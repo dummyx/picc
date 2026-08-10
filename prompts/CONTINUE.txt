@@ -1,0 +1,9 @@
+Continue the same PiCC implementation task autonomously.
+
+Read PROGRESS.md if it exists and call experiment_status. Work on the
+lowest-numbered incomplete or regressed stage. Run focused visible tests,
+implement and debug the compiler, run broader tests at a meaningful checkpoint,
+and update PROGRESS.md.
+
+Do not only summarize status. Perform substantive implementation work during
+this invocation.

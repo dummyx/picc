@@ -1,0 +1,130 @@
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { appendFileSync, mkdirSync } from "node:fs";
+import { dirname, isAbsolute, resolve, sep } from "node:path";
+
+const WORKSPACE = resolve(process.env.PICC_WORKSPACE ?? "/workspace");
+const VISIBLE_TESTS = resolve(process.env.PICC_VISIBLE_TESTS ?? "/visible-tests");
+const AUDIT_PATH = process.env.PICC_GUARD_LOG ?? "/run-artifacts/guard.jsonl";
+
+function inside(path: string, root: string): boolean {
+  return path === root || path.startsWith(root + sep);
+}
+
+function absolutePath(raw: unknown): string | undefined {
+  if (typeof raw !== "string" || raw.trim() === "") return undefined;
+  return resolve(isAbsolute(raw) ? raw : resolve(WORKSPACE, raw));
+}
+
+function audit(record: Record<string, unknown>): void {
+  try {
+    mkdirSync(dirname(AUDIT_PATH), { recursive: true });
+    appendFileSync(
+      AUDIT_PATH,
+      JSON.stringify({ timestamp: new Date().toISOString(), ...record }) + "\n",
+      { encoding: "utf8" },
+    );
+  } catch {
+    // Logging must never break the experiment process.
+  }
+}
+
+function protectedWrite(path: string): string | undefined {
+  if (!inside(path, WORKSPACE)) return "writes are restricted to /workspace";
+
+  const protectedPaths = [
+    resolve(WORKSPACE, "AGENTS.md"),
+    resolve(WORKSPACE, "TASK.md"),
+    resolve(WORKSPACE, ".pi"),
+    resolve(WORKSPACE, ".git"),
+  ];
+  if (protectedPaths.some((root) => inside(path, root))) {
+    return "experiment-control and Git metadata are read-only";
+  }
+  return undefined;
+}
+
+function restrictedRead(path: string): string | undefined {
+  if (inside(path, WORKSPACE) || inside(path, VISIBLE_TESTS)) return undefined;
+  return "reads are restricted to the product workspace and visible tests";
+}
+
+const bashBlocks: Array<{ pattern: RegExp; reason: string }> = [
+  {
+    pattern: /(^|[;&|]\s*)(?:\/[^\s;&|]+\/)?(?:curl|wget|aria2c|ftp|sftp|ssh|scp|nc|ncat|socat)(?=\s|$)/i,
+    reason: "network/download command is prohibited",
+  },
+  {
+    pattern: /\bgit\s+(?:clone|fetch|pull|submodule|remote)\b/i,
+    reason: "retrieving external repository content is prohibited",
+  },
+  {
+    pattern: /\b(?:apt|apt-get|apk|dnf|yum|pacman|brew)\b/i,
+    reason: "system package installation is prohibited",
+  },
+  {
+    pattern: /\b(?:pip|pip3|uv|npm|pnpm|yarn|bun)\s+(?:install|add|update|upgrade|x|dlx)\b/i,
+    reason: "dependency download or installation is prohibited",
+  },
+  {
+    pattern: /\bcargo\s+(?:add|install|search|update|login|publish)\b/i,
+    reason: "Cargo network/package mutation is prohibited",
+  },
+  {
+    pattern: /(^|[;&|]\s*)(?:\/[^\s;&|]+\/)?(?:gcc|g\+\+|clang|clang\+\+|cc|c\+\+|tcc|cpp|c99|c11|zig\s+cc)(?=\s|$)/i,
+    reason: "direct use of an existing C/C++ compiler is prohibited; use test_visible",
+  },
+  {
+    pattern: /(^|[;&|]\s*)(?:printenv(?:\s+[A-Za-z_][A-Za-z0-9_]*)?|env|set|export\s+-p)\s*(?=$|[;&|])/i,
+    reason: "credential/environment inspection is prohibited",
+  },
+  {
+    pattern: /(?:\/proc(?:\/[^\s]*)?\/environ|ZAI_API_KEY|ZAI_CODING_CN_API_KEY|auth\.json|\/run-artifacts)/i,
+    reason: "credential or harness-internal access is prohibited",
+  },
+  {
+    pattern: /(?:https?:\/\/|\b(?:requests|urllib|httpx|node-fetch)\b|\bfetch\s*\()/i,
+    reason: "programmatic network access is prohibited",
+  },
+  {
+    pattern: /(?:^|[;&|]\s*)(?:rm|mv|cp|install|chmod|chown|truncate|tee)(?:\s+[^;&|]*)?(?:AGENTS\.md|TASK\.md|\/visible-tests|\/opt\/picc-eval|\/run-artifacts|\/workspace\/\.pi)/i,
+    reason: "mutation of experiment-control files is prohibited",
+  },
+];
+
+export default function experimentGuard(pi: ExtensionAPI) {
+  pi.on("tool_call", async (event) => {
+    let reason: string | undefined;
+    let subject: unknown;
+
+    if (event.toolName === "bash") {
+      const command = (event.input as { command?: unknown }).command;
+      subject = command;
+      if (typeof command !== "string") {
+        reason = "bash command must be a string";
+      } else {
+        reason = bashBlocks.find(({ pattern }) => pattern.test(command))?.reason;
+      }
+    } else if (event.toolName === "write" || event.toolName === "edit") {
+      const rawPath = (event.input as { path?: unknown }).path;
+      subject = rawPath;
+      const path = absolutePath(rawPath);
+      reason = path ? protectedWrite(path) : "missing or invalid path";
+    } else if (["read", "grep", "find", "ls"].includes(event.toolName)) {
+      const rawPath = (event.input as { path?: unknown }).path ?? WORKSPACE;
+      subject = rawPath;
+      const path = absolutePath(rawPath);
+      reason = path ? restrictedRead(path) : "missing or invalid path";
+    }
+
+    if (!reason) return undefined;
+
+    audit({
+      event: "blocked_tool_call",
+      toolName: event.toolName,
+      toolCallId: event.toolCallId,
+      reason,
+      subject,
+    });
+    return { block: true, reason: `Experiment guard: ${reason}` };
+  });
+}

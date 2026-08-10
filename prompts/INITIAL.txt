@@ -1,0 +1,4 @@
+Read TASK.md and inspect the initial repository. Implement PiCC autonomously.
+Begin with the smallest end-to-end compiler that can pass Stage 1, then test and
+continue toward later stages. Do not stop merely to describe a plan; inspect,
+implement, build, test, and debug. Maintain PROGRESS.md as specified.
