@@ -8,9 +8,10 @@ Coding Plan**, starts from an empty product repository and implements **PiCC**:
 a Rust compiler for the core language features covered by Chapters 1–10 of the
 *Writing a C Compiler* test suite.
 
-The pack is intentionally narrow. It gives you a runnable feasibility study
-before adding multi-agent coordination, prompt ablations, web access, or custom
-context-management treatments.
+The base workflow is intentionally narrow and remains the runnable feasibility
+study. An additive controlled-study layer covers prespecified prompt,
+specification, test-access, implementation-substrate, and reference-access
+conditions; see [`STUDIES.md`](STUDIES.md).
 
 ## Frozen default configuration
 
@@ -46,6 +47,8 @@ Coding Plan.
 - Pi JSON event and session logging;
 - post-hoc hidden evaluation for the final or every snapshot;
 - report generation;
+- an optional, materialized controlled-study layer under
+  [`studies/`](studies/README.md);
 - two small, inspectable Pi extensions:
   - `experiment-tools.ts` adds `test_visible` and `experiment_status`;
   - `experiment-guard.ts` blocks obvious policy violations and logs attempts.
@@ -343,7 +346,8 @@ During main runs:
 3. **No deterministic seed.** Repetitions measure stochastic run variability;
    they are not bitwise reproductions.
 4. **Guard limitations.** The default single-container setup is practical, not
-   high-assurance adversarial containment.
+   high-assurance adversarial containment. Candidate processes also share an
+   evaluator namespace with the selected test partition.
 5. **One target.** Results support a claim about this PiCC task and harness, not
    arbitrary large-scale software construction.
 6. **Plan quotas.** Coding Plan throttling or quota exhaustion can terminate a
@@ -365,6 +369,8 @@ make visible RUN_ID=...     # reevaluate final snapshot on visible tests
 make hidden RUN_ID=...      # final hidden snapshot
 make hidden-all RUN_ID=...  # all saved snapshots
 make report RUN_ID=...
+make study-validate          # validate the controlled-study definition
+make study-schedule          # deterministic randomized-block run order
 ```
 
 Configuration overrides belong in `.env`, but any override used in a reported

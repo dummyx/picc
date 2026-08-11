@@ -1,0 +1,6 @@
+Read the controlling specification at {{SPEC_LOCATION}} and inspect the initial
+repository. Implement PiCC autonomously. Establish the smallest end-to-end
+vertical slice first, then expand while preserving working behavior. Do not stop
+merely to describe a plan.
+
+{{INITIAL_SPEC_BLOCK}}

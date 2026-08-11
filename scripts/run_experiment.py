@@ -13,6 +13,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -258,7 +259,7 @@ def run_pi_round(
     }
 
 
-def run_visible_evaluation(
+def _run_visible_evaluation_in_workspace(
     config: dict[str, str],
     workspace: Path,
     visible_tests: Path,
@@ -309,6 +310,47 @@ def run_visible_evaluation(
         }
     full = json.loads(output_host.read_text(encoding="utf-8"))
     return dict(full.get("summary", {}))
+
+
+def run_visible_evaluation(
+    config: dict[str, str],
+    workspace: Path,
+    visible_tests: Path,
+    evaluator: Path,
+    artifacts: Path,
+    round_number: int,
+    max_stage: int,
+    commit: str,
+) -> dict[str, Any]:
+    with tempfile.TemporaryDirectory(prefix=".picc-visible-eval-", dir=artifacts.parent) as temporary:
+        worktree = Path(temporary) / "workspace"
+        result = subprocess.run(
+            ["git", "worktree", "add", "--detach", str(worktree), commit],
+            cwd=workspace,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise ExperimentError(f"git worktree failed for visible evaluation: {result.stderr}")
+        try:
+            return _run_visible_evaluation_in_workspace(
+                config,
+                worktree,
+                visible_tests,
+                evaluator,
+                artifacts,
+                round_number,
+                max_stage,
+            )
+        finally:
+            subprocess.run(
+                ["git", "worktree", "remove", "--force", str(worktree)],
+                cwd=workspace,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
 
 
 def prompt_hashes(control: Path) -> dict[str, str]:
@@ -1051,13 +1093,14 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             snapshot = snapshot_workspace(workspace, round_number)
             print(f"[{run_id}] round {round_number:03d}: visible evaluation", flush=True)
             visible = run_visible_evaluation(
-                config,
-                workspace,
-                visible_tests,
-                REPO_ROOT / "evaluator",
-                artifacts,
-                round_number,
-                max_stage,
+                config=config,
+                workspace=workspace,
+                visible_tests=visible_tests,
+                evaluator=REPO_ROOT / "evaluator",
+                artifacts=artifacts,
+                round_number=round_number,
+                max_stage=max_stage,
+                commit=str(snapshot["git_commit"]),
             )
             last_visible = visible
             snapshot.update(

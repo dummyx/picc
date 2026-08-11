@@ -1,0 +1,5 @@
+Continue the same PiCC implementation autonomously. Re-read {{SPEC_LOCATION}} and
+`PROGRESS.md` when available. Work on the lowest-numbered incomplete or regressed
+stage, perform implementation and debugging, run the feedback available in this
+condition after meaningful changes, and update `PROGRESS.md`. Do not only
+summarize status.

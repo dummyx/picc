@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "id": "picc-essential-v1",
+  "description": "One-factor-at-a-time study of prompt, specification, test feedback/provision, implementation substrate, scaffold, and reference access for the PiCC construction task.",
+  "design": "one-factor-at-a-time",
+  "baseline_condition": "baseline",
+  "seed": 20260811,
+  "completion_threshold": 0.95,
+  "defaults": {
+    "prompt": {
+      "agents": "studies/assets/prompts/agents-baseline.md",
+      "initial": "studies/assets/prompts/initial.txt",
+      "continuation": "studies/assets/prompts/continue.txt"
+    },
+    "specification": {
+      "path": "studies/assets/specs/behavioral.md",
+      "delivery": "task_file",
+      "provenance": {
+        "method": "human-edited",
+        "creator": "study-author",
+        "source": "PiCC task contract and Writing a C Compiler test-suite scope",
+        "artifact_family": "picc-behavioral-v1",
+        "reviewed_by": null
+      }
+    },
+    "tests": {
+      "access": "tool",
+      "feedback": "failures",
+      "visible_subset_fraction": 1.0,
+      "subset_seed": 20260811,
+      "visible_partition": null,
+      "hidden_partition": null,
+      "provenance": {
+        "method": "upstream-human-and-template-generated",
+        "creator": "nlsandler/writing-a-c-compiler-tests contributors",
+        "source": "https://github.com/nlsandler/writing-a-c-compiler-tests@ae12014d2dec14488f3f80d14df4b6d8e4634d7d",
+        "artifact_family": "writing-a-c-compiler-core-ch1-10",
+        "reviewed_by": null
+      }
+    },
+    "candidate": {
+      "adapter": "studies/assets/candidates/rust-std.json",
+      "language": "rust",
+      "framework": "standard-library",
+      "scaffold": null
+    },
+    "reference": {
+      "mode": "none",
+      "oracle_limit": 0,
+      "source": null
+    },
+    "environment": {
+      "overrides": {}
+    },
+    "budget": {}
+  },
+  "conditions": [
+    {
+      "id": "baseline",
+      "factor": "baseline",
+      "description": "Behavioral specification in TASK.md, detailed workflow prompt, failure-level test tool, empty Rust repository, and no reference implementation."
+    },
+    {
+      "id": "prompt-minimal",
+      "factor": "prompt",
+      "description": "Remove workflow, progress-memory, sequencing, and regression-management instructions while retaining safety and task rules.",
+      "prompt": {
+        "agents": "studies/assets/prompts/agents-minimal.md"
+      }
+    },
+    {
+      "id": "spec-brief",
+      "factor": "specification",
+      "description": "Replace the detailed behavioral specification with a concise product brief of the same feature scope.",
+      "specification": {
+        "path": "studies/assets/specs/brief.md",
+        "provenance": {
+          "method": "human-edited",
+          "creator": "study-author",
+          "source": "Condensed from picc-behavioral-v1",
+          "artifact_family": "picc-brief-v1",
+          "reviewed_by": null
+        }
+      }
+    },
+    {
+      "id": "spec-architecture",
+      "factor": "specification",
+      "description": "Provide the behavioral scope plus prescribed lexer/parser/sema/IR/codegen boundaries and invariants.",
+      "specification": {
+        "path": "studies/assets/specs/architecture.md",
+        "provenance": {
+          "method": "human-edited",
+          "creator": "study-author",
+          "source": "Behavioral scope plus conventional compiler architecture guidance",
+          "artifact_family": "picc-architecture-v1",
+          "reviewed_by": null
+        }
+      }
+    },
+    {
+      "id": "spec-inline",
+      "factor": "specification",
+      "description": "Provide the same behavioral specification in the initial request rather than as a persistent TASK.md file.",
+      "specification": {
+        "delivery": "initial_prompt"
+      }
+    },
+    {
+      "id": "tests-none",
+      "factor": "tests",
+      "description": "Withhold visible tests and all visible scores while retaining post-hoc hidden evaluation.",
+      "tests": {
+        "access": "none",
+        "feedback": "none"
+      }
+    },
+    {
+      "id": "tests-aggregate",
+      "factor": "tests",
+      "description": "Expose only aggregate visible score/build status, withholding per-stage and per-test failures.",
+      "tests": {
+        "feedback": "aggregate"
+      }
+    },
+    {
+      "id": "tests-files",
+      "factor": "tests",
+      "description": "Expose the same visible test corpus as readable source files while retaining baseline failure-level evaluator feedback.",
+      "tests": {
+        "access": "files",
+        "feedback": "failures"
+      }
+    },
+    {
+      "id": "tests-quarter",
+      "factor": "tests",
+      "description": "Expose a deterministic, family-grouped 25% subset of the baseline visible tests.",
+      "tests": {
+        "visible_subset_fraction": 0.25
+      }
+    },
+    {
+      "id": "language-python",
+      "factor": "candidate",
+      "description": "Use Python 3 and the standard library rather than Rust, with the same external compiler contract and tests.",
+      "candidate": {
+        "adapter": "studies/assets/candidates/python-stdlib.json",
+        "language": "python",
+        "framework": "standard-library",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "scaffold-rust",
+      "factor": "candidate",
+      "description": "Start from a buildable Rust lexer/parser/sema/IR/codegen scaffold instead of an empty repository.",
+      "candidate": {
+        "adapter": "studies/assets/candidates/rust-scaffold.json",
+        "language": "rust",
+        "framework": "provided-pipeline-scaffold",
+        "scaffold": "studies/assets/scaffolds/rust-pipeline"
+      }
+    },
+    {
+      "id": "reference-oracle",
+      "factor": "reference",
+      "description": "Provide a rate-limited black-box reference behavior oracle while withholding source code.",
+      "reference": {
+        "mode": "oracle",
+        "oracle_limit": 50,
+        "source": null
+      }
+    }
+  ]
+}

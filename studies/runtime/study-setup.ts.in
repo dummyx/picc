@@ -1,0 +1,48 @@
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { appendFileSync, cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
+
+const HAS_SCAFFOLD = __HAS_SCAFFOLD__;
+const SOURCE = "/visible-tests/.study-scaffold";
+const WORKSPACE = "/workspace";
+const ARTIFACTS = process.env.PICC_ARTIFACTS ?? "/run-artifacts";
+const MARKER = `${ARTIFACTS}/study-scaffold-applied`;
+const EVENT_PATH = `${ARTIFACTS}/extension-events.jsonl`;
+
+function appendEvent(record: Record<string, unknown>): void {
+  try {
+    mkdirSync(dirname(EVENT_PATH), { recursive: true });
+    appendFileSync(
+      EVENT_PATH,
+      JSON.stringify({ timestamp: new Date().toISOString(), ...record }) + "\n",
+      "utf8",
+    );
+  } catch {
+    // Setup logging must not terminate Pi.
+  }
+}
+
+export default function studySetup(pi: ExtensionAPI) {
+  pi.on("session_start", async () => {
+    if (!HAS_SCAFFOLD || existsSync(MARKER)) return;
+    if (!existsSync(SOURCE)) {
+      throw new Error(`Study scaffold is configured but missing: ${SOURCE}`);
+    }
+
+    const copied: string[] = [];
+    for (const entry of readdirSync(SOURCE, { withFileTypes: true })) {
+      const destination = join(WORKSPACE, entry.name);
+      if (existsSync(destination)) {
+        throw new Error(`Study scaffold would overwrite existing workspace path: ${destination}`);
+      }
+      cpSync(join(SOURCE, entry.name), destination, { recursive: true, force: false });
+      copied.push(basename(destination));
+    }
+    writeFileSync(
+      MARKER,
+      JSON.stringify({ copied, timestamp: new Date().toISOString() }) + "\n",
+      "utf8",
+    );
+    appendEvent({ event: "study_scaffold_applied", copied });
+  });
+}

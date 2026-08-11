@@ -1,0 +1,156 @@
+# Controlled-study data dictionary
+
+This document covers the additive study layer. Existing per-run files remain
+defined in `docs/DATA_DICTIONARY.md`.
+
+## Study manifest
+
+A study JSON object contains:
+
+- `schema_version`: currently `1`;
+- `id`, `description`, and deterministic subset `seed`;
+- optional `design` and `baseline_condition`; the starter uses validated
+  one-factor-at-a-time overlays;
+- `completion_threshold`;
+- `defaults`: complete baseline condition;
+- `conditions`: deep-merged overlays.
+
+Each resolved condition contains:
+
+### `prompt`
+
+- `agents`: project-context prompt template;
+- `initial`: first-request template;
+- `continuation`: fixed continuation template.
+
+### `specification`
+
+- `path`: specification template;
+- `delivery`: `task_file`, `initial_prompt`, or `workspace_file`;
+- `provenance`: at minimum `method`, with optional creator, source,
+  generation-model, reviewer, and artifact-family fields.
+
+### `tests`
+
+- `access`: `none`, `tool`, or `files`;
+- `feedback`: `none`, `aggregate`, `failures`, or `detailed`;
+- `visible_subset_fraction` and `subset_seed`;
+- optional `visible_partition` and `hidden_partition` paths;
+- `provenance` fields analogous to specification provenance.
+
+### `candidate`
+
+- `adapter`: language-neutral build/invocation/audit adapter;
+- `language` and `framework` labels, required to match the adapter;
+- optional `scaffold` directory copied into the initial workspace.
+
+### `reference`
+
+- `mode`: `none`, `oracle`, or `source`;
+- `oracle_limit` for black-box mode;
+- `source` path for source-visible mode.
+
+### `environment` and `budget`
+
+Optional scalar environment overrides and per-profile budget overrides. They are
+frozen in the materialized `config/defaults.env`. Do not use them casually in a
+one-factor condition because they change compute or tooling.
+
+## Candidate adapter
+
+`candidate.json` defines:
+
+- `language`, `framework`, and descriptive dependency policy;
+- `build.command`, `build.artifact`, and optional timeout;
+- `run.command`, with `{artifact}`, `{input}`, `{output}`, and `{workspace}`
+  placeholders;
+- `source_extensions` used for artifact measurement/audit;
+- audit allowlists/patterns; source audit covers Rust/Python files,
+  including test paths, and rejects symlinks;
+- specification-rendering variables.
+
+The evaluator requires the same external PiCC contract for every adapter.
+
+## `runs/.study-materializations/<run-id>/`
+
+Condition-specific copy of the current harness. It contains rendered prompts,
+condition-aware extensions, generic evaluator and adapter, visible subset,
+constant hidden partition, optional scaffold/reference, and effective nonsecret
+configuration.
+
+`study-materialization.json` records:
+
+- study/condition identities and SHA-256 values;
+- completion threshold;
+- source-harness file hashes;
+- rendered prompt/extension/scaffold/manifest hashes.
+
+The materialization is retained so resume and post-hoc evaluation use the same
+frozen environment.
+
+## `runs/<run-id>/study-metadata.json`
+
+Run-level copy of the resolved study metadata plus the materialization path. It
+is the discovery key used by `study.py resume/evaluate/report` and the aggregate
+reporter.
+
+## `runs/<run-id>/study-control/`
+
+Compact immutable review set:
+
+- resolved materialization record;
+- rendered prompts and specification delivery;
+- candidate adapter;
+- visible and hidden manifests.
+
+## Additional extension events
+
+`artifacts/extension-events.jsonl` may include:
+
+- `test_visible_start`, `test_visible_end`, or
+  `test_visible_unavailable`;
+- `reference_oracle_start`, `reference_oracle_end`,
+  `reference_oracle_unavailable`, and limit events;
+- compaction/provider events inherited from the base extension;
+- `study_scaffold_applied`.
+
+Oracle source programs and observations are retained under
+`artifacts/oracle-queries/`. Their count is tracked in `oracle-count.json`.
+
+## Aggregate outputs
+
+`runs/study-results/<study-id>/` contains:
+
+- `runs.csv`: one row per eligible primary-analysis run;
+- `conditions.csv`: primary median/finish-rate summary by condition;
+- `paired-baseline-deltas.csv`: replicate-matched differences from baseline;
+- `summary.json`: complete machine-readable aggregate;
+- `summary.md`: compact human-readable table and interpretation warnings.
+
+Primary rows require `profile=main`, `status=completed`,
+`protocol_comparable=true`, a positive integer `replicate`, a current
+`study_sha256`, and a `condition_sha256` matching both the frozen payload and
+current resolved condition. Pilot, resumed, incomplete, stale, or internally
+inconsistent runs appear in `warnings` and the Markdown exclusion section.
+Duplicate eligible `(condition_id, replicate)` records stop aggregation.
+
+Before inclusion, the reporter verifies the retained materialization and both
+frozen control trees, candidate adapter, visible/hidden manifests, source
+harness/evaluator, runtime model/image/configuration, and every hidden snapshot's
+Git commit and tree. The hidden report, score ledger, full evaluator files, and
+frozen manifest selection must agree for every round. Passed/failed totals and
+macro/micro scores are recomputed from per-test boolean results. Raw Pi-event
+usage and guard ledgers must also reproduce the report. Shared cohort drift, or
+within-condition rendered/runtime drift across replicates, stops aggregation.
+
+Important run columns include `profile`, `replicate`, study/condition and
+materialization/runtime fingerprints, model/provider/thinking/revision, image,
+condition axes, hidden score/AUC, finish status, time-to-completion, elapsed time,
+tokens, model/tool/test/oracle calls, compactions, regressions, buildability,
+guard events, source/test/scaffold LOC, and final build/audit status. Missing
+provider token fields remain null. A complete one-snapshot early stop receives
+the origin-anchored AUC `score / 2`.
+
+`summary.json.selection` records the primary inclusion and integrity policy.
+Warnings enumerate excluded runs, every missing condition/replicate cell over the included replicate union, and variants without an eligible same-replicate baseline; paired
+deltas never disappear silently.

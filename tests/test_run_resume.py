@@ -578,15 +578,35 @@ class ResumeLifecycleTests(unittest.TestCase):
 
             resumed_visible = dict(fixture.visible, score=0.5, passed=2)
 
-            def fake_visible(*unused_args):
+            def fake_visible(
+                *,
+                config,
+                workspace,
+                visible_tests,
+                evaluator,
+                artifacts,
+                round_number,
+                max_stage,
+                commit,
+            ):
+                captured["visible_call"] = {
+                    "config": config,
+                    "workspace": workspace,
+                    "visible_tests": visible_tests,
+                    "evaluator": evaluator,
+                    "artifacts": artifacts,
+                    "round_number": round_number,
+                    "max_stage": max_stage,
+                    "commit": commit,
+                }
                 write_json(
-                    fixture.artifacts / "evaluations" / "visible-round-001.json",
+                    artifacts / "evaluations" / "visible-round-001.json",
                     {"summary": resumed_visible},
                 )
-                (fixture.artifacts / "evaluations" / "visible-round-001.stdout.log").write_text(
+                (artifacts / "evaluations" / "visible-round-001.stdout.log").write_text(
                     "visible summary\n", encoding="utf-8"
                 )
-                (fixture.artifacts / "evaluations" / "visible-round-001.stderr.log").write_text(
+                (artifacts / "evaluations" / "visible-round-001.stderr.log").write_text(
                     "", encoding="utf-8"
                 )
                 return resumed_visible
@@ -623,6 +643,15 @@ class ResumeLifecycleTests(unittest.TestCase):
 
             self.assertEqual(result, 0)
             self.assertEqual(captured["round_number"], 1)
+            visible_call = captured["visible_call"]
+            self.assertEqual(visible_call["config"]["EXPERIMENT_IMAGE"], IMAGE_NAME)
+            self.assertEqual(visible_call["workspace"], fixture.workspace)
+            self.assertEqual(visible_call["visible_tests"], fixture.visible_manifest.parent)
+            self.assertEqual(visible_call["evaluator"], fixture.root / "evaluator")
+            self.assertEqual(visible_call["artifacts"], fixture.artifacts)
+            self.assertEqual(visible_call["round_number"], 1)
+            self.assertEqual(visible_call["max_stage"], 6)
+            self.assertEqual(visible_call["commit"], fixture.commit)
             self.assertTrue(captured["continuation"])
             self.assertEqual(captured["prompt"], "continue prompt\n")
             self.assertEqual(captured["config"]["AGENT_CPUS"], "8")

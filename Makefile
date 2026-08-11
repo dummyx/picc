@@ -4,7 +4,13 @@ RUN_ID ?= glm52-$(shell date -u +%Y%m%d-%H%M%S)
 REPLICATE ?=
 REPLICATE_ARG := $(if $(REPLICATE),--replicate $(REPLICATE),)
 
-.PHONY: doctor validate image tests smoke-tests evaluator-smoke setup auth-check pilot main resume visible hidden hidden-all report clean-runs
+STUDY ?= studies/starter/study.json
+CONDITION ?= baseline
+PROFILE ?= pilot
+REPLICATES ?= 3
+
+.PHONY: doctor validate image tests smoke-tests evaluator-smoke setup auth-check pilot main resume visible hidden hidden-all report \
+	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs
 
 doctor:
 	./scripts/doctor.sh
@@ -49,6 +55,39 @@ hidden-all:
 
 report:
 	python3 scripts/summarize_run.py --run-id "$(RUN_ID)"
+
+study-validate:
+	python3 scripts/study.py validate --study "$(STUDY)"
+
+study-list:
+	python3 scripts/study.py list --study "$(STUDY)"
+
+study-schedule:
+	python3 scripts/study.py schedule --study "$(STUDY)" --replicates "$(REPLICATES)" --profile "$(PROFILE)"
+
+study-materialize:
+	python3 scripts/study.py materialize --study "$(STUDY)" --condition "$(CONDITION)" --run-id "$(RUN_ID)"
+
+study-run:
+	python3 scripts/study.py run --study "$(STUDY)" --condition "$(CONDITION)" --profile "$(PROFILE)" --run-id "$(RUN_ID)" $(REPLICATE_ARG)
+
+study-resume:
+	python3 scripts/study.py resume --run-id "$(RUN_ID)"
+
+study-visible:
+	python3 scripts/study.py evaluate --run-id "$(RUN_ID)" --partition visible
+
+study-hidden:
+	python3 scripts/study.py evaluate --run-id "$(RUN_ID)" --partition hidden
+
+study-hidden-all:
+	python3 scripts/study.py evaluate --run-id "$(RUN_ID)" --partition hidden --all-snapshots
+
+study-report:
+	python3 scripts/study.py report --run-id "$(RUN_ID)"
+
+study-summary:
+	python3 scripts/study.py summarize --study "$(STUDY)"
 
 clean-runs:
 	@echo "Refusing to delete runs automatically. Remove a specific runs/<id> directory explicitly."

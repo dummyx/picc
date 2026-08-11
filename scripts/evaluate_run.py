@@ -18,6 +18,7 @@ from common import (
     ExperimentError,
     REPO_ROOT,
     append_jsonl,
+    atomic_write_json,
     docker_image_id,
     docker_mount,
     load_config,
@@ -115,6 +116,43 @@ def evaluate_snapshot(
     return result.returncode, result.stdout, result.stderr, output_path
 
 
+def git_revision(workspace: Path, revision: str) -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", revision],
+        cwd=workspace,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise ExperimentError(f"git rev-parse {revision} failed: {result.stderr}")
+    return result.stdout.strip()
+
+
+def verified_evaluation_image(config: dict[str, str], metadata: dict[str, Any]) -> dict[str, str]:
+    recorded = metadata.get("docker_image")
+    if not isinstance(recorded, dict):
+        raise ExperimentError("Run metadata has no frozen Docker image")
+    recorded_name = recorded.get("name")
+    recorded_id = recorded.get("id")
+    if not isinstance(recorded_name, str) or not recorded_name:
+        raise ExperimentError("Run metadata has no frozen Docker image name")
+    if not isinstance(recorded_id, str) or not recorded_id:
+        raise ExperimentError("Run metadata has no frozen Docker image ID")
+
+    configured_name = config.get("EXPERIMENT_IMAGE")
+    if configured_name != recorded_name:
+        raise ExperimentError(
+            f"Frozen Docker image name changed: expected {recorded_name!r}, got {configured_name!r}"
+        )
+    actual_id = docker_image_id(recorded_name)
+    if actual_id != recorded_id:
+        raise ExperimentError(
+            f"Docker image {recorded_name!r} changed: expected {recorded_id}, got {actual_id}"
+        )
+    return {"name": recorded_name, "id": actual_id}
+
+
 def evaluate_locked(args: argparse.Namespace, run_id: str, run_dir: Path) -> int:
     metadata_path = run_dir / "metadata.json"
     if not metadata_path.exists():
@@ -124,7 +162,9 @@ def evaluate_locked(args: argparse.Namespace, run_id: str, run_dir: Path) -> int
         raise ExperimentError(f"Run {run_id} is still running; evaluate it after the run finishes")
 
     config = load_config()
-    docker_image_id(config["EXPERIMENT_IMAGE"])
+    verified_image = verified_evaluation_image(config, metadata)
+    evaluation_config = dict(config)
+    evaluation_config["EXPERIMENT_IMAGE"] = verified_image["id"]
 
     workspace = run_dir / "workspace"
     artifacts = run_dir / "artifacts"
@@ -167,8 +207,15 @@ def evaluate_locked(args: argparse.Namespace, run_id: str, run_dir: Path) -> int
                 raise ExperimentError(f"git worktree failed: {result.stderr}")
             try:
                 output_name = f"{args.partition}-round-{round_number:03d}.json"
+                evaluated_commit = git_revision(worktree, "HEAD")
+                evaluated_tree = git_revision(worktree, "HEAD^{tree}")
+                expected_tree = str(snapshot.get("git_tree", ""))
+                if evaluated_commit != commit:
+                    raise ExperimentError("Detached evaluation commit does not match the snapshot ledger")
+                if not expected_tree or evaluated_tree != expected_tree:
+                    raise ExperimentError("Detached evaluation tree does not match the snapshot ledger")
                 returncode, stdout, stderr, output_path = evaluate_snapshot(
-                    config,
+                    evaluation_config,
                     worktree,
                     tests,
                     REPO_ROOT / "evaluator",
@@ -182,19 +229,32 @@ def evaluate_locked(args: argparse.Namespace, run_id: str, run_dir: Path) -> int
                 (artifacts / "evaluations" / f"{args.partition}-round-{round_number:03d}.stderr.log").write_text(
                     stderr, encoding="utf-8"
                 )
-                if returncode != 0 or not output_path.exists():
+                full: dict[str, Any] | None = None
+                if output_path.exists():
+                    loaded = json.loads(output_path.read_text(encoding="utf-8"))
+                    if not isinstance(loaded, dict):
+                        raise ExperimentError(f"Evaluator output is not a JSON object: {output_path}")
+                    loaded["snapshot"] = {
+                        "git_commit": evaluated_commit,
+                        "git_tree": evaluated_tree,
+                    }
+                    loaded["docker_image"] = dict(verified_image)
+                    atomic_write_json(output_path, loaded)
+                    full = loaded
+                if returncode != 0 or full is None:
                     summary: dict[str, Any] = {
                         "score": 0.0,
                         "build_ok": False,
                         "error": f"evaluator exit {returncode}: {stderr[-2000:]}",
                     }
                 else:
-                    full = json.loads(output_path.read_text(encoding="utf-8"))
                     summary = dict(full.get("summary", {}))
                 row = {
                     "partition": args.partition,
                     "round": round_number,
                     "git_commit": commit,
+                    "git_tree": evaluated_tree,
+                    "docker_image": dict(verified_image),
                     "elapsed_seconds": snapshot.get("elapsed_seconds"),
                     "summary": summary,
                     "output": str(output_path.relative_to(run_dir)),

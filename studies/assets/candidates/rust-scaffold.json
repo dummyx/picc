@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "language": "rust",
+  "framework": "provided-pipeline-scaffold",
+  "dependency_policy": "Rust standard library only; no Cargo dependencies",
+  "build": {
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "artifact": "target/release/picc",
+    "timeout_seconds": 900
+  },
+  "run": {
+    "command": [
+      "{artifact}",
+      "{input}",
+      "-o",
+      "{output}"
+    ]
+  },
+  "source_extensions": [
+    ".rs"
+  ],
+  "audit": {
+    "allowed_dependencies": []
+  },
+  "spec_variables": {
+    "LANGUAGE": "Rust",
+    "FRAMEWORK": "the provided lexer/parser/sema/IR/codegen pipeline scaffold",
+    "DEPENDENCY_POLICY": "Rust standard library only; Cargo dependency tables must remain empty",
+    "BUILD_COMMAND": "cargo build --release --offline",
+    "ENTRY_COMMAND": "target/release/picc INPUT.c -o OUTPUT.s"
+  }
+}
