@@ -1047,9 +1047,10 @@ def safe_environment(materialization_root: Path) -> dict[str, str]:
     secret_by_provider = {
         "zai": "ZAI_API_KEY",
         "zai-coding-cn": "ZAI_CODING_CN_API_KEY",
+        "local": "LOCAL_API_KEY",
     }
     if provider not in secret_by_provider:
-        raise StudyError(f"Unsupported frozen ZAI provider: {provider!r}")
+        raise StudyError(f"Unsupported frozen provider: {provider!r}")
 
     current = load_config()
     secret_name = secret_by_provider[provider]
@@ -1058,7 +1059,7 @@ def safe_environment(materialization_root: Path) -> dict[str, str]:
     for key in list(env):
         if key in frozen or any(marker in key.upper() for marker in SECRET_MARKERS):
             env.pop(key, None)
-    for key in ("ZAI_PROVIDER", "ZAI_MODEL", "ZAI_THINKING", "ZAI_API_KEY", "ZAI_CODING_CN_API_KEY"):
+    for key in ("ZAI_PROVIDER", "ZAI_MODEL", "ZAI_THINKING", "ZAI_API_KEY", "ZAI_CODING_CN_API_KEY", "LOCAL_API_KEY"):
         env.pop(key, None)
     env.update(frozen)
     if secret_value:

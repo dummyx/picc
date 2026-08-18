@@ -48,7 +48,7 @@ DEFAULT_SOURCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
             r"\b(?:std::)?env::(?:var|var_os|vars|vars_os)\b|"
             r"\bstd::env::\{[^}\n]*\b(?:var|var_os|vars|vars_os)\b|\bos\.(?:environ|getenv)\b|"
             r"/proc(?:/[^\s]*)?/environ|"
-            r"ZAI_(?:API_KEY|CODING_CN_API_KEY)",
+            r"ZAI_(?:API_KEY|CODING_CN_API_KEY)|LOCAL_API_KEY",
             re.I,
         ),
         "credential or environment inspection",

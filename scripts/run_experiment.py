@@ -32,11 +32,15 @@ from common import (
     docker_pi_config_mounts,
     docker_secret_env,
     host_metadata,
+    is_local_provider,
     load_config,
+    local_model_metadata,
     read_jsonl,
+    resolve_local_provider,
     run,
     sanitize_run_id,
     sha256_file,
+    write_local_models_json,
 )
 
 METADATA_SCHEMA_VERSION = 2
@@ -63,7 +67,7 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
-def copy_control_files(run_dir: Path) -> Path:
+def copy_control_files(run_dir: Path, config: dict[str, str]) -> Path:
     control = run_dir / "control"
     (control / "pi" / "extensions").mkdir(parents=True)
     for name in ("AGENTS.md", "TASK.md", "INITIAL.txt", "CONTINUE.txt"):
@@ -71,6 +75,8 @@ def copy_control_files(run_dir: Path) -> Path:
     shutil.copy2(REPO_ROOT / "pi" / "settings.json", control / "pi" / "settings.json")
     for extension in sorted((REPO_ROOT / "pi" / "extensions").glob("*.ts")):
         shutil.copy2(extension, control / "pi" / "extensions" / extension.name)
+    if is_local_provider(config):
+        write_local_models_json(config, control / "pi")
     return control
 
 
@@ -152,6 +158,10 @@ def base_container_args(config: dict[str, str], *, name: str | None = None) -> l
         "--pids-limit",
         config.get("AGENT_PIDS", "512"),
     ]
+    if is_local_provider(config):
+        # Reach the operator's endpoint from inside the container on Linux
+        # engines; Docker Desktop resolves host.docker.internal either way.
+        args += ["--add-host", "host.docker.internal:host-gateway"]
     if name:
         args += ["--name", name]
     if hasattr(os, "getuid") and hasattr(os, "getgid"):
@@ -181,6 +191,12 @@ def run_pi_round(
     stdout_path = events / f"round-{round_number:03d}.jsonl"
     stderr_path = events / f"round-{round_number:03d}.stderr.log"
     container_name = pi_container_name(run_id, round_number)
+    if is_local_provider(config):
+        # Pi reads models.json from PI_CODING_AGENT_DIR (/run-artifacts/pi-global).
+        # Refresh it from the frozen control copy so the agent-writable artifacts
+        # tree cannot alter the endpoint definition between rounds.
+        (artifacts / "pi-global").mkdir(parents=True, exist_ok=True)
+        shutil.copy2(control / "pi" / "models.json", artifacts / "pi-global" / "models.json")
 
     command = base_container_args(config, name=container_name)
     with docker_secret_env(api_variable, api_key) as env_file:
@@ -473,8 +489,16 @@ def frozen_resume_config(metadata: dict[str, Any], current_config: dict[str, str
     for key, value in expected.items():
         if not isinstance(value, str) or config.get(key) != value:
             raise ExperimentError(f"Frozen configuration disagrees with metadata field {key}")
+    if is_local_provider(config):
+        try:
+            expected_local = local_model_metadata(config)
+        except ExperimentError as error:
+            raise ExperimentError(f"Frozen local-endpoint configuration is invalid: {error}") from error
+        for field, value in expected_local.items():
+            if model.get(field) != value:
+                raise ExperimentError(f"Frozen configuration disagrees with metadata model field {field}")
 
-    for key in ("ZAI_API_KEY", "ZAI_CODING_CN_API_KEY"):
+    for key in ("ZAI_API_KEY", "ZAI_CODING_CN_API_KEY", "LOCAL_API_KEY"):
         value = current_config.get(key, "").strip()
         if value:
             config[key] = value
@@ -961,6 +985,8 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
         max_stage = config_int(config, f"{profile_prefix}_MAX_STAGE")
         image_id = docker_image_id(config["EXPERIMENT_IMAGE"])
         api_variable, api_key = api_key_for(config)
+        if is_local_provider(config):
+            resolve_local_provider(config)
         review_rounds = config_int(config, "PERFECT_VISIBLE_REVIEW_ROUNDS")
         if run_dir.exists():
             raise ExperimentError(f"Run directory already exists: {run_dir}. Use a new run ID.")
@@ -974,7 +1000,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             artifacts / "tool-evaluations",
         ):
             path.mkdir(parents=True, exist_ok=True)
-        control = copy_control_files(run_dir)
+        control = copy_control_files(run_dir, config)
         initialize_workspace(workspace)
 
         elapsed_before = 0.0
@@ -1002,24 +1028,41 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "host": host_metadata(),
             "harness_manifest_sha256": harness_manifest_sha256,
         }
+        model_record = {
+            "provider": config.get("ZAI_PROVIDER", "zai"),
+            "id": config.get("ZAI_MODEL", "glm-5.2"),
+            "thinking": config.get("ZAI_THINKING", "max"),
+        }
+        if is_local_provider(config):
+            model_record.update(local_model_metadata(config))
+            model_record["serving_revision"] = (
+                "self-hosted endpoint; the harness freezes client configuration only. "
+                "Record the server build and model file digest alongside the run."
+            )
+            replicate_note = (
+                "The local endpoint is operator-managed; unless the server pins a "
+                "sampling seed (e.g. via LOCAL_SAMPLING_PARAMS), repetitions are "
+                "independent stochastic runs."
+            )
+        else:
+            model_record["serving_revision"] = "provider-managed and not exposed by Coding Plan"
+            replicate_note = (
+                "GLM Coding Plan does not expose a deterministic sampling seed through Pi; "
+                "this is an independent stochastic repetition."
+            )
         metadata = {
             "schema_version": METADATA_SCHEMA_VERSION,
             "starter_version": config.get("STARTER_VERSION", "unknown"),
             "run_id": run_id,
             "profile": profile,
             "replicate": args.replicate,
-            "replicate_note": "GLM Coding Plan does not expose a deterministic sampling seed through Pi; this is an independent stochastic repetition.",
+            "replicate_note": replicate_note,
             "started_at": attempt_started_at,
             "ended_at": None,
             "status": "running",
             "host": host_metadata(),
             "configuration": nonsecret_config,
-            "model": {
-                "provider": config.get("ZAI_PROVIDER", "zai"),
-                "id": config.get("ZAI_MODEL", "glm-5.2"),
-                "thinking": config.get("ZAI_THINKING", "max"),
-                "serving_revision": "provider-managed and not exposed by Coding Plan",
-            },
+            "model": model_record,
             "docker_image": {"name": config["EXPERIMENT_IMAGE"], "id": image_id},
             "prompt_and_extension_hashes": prompt_hashes(control),
             "visible_manifest_sha256": sha256_file(visible_manifest),

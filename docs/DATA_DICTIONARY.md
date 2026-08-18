@@ -6,7 +6,11 @@ One object per run. Important fields:
 
 - `starter_version`, `run_id`, `profile`, `replicate`;
 - start/end timestamps and termination reason;
-- provider, model ID, and Pi thinking setting;
+- provider, model ID, and Pi thinking setting; for `ZAI_PROVIDER=local` runs,
+  `model` additionally records the frozen endpoint shape (`base_url`, `api`,
+  `context_window`, `max_tokens`, `reasoning`, `thinking_format`,
+  `sampling_params`), which resume revalidates against the frozen
+  configuration;
 - immutable Docker image ID;
 - non-secret effective configuration;
 - prompt, settings, and extension SHA-256 hashes;
@@ -26,7 +30,10 @@ included. Each `execution_attempts` row records its kind, round range, host,
 attempt-local elapsed time, prior cumulative elapsed time, status, and
 termination reason. Any resume sets `protocol_comparable` to `false`.
 
-The Coding Plan key is never written to run artifacts.
+The Coding Plan key is never written to run artifacts. The same scrubbing
+applies to `LOCAL_API_KEY` for local-endpoint runs; the generated
+`control/pi/models.json` references it only as the environment interpolation
+`$LOCAL_API_KEY`.
 
 ## `artifacts/events/round-NNN.jsonl`
 

@@ -78,7 +78,7 @@ const bashBlocks: Array<{ pattern: RegExp; reason: string }> = [
     reason: "credential/environment inspection is prohibited",
   },
   {
-    pattern: /(?:\/proc(?:\/[^\s]*)?\/environ|ZAI_API_KEY|ZAI_CODING_CN_API_KEY|auth\.json|\/run-artifacts)/i,
+    pattern: /(?:\/proc(?:\/[^\s]*)?\/environ|ZAI_API_KEY|ZAI_CODING_CN_API_KEY|LOCAL_API_KEY|auth\.json|\/run-artifacts)/i,
     reason: "credential or harness-internal access is prohibited",
   },
   {

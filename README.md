@@ -68,7 +68,8 @@ Requirements:
 - Git;
 - Python 3.11 or later;
 - GNU Make;
-- an active GLM Coding Plan and Z.AI API key.
+- an active GLM Coding Plan and Z.AI API key, **or** a local OpenAI-compatible
+  endpoint (see [Using a local model](#using-a-local-model)).
 
 On Apple Silicon, Docker runs the pinned `linux/amd64` image under emulation so
 that generated x86-64 assembly can be linked and executed. This is slower but
@@ -117,7 +118,9 @@ make auth-check
 ```
 
 This loads the two project-local extensions and sends one minimal request through
-Pi using `zai/glm-5.2`. It consumes a small amount of Coding Plan quota.
+Pi using the configured provider and model (`zai/glm-5.2` by default). Against
+the hosted plan it consumes a small amount of Coding Plan quota; with
+`ZAI_PROVIDER=local` it exercises the local endpoint instead.
 
 ### 4. Run a non-reportable pilot
 
@@ -161,6 +164,64 @@ make main RUN_ID=glm52-picc-r3 REPLICATE=3
 
 GLM Coding Plan does not expose a deterministic sampling seed through Pi. These
 are independent stochastic repetitions, not seeded deterministic reruns.
+
+## Using a local model
+
+Setting `ZAI_PROVIDER=local` replaces the hosted Coding Plan with any
+OpenAI-compatible endpoint (llama.cpp `llama-server`, LM Studio, vLLM, Ollama).
+The harness then generates a Pi `models.json` describing exactly one provider
+and one model from the `LOCAL_*` configuration, freezes it into
+`runs/<run-id>/control/pi/models.json`, and records the endpoint shape in
+`metadata.json`. Resume revalidates all of it like every other frozen setting.
+
+Example: serve the intended checkpoint with llama.cpp on the host,
+
+```bash
+llama-server -hf unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL --jinja -c 131072 --port 8080
+```
+
+then select it in `.env` (no hosted key is required):
+
+```dotenv
+ZAI_PROVIDER=local
+ZAI_MODEL=unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL
+ZAI_THINKING=high
+LOCAL_BASE_URL=http://host.docker.internal:8080/v1
+LOCAL_CONTEXT_WINDOW=131072
+```
+
+and verify the endpoint end to end before any run:
+
+```bash
+make auth-check
+```
+
+Notes:
+
+- `ZAI_MODEL` must name the served model; the harness refuses to reuse the
+  hosted default `glm-5.2` under `ZAI_PROVIDER=local` so runs cannot be
+  mislabeled. Single-model servers usually ignore the requested ID, so the
+  configured value is also the run's provenance label — keep it exact.
+- Keep `LOCAL_CONTEXT_WINDOW` equal to the server's real context size
+  (`llama-server -c`); Pi uses it for compaction thresholds.
+  `LOCAL_MAX_OUTPUT` caps output tokens per request.
+- Docker Desktop (macOS/Windows) resolves `host.docker.internal` even for a
+  server bound to `127.0.0.1`. On a Linux engine the harness adds
+  `host.docker.internal:host-gateway`, but the server must listen on an
+  interface reachable from the Docker bridge (for example `--host 0.0.0.0`,
+  ideally with `--api-key` plus a matching `LOCAL_API_KEY` in `.env`).
+- `LOCAL_THINKING_FORMAT=qwen-chat-template` (the default) drives
+  `chat_template_kwargs.enable_thinking` for local Qwen-style thinking models;
+  set `LOCAL_REASONING=0` for non-thinking models, and use
+  `LOCAL_SAMPLING_PARAMS` (a JSON object; for Qwen3.8 thinking mode the
+  published recommendation is
+  `{"temperature": 1.0, "top_p": 0.95, "top_k": 20, "min_p": 0}`) to pin
+  sampling server-side. Everything lands in the frozen `models.json`.
+- Provenance: the harness freezes the client configuration but cannot archive
+  the server. Record the server build and the GGUF file digest alongside the
+  run, mirroring the hosted-checkpoint limitation.
+- Runs against a local model are a different experimental condition. Do not
+  pool them with GLM-5.2 repetitions.
 
 Evaluate the final hidden snapshot and produce a report:
 
@@ -298,7 +359,8 @@ runs/<run-id>/
 ├── report.md
 ├── workspace.git.bundle
 ├── workspace/                  # final product repository and Git history
-├── control/                    # exact frozen prompts, settings, extensions
+├── control/                    # frozen prompts, settings, extensions, and
+│                               # models.json for local-endpoint runs
 └── artifacts/
     ├── events/                 # Pi JSON event stream and stderr per round
     ├── sessions/               # canonical Pi session JSONL
@@ -361,7 +423,7 @@ make validate               # syntax and deterministic-split checks
 make image                  # build pinned experiment image
 make tests                  # fetch pinned corpus and partition it
 make evaluator-smoke        # verify Stage-1 evaluator path
-make auth-check             # minimal GLM-5.2 request
+make auth-check             # minimal request via the configured provider
 make pilot RUN_ID=...
 make main RUN_ID=... REPLICATE=1
 make resume RUN_ID=...      # audited continuation after timeout/process failure

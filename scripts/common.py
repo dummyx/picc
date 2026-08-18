@@ -54,6 +54,7 @@ def load_config() -> dict[str, str]:
         "ZAI_PROVIDER",
         "ZAI_MODEL",
         "ZAI_THINKING",
+        "LOCAL_API_KEY",
     }:
         if key in os.environ:
             config[key] = os.environ[key]
@@ -72,6 +73,15 @@ def config_float(config: Mapping[str, str], key: str) -> float:
         return float(config[key])
     except (KeyError, ValueError) as exc:
         raise ExperimentError(f"Configuration {key} must be a number") from exc
+
+
+def config_bool(config: Mapping[str, str], key: str) -> bool:
+    raw = str(config.get(key, "")).strip().lower()
+    if raw in {"1", "true", "yes", "on"}:
+        return True
+    if raw in {"", "0", "false", "no", "off"}:
+        return False
+    raise ExperimentError(f"Configuration {key} must be a boolean (0/1/true/false)")
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -181,20 +191,148 @@ def docker_image_id(image: str) -> str:
     return result.stdout.strip()
 
 
+LOCAL_PROVIDER = "local"
+LOCAL_API_KEY_PLACEHOLDER = "local-no-key"
+LOCAL_SUPPORTED_APIS = (
+    "openai-completions",
+    "openai-responses",
+    "anthropic-messages",
+    "google-generative-ai",
+)
+# Pi thinking levels above "off"; the generated models.json declares all of
+# them so any frozen ZAI_THINKING value stays selectable against the endpoint.
+PI_THINKING_LEVELS = ("minimal", "low", "medium", "high", "xhigh", "max")
+
+
+def is_local_provider(config: Mapping[str, str]) -> bool:
+    return config.get("ZAI_PROVIDER", "zai") == LOCAL_PROVIDER
+
+
 def api_key_for(config: Mapping[str, str]) -> tuple[str, str]:
     provider = config.get("ZAI_PROVIDER", "zai")
     if provider == "zai-coding-cn":
         variable = "ZAI_CODING_CN_API_KEY"
     elif provider == "zai":
         variable = "ZAI_API_KEY"
+    elif provider == LOCAL_PROVIDER:
+        # Keyless local servers still need a non-empty value: the generated
+        # models.json resolves "$LOCAL_API_KEY" from the container environment.
+        value = config.get("LOCAL_API_KEY", "").strip()
+        return "LOCAL_API_KEY", value or LOCAL_API_KEY_PLACEHOLDER
     else:
         raise ExperimentError(
-            f"Unsupported built-in Coding Plan provider {provider!r}; use 'zai' or 'zai-coding-cn'"
+            f"Unsupported provider {provider!r}; use 'zai', 'zai-coding-cn', or 'local'"
         )
     value = config.get(variable, "").strip()
     if not value:
         raise ExperimentError(f"{variable} is empty. Copy .env.example to .env and set the key.")
     return variable, value
+
+
+def _config_json_object(config: Mapping[str, str], key: str) -> dict[str, Any] | None:
+    raw = config.get(key, "").strip()
+    if not raw:
+        return None
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ExperimentError(f"Configuration {key} must be a JSON object: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ExperimentError(f"Configuration {key} must be a JSON object")
+    return value
+
+
+def resolve_local_provider(config: Mapping[str, str]) -> dict[str, Any]:
+    """Validate the LOCAL_* endpoint configuration used when ZAI_PROVIDER=local."""
+    if not is_local_provider(config):
+        raise ExperimentError("Local endpoint configuration requires ZAI_PROVIDER=local")
+    model_id = config.get("ZAI_MODEL", "").strip()
+    if not model_id or model_id == "glm-5.2":
+        raise ExperimentError(
+            "ZAI_PROVIDER=local requires ZAI_MODEL to name the locally served model, "
+            "for example unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL; refusing the hosted "
+            "default 'glm-5.2' so runs cannot be silently mislabeled"
+        )
+    base_url = config.get("LOCAL_BASE_URL", "").strip()
+    if not base_url.startswith(("http://", "https://")):
+        raise ExperimentError(
+            "LOCAL_BASE_URL must be an http(s) URL, e.g. http://host.docker.internal:8080/v1"
+        )
+    api = config.get("LOCAL_API", "openai-completions").strip()
+    if api not in LOCAL_SUPPORTED_APIS:
+        raise ExperimentError(
+            "LOCAL_API must be one of Pi's models.json API types: " + ", ".join(LOCAL_SUPPORTED_APIS)
+        )
+    context_window = config_int(config, "LOCAL_CONTEXT_WINDOW")
+    max_tokens = config_int(config, "LOCAL_MAX_OUTPUT")
+    if context_window <= 0 or max_tokens <= 0:
+        raise ExperimentError("LOCAL_CONTEXT_WINDOW and LOCAL_MAX_OUTPUT must be positive integers")
+    thinking_format = config.get("LOCAL_THINKING_FORMAT", "").strip()
+    compat = _config_json_object(config, "LOCAL_COMPAT") or {}
+    if thinking_format and "thinkingFormat" not in compat:
+        compat["thinkingFormat"] = thinking_format
+    return {
+        "model_id": model_id,
+        "base_url": base_url,
+        "api": api,
+        "context_window": context_window,
+        "max_tokens": max_tokens,
+        "reasoning": config_bool(config, "LOCAL_REASONING"),
+        "thinking_format": thinking_format,
+        "sampling_params": _config_json_object(config, "LOCAL_SAMPLING_PARAMS"),
+        "compat": compat,
+    }
+
+
+def local_models_json(config: Mapping[str, str]) -> dict[str, Any]:
+    """Pi models.json payload declaring the single frozen local provider/model."""
+    resolved = resolve_local_provider(config)
+    model: dict[str, Any] = {
+        "id": resolved["model_id"],
+        "reasoning": resolved["reasoning"],
+        "input": ["text"],
+        "contextWindow": resolved["context_window"],
+        "maxTokens": resolved["max_tokens"],
+        "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
+    }
+    if resolved["reasoning"]:
+        model["thinkingLevelMap"] = {level: level for level in PI_THINKING_LEVELS}
+    if resolved["sampling_params"] is not None:
+        model["samplingParams"] = resolved["sampling_params"]
+    provider: dict[str, Any] = {
+        "name": "PiCC local endpoint",
+        "baseUrl": resolved["base_url"],
+        "api": resolved["api"],
+        "apiKey": "$LOCAL_API_KEY",
+        "models": [model],
+    }
+    if resolved["compat"]:
+        provider["compat"] = resolved["compat"]
+    return {"providers": {LOCAL_PROVIDER: provider}}
+
+
+def write_local_models_json(config: Mapping[str, str], directory: Path) -> Path:
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / "models.json"
+    path.write_text(
+        json.dumps(local_models_json(config), indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+def local_model_metadata(config: Mapping[str, str]) -> dict[str, Any]:
+    """Endpoint facts recorded in (and revalidated against) metadata.json."""
+    resolved = resolve_local_provider(config)
+    return {
+        "base_url": resolved["base_url"],
+        "api": resolved["api"],
+        "context_window": resolved["context_window"],
+        "max_tokens": resolved["max_tokens"],
+        "reasoning": resolved["reasoning"],
+        "thinking_format": resolved["thinking_format"] or None,
+        "sampling_params": resolved["sampling_params"],
+    }
 
 
 @contextlib.contextmanager

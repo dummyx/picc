@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Make one minimal GLM Coding Plan request through the pinned Pi image."""
+"""Make one minimal provider request (Coding Plan or local endpoint) through the pinned Pi image."""
 
 from __future__ import annotations
 
@@ -17,8 +17,10 @@ from common import (
     docker_image_id,
     docker_pi_config_mounts,
     docker_secret_env,
+    is_local_provider,
     load_config,
     require_command,
+    write_local_models_json,
 )
 
 
@@ -60,6 +62,11 @@ def main() -> int:
         (state / "pi").mkdir()
         work.mkdir()
         (work / ".pi").mkdir()
+        local_args: list[str] = []
+        if is_local_provider(config):
+            # Pi resolves the custom provider from PI_CODING_AGENT_DIR/models.json.
+            write_local_models_json(config, state / "pi")
+            local_args = ["--add-host", "host.docker.internal:host-gateway"]
         user_args: list[str] = []
         if hasattr(os, "getuid") and hasattr(os, "getgid"):
             user_args = ["--user", f"{os.getuid()}:{os.getgid()}"]
@@ -77,6 +84,7 @@ def main() -> int:
             "ALL",
             "--security-opt",
             "no-new-privileges",
+            *local_args,
             *user_args,
             "--env-file",
             str(env_file),
@@ -119,7 +127,7 @@ def main() -> int:
         result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=300)
     if result.returncode != 0:
         raise ExperimentError(
-            f"Pi/GLM authentication check failed ({result.returncode}).\n"
+            f"Pi provider check failed for {provider}/{model} ({result.returncode}).\n"
             f"stderr:\n{result.stderr[-4000:]}\nstdout:\n{result.stdout[-4000:]}"
         )
     text = extract_text(result.stdout)
