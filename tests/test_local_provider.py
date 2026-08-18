@@ -25,9 +25,9 @@ LOCAL_MODEL_ID = "unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL"
 def local_config(**overrides: str) -> dict[str, str]:
     config = {
         "EXPERIMENT_IMAGE": "picc-test:0.1",
-        "ZAI_PROVIDER": "local",
-        "ZAI_MODEL": LOCAL_MODEL_ID,
-        "ZAI_THINKING": "high",
+        "MODEL_PROVIDER": "local",
+        "MODEL_ID": LOCAL_MODEL_ID,
+        "MODEL_THINKING": "high",
         "LOCAL_BASE_URL": "http://host.docker.internal:8080/v1",
         "LOCAL_API": "openai-completions",
         "LOCAL_CONTEXT_WINDOW": "131072",
@@ -53,21 +53,21 @@ class ApiKeyResolutionTests(unittest.TestCase):
 
     def test_hosted_providers_still_require_their_key(self) -> None:
         with self.assertRaisesRegex(common.ExperimentError, "ZAI_API_KEY"):
-            common.api_key_for({"ZAI_PROVIDER": "zai"})
-        variable, value = common.api_key_for({"ZAI_PROVIDER": "zai", "ZAI_API_KEY": "k"})
+            common.api_key_for({"MODEL_PROVIDER": "zai"})
+        variable, value = common.api_key_for({"MODEL_PROVIDER": "zai", "ZAI_API_KEY": "k"})
         self.assertEqual((variable, value), ("ZAI_API_KEY", "k"))
 
     def test_unknown_provider_is_rejected(self) -> None:
         with self.assertRaisesRegex(common.ExperimentError, "Unsupported provider"):
-            common.api_key_for({"ZAI_PROVIDER": "other"})
+            common.api_key_for({"MODEL_PROVIDER": "other"})
 
 
 class LocalProviderResolutionTests(unittest.TestCase):
     def test_rejects_hosted_default_model_id(self) -> None:
         for model in ("", "glm-5.2"):
             with self.subTest(model=model):
-                with self.assertRaisesRegex(common.ExperimentError, "ZAI_MODEL"):
-                    common.resolve_local_provider(local_config(ZAI_MODEL=model))
+                with self.assertRaisesRegex(common.ExperimentError, "MODEL_ID"):
+                    common.resolve_local_provider(local_config(MODEL_ID=model))
 
     def test_rejects_non_http_base_url(self) -> None:
         with self.assertRaisesRegex(common.ExperimentError, "LOCAL_BASE_URL"):
@@ -94,8 +94,8 @@ class LocalProviderResolutionTests(unittest.TestCase):
             common.resolve_local_provider(local_config(LOCAL_REASONING="maybe"))
 
     def test_requires_local_provider_selection(self) -> None:
-        with self.assertRaisesRegex(common.ExperimentError, "ZAI_PROVIDER=local"):
-            common.resolve_local_provider(local_config(ZAI_PROVIDER="zai"))
+        with self.assertRaisesRegex(common.ExperimentError, "MODEL_PROVIDER=local"):
+            common.resolve_local_provider(local_config(MODEL_PROVIDER="zai"))
 
 
 class ModelsJsonGenerationTests(unittest.TestCase):
@@ -152,7 +152,7 @@ class ControlFileTests(unittest.TestCase):
     def test_hosted_run_control_has_no_models_json(self) -> None:
         with tempfile.TemporaryDirectory(prefix="picc-hosted-control-") as temporary:
             control = runner.copy_control_files(
-                Path(temporary) / "run", {"ZAI_PROVIDER": "zai", "ZAI_MODEL": "glm-5.2"}
+                Path(temporary) / "run", {"MODEL_PROVIDER": "zai", "MODEL_ID": "glm-5.2"}
             )
             self.assertFalse((control / "pi" / "models.json").exists())
 
@@ -176,7 +176,7 @@ class FrozenResumeConfigTests(unittest.TestCase):
     def test_matching_local_metadata_passes_and_reinjects_secret(self) -> None:
         config = runner.frozen_resume_config(self.metadata(), {"LOCAL_API_KEY": "server-secret"})
         self.assertEqual(config["LOCAL_API_KEY"], "server-secret")
-        self.assertEqual(config["ZAI_MODEL"], LOCAL_MODEL_ID)
+        self.assertEqual(config["MODEL_ID"], LOCAL_MODEL_ID)
 
     def test_missing_local_secret_is_allowed(self) -> None:
         config = runner.frozen_resume_config(self.metadata(), {})
@@ -222,7 +222,7 @@ class StudyEnvironmentTests(unittest.TestCase):
                 environment = study.safe_environment(root)
         self.assertEqual(environment["LOCAL_API_KEY"], "current-local-secret")
         self.assertNotIn("ZAI_API_KEY", environment)
-        self.assertEqual(environment["ZAI_PROVIDER"], "local")
+        self.assertEqual(environment["MODEL_PROVIDER"], "local")
         self.assertEqual(environment["UNRELATED"], "preserved")
 
     def test_local_provider_without_secret_still_freezes_environment(self) -> None:
@@ -237,7 +237,67 @@ class StudyEnvironmentTests(unittest.TestCase):
             ):
                 environment = study.safe_environment(root)
         self.assertNotIn("LOCAL_API_KEY", environment)
-        self.assertEqual(environment["ZAI_MODEL"], LOCAL_MODEL_ID)
+        self.assertEqual(environment["MODEL_ID"], LOCAL_MODEL_ID)
+
+
+class LegacyKeyMigrationTests(unittest.TestCase):
+    """The pre-rename ZAI_PROVIDER/ZAI_MODEL/ZAI_THINKING keys fail loudly."""
+
+    def test_legacy_key_in_process_environment_is_refused(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="picc-legacy-env-") as temporary:
+            with (
+                mock.patch.object(common, "REPO_ROOT", Path(temporary)),
+                mock.patch.dict(os.environ, {"ZAI_MODEL": "glm-5.2"}, clear=True),
+            ):
+                with self.assertRaisesRegex(common.ExperimentError, "ZAI_MODEL -> MODEL_ID"):
+                    common.load_config()
+
+    def test_legacy_key_in_dotenv_is_refused(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="picc-legacy-dotenv-") as temporary:
+            root = Path(temporary)
+            (root / ".env").write_text("ZAI_PROVIDER=local\n", encoding="utf-8")
+            with (
+                mock.patch.object(common, "REPO_ROOT", root),
+                mock.patch.dict(os.environ, {}, clear=True),
+            ):
+                with self.assertRaisesRegex(common.ExperimentError, r"\.env.*ZAI_PROVIDER -> MODEL_PROVIDER"):
+                    common.load_config()
+
+    def test_secret_key_names_are_not_legacy(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="picc-legacy-secret-") as temporary:
+            with (
+                mock.patch.object(common, "REPO_ROOT", Path(temporary)),
+                mock.patch.dict(os.environ, {"ZAI_API_KEY": "still-valid"}, clear=True),
+            ):
+                config = common.load_config()
+        self.assertEqual(config["ZAI_API_KEY"], "still-valid")
+
+    def test_pre_rename_run_cannot_be_resumed(self) -> None:
+        frozen = local_config()
+        frozen["ZAI_PROVIDER"] = frozen["MODEL_PROVIDER"]
+        model = {
+            "provider": "local",
+            "id": LOCAL_MODEL_ID,
+            "thinking": "high",
+        }
+        model.update(common.local_model_metadata(local_config()))
+        metadata = {
+            "configuration": frozen,
+            "model": model,
+            "docker_image": {"name": frozen["EXPERIMENT_IMAGE"], "id": "sha256:test"},
+        }
+        with self.assertRaisesRegex(runner.ExperimentError, "configuration rename"):
+            runner.frozen_resume_config(metadata, {})
+
+    def test_pre_rename_materialization_is_refused(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="picc-legacy-study-") as temporary:
+            root = Path(temporary)
+            frozen = {"MODEL_ID": "frozen-model", "ZAI_THINKING": "max"}
+            (root / "study-materialization.json").write_text(
+                json.dumps({"effective_config": frozen}), encoding="utf-8"
+            )
+            with self.assertRaisesRegex(study.StudyError, "configuration rename"):
+                study.safe_environment(root)
 
 
 if __name__ == "__main__":

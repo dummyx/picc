@@ -44,16 +44,39 @@ def _parse_env_file(path: Path) -> dict[str, str]:
     return values
 
 
+# Pre-rename names of the provider/model/thinking keys. They are refused, not
+# aliased: a silently ignored override or a fuzzy frozen-config comparison is
+# worse for this harness than a hard error.
+LEGACY_KEY_RENAMES = {
+    "ZAI_PROVIDER": "MODEL_PROVIDER",
+    "ZAI_MODEL": "MODEL_ID",
+    "ZAI_THINKING": "MODEL_THINKING",
+}
+
+
+def reject_legacy_keys(source: str, keys: Any) -> None:
+    stale = sorted(set(keys) & set(LEGACY_KEY_RENAMES))
+    if stale:
+        renames = ", ".join(f"{key} -> {LEGACY_KEY_RENAMES[key]}" for key in stale)
+        raise ExperimentError(
+            f"Legacy configuration keys in {source}: {renames}. "
+            "Rename them; they are refused so an outdated override cannot silently fall back to defaults."
+        )
+
+
 def load_config() -> dict[str, str]:
     """Load defaults, project .env, then process environment overrides."""
     config = _parse_env_file(REPO_ROOT / "config" / "defaults.env")
-    config.update(_parse_env_file(REPO_ROOT / ".env"))
+    overrides = _parse_env_file(REPO_ROOT / ".env")
+    reject_legacy_keys(".env", overrides)
+    reject_legacy_keys("the process environment", os.environ)
+    config.update(overrides)
     for key in set(config) | {
         "ZAI_API_KEY",
         "ZAI_CODING_CN_API_KEY",
-        "ZAI_PROVIDER",
-        "ZAI_MODEL",
-        "ZAI_THINKING",
+        "MODEL_PROVIDER",
+        "MODEL_ID",
+        "MODEL_THINKING",
         "LOCAL_API_KEY",
     }:
         if key in os.environ:
@@ -200,16 +223,16 @@ LOCAL_SUPPORTED_APIS = (
     "google-generative-ai",
 )
 # Pi thinking levels above "off"; the generated models.json declares all of
-# them so any frozen ZAI_THINKING value stays selectable against the endpoint.
+# them so any frozen MODEL_THINKING value stays selectable against the endpoint.
 PI_THINKING_LEVELS = ("minimal", "low", "medium", "high", "xhigh", "max")
 
 
 def is_local_provider(config: Mapping[str, str]) -> bool:
-    return config.get("ZAI_PROVIDER", "zai") == LOCAL_PROVIDER
+    return config.get("MODEL_PROVIDER", "zai") == LOCAL_PROVIDER
 
 
 def api_key_for(config: Mapping[str, str]) -> tuple[str, str]:
-    provider = config.get("ZAI_PROVIDER", "zai")
+    provider = config.get("MODEL_PROVIDER", "zai")
     if provider == "zai-coding-cn":
         variable = "ZAI_CODING_CN_API_KEY"
     elif provider == "zai":
@@ -243,13 +266,13 @@ def _config_json_object(config: Mapping[str, str], key: str) -> dict[str, Any] |
 
 
 def resolve_local_provider(config: Mapping[str, str]) -> dict[str, Any]:
-    """Validate the LOCAL_* endpoint configuration used when ZAI_PROVIDER=local."""
+    """Validate the LOCAL_* endpoint configuration used when MODEL_PROVIDER=local."""
     if not is_local_provider(config):
-        raise ExperimentError("Local endpoint configuration requires ZAI_PROVIDER=local")
-    model_id = config.get("ZAI_MODEL", "").strip()
+        raise ExperimentError("Local endpoint configuration requires MODEL_PROVIDER=local")
+    model_id = config.get("MODEL_ID", "").strip()
     if not model_id or model_id == "glm-5.2":
         raise ExperimentError(
-            "ZAI_PROVIDER=local requires ZAI_MODEL to name the locally served model, "
+            "MODEL_PROVIDER=local requires MODEL_ID to name the locally served model, "
             "for example unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL; refusing the hosted "
             "default 'glm-5.2' so runs cannot be silently mislabeled"
         )

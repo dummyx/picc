@@ -168,9 +168,9 @@ def make_run(
         "MAIN_ROUNDS": str(max(2, round_count)),
         "MAIN_ROUND_TIMEOUT_MINUTES": "30",
         "STARTER_VERSION": "summary-fixture-v1",
-        "ZAI_MODEL": "glm-5.2",
-        "ZAI_PROVIDER": "zai",
-        "ZAI_THINKING": "max",
+        "MODEL_ID": "glm-5.2",
+        "MODEL_PROVIDER": "zai",
+        "MODEL_THINKING": "max",
     }
     write_text(materialization / "VERSION", "summary-fixture-v1\n")
     write_text(

@@ -91,7 +91,7 @@ ZAI_API_KEY=your_key_here
 For the China endpoint:
 
 ```dotenv
-ZAI_PROVIDER=zai-coding-cn
+MODEL_PROVIDER=zai-coding-cn
 ZAI_CODING_CN_API_KEY=your_key_here
 ```
 
@@ -120,7 +120,7 @@ make auth-check
 This loads the two project-local extensions and sends one minimal request through
 Pi using the configured provider and model (`zai/glm-5.2` by default). Against
 the hosted plan it consumes a small amount of Coding Plan quota; with
-`ZAI_PROVIDER=local` it exercises the local endpoint instead.
+`MODEL_PROVIDER=local` it exercises the local endpoint instead.
 
 ### 4. Run a non-reportable pilot
 
@@ -167,7 +167,7 @@ are independent stochastic repetitions, not seeded deterministic reruns.
 
 ## Using a local model
 
-Setting `ZAI_PROVIDER=local` replaces the hosted Coding Plan with any
+Setting `MODEL_PROVIDER=local` replaces the hosted Coding Plan with any
 OpenAI-compatible endpoint (llama.cpp `llama-server`, LM Studio, vLLM, Ollama).
 The harness then generates a Pi `models.json` describing exactly one provider
 and one model from the `LOCAL_*` configuration, freezes it into
@@ -183,9 +183,9 @@ llama-server -hf unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL --jinja -c 131072 --port 80
 then select it in `.env` (no hosted key is required):
 
 ```dotenv
-ZAI_PROVIDER=local
-ZAI_MODEL=unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL
-ZAI_THINKING=high
+MODEL_PROVIDER=local
+MODEL_ID=unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL
+MODEL_THINKING=high
 LOCAL_BASE_URL=http://host.docker.internal:8080/v1
 LOCAL_CONTEXT_WINDOW=131072
 ```
@@ -198,8 +198,8 @@ make auth-check
 
 Notes:
 
-- `ZAI_MODEL` must name the served model; the harness refuses to reuse the
-  hosted default `glm-5.2` under `ZAI_PROVIDER=local` so runs cannot be
+- `MODEL_ID` must name the served model; the harness refuses to reuse the
+  hosted default `glm-5.2` under `MODEL_PROVIDER=local` so runs cannot be
   mislabeled. Single-model servers usually ignore the requested ID, so the
   configured value is also the run's provenance label — keep it exact.
 - Keep `LOCAL_CONTEXT_WINDOW` equal to the server's real context size
@@ -437,7 +437,9 @@ make study-schedule          # deterministic randomized-block run order
 
 Configuration overrides belong in `.env`, but any override used in a reported
 run must be preserved and disclosed. Non-secret effective configuration is
-copied into `metadata.json`.
+copied into `metadata.json`. The pre-rename `ZAI_PROVIDER`/`ZAI_MODEL`/
+`ZAI_THINKING` keys are refused with a migration error rather than ignored;
+only the `ZAI_API_KEY` and `ZAI_CODING_CN_API_KEY` credential names remain.
 
 ## Upstream references
 

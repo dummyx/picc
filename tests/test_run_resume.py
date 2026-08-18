@@ -185,9 +185,9 @@ class ResumeFixture:
             "PILOT_MAX_STAGE": "6",
             "PILOT_ROUNDS": "6",
             "PILOT_ROUND_TIMEOUT_MINUTES": "45",
-            "ZAI_MODEL": "glm-5.2",
-            "ZAI_PROVIDER": "zai",
-            "ZAI_THINKING": "max",
+            "MODEL_ID": "glm-5.2",
+            "MODEL_PROVIDER": "zai",
+            "MODEL_THINKING": "max",
         }
         self.current_config = dict(self.frozen_config)
         self.current_config.update({"AGENT_CPUS": "99", "ZAI_API_KEY": "test-secret"})
@@ -496,7 +496,7 @@ class ResumePlanningTests(unittest.TestCase):
         with self.subTest("model"), ResumeFixture() as fixture:
             fixture.metadata["model"]["id"] = "different"
             fixture.write_metadata()
-            with self.assertRaisesRegex(runner.ExperimentError, "ZAI_MODEL"):
+            with self.assertRaisesRegex(runner.ExperimentError, "MODEL_ID"):
                 fixture.plan()
 
     def test_rejects_postprocessing_and_next_round_collisions(self) -> None:

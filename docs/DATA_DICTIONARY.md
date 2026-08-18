@@ -6,7 +6,7 @@ One object per run. Important fields:
 
 - `starter_version`, `run_id`, `profile`, `replicate`;
 - start/end timestamps and termination reason;
-- provider, model ID, and Pi thinking setting; for `ZAI_PROVIDER=local` runs,
+- provider, model ID, and Pi thinking setting; for `MODEL_PROVIDER=local` runs,
   `model` additionally records the frozen endpoint shape (`base_url`, `api`,
   `context_window`, `max_tokens`, `reasoning`, `thinking_format`,
   `sampling_params`), which resume revalidates against the frozen

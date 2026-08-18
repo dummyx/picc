@@ -236,17 +236,17 @@ class FrozenExecutionEnvironmentTests(unittest.TestCase):
             frozen = {
                 "EXPERIMENT_IMAGE": "frozen-image",
                 "PILOT_HOURS": "2",
-                "ZAI_MODEL": "frozen-model",
-                "ZAI_PROVIDER": "zai",
-                "ZAI_THINKING": "max",
+                "MODEL_ID": "frozen-model",
+                "MODEL_PROVIDER": "zai",
+                "MODEL_THINKING": "max",
             }
             write_json(root / "study-materialization.json", {"effective_config": frozen})
             host = {
                 "EXPERIMENT_IMAGE": "host-image",
                 "PILOT_HOURS": "99",
-                "ZAI_MODEL": "host-model",
-                "ZAI_PROVIDER": "zai-coding-cn",
-                "ZAI_THINKING": "off",
+                "MODEL_ID": "host-model",
+                "MODEL_PROVIDER": "zai-coding-cn",
+                "MODEL_THINKING": "off",
                 "ZAI_API_KEY": "host-zai-secret",
                 "ZAI_CODING_CN_API_KEY": "host-cn-secret",
                 "GITHUB_TOKEN": "unrelated-secret",
@@ -478,7 +478,7 @@ class MaterializationLookupTests(unittest.TestCase):
 
         files = {
             "VERSION": b"test-version\n",
-            "config/defaults.env": b"ZAI_PROVIDER=zai\n",
+            "config/defaults.env": b"MODEL_PROVIDER=zai\n",
             "docker/Dockerfile": b"FROM scratch\n",
             "scripts/run_experiment.py": b"print('run')\n",
             "pi/settings.json": b"{}\n",
@@ -508,9 +508,9 @@ class MaterializationLookupTests(unittest.TestCase):
             "effective_config": {
                 "EXPERIMENT_IMAGE": "frozen-image",
                 "PILOT_HOURS": "2",
-                "ZAI_MODEL": "frozen-model",
-                "ZAI_PROVIDER": "zai",
-                "ZAI_THINKING": "max",
+                "MODEL_ID": "frozen-model",
+                "MODEL_PROVIDER": "zai",
+                "MODEL_THINKING": "max",
             },
             "source_harness": {
                 "manifest_sha256": self.manifest_digest,

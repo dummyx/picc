@@ -604,13 +604,13 @@ def verified_provenance(
     starter_version = require_nonempty_string(metadata.get("starter_version"), "metadata.starter_version")
 
     expected_model = {
-        "provider": effective_config.get("ZAI_PROVIDER", "zai"),
-        "id": effective_config.get("ZAI_MODEL", "glm-5.2"),
-        "thinking": effective_config.get("ZAI_THINKING", "max"),
+        "provider": effective_config.get("MODEL_PROVIDER", "zai"),
+        "id": effective_config.get("MODEL_ID", "glm-5.2"),
+        "thinking": effective_config.get("MODEL_THINKING", "max"),
     }
     actual_model = {"provider": model_provider, "id": model_id, "thinking": model_thinking}
     if actual_model != expected_model:
-        raise SummaryError("metadata.model disagrees with the frozen ZAI provider/model/thinking configuration")
+        raise SummaryError("metadata.model disagrees with the frozen provider/model/thinking configuration")
     expected_image_name = require_nonempty_string(
         effective_config.get("EXPERIMENT_IMAGE"), "effective_config.EXPERIMENT_IMAGE"
     )

@@ -1043,7 +1043,13 @@ def safe_environment(materialization_root: Path) -> dict[str, str]:
             raise StudyError(f"Frozen effective_config must not contain secret key {key}")
         frozen[key] = value
 
-    provider = frozen.get("ZAI_PROVIDER", "zai")
+    stale = sorted(set(frozen) & {"ZAI_PROVIDER", "ZAI_MODEL", "ZAI_THINKING"})
+    if stale:
+        raise StudyError(
+            "Study materialization predates the MODEL_* configuration rename and "
+            "cannot be executed by this harness revision: " + ", ".join(stale)
+        )
+    provider = frozen.get("MODEL_PROVIDER", "zai")
     secret_by_provider = {
         "zai": "ZAI_API_KEY",
         "zai-coding-cn": "ZAI_CODING_CN_API_KEY",
@@ -1059,7 +1065,20 @@ def safe_environment(materialization_root: Path) -> dict[str, str]:
     for key in list(env):
         if key in frozen or any(marker in key.upper() for marker in SECRET_MARKERS):
             env.pop(key, None)
-    for key in ("ZAI_PROVIDER", "ZAI_MODEL", "ZAI_THINKING", "ZAI_API_KEY", "ZAI_CODING_CN_API_KEY", "LOCAL_API_KEY"):
+    scrubbed = (
+        "MODEL_PROVIDER",
+        "MODEL_ID",
+        "MODEL_THINKING",
+        # Legacy names: the materialized runner refuses them, so host drift
+        # using the old spelling must not reach the frozen execution.
+        "ZAI_PROVIDER",
+        "ZAI_MODEL",
+        "ZAI_THINKING",
+        "ZAI_API_KEY",
+        "ZAI_CODING_CN_API_KEY",
+        "LOCAL_API_KEY",
+    )
+    for key in scrubbed:
         env.pop(key, None)
     env.update(frozen)
     if secret_value:

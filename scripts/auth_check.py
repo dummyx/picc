@@ -51,8 +51,8 @@ def main() -> int:
     image = config["EXPERIMENT_IMAGE"]
     docker_image_id(image)
     variable, key = api_key_for(config)
-    provider = config.get("ZAI_PROVIDER", "zai")
-    model = config.get("ZAI_MODEL", "glm-5.2")
+    provider = config.get("MODEL_PROVIDER", "zai")
+    model = config.get("MODEL_ID", "glm-5.2")
     platform_name = config.get("DOCKER_PLATFORM", "linux/amd64")
 
     with tempfile.TemporaryDirectory(prefix="picc-auth-") as temporary, docker_secret_env(variable, key) as env_file:

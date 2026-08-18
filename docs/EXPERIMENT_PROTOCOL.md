@@ -27,7 +27,7 @@ The starter has one condition:
 - no web or source retrieval through agent tools;
 - standard-library-only Rust implementation.
 
-Selecting the optional local endpoint (`ZAI_PROVIDER=local`, see README) keeps
+Selecting the optional local endpoint (`MODEL_PROVIDER=local`, see README) keeps
 the same harness and budgets but is a different model condition. Runs made that
 way must be labeled and analyzed separately from the `glm-5.2` condition.
 

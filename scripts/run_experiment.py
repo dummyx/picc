@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from common import (
+    LEGACY_KEY_RENAMES,
     ExperimentError,
     REPO_ROOT,
     api_key_for,
@@ -233,11 +234,11 @@ def run_pi_round(
             "json",
             "--approve",
             "--provider",
-            config.get("ZAI_PROVIDER", "zai"),
+            config.get("MODEL_PROVIDER", "zai"),
             "--model",
-            config.get("ZAI_MODEL", "glm-5.2"),
+            config.get("MODEL_ID", "glm-5.2"),
             "--thinking",
-            config.get("ZAI_THINKING", "max"),
+            config.get("MODEL_THINKING", "max"),
             "--session-dir",
             "/run-artifacts/sessions",
             "--tools",
@@ -475,15 +476,21 @@ def frozen_resume_config(metadata: dict[str, Any], current_config: dict[str, str
     if not all(isinstance(key, str) and isinstance(value, str) for key, value in stored.items()):
         raise ExperimentError("Frozen configuration must contain only string keys and values")
     config = dict(stored)
+    stale = sorted(set(config) & set(LEGACY_KEY_RENAMES))
+    if stale:
+        raise ExperimentError(
+            "Run was created before the MODEL_* configuration rename and cannot be "
+            "resumed by this harness revision: " + ", ".join(stale)
+        )
 
     model = metadata.get("model")
     image = metadata.get("docker_image")
     if not isinstance(model, dict) or not isinstance(image, dict):
         raise ExperimentError("Run metadata has no valid model or Docker image record")
     expected = {
-        "ZAI_PROVIDER": model.get("provider"),
-        "ZAI_MODEL": model.get("id"),
-        "ZAI_THINKING": model.get("thinking"),
+        "MODEL_PROVIDER": model.get("provider"),
+        "MODEL_ID": model.get("id"),
+        "MODEL_THINKING": model.get("thinking"),
         "EXPERIMENT_IMAGE": image.get("name"),
     }
     for key, value in expected.items():
@@ -1029,9 +1036,9 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "harness_manifest_sha256": harness_manifest_sha256,
         }
         model_record = {
-            "provider": config.get("ZAI_PROVIDER", "zai"),
-            "id": config.get("ZAI_MODEL", "glm-5.2"),
-            "thinking": config.get("ZAI_THINKING", "max"),
+            "provider": config.get("MODEL_PROVIDER", "zai"),
+            "id": config.get("MODEL_ID", "glm-5.2"),
+            "thinking": config.get("MODEL_THINKING", "max"),
         }
         if is_local_provider(config):
             model_record.update(local_model_metadata(config))
