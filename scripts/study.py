@@ -1049,14 +1049,18 @@ def safe_environment(materialization_root: Path) -> dict[str, str]:
             "Study materialization predates the MODEL_* configuration rename and "
             "cannot be executed by this harness revision: " + ", ".join(stale)
         )
-    provider = frozen.get("MODEL_PROVIDER", "zai")
+    provider = (frozen.get("MODEL_PROVIDER", "") or "").strip()
     secret_by_provider = {
         "zai": "ZAI_API_KEY",
         "zai-coding-cn": "ZAI_CODING_CN_API_KEY",
         "local": "LOCAL_API_KEY",
     }
     if provider not in secret_by_provider:
-        raise StudyError(f"Unsupported frozen provider: {provider!r}")
+        raise StudyError(
+            f"Frozen materialization declares no usable provider: {provider!r}"
+            if not provider
+            else f"Unsupported frozen provider: {provider!r}"
+        )
 
     current = load_config()
     secret_name = secret_by_provider[provider]

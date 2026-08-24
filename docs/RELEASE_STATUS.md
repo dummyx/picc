@@ -17,16 +17,16 @@ Prepared on 2026-08-10.
 
 ## Requires validation on the experiment host
 
-This environment did not provide a Docker daemon or a GLM Coding Plan API key.
-Consequently, the following are intentionally performed by `make setup` and
-`make auth-check` on the experiment host:
+This environment did not provide a Docker daemon or credentials for a model
+provider. Consequently, the following are intentionally performed by `make setup`
+and `make auth-check` on the experiment host:
 
 - building the `linux/amd64` Docker image;
 - installing the pinned Pi npm package inside that image;
 - downloading the exact upstream test revision;
 - running the Dockerized evaluator smoke test;
 - loading the extensions with the pinned Pi runtime and sending a live minimal
-  request to `zai/glm-5.2`;
+  request to the declared `MODEL_PROVIDER`/`MODEL_ID`;
 - executing an end-to-end Pi trajectory.
 
 Do not start reportable runs until `make setup` and `make auth-check` both pass.

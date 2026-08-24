@@ -8,7 +8,7 @@ correctness, completion probability, elapsed active time, and model-reported
 token use. Secondary outcomes describe the development trajectory and resulting
 artifact.
 
-This is an extension of the existing Pi + GLM-5.2 reproduction, not a new
+This is an extension of the existing Pi reproduction harness, not a new
 benchmark. The original single-run path remains untouched. Each study condition
 is materialized into a private copy of the current harness so that prompt,
 specification, test, adapter, and reference artifacts are frozen and hashed.
@@ -128,8 +128,9 @@ replicate `r` in a randomized block. For example, independently shuffle all
 conditions within replicate 1, then replicate 2, rather than running every
 baseline first.
 
-Coding Plan does not expose a deterministic model seed. `REPLICATE` identifies
-an independent stochastic trajectory; it is not a bit-reproducible seed.
+The harness does not pin a sampling seed, and Pi exposes none for the supported
+providers. `REPLICATE` identifies an independent stochastic trajectory; it is
+not a bit-reproducible seed.
 
 ### 4. Post-hoc evaluation
 

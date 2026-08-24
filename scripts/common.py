@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared helpers for the PiCC GLM-5.2 experiment starter."""
+"""Shared helpers for the PiCC experiment starter."""
 
 from __future__ import annotations
 
@@ -227,25 +227,66 @@ LOCAL_SUPPORTED_APIS = (
 PI_THINKING_LEVELS = ("minimal", "low", "medium", "high", "xhigh", "max")
 
 
+SUPPORTED_PROVIDERS = ("zai", "zai-coding-cn", LOCAL_PROVIDER)
+
+
+def require_model_provider(config: Mapping[str, str]) -> str:
+    """The declared provider. No model or provider is assumed by default."""
+    provider = (config.get("MODEL_PROVIDER", "") or "").strip()
+    if not provider:
+        raise ExperimentError(
+            "MODEL_PROVIDER is not set. The harness assumes no model: declare one in "
+            ".env, using " + ", ".join(repr(name) for name in SUPPORTED_PROVIDERS)
+        )
+    if provider not in SUPPORTED_PROVIDERS:
+        raise ExperimentError(
+            f"Unsupported provider {provider!r}; use "
+            + ", ".join(repr(name) for name in SUPPORTED_PROVIDERS)
+        )
+    return provider
+
+
+def require_model_id(config: Mapping[str, str]) -> str:
+    """The declared model ID, which is also the run's provenance label."""
+    model = (config.get("MODEL_ID", "") or "").strip()
+    if not model:
+        raise ExperimentError(
+            "MODEL_ID is not set. Declare the exact model the provider should serve; "
+            "it is recorded as the run's provenance label."
+        )
+    return model
+
+
 def is_local_provider(config: Mapping[str, str]) -> bool:
-    return config.get("MODEL_PROVIDER", "zai") == LOCAL_PROVIDER
+    return (config.get("MODEL_PROVIDER", "") or "").strip() == LOCAL_PROVIDER
+
+
+LOCAL_NETWORK_MODES = ("bridge", "host")
+
+
+def local_network_mode(config: Mapping[str, str]) -> str:
+    """Network mode for containers that must reach the local model endpoint."""
+    mode = (config.get("LOCAL_NETWORK_MODE", "") or "bridge").strip() or "bridge"
+    if mode not in LOCAL_NETWORK_MODES:
+        raise ExperimentError(
+            "LOCAL_NETWORK_MODE must be 'bridge' (default; maps host.docker.internal "
+            "to the host gateway) or 'host' (share the host network namespace so "
+            "LOCAL_BASE_URL may target a loopback endpoint)"
+        )
+    return mode
 
 
 def api_key_for(config: Mapping[str, str]) -> tuple[str, str]:
-    provider = config.get("MODEL_PROVIDER", "zai")
+    provider = require_model_provider(config)
     if provider == "zai-coding-cn":
         variable = "ZAI_CODING_CN_API_KEY"
     elif provider == "zai":
         variable = "ZAI_API_KEY"
-    elif provider == LOCAL_PROVIDER:
+    else:
         # Keyless local servers still need a non-empty value: the generated
         # models.json resolves "$LOCAL_API_KEY" from the container environment.
         value = config.get("LOCAL_API_KEY", "").strip()
         return "LOCAL_API_KEY", value or LOCAL_API_KEY_PLACEHOLDER
-    else:
-        raise ExperimentError(
-            f"Unsupported provider {provider!r}; use 'zai', 'zai-coding-cn', or 'local'"
-        )
     value = config.get(variable, "").strip()
     if not value:
         raise ExperimentError(f"{variable} is empty. Copy .env.example to .env and set the key.")
@@ -269,13 +310,7 @@ def resolve_local_provider(config: Mapping[str, str]) -> dict[str, Any]:
     """Validate the LOCAL_* endpoint configuration used when MODEL_PROVIDER=local."""
     if not is_local_provider(config):
         raise ExperimentError("Local endpoint configuration requires MODEL_PROVIDER=local")
-    model_id = config.get("MODEL_ID", "").strip()
-    if not model_id or model_id == "glm-5.2":
-        raise ExperimentError(
-            "MODEL_PROVIDER=local requires MODEL_ID to name the locally served model, "
-            "for example unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL; refusing the hosted "
-            "default 'glm-5.2' so runs cannot be silently mislabeled"
-        )
+    model_id = require_model_id(config)
     base_url = config.get("LOCAL_BASE_URL", "").strip()
     if not base_url.startswith(("http://", "https://")):
         raise ExperimentError(

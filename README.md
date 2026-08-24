@@ -1,12 +1,12 @@
-# PiCC: Pi + GLM-5.2 Coding Plan starter pack
+# PiCC: Pi coding-agent compiler-construction starter pack
 
 This repository starts a small, controlled reproduction of the long-horizon
 "coding agent builds a compiler" experiment.
 
-A single **Pi Coding Agent** session, backed by **GLM-5.2 through the Z.AI GLM
-Coding Plan**, starts from an empty product repository and implements **PiCC**:
-a Rust compiler for the core language features covered by Chapters 1–10 of the
-*Writing a C Compiler* test suite.
+A single **Pi Coding Agent** session, backed by an **operator-declared model**,
+starts from an empty product repository and implements **PiCC**: a Rust compiler
+for the core language features covered by Chapters 1–10 of the *Writing a C
+Compiler* test suite.
 
 The base workflow is intentionally narrow and remains the runnable feasibility
 study. An additive controlled-study layer covers prespecified prompt,
@@ -19,8 +19,8 @@ conditions; see [`STUDIES.md`](STUDIES.md).
 |---|---|
 | Starter pack | `0.1.0` |
 | Pi | `@earendil-works/pi-coding-agent@0.84.1` |
-| Provider | Pi built-in `zai` Coding Plan provider |
-| Model | `glm-5.2` |
+| Provider | Operator-declared in `MODEL_PROVIDER`; recorded per run |
+| Model | Operator-declared in `MODEL_ID`; recorded per run |
 | Thinking setting | `max` |
 | Agent topology | One persistent Pi session |
 | Implementation | Rust `1.88.0`, standard library only |
@@ -32,14 +32,17 @@ conditions; see [`STUDIES.md`](STUDIES.md).
 | Main | 12 hours, at most 30 Pi invocations, Stages 1–10 |
 | Container platform | `linux/amd64` |
 
-The model is hosted and provider-managed. The model ID and client configuration
-are frozen, but the exact server-side GLM checkpoint cannot be pinned through
-Coding Plan.
+The harness assumes no model. `MODEL_PROVIDER` and `MODEL_ID` have no defaults
+and must be declared in `.env` before any run; an empty value is an error rather
+than a guess. Both are frozen for the run and recorded in `metadata.json`. When
+the declared provider is a hosted plan, the model ID and client configuration
+are frozen, but the exact server-side checkpoint cannot be pinned.
 
 ## What is included
 
 - a pinned Pi and Rust Docker image;
-- official GLM Coding Plan authentication through `ZAI_API_KEY`;
+- hosted Coding Plan authentication through `ZAI_API_KEY` or
+  `ZAI_CODING_CN_API_KEY`, or a local OpenAI-compatible endpoint;
 - fixed `AGENTS.md`, task, initial, and continuation prompts;
 - a deterministic visible/hidden test split;
 - an evaluator-side GCC behavioral oracle;
@@ -68,32 +71,41 @@ Requirements:
 - Git;
 - Python 3.11 or later;
 - GNU Make;
-- an active GLM Coding Plan and Z.AI API key, **or** a local OpenAI-compatible
-  endpoint (see [Using a local model](#using-a-local-model)).
+- credentials for the declared provider, such as an active Z.AI Coding Plan and
+  API key, **or** a local OpenAI-compatible endpoint (see
+  [Using a local model](#using-a-local-model)).
 
 On Apple Silicon, Docker runs the pinned `linux/amd64` image under emulation so
 that generated x86-64 assembly can be linked and executed. This is slower but
 keeps the target architecture identical across hosts.
 
-### 1. Configure the key
+### 1. Declare the model and configure access
 
 ```bash
 cp .env.example .env
 $EDITOR .env
 ```
 
-For the global Coding Plan endpoint:
+Every run needs an explicit `MODEL_PROVIDER` and `MODEL_ID`; neither has a
+default. The supported providers are `zai`, `zai-coding-cn`, and `local`.
+
+For the global Z.AI Coding Plan endpoint:
 
 ```dotenv
+MODEL_PROVIDER=zai
+MODEL_ID=the_model_you_declare
 ZAI_API_KEY=your_key_here
 ```
 
-For the China endpoint:
+For the Z.AI China endpoint:
 
 ```dotenv
 MODEL_PROVIDER=zai-coding-cn
+MODEL_ID=the_model_you_declare
 ZAI_CODING_CN_API_KEY=your_key_here
 ```
+
+For a self-hosted endpoint, see [Using a local model](#using-a-local-model).
 
 Do not commit `.env`. Prefer a dedicated experiment key with the smallest
 practical quota and scope.
@@ -111,21 +123,21 @@ creates `data/partitions/visible` and `data/partitions/hidden`.
 The source revision is fixed in `config/defaults.env`. The first setup does not
 track the moving upstream default branch.
 
-### 3. Verify Coding Plan access
+### 3. Verify provider access
 
 ```bash
 make auth-check
 ```
 
 This loads the two project-local extensions and sends one minimal request through
-Pi using the configured provider and model (`zai/glm-5.2` by default). Against
-the hosted plan it consumes a small amount of Coding Plan quota; with
-`MODEL_PROVIDER=local` it exercises the local endpoint instead.
+Pi using the declared `MODEL_PROVIDER` and `MODEL_ID`. Against a hosted plan it
+consumes a small amount of plan quota; with `MODEL_PROVIDER=local` it exercises
+the local endpoint instead.
 
 ### 4. Run a non-reportable pilot
 
 ```bash
-make pilot RUN_ID=glm52-picc-pilot-01
+make pilot RUN_ID=picc-pilot-01
 ```
 
 The pilot is for infrastructure and feasibility calibration. Do not include it
@@ -135,7 +147,7 @@ If the pilot stops with `round_timeout` or `pi_process_failure`, it can be
 continued before any post-hoc evaluation or report is generated:
 
 ```bash
-make resume RUN_ID=glm52-picc-pilot-01
+make resume RUN_ID=picc-pilot-01
 ```
 
 Resume is an audited recovery operation, not a new independent run. It uses the
@@ -147,9 +159,9 @@ protocol and must not be included as a main independent repetition.
 Inspect:
 
 ```bash
-make hidden RUN_ID=glm52-picc-pilot-01
-make report RUN_ID=glm52-picc-pilot-01
-less runs/glm52-picc-pilot-01/report.md
+make hidden RUN_ID=picc-pilot-01
+make report RUN_ID=picc-pilot-01
+less runs/picc-pilot-01/report.md
 ```
 
 ### 5. Run the main repetitions
@@ -157,13 +169,14 @@ less runs/glm52-picc-pilot-01/report.md
 Use at least three independent run IDs:
 
 ```bash
-make main RUN_ID=glm52-picc-r1 REPLICATE=1
-make main RUN_ID=glm52-picc-r2 REPLICATE=2
-make main RUN_ID=glm52-picc-r3 REPLICATE=3
+make main RUN_ID=picc-r1 REPLICATE=1
+make main RUN_ID=picc-r2 REPLICATE=2
+make main RUN_ID=picc-r3 REPLICATE=3
 ```
 
-GLM Coding Plan does not expose a deterministic sampling seed through Pi. These
-are independent stochastic repetitions, not seeded deterministic reruns.
+The harness does not pin a sampling seed, and Pi exposes no deterministic seed
+for the supported providers. These are independent stochastic repetitions, not
+seeded deterministic reruns.
 
 ## Using a local model
 
@@ -198,10 +211,10 @@ make auth-check
 
 Notes:
 
-- `MODEL_ID` must name the served model; the harness refuses to reuse the
-  hosted default `glm-5.2` under `MODEL_PROVIDER=local` so runs cannot be
-  mislabeled. Single-model servers usually ignore the requested ID, so the
-  configured value is also the run's provenance label — keep it exact.
+- `MODEL_ID` must name the served model; the harness refuses an empty value so
+  runs cannot be mislabeled. Single-model servers usually ignore the requested
+  ID, so the configured value is also the run's provenance label — keep it
+  exact.
 - Keep `LOCAL_CONTEXT_WINDOW` equal to the server's real context size
   (`llama-server -c`); Pi uses it for compaction thresholds.
   `LOCAL_MAX_OUTPUT` caps output tokens per request.
@@ -221,12 +234,12 @@ Notes:
   the server. Record the server build and the GGUF file digest alongside the
   run, mirroring the hosted-checkpoint limitation.
 - Runs against a local model are a different experimental condition. Do not
-  pool them with GLM-5.2 repetitions.
+  pool them with hosted-provider repetitions.
 
 Evaluate the final hidden snapshot and produce a report:
 
 ```bash
-for id in glm52-picc-r1 glm52-picc-r2 glm52-picc-r3; do
+for id in picc-r1 picc-r2 picc-r3; do
   make hidden RUN_ID="$id"
   make report RUN_ID="$id"
 done
@@ -235,8 +248,8 @@ done
 To obtain a hidden-score trajectory for every saved round:
 
 ```bash
-make hidden-all RUN_ID=glm52-picc-r1
-make report RUN_ID=glm52-picc-r1
+make hidden-all RUN_ID=picc-r1
+make report RUN_ID=picc-r1
 ```
 
 ## Experiment behavior
@@ -342,11 +355,11 @@ This extension blocks obvious attempts to:
 
 It is an **audit and accident-prevention layer, not a security boundary**.
 Extensions and shell tools execute with the Pi process's container permissions.
-The Coding Plan key is necessarily available to the Pi process. A deliberately
-adversarial agent could potentially obfuscate a forbidden action. For stronger
-isolation, move tool execution to a separate sandbox service or use a dedicated
-microVM/container sandbox such as Gondolin, while keeping model calls in a
-credential-bearing controller.
+The provider credential is necessarily available to the Pi process. A
+deliberately adversarial agent could potentially obfuscate a forbidden action.
+For stronger isolation, move tool execution to a separate sandbox service or use
+a dedicated microVM/container sandbox such as Gondolin, while keeping model calls
+in a credential-bearing controller.
 
 ## Output layout
 
@@ -403,8 +416,9 @@ During main runs:
    material may be represented in model training data. Report this explicitly
    and add newly generated private holdout tests before making strong capability
    claims.
-2. **Hosted-model drift.** `glm-5.2` is provider-managed. The starter records
-   client configuration and timestamps but cannot archive the server checkpoint.
+2. **Hosted-model drift.** A hosted model is provider-managed. The starter
+   records the declared model ID, client configuration, and timestamps but
+   cannot archive the server checkpoint.
 3. **No deterministic seed.** Repetitions measure stochastic run variability;
    they are not bitwise reproductions.
 4. **Guard limitations.** The default single-container setup is practical, not
@@ -412,7 +426,7 @@ During main runs:
    evaluator namespace with the selected test partition.
 5. **One target.** Results support a claim about this PiCC task and harness, not
    arbitrary large-scale software construction.
-6. **Plan quotas.** Coding Plan throttling or quota exhaustion can terminate a
+6. **Provider quotas.** Provider throttling or quota exhaustion can terminate a
    run. Pi/provider errors are logged and must not be hidden by manual steering.
 
 ## Useful commands
@@ -443,12 +457,16 @@ only the `ZAI_API_KEY` and `ZAI_CODING_CN_API_KEY` credential names remain.
 
 ## Upstream references
 
-- Z.AI Pi Coding Agent guide: <https://docs.z.ai/devpack/tool/pi>
-- Z.AI GLM-5.2 model-switching guide: <https://docs.z.ai/devpack/latest-model>
 - Pi Coding Agent: <https://github.com/earendil-works/pi>
 - Pi JSON event mode: <https://github.com/earendil-works/pi/blob/v0.84.1/packages/coding-agent/docs/json.md>
 - Pi extension API: <https://github.com/earendil-works/pi/blob/v0.84.1/packages/coding-agent/docs/extensions.md>
 - Compiler test corpus: <https://github.com/nlsandler/writing-a-c-compiler-tests>
+
+Provider-specific, relevant only when the declared provider is `zai` or
+`zai-coding-cn`:
+
+- Z.AI Pi Coding Agent guide: <https://docs.z.ai/devpack/tool/pi>
+- Z.AI model-switching guide: <https://docs.z.ai/devpack/latest-model>
 
 The starter-pack harness code is MIT-licensed. The downloaded upstream test
 corpus retains its own license, copied to `data/UPSTREAM_TEST_LICENSE` by

@@ -42,6 +42,14 @@ SUBPROCESS_ENV_ALLOWLIST = {
     "RUSTUP_HOME",
     "TERM",
 }
+# Audit findings split into two kinds. A blocking finding means the candidate
+# either delegated the task or is unsafe to execute, so its measured behaviour
+# would be meaningless; those still gate scoring. An advisory finding is a broken
+# rule that leaves the compiler both safe to run and honestly measurable — it is
+# reported as its own compliance outcome rather than nullifying the score, so a
+# single debug flag cannot erase an otherwise working compiler.
+ADVISORY_AUDIT_REASONS = frozenset({"credential or environment inspection"})
+
 DEFAULT_SOURCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (
         re.compile(
@@ -426,9 +434,15 @@ def source_audit(workspace: Path, adapter: dict[str, Any]) -> dict[str, Any]:
                             "excerpt": truncate(line.strip(), 300),
                         }
                     )
+    blocking = [
+        finding for finding in findings if finding.get("reason") not in ADVISORY_AUDIT_REASONS
+    ]
     return {
         "passed": not findings,
+        "blocking": bool(blocking),
         "findings": findings,
+        "blocking_findings": blocking,
+        "advisory_findings": [finding for finding in findings if finding not in blocking],
         "source_files_scanned": len(files),
         "source_extensions": sorted(extensions),
     }
@@ -787,6 +801,7 @@ def summarize(results: list[TestResult], build_ok: bool, audit: dict[str, Any]) 
         "total": len(results),
         "build_ok": build_ok,
         "audit_ok": bool(audit.get("passed")),
+        "audit_blocking": bool(audit.get("blocking")),
         "stages": stages,
         "failures": failures[:12],
     }
@@ -824,7 +839,7 @@ def main() -> int:
     artifact = workspace / str(adapter["build"]["artifact"])
     build_ok = False
     results: list[TestResult] = []
-    if audit["passed"]:
+    if not audit["blocking"]:
         build_result, artifact = build_candidate(workspace, adapter, args.build_timeout)
         build_ok = (
             not build_result.timed_out
@@ -850,10 +865,10 @@ def main() -> int:
                 result = evaluate_invalid(workspace, adapter, artifact, source, test, args.compile_timeout)
             results.append(result)
     else:
-        failure_type = "source_audit_failure" if not audit["passed"] else "build_failure"
+        failure_type = "source_audit_failure" if audit["blocking"] else "build_failure"
         detail = (
-            truncate(json.dumps(audit["findings"][:10], sort_keys=True), 2000)
-            if not audit["passed"]
+            truncate(json.dumps(audit["blocking_findings"][:10], sort_keys=True), 2000)
+            if audit["blocking"]
             else truncate(build_result.stderr if build_result else "candidate artifact or build command missing", 2000)
         )
         results = [

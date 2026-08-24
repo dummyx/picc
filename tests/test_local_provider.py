@@ -61,13 +61,23 @@ class ApiKeyResolutionTests(unittest.TestCase):
         with self.assertRaisesRegex(common.ExperimentError, "Unsupported provider"):
             common.api_key_for({"MODEL_PROVIDER": "other"})
 
+    def test_unset_provider_is_rejected_rather_than_assumed(self) -> None:
+        for config in ({}, {"MODEL_PROVIDER": "  "}):
+            with self.subTest(config=config):
+                with self.assertRaisesRegex(common.ExperimentError, "MODEL_PROVIDER"):
+                    common.api_key_for(config)
+
 
 class LocalProviderResolutionTests(unittest.TestCase):
-    def test_rejects_hosted_default_model_id(self) -> None:
-        for model in ("", "glm-5.2"):
+    def test_rejects_unset_model_id(self) -> None:
+        for model in ("", "   "):
             with self.subTest(model=model):
                 with self.assertRaisesRegex(common.ExperimentError, "MODEL_ID"):
                     common.resolve_local_provider(local_config(MODEL_ID=model))
+
+    def test_accepts_any_declared_model_id(self) -> None:
+        resolved = common.resolve_local_provider(local_config(MODEL_ID="vendor/some-model"))
+        self.assertEqual(resolved["model_id"], "vendor/some-model")
 
     def test_rejects_non_http_base_url(self) -> None:
         with self.assertRaisesRegex(common.ExperimentError, "LOCAL_BASE_URL"):
@@ -152,7 +162,7 @@ class ControlFileTests(unittest.TestCase):
     def test_hosted_run_control_has_no_models_json(self) -> None:
         with tempfile.TemporaryDirectory(prefix="picc-hosted-control-") as temporary:
             control = runner.copy_control_files(
-                Path(temporary) / "run", {"MODEL_PROVIDER": "zai", "MODEL_ID": "glm-5.2"}
+                Path(temporary) / "run", {"MODEL_PROVIDER": "zai", "MODEL_ID": "example/hosted-model"}
             )
             self.assertFalse((control / "pi" / "models.json").exists())
 
@@ -247,7 +257,7 @@ class LegacyKeyMigrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="picc-legacy-env-") as temporary:
             with (
                 mock.patch.object(common, "REPO_ROOT", Path(temporary)),
-                mock.patch.dict(os.environ, {"ZAI_MODEL": "glm-5.2"}, clear=True),
+                mock.patch.dict(os.environ, {"ZAI_MODEL": "example/hosted-model"}, clear=True),
             ):
                 with self.assertRaisesRegex(common.ExperimentError, "ZAI_MODEL -> MODEL_ID"):
                     common.load_config()

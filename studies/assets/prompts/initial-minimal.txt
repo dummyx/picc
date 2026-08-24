@@ -1,0 +1,4 @@
+Read the controlling specification at {{SPEC_LOCATION}} and inspect the initial
+repository. Implement PiCC autonomously.
+
+{{INITIAL_SPEC_BLOCK}}

@@ -11,8 +11,8 @@ Complete and commit this file before starting reportable main runs.
 
 ## Research question
 
-Under the frozen Pi + GLM-5.2 condition, what hidden behavioral correctness can
-the agent reach on PiCC within the main budget?
+Under the frozen Pi and declared-model condition, what hidden behavioral
+correctness can the agent reach on PiCC within the main budget?
 
 ## Planned runs
 

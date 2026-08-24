@@ -604,8 +604,8 @@ def verified_provenance(
     starter_version = require_nonempty_string(metadata.get("starter_version"), "metadata.starter_version")
 
     expected_model = {
-        "provider": effective_config.get("MODEL_PROVIDER", "zai"),
-        "id": effective_config.get("MODEL_ID", "glm-5.2"),
+        "provider": effective_config.get("MODEL_PROVIDER", ""),
+        "id": effective_config.get("MODEL_ID", ""),
         "thinking": effective_config.get("MODEL_THINKING", "max"),
     }
     actual_model = {"provider": model_provider, "id": model_id, "thinking": model_thinking}

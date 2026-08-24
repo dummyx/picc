@@ -63,9 +63,11 @@
     {
       "id": "prompt-minimal",
       "factor": "prompt",
-      "description": "Remove workflow, progress-memory, sequencing, and regression-management instructions while retaining safety and task rules.",
+      "description": "Remove workflow, progress-memory, sequencing, and regression-management instructions from every prompt surface while retaining safety and task rules. The initial and continuation requests are also stripped; leaving the shared ones in place re-supplied the removed instructions each round.",
       "prompt": {
-        "agents": "studies/assets/prompts/agents-minimal.md"
+        "agents": "studies/assets/prompts/agents-minimal.md",
+        "initial": "studies/assets/prompts/initial-minimal.txt",
+        "continuation": "studies/assets/prompts/continue-minimal.txt"
       }
     },
     {
@@ -86,7 +88,7 @@
     {
       "id": "spec-architecture",
       "factor": "specification",
-      "description": "Provide the behavioral scope plus prescribed lexer/parser/sema/IR/codegen boundaries and invariants.",
+      "description": "Provide the full baseline behavioral specification plus prescribed lexer/parser/sema/IR/codegen boundaries and invariants. Differs from baseline only by the added architecture sections.",
       "specification": {
         "path": "studies/assets/specs/architecture.md",
         "provenance": {

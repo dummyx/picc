@@ -168,7 +168,7 @@ def make_run(
         "MAIN_ROUNDS": str(max(2, round_count)),
         "MAIN_ROUND_TIMEOUT_MINUTES": "30",
         "STARTER_VERSION": "summary-fixture-v1",
-        "MODEL_ID": "glm-5.2",
+        "MODEL_ID": "example/hosted-model",
         "MODEL_PROVIDER": "zai",
         "MODEL_THINKING": "max",
     }
@@ -264,7 +264,7 @@ def make_run(
         },
         "model": {
             "provider": "zai",
-            "id": "glm-5.2",
+            "id": "example/hosted-model",
             "thinking": "max",
             "serving_revision": "provider-managed",
         },

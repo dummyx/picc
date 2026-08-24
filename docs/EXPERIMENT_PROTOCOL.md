@@ -3,8 +3,8 @@
 ## Research question
 
 Under a fixed wall-clock and interaction budget, how much of the specified C
-subset can a single Pi coding-agent session using GLM-5.2 Coding Plan implement
-from an empty Rust repository without human steering?
+subset can a single Pi coding-agent session using the operator-declared model
+implement from an empty Rust repository without human steering?
 
 ## Unit of observation
 
@@ -17,8 +17,8 @@ workspace is not a new independent run.
 The starter has one condition:
 
 - Pi `0.84.1`;
-- built-in `zai` provider;
-- model `glm-5.2`;
+- the provider declared in `MODEL_PROVIDER` (`zai`, `zai-coding-cn`, or `local`);
+- the model declared in `MODEL_ID`;
 - thinking setting `max`;
 - stock Pi compaction with explicitly frozen settings;
 - project-local test and guard extensions;
@@ -27,9 +27,11 @@ The starter has one condition:
 - no web or source retrieval through agent tools;
 - standard-library-only Rust implementation.
 
-Selecting the optional local endpoint (`MODEL_PROVIDER=local`, see README) keeps
-the same harness and budgets but is a different model condition. Runs made that
-way must be labeled and analyzed separately from the `glm-5.2` condition.
+Provider and model have no defaults: both are declared before the run, frozen,
+and recorded. Changing either — including selecting the optional local endpoint
+(`MODEL_PROVIDER=local`, see README) — keeps the same harness and budgets but is
+a different model condition. Runs under a different declaration must be labeled
+and analyzed separately.
 
 ## Task
 
@@ -102,9 +104,9 @@ Final hidden macro-score:
 
 ## Repetitions
 
-Use at least three main runs. Coding Plan does not expose deterministic sampling
-seeds through Pi, so repetitions use unique IDs and identical configuration but
-are not seeded deterministic trials.
+Use at least three main runs. The harness does not pin a sampling seed and Pi
+exposes none for the supported providers, so repetitions use unique IDs and
+identical configuration but are not seeded deterministic trials.
 
 Report every run individually, then median and range. Never select only the best
 run.

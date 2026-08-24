@@ -19,7 +19,10 @@ from common import (
     docker_secret_env,
     is_local_provider,
     load_config,
+    local_network_mode,
     require_command,
+    require_model_id,
+    require_model_provider,
     write_local_models_json,
 )
 
@@ -51,8 +54,8 @@ def main() -> int:
     image = config["EXPERIMENT_IMAGE"]
     docker_image_id(image)
     variable, key = api_key_for(config)
-    provider = config.get("MODEL_PROVIDER", "zai")
-    model = config.get("MODEL_ID", "glm-5.2")
+    provider = require_model_provider(config)
+    model = require_model_id(config)
     platform_name = config.get("DOCKER_PLATFORM", "linux/amd64")
 
     with tempfile.TemporaryDirectory(prefix="picc-auth-") as temporary, docker_secret_env(variable, key) as env_file:
@@ -66,7 +69,10 @@ def main() -> int:
         if is_local_provider(config):
             # Pi resolves the custom provider from PI_CODING_AGENT_DIR/models.json.
             write_local_models_json(config, state / "pi")
-            local_args = ["--add-host", "host.docker.internal:host-gateway"]
+            if local_network_mode(config) == "host":
+                local_args = ["--network", "host"]
+            else:
+                local_args = ["--add-host", "host.docker.internal:host-gateway"]
         user_args: list[str] = []
         if hasattr(os, "getuid") and hasattr(os, "getgid"):
             user_args = ["--user", f"{os.getuid()}:{os.getgid()}"]

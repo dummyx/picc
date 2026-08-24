@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-RUN_ID ?= glm52-$(shell date -u +%Y%m%d-%H%M%S)
+RUN_ID ?= picc-$(shell date -u +%Y%m%d-%H%M%S)
 REPLICATE ?=
 REPLICATE_ARG := $(if $(REPLICATE),--replicate $(REPLICATE),)
 

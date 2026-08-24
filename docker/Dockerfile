@@ -6,7 +6,7 @@ ARG STARTER_VERSION=0.1.0
 ARG PI_VERSION=0.84.1
 ARG RUST_TOOLCHAIN=1.88.0
 
-LABEL org.opencontainers.image.title="PiCC Pi + GLM-5.2 experiment"
+LABEL org.opencontainers.image.title="PiCC Pi experiment"
 LABEL org.opencontainers.image.version="${STARTER_VERSION}"
 LABEL org.opencontainers.image.description="Pinned Pi coding-agent, Rust toolchain, and C compiler evaluator"
 LABEL io.picc.pi.version="${PI_VERSION}"

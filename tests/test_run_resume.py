@@ -185,7 +185,7 @@ class ResumeFixture:
             "PILOT_MAX_STAGE": "6",
             "PILOT_ROUNDS": "6",
             "PILOT_ROUND_TIMEOUT_MINUTES": "45",
-            "MODEL_ID": "glm-5.2",
+            "MODEL_ID": "example/hosted-model",
             "MODEL_PROVIDER": "zai",
             "MODEL_THINKING": "max",
         }
@@ -205,7 +205,7 @@ class ResumeFixture:
             "configuration": self.frozen_config,
             "model": {
                 "provider": "zai",
-                "id": "glm-5.2",
+                "id": "example/hosted-model",
                 "thinking": "max",
             },
             "docker_image": {"name": IMAGE_NAME, "id": self.image_id},
@@ -642,14 +642,21 @@ class ResumeLifecycleTests(unittest.TestCase):
                 result = runner.execute_run(args, RUN_ID, fixture.run_dir, fixture.current_config)
 
             self.assertEqual(result, 0)
-            self.assertEqual(captured["round_number"], 1)
+            # fake_pi_round always times out. A single stall is no longer
+            # terminal, so the resumed run attempts round 1 and then round 2
+            # before the consecutive-stall limit ends it.
+            self.assertEqual(captured["round_number"], 2)
+            resumed_metadata = json.loads(
+                (fixture.run_dir / "metadata.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(resumed_metadata["termination_reason"], "round_timeout")
             visible_call = captured["visible_call"]
             self.assertEqual(visible_call["config"]["EXPERIMENT_IMAGE"], IMAGE_NAME)
             self.assertEqual(visible_call["workspace"], fixture.workspace)
             self.assertEqual(visible_call["visible_tests"], fixture.visible_manifest.parent)
             self.assertEqual(visible_call["evaluator"], fixture.root / "evaluator")
             self.assertEqual(visible_call["artifacts"], fixture.artifacts)
-            self.assertEqual(visible_call["round_number"], 1)
+            self.assertEqual(visible_call["round_number"], 2)
             self.assertEqual(visible_call["max_stage"], 6)
             self.assertEqual(visible_call["commit"], fixture.commit)
             self.assertTrue(captured["continuation"])
@@ -672,14 +679,14 @@ class ResumeLifecycleTests(unittest.TestCase):
             self.assertEqual(len(metadata["execution_attempts"]), 2)
             self.assertEqual(metadata["execution_attempts"][0]["last_round"], 0)
             self.assertEqual(metadata["execution_attempts"][1]["first_round"], 1)
-            self.assertEqual(metadata["execution_attempts"][1]["rounds_attempted"], 1)
+            self.assertEqual(metadata["execution_attempts"][1]["rounds_attempted"], 2)
 
             resume_events = runner.read_jsonl(fixture.artifacts / "resume-events.jsonl")
             self.assertEqual([event["event"] for event in resume_events], ["resume_started", "resume_finished"])
             self.assertEqual(resume_events[0]["next_round"], 1)
-            self.assertEqual(len(runner.read_jsonl(fixture.artifacts / "rounds.jsonl")), 2)
+            self.assertEqual(len(runner.read_jsonl(fixture.artifacts / "rounds.jsonl")), 3)
             snapshots = runner.read_jsonl(fixture.artifacts / "snapshots.jsonl")
-            self.assertEqual([snapshot["round"] for snapshot in snapshots], [0, 1])
+            self.assertEqual([snapshot["round"] for snapshot in snapshots], [0, 1, 2])
             self.assertGreater(snapshots[1]["elapsed_seconds"], snapshots[0]["elapsed_seconds"])
 
     def test_pi_continuation_command_uses_existing_session(self) -> None:

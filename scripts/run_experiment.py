@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a fixed-budget Pi + GLM-5.2 PiCC construction trajectory."""
+"""Run a fixed-budget Pi PiCC construction trajectory."""
 
 from __future__ import annotations
 
@@ -36,7 +36,10 @@ from common import (
     is_local_provider,
     load_config,
     local_model_metadata,
+    local_network_mode,
     read_jsonl,
+    require_model_id,
+    require_model_provider,
     resolve_local_provider,
     run,
     sanitize_run_id,
@@ -137,7 +140,9 @@ def snapshot_workspace(workspace: Path, round_number: int) -> dict[str, Any]:
     }
 
 
-def base_container_args(config: dict[str, str], *, name: str | None = None) -> list[str]:
+def base_container_args(
+    config: dict[str, str], *, name: str | None = None, model_endpoint: bool = False
+) -> list[str]:
     args = [
         "docker",
         "run",
@@ -159,10 +164,16 @@ def base_container_args(config: dict[str, str], *, name: str | None = None) -> l
         "--pids-limit",
         config.get("AGENT_PIDS", "512"),
     ]
-    if is_local_provider(config):
-        # Reach the operator's endpoint from inside the container on Linux
-        # engines; Docker Desktop resolves host.docker.internal either way.
-        args += ["--add-host", "host.docker.internal:host-gateway"]
+    if model_endpoint and is_local_provider(config):
+        if local_network_mode(config) == "host":
+            # Share the host network namespace so the frozen LOCAL_BASE_URL can
+            # target a loopback endpoint that host firewalling hides from the
+            # docker bridge. Only containers that talk to the model get this.
+            args += ["--network", "host"]
+        else:
+            # Reach the operator's endpoint from inside the container on Linux
+            # engines; Docker Desktop resolves host.docker.internal either way.
+            args += ["--add-host", "host.docker.internal:host-gateway"]
     if name:
         args += ["--name", name]
     if hasattr(os, "getuid") and hasattr(os, "getgid"):
@@ -199,7 +210,7 @@ def run_pi_round(
         (artifacts / "pi-global").mkdir(parents=True, exist_ok=True)
         shutil.copy2(control / "pi" / "models.json", artifacts / "pi-global" / "models.json")
 
-    command = base_container_args(config, name=container_name)
+    command = base_container_args(config, name=container_name, model_endpoint=True)
     with docker_secret_env(api_variable, api_key) as env_file:
         command += ["--env-file", str(env_file)]
         for key, value in {
@@ -234,9 +245,9 @@ def run_pi_round(
             "json",
             "--approve",
             "--provider",
-            config.get("MODEL_PROVIDER", "zai"),
+            require_model_provider(config),
             "--model",
-            config.get("MODEL_ID", "glm-5.2"),
+            require_model_id(config),
             "--thinking",
             config.get("MODEL_THINKING", "max"),
             "--session-dir",
@@ -1036,8 +1047,8 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "harness_manifest_sha256": harness_manifest_sha256,
         }
         model_record = {
-            "provider": config.get("MODEL_PROVIDER", "zai"),
-            "id": config.get("MODEL_ID", "glm-5.2"),
+            "provider": require_model_provider(config),
+            "id": require_model_id(config),
             "thinking": config.get("MODEL_THINKING", "max"),
         }
         if is_local_provider(config):
@@ -1052,10 +1063,10 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 "independent stochastic runs."
             )
         else:
-            model_record["serving_revision"] = "provider-managed and not exposed by Coding Plan"
+            model_record["serving_revision"] = "provider-managed and not exposed by the hosted plan"
             replicate_note = (
-                "GLM Coding Plan does not expose a deterministic sampling seed through Pi; "
-                "this is an independent stochastic repetition."
+                "The hosted provider does not expose a deterministic sampling seed through "
+                "Pi; this is an independent stochastic repetition."
             )
         metadata = {
             "schema_version": METADATA_SCHEMA_VERSION,
@@ -1093,6 +1104,15 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
     deadline = started_monotonic + (total_budget_seconds - elapsed_before)
     termination_reason = "max_rounds"
     last_round_attempted = start_round - 1
+    consecutive_timeouts = 0
+    # Configurations frozen before this setting existed must stay resumable, so
+    # a missing key defaults rather than failing the run.
+    stall_limit = max(
+        1,
+        config_int(config, "MAX_CONSECUTIVE_ROUND_TIMEOUTS")
+        if "MAX_CONSECUTIVE_ROUND_TIMEOUTS" in config
+        else 2,
+    )
 
     def cumulative_elapsed() -> float:
         return elapsed_before + (time.monotonic() - started_monotonic)
@@ -1171,11 +1191,25 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             )
 
             if round_result["timed_out"]:
-                termination_reason = "round_timeout"
-                break
-            if round_result["returncode"] != 0:
-                termination_reason = "pi_process_failure"
-                break
+                # A timed-out round is usually the agent blocking on a runaway
+                # child process of its own making, not a dead session. Keep the
+                # snapshot and let the next round continue the same Pi session,
+                # so one stall costs a round rather than the whole run. Only a
+                # session that stalls repeatedly is treated as terminal.
+                consecutive_timeouts += 1
+                print(
+                    f"[{run_id}] round {round_number:03d}: stalled "
+                    f"({consecutive_timeouts}/{stall_limit} consecutive)",
+                    flush=True,
+                )
+                if consecutive_timeouts >= stall_limit:
+                    termination_reason = "round_timeout"
+                    break
+            else:
+                consecutive_timeouts = 0
+                if round_result["returncode"] != 0:
+                    termination_reason = "pi_process_failure"
+                    break
 
             if float(visible.get("score", 0.0)) >= 1.0 - 1e-12:
                 if perfect_first_round is None:
