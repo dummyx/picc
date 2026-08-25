@@ -64,7 +64,7 @@ DEFAULT_SOURCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (
         re.compile(
             r"\b(?:std::)?process::Command\b|\bCommand::new\s*\(|"
-            r"\bsubprocess\b|\bos\.system\s*\(|\bPopen\s*\(|\bexec[lvpe]*\s*\(",
+            r"\bsubprocess\b|\bos\.system\s*\(|\bPopen\s*\(|\bexec[lvpe]+\s*\(",
             re.I,
         ),
         "subprocess invocation",

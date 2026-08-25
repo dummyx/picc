@@ -1791,5 +1791,2088 @@
     "visible_scores": [
       0.9548
     ]
+  },
+  {
+    "active_minutes": 75.6,
+    "affordance_calls": {
+      "experiment_status": 5,
+      "reference_oracle": 0,
+      "test_visible": 20
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 322,
+    "bash_intents": {
+      "build": 12,
+      "inspect": 1,
+      "other": 58,
+      "self_test": 102,
+      "write_via_shell": 19
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 55,
+        "entries_total": 661,
+        "opening_request_evicted": true,
+        "tokens_before": 126991
+      },
+      {
+        "entries_evicted": 283,
+        "entries_total": 661,
+        "opening_request_evicted": true,
+        "tokens_before": 127144
+      },
+      {
+        "entries_evicted": 552,
+        "entries_total": 661,
+        "opening_request_evicted": true,
+        "tokens_before": 127006
+      }
+    ],
+    "compactions": 6,
+    "condition": "baseline",
+    "elapsed_minutes": 75.8,
+    "errored_turns": 0,
+    "factor": "baseline",
+    "final_loc": 2516,
+    "guard_blocks": 1,
+    "guard_reasons": {
+      "writes are restricted to /workspace": 1
+    },
+    "hangs": [],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2
+    },
+    "hidden_final_score": 0.9583,
+    "idle_minutes": 0.2,
+    "input_tokens": 255694,
+    "kept_progress_file": true,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 9.0,
+    "median_turn_gap_seconds": 5.7,
+    "output_cap": 65536,
+    "output_tokens": 242834,
+    "per_round": [
+      {
+        "assistant_turns": 144,
+        "round": "round-000",
+        "tool_calls": 155,
+        "tools": {
+          "bash": 81,
+          "edit": 24,
+          "experiment_status": 2,
+          "grep": 6,
+          "ls": 2,
+          "read": 21,
+          "test_visible": 9,
+          "write": 10
+        }
+      },
+      {
+        "assistant_turns": 178,
+        "round": "round-001",
+        "tool_calls": 175,
+        "tools": {
+          "bash": 111,
+          "edit": 31,
+          "experiment_status": 3,
+          "read": 15,
+          "test_visible": 11,
+          "write": 4
+        }
+      }
+    ],
+    "planning_only_turns": 4,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 1,
+    "rounds": 2,
+    "run_id": "v2-baseline-r1",
+    "score_regressions": 0,
+    "self_authored_tests": [
+      "local-tests"
+    ],
+    "termination": "visible_complete_after_review",
+    "text_chars": 15451,
+    "thinking_blocks": 322,
+    "thinking_chars": 463215,
+    "tool_calls": 330,
+    "tools": {
+      "bash": 192,
+      "edit": 55,
+      "experiment_status": 5,
+      "grep": 6,
+      "ls": 2,
+      "read": 36,
+      "test_visible": 20,
+      "write": 14
+    },
+    "top_edited_files": {
+      "PROGRESS.md": 10,
+      "codegen.rs": 9,
+      "fuzz.py": 3,
+      "lex.rs": 7,
+      "parse.rs": 8,
+      "runall.sh": 3,
+      "runtest.sh": 4,
+      "sem.rs": 19
+    },
+    "truncated_turns": 4,
+    "visible_scores": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "active_minutes": 45.0,
+    "affordance_calls": {
+      "experiment_status": 1,
+      "reference_oracle": 0,
+      "test_visible": 0
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "declined"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 35,
+    "bash_intents": {
+      "build": 7,
+      "inspect": 1,
+      "other": 13,
+      "self_test": 2,
+      "write_via_shell": 2
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 0,
+    "compaction_evictions": [],
+    "compactions": 0,
+    "condition": "baseline",
+    "elapsed_minutes": 90.1,
+    "errored_turns": 0,
+    "factor": "baseline",
+    "final_loc": 1860,
+    "guard_blocks": 0,
+    "guard_reasons": {},
+    "hangs": [
+      {
+        "command": "cd /workspace && cat > scratch/t/s4c.c <<'EOF'\nint main(void) {\n    int a = 1;\n    int b = 0;\n    int r = (a == 1) && (b = 5);\n    return r * 100 + b;\n}\nEOF\ncargo build --release --offline 2>&1 | grep -E \"^error\" -A5\nfor t in \"s1a 42\" \"s1b 0\" \"s1c 8\" \"s2a 3\" \"s2b 0\" \"s2c 2\" \"s3a 9\" \"s3b 10\" \"s3c 135",
+        "round": "round-000",
+        "tool": "bash"
+      },
+      {
+        "command": "cd /workspace && cargo build --release --offline 2>&1 | grep -cE \"^(error|warning)\" ; for t in \"s1a 42\" \"s1b 0\" \"s1c 8\" \"s2a 3\" \"s2b 0\" \"s2c 2\" \"s3a 9\" \"s3b 10\" \"s3c 135\" \"s3d 246\" \"s4a 4\" \"s4b 7\" \"s4c 105\" \"s4d 100\" \"s5a 20\" \"s5b 2\" \"s6a 2\" \"s6b 30\" \"s6c 11\" \"s7a 12\" \"s7b 2\" \"s8a 55\" \"s8b 5\" \"s8c 9",
+        "round": "round-001",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 1,
+      "unexpected_reject": 8
+    },
+    "hidden_final_score": 0.8981,
+    "idle_minutes": 45.1,
+    "input_tokens": 57843,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 20.2,
+    "median_turn_gap_seconds": 9.6,
+    "output_cap": 65536,
+    "output_tokens": 97788,
+    "per_round": [
+      {
+        "assistant_turns": 33,
+        "round": "round-000",
+        "tool_calls": 38,
+        "tools": {
+          "bash": 23,
+          "edit": 4,
+          "experiment_status": 1,
+          "ls": 2,
+          "read": 2,
+          "write": 6
+        }
+      },
+      {
+        "assistant_turns": 2,
+        "round": "round-001",
+        "tool_calls": 2,
+        "tools": {
+          "bash": 2
+        }
+      }
+    ],
+    "planning_only_turns": 0,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 2,
+    "rounds": 2,
+    "run_id": "v2-baseline-r2",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 1751,
+    "thinking_blocks": 35,
+    "thinking_chars": 190097,
+    "tool_calls": 40,
+    "tools": {
+      "bash": 25,
+      "edit": 4,
+      "experiment_status": 1,
+      "ls": 2,
+      "read": 2,
+      "write": 6
+    },
+    "top_edited_files": {
+      "driver.s": 3,
+      "main.rs": 6,
+      "run.sh": 1
+    },
+    "truncated_turns": 0,
+    "visible_scores": [
+      0.9429,
+      0.9429
+    ]
+  },
+  {
+    "active_minutes": 61.3,
+    "affordance_calls": {
+      "experiment_status": 0,
+      "reference_oracle": 0,
+      "test_visible": 0
+    },
+    "affordance_uptake": {
+      "experiment_status": "declined",
+      "reference_oracle": "n/a",
+      "test_visible": "declined"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 56,
+    "bash_intents": {
+      "build": 7,
+      "inspect": 3,
+      "other": 1,
+      "self_test": 17
+    },
+    "buildable_snapshots": "2/3",
+    "compaction_count": 0,
+    "compaction_evictions": [],
+    "compactions": 0,
+    "condition": "baseline",
+    "elapsed_minutes": 106.3,
+    "errored_turns": 0,
+    "factor": "baseline",
+    "final_loc": 2164,
+    "guard_blocks": 0,
+    "guard_reasons": {},
+    "hangs": [
+      {
+        "command": "cd /workspace && cargo build --release --offline 2>&1 | grep -cE \"^error\"; cd /tmp/picc-test && PICC=/workspace/target/release/picc\nfor t in d1 d2 t1 t3; do $PICC $t.c -o $t.s && as -o $t.o $t.s && ld -o $t $t.o stub.o 2>/dev/null && ./$t; echo \"$t EXIT=$?\"; done\n$PICC t2.c -o t2.s && as -o t2.o t2.",
+        "round": "round-001",
+        "tool": "bash"
+      },
+      {
+        "command": "mkdir -p /tmp/picc-test && cd /tmp/picc-test && PICC=/workspace/target/release/picc\ncat > stub.s <<'EOF'\n.intel_syntax noprefix\n.global _start\n_start:\n    call main\n    mov edi, eax\n    and edi, 255\n    mov eax, 60\n    syscall\nEOF\nas -o stub.o stub.s\ncat > t1.c <<'EOF'\nint main(void) { return 42; }\n",
+        "round": "round-002",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 1,
+      "unexpected_reject": 8
+    },
+    "hidden_final_score": 0.8981,
+    "idle_minutes": 45.0,
+    "input_tokens": 52523,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 22.1,
+    "median_turn_gap_seconds": 9.2,
+    "output_cap": 65536,
+    "output_tokens": 154457,
+    "per_round": [
+      {
+        "assistant_turns": 2,
+        "round": "round-000",
+        "tool_calls": 2,
+        "tools": {
+          "ls": 1,
+          "read": 1
+        }
+      },
+      {
+        "assistant_turns": 52,
+        "round": "round-001",
+        "tool_calls": 57,
+        "tools": {
+          "bash": 26,
+          "edit": 22,
+          "read": 1,
+          "write": 8
+        }
+      },
+      {
+        "assistant_turns": 2,
+        "round": "round-002",
+        "tool_calls": 2,
+        "tools": {
+          "bash": 2
+        }
+      }
+    ],
+    "planning_only_turns": 1,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 3,
+    "rounds": 3,
+    "run_id": "v2-baseline-r3",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 2675,
+    "thinking_blocks": 56,
+    "thinking_chars": 399720,
+    "tool_calls": 61,
+    "tools": {
+      "bash": 28,
+      "edit": 22,
+      "ls": 1,
+      "read": 2,
+      "write": 8
+    },
+    "top_edited_files": {
+      "Cargo.toml": 1,
+      "ast.rs": 2,
+      "codegen.rs": 13,
+      "lexer.rs": 2,
+      "main.rs": 1,
+      "parser.rs": 5,
+      "sem.rs": 6
+    },
+    "truncated_turns": 1,
+    "visible_scores": [
+      0.0,
+      0.9373,
+      0.9373
+    ]
+  },
+  {
+    "active_minutes": 46.5,
+    "affordance_calls": {
+      "experiment_status": 0,
+      "reference_oracle": 0,
+      "test_visible": 4
+    },
+    "affordance_uptake": {
+      "experiment_status": "declined",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 163,
+    "bash_intents": {
+      "build": 21,
+      "inspect": 1,
+      "other": 23,
+      "self_test": 56,
+      "write_via_shell": 15
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 1,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 121,
+        "entries_total": 336,
+        "opening_request_evicted": true,
+        "tokens_before": 127582
+      }
+    ],
+    "compactions": 2,
+    "condition": "prompt-minimal",
+    "elapsed_minutes": 90.0,
+    "errored_turns": 0,
+    "factor": "prompt",
+    "final_loc": 2385,
+    "guard_blocks": 1,
+    "guard_reasons": {
+      "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 1
+    },
+    "hangs": [
+      {
+        "command": "cd /tmp/pc/tests && cat > h1.c <<'EOF'\n/* nested loops: break/continue targeting */\nint main(void) {\n    int r = 0;\n    int i = 0;\n    while (i < 5) {\n        int j = 0;\n        while (j < 5) {\n            if (j == 2) { i = i + 1; continue; }\n            if (i == 3) { break; }\n            r = r + i ",
+        "round": "round-001",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2
+    },
+    "hidden_final_score": 0.9583,
+    "idle_minutes": 43.5,
+    "input_tokens": 137760,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 7.8,
+    "median_turn_gap_seconds": 7.0,
+    "output_cap": 65536,
+    "output_tokens": 155861,
+    "per_round": [
+      {
+        "assistant_turns": 157,
+        "round": "round-000",
+        "tool_calls": 161,
+        "tools": {
+          "bash": 111,
+          "edit": 24,
+          "ls": 1,
+          "read": 14,
+          "test_visible": 4,
+          "write": 7
+        }
+      },
+      {
+        "assistant_turns": 6,
+        "round": "round-001",
+        "tool_calls": 6,
+        "tools": {
+          "bash": 5,
+          "edit": 1
+        }
+      }
+    ],
+    "planning_only_turns": 1,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 1,
+    "rounds": 2,
+    "run_id": "v2-prompt-minimal-r1",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 6150,
+    "thinking_blocks": 163,
+    "thinking_chars": 322652,
+    "tool_calls": 167,
+    "tools": {
+      "bash": 116,
+      "edit": 25,
+      "ls": 1,
+      "read": 14,
+      "test_visible": 4,
+      "write": 7
+    },
+    "top_edited_files": {
+      "ast.rs": 1,
+      "codegen.rs": 13,
+      "env.rs": 1,
+      "lexer.rs": 9,
+      "main.rs": 2,
+      "parser.rs": 6
+    },
+    "truncated_turns": 1,
+    "visible_scores": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "active_minutes": 89.6,
+    "affordance_calls": {
+      "experiment_status": 4,
+      "reference_oracle": 0,
+      "test_visible": 40
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 295,
+    "bash_intents": {
+      "build": 22,
+      "inspect": 1,
+      "other": 76,
+      "self_test": 52,
+      "write_via_shell": 4
+    },
+    "buildable_snapshots": "1/2",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 92,
+        "entries_total": 616,
+        "opening_request_evicted": true,
+        "tokens_before": 127006
+      },
+      {
+        "entries_evicted": 221,
+        "entries_total": 616,
+        "opening_request_evicted": true,
+        "tokens_before": 127043
+      },
+      {
+        "entries_evicted": 221,
+        "entries_total": 616,
+        "opening_request_evicted": true,
+        "tokens_before": 127043
+      },
+      {
+        "entries_evicted": 404,
+        "entries_total": 616,
+        "opening_request_evicted": true,
+        "tokens_before": 127752
+      }
+    ],
+    "compactions": 7,
+    "condition": "prompt-minimal",
+    "elapsed_minutes": 90.0,
+    "errored_turns": 0,
+    "factor": "prompt",
+    "final_loc": 2272,
+    "guard_blocks": 3,
+    "guard_reasons": {
+      "mutation of experiment-control files is prohibited": 1,
+      "reads are restricted by this condition's test/reference access policy": 1,
+      "writes are restricted to /workspace": 1
+    },
+    "hangs": [],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2
+    },
+    "hidden_final_score": 0.9583,
+    "idle_minutes": 0.4,
+    "input_tokens": 264071,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 10.9,
+    "median_turn_gap_seconds": 8.0,
+    "output_cap": 65536,
+    "output_tokens": 295839,
+    "per_round": [
+      {
+        "assistant_turns": 122,
+        "round": "round-000",
+        "tool_calls": 140,
+        "tools": {
+          "bash": 52,
+          "edit": 24,
+          "experiment_status": 2,
+          "grep": 1,
+          "ls": 1,
+          "read": 20,
+          "test_visible": 33,
+          "write": 7
+        }
+      },
+      {
+        "assistant_turns": 173,
+        "round": "round-001",
+        "tool_calls": 172,
+        "tools": {
+          "bash": 103,
+          "edit": 33,
+          "experiment_status": 2,
+          "read": 17,
+          "test_visible": 7,
+          "write": 10
+        }
+      }
+    ],
+    "planning_only_turns": 3,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 2,
+    "rounds": 2,
+    "run_id": "v2-prompt-minimal-r2",
+    "score_regressions": 0,
+    "self_authored_tests": [
+      ".picc_tests"
+    ],
+    "termination": "round_timeout",
+    "text_chars": 15957,
+    "thinking_blocks": 295,
+    "thinking_chars": 687147,
+    "tool_calls": 312,
+    "tools": {
+      "bash": 155,
+      "edit": 57,
+      "experiment_status": 4,
+      "grep": 1,
+      "ls": 1,
+      "read": 37,
+      "test_visible": 40,
+      "write": 17
+    },
+    "top_edited_files": {
+      "codegen.rs": 28,
+      "fuzz_cf.py": 7,
+      "fuzz_expr.py": 8,
+      "lexer.rs": 11,
+      "main.rs": 4,
+      "parser.rs": 5,
+      "run.sh": 2,
+      "t78910.sh": 3
+    },
+    "truncated_turns": 3,
+    "visible_scores": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "active_minutes": 54.6,
+    "affordance_calls": {
+      "experiment_status": 1,
+      "reference_oracle": 0,
+      "test_visible": 4
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 102,
+    "bash_intents": {
+      "build": 22,
+      "inspect": 2,
+      "other": 10,
+      "self_test": 20,
+      "write_via_shell": 5
+    },
+    "buildable_snapshots": "1/2",
+    "compaction_count": 2,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 56,
+        "entries_total": 217,
+        "opening_request_evicted": true,
+        "tokens_before": 127103
+      },
+      {
+        "entries_evicted": 179,
+        "entries_total": 217,
+        "opening_request_evicted": true,
+        "tokens_before": 127081
+      }
+    ],
+    "compactions": 4,
+    "condition": "prompt-minimal",
+    "elapsed_minutes": 90.0,
+    "errored_turns": 0,
+    "factor": "prompt",
+    "final_loc": 3278,
+    "guard_blocks": 1,
+    "guard_reasons": {
+      "writes are restricted to /workspace": 1
+    },
+    "hangs": [
+      {
+        "command": "/workspace/tools/fuzz.sh 0 40 2>&1 | tail -15",
+        "round": "round-001",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": false,
+    "hidden_failure_types": {
+      "source_audit_failure": 12
+    },
+    "hidden_final_score": 0.0,
+    "idle_minutes": 35.4,
+    "input_tokens": 190219,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 10.6,
+    "median_turn_gap_seconds": 12.9,
+    "output_cap": 65536,
+    "output_tokens": 184228,
+    "per_round": [
+      {
+        "assistant_turns": 83,
+        "round": "round-000",
+        "tool_calls": 89,
+        "tools": {
+          "bash": 47,
+          "edit": 18,
+          "experiment_status": 1,
+          "ls": 1,
+          "read": 8,
+          "test_visible": 4,
+          "write": 10
+        }
+      },
+      {
+        "assistant_turns": 19,
+        "round": "round-001",
+        "tool_calls": 19,
+        "tools": {
+          "bash": 12,
+          "edit": 3,
+          "write": 4
+        }
+      }
+    ],
+    "planning_only_turns": 2,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 3,
+    "rounds": 2,
+    "run_id": "v2-prompt-minimal-r3",
+    "score_regressions": 1,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 5557,
+    "thinking_blocks": 102,
+    "thinking_chars": 400098,
+    "tool_calls": 108,
+    "tools": {
+      "bash": 59,
+      "edit": 21,
+      "experiment_status": 1,
+      "ls": 1,
+      "read": 8,
+      "test_visible": 4,
+      "write": 14
+    },
+    "top_edited_files": {
+      "Cargo.toml": 2,
+      "ast.rs": 2,
+      "codegen.rs": 12,
+      "fuzzgen.rs": 4,
+      "lexer.rs": 3,
+      "main.rs": 4,
+      "parser.rs": 4,
+      "semantic.rs": 2
+    },
+    "truncated_turns": 3,
+    "visible_scores": [
+      0.9548,
+      0.0
+    ]
+  },
+  {
+    "active_minutes": 45.0,
+    "affordance_calls": {
+      "experiment_status": 0,
+      "reference_oracle": 0,
+      "test_visible": 0
+    },
+    "affordance_uptake": {
+      "experiment_status": "declined",
+      "reference_oracle": "n/a",
+      "test_visible": "declined"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 45,
+    "bash_intents": {
+      "build": 13,
+      "inspect": 1,
+      "other": 5,
+      "self_test": 3,
+      "write_via_shell": 2
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 0,
+    "compaction_evictions": [],
+    "compactions": 0,
+    "condition": "spec-architecture",
+    "elapsed_minutes": 90.1,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 2408,
+    "guard_blocks": 0,
+    "guard_reasons": {},
+    "hangs": [
+      {
+        "command": "cd /workspace && cargo build --release --offline 2>&1 | grep -E \"^error\" ; cd /tmp/picctest && ./battery.sh \\\n  s2:251 s3:10 s3b:225 s4:3 s4b:5 s5:17 s6:18 s6b:2 s7:1 \\\n  s8:18 s8b:8 s8c:4 s8d:13 s9:15 s9b:800 s9c:42 s9d:36 s10:14 s10b:123",
+        "round": "round-000",
+        "tool": "bash"
+      },
+      {
+        "command": "mkdir -p /tmp/picctest/tests && cd /tmp/picctest\ncat > stub.s <<'EOF'\n\t.globl\t_start\n_start:\n\tcall\tmain\n\tmovl\t%eax, %edi\n\tmovl\t$60, %eax\n\tsyscall\nEOF\nas -o stub.o stub.s\ncat > run.sh <<'EOF'\n#!/bin/bash\nas -o /tmp/picctest/t.o \"$1\" 2>/tmp/picctest/as.err || { echo \"AS FAIL:\"; cat /tmp/picctest/as.er",
+        "round": "round-001",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 1,
+      "unexpected_reject": 9,
+      "wrong_behavior": 2
+    },
+    "hidden_final_score": 0.8704,
+    "idle_minutes": 45.1,
+    "input_tokens": 51313,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 19.6,
+    "median_turn_gap_seconds": 11.7,
+    "output_cap": 65536,
+    "output_tokens": 98174,
+    "per_round": [
+      {
+        "assistant_turns": 43,
+        "round": "round-000",
+        "tool_calls": 53,
+        "tools": {
+          "bash": 22,
+          "edit": 19,
+          "ls": 1,
+          "read": 2,
+          "write": 9
+        }
+      },
+      {
+        "assistant_turns": 2,
+        "round": "round-001",
+        "tool_calls": 2,
+        "tools": {
+          "bash": 2
+        }
+      }
+    ],
+    "planning_only_turns": 0,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 1,
+    "rounds": 2,
+    "run_id": "v2-spec-architecture-r1",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 1514,
+    "thinking_blocks": 45,
+    "thinking_chars": 201325,
+    "tool_calls": 55,
+    "tools": {
+      "bash": 24,
+      "edit": 19,
+      "ls": 1,
+      "read": 2,
+      "write": 9
+    },
+    "top_edited_files": {
+      "Cargo.toml": 1,
+      "codegen.rs": 5,
+      "diagnose.rs": 1,
+      "ir.rs": 3,
+      "lexer.rs": 2,
+      "main.rs": 2,
+      "parser.rs": 5,
+      "sema.rs": 9
+    },
+    "truncated_turns": 0,
+    "visible_scores": [
+      0.9369,
+      0.9369
+    ]
+  },
+  {
+    "active_minutes": 72.2,
+    "affordance_calls": {
+      "experiment_status": 0,
+      "reference_oracle": 0,
+      "test_visible": 9
+    },
+    "affordance_uptake": {
+      "experiment_status": "declined",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 197,
+    "bash_intents": {
+      "build": 7,
+      "inspect": 4,
+      "other": 45,
+      "self_test": 42,
+      "write_via_shell": 43
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 108,
+        "entries_total": 408,
+        "opening_request_evicted": true,
+        "tokens_before": 127055
+      },
+      {
+        "entries_evicted": 245,
+        "entries_total": 408,
+        "opening_request_evicted": true,
+        "tokens_before": 127024
+      },
+      {
+        "entries_evicted": 363,
+        "entries_total": 408,
+        "opening_request_evicted": true,
+        "tokens_before": 126997
+      }
+    ],
+    "compactions": 6,
+    "condition": "spec-architecture",
+    "elapsed_minutes": 90.0,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 2904,
+    "guard_blocks": 3,
+    "guard_reasons": {
+      "direct evaluator execution is prohibited; use the condition-controlled tools": 1,
+      "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 1,
+      "writes are restricted to /workspace": 1
+    },
+    "hangs": [
+      {
+        "command": "cd /tmp/picc-dev && cat > difffuzz.py <<'PYEOF'\nimport random, subprocess, sys\nsys.path.insert(0, '/tmp/picc-dev')\nimport oracle\n\ndef gen(seed):\n    random.seed(seed)\n    NAMES = ['a','b','c','d','x','y','n']\n    def expr(depth):\n        if depth <= 0 or random.random() < 0.35:\n            return ra",
+        "round": "round-001",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2,
+      "unexpected_reject": 8,
+      "wrong_behavior": 2
+    },
+    "hidden_final_score": 0.8634,
+    "idle_minutes": 17.8,
+    "input_tokens": 249634,
+    "kept_progress_file": true,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 9.8,
+    "median_turn_gap_seconds": 11.8,
+    "output_cap": 65536,
+    "output_tokens": 239571,
+    "per_round": [
+      {
+        "assistant_turns": 116,
+        "round": "round-000",
+        "tool_calls": 122,
+        "tools": {
+          "bash": 75,
+          "edit": 27,
+          "grep": 2,
+          "ls": 1,
+          "read": 4,
+          "test_visible": 4,
+          "write": 9
+        }
+      },
+      {
+        "assistant_turns": 81,
+        "round": "round-001",
+        "tool_calls": 81,
+        "tools": {
+          "bash": 66,
+          "edit": 5,
+          "grep": 2,
+          "read": 2,
+          "test_visible": 5,
+          "write": 1
+        }
+      }
+    ],
+    "planning_only_turns": 3,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 2,
+    "rounds": 2,
+    "run_id": "v2-spec-architecture-r2",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 9815,
+    "thinking_blocks": 197,
+    "thinking_chars": 427368,
+    "tool_calls": 203,
+    "tools": {
+      "bash": 141,
+      "edit": 32,
+      "grep": 4,
+      "ls": 1,
+      "read": 6,
+      "test_visible": 9,
+      "write": 10
+    },
+    "top_edited_files": {
+      "Cargo.toml": 1,
+      "ast.rs": 1,
+      "codegen.rs": 15,
+      "ir.rs": 5,
+      "lexer.rs": 5,
+      "main.rs": 2,
+      "parser.rs": 6,
+      "sema.rs": 4
+    },
+    "truncated_turns": 4,
+    "visible_scores": [
+      0.8361,
+      0.9413
+    ]
+  },
+  {
+    "active_minutes": 74.9,
+    "affordance_calls": {
+      "experiment_status": 1,
+      "reference_oracle": 0,
+      "test_visible": 15
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 213,
+    "bash_intents": {
+      "build": 31,
+      "inspect": 2,
+      "other": 60,
+      "self_test": 23,
+      "write_via_shell": 28
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 2,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 47,
+        "entries_total": 471,
+        "opening_request_evicted": true,
+        "tokens_before": 127161
+      },
+      {
+        "entries_evicted": 251,
+        "entries_total": 471,
+        "opening_request_evicted": true,
+        "tokens_before": 127155
+      }
+    ],
+    "compactions": 4,
+    "condition": "spec-architecture",
+    "elapsed_minutes": 90.0,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 3101,
+    "guard_blocks": 2,
+    "guard_reasons": {
+      "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 1,
+      "writes are restricted to /workspace": 1
+    },
+    "hangs": [
+      {
+        "command": "cd /workspace && python3 dev/fuzz.py 500 1000 2>&1 | tail -20",
+        "round": "round-001",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2
+    },
+    "hidden_final_score": 0.9583,
+    "idle_minutes": 15.1,
+    "input_tokens": 196485,
+    "kept_progress_file": true,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 13.8,
+    "median_turn_gap_seconds": 10.4,
+    "output_cap": 65536,
+    "output_tokens": 230957,
+    "per_round": [
+      {
+        "assistant_turns": 113,
+        "round": "round-000",
+        "tool_calls": 136,
+        "tools": {
+          "bash": 69,
+          "edit": 34,
+          "experiment_status": 1,
+          "ls": 1,
+          "read": 13,
+          "test_visible": 7,
+          "write": 11
+        }
+      },
+      {
+        "assistant_turns": 100,
+        "round": "round-001",
+        "tool_calls": 116,
+        "tools": {
+          "bash": 75,
+          "edit": 27,
+          "read": 3,
+          "test_visible": 8,
+          "write": 3
+        }
+      }
+    ],
+    "planning_only_turns": 2,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 3,
+    "rounds": 2,
+    "run_id": "v2-spec-architecture-r3",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 10206,
+    "thinking_blocks": 213,
+    "thinking_chars": 438443,
+    "tool_calls": 252,
+    "tools": {
+      "bash": 144,
+      "edit": 61,
+      "experiment_status": 1,
+      "ls": 1,
+      "read": 16,
+      "test_visible": 15,
+      "write": 14
+    },
+    "top_edited_files": {
+      "ast.rs": 5,
+      "codegen.rs": 12,
+      "fuzz.py": 8,
+      "ir.rs": 5,
+      "lexer.rs": 7,
+      "main.rs": 4,
+      "parser.rs": 10,
+      "sema.rs": 17
+    },
+    "truncated_turns": 3,
+    "visible_scores": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "active_minutes": 118.7,
+    "affordance_calls": {
+      "experiment_status": 2,
+      "reference_oracle": 0,
+      "test_visible": 16
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 247,
+    "bash_intents": {
+      "build": 9,
+      "inspect": 4,
+      "other": 40,
+      "self_test": 71,
+      "vcs": 2,
+      "write_via_shell": 12
+    },
+    "buildable_snapshots": "4/4",
+    "compaction_count": 4,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 112,
+        "entries_total": 502,
+        "opening_request_evicted": true,
+        "tokens_before": 127638
+      },
+      {
+        "entries_evicted": 237,
+        "entries_total": 502,
+        "opening_request_evicted": true,
+        "tokens_before": 127022
+      },
+      {
+        "entries_evicted": 375,
+        "entries_total": 502,
+        "opening_request_evicted": true,
+        "tokens_before": 127253
+      },
+      {
+        "entries_evicted": 451,
+        "entries_total": 502,
+        "opening_request_evicted": true,
+        "tokens_before": 122370
+      }
+    ],
+    "compactions": 8,
+    "condition": "spec-brief",
+    "elapsed_minutes": 120.0,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 2686,
+    "guard_blocks": 6,
+    "guard_reasons": {
+      "direct access to visible test files is withheld": 1,
+      "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 1,
+      "reads are restricted by this condition's test/reference access policy": 1,
+      "writes are restricted to /workspace": 3
+    },
+    "hangs": [],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2
+    },
+    "hidden_final_score": 0.9583,
+    "idle_minutes": 1.3,
+    "input_tokens": 302591,
+    "kept_progress_file": true,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 6.2,
+    "median_turn_gap_seconds": 14.5,
+    "output_cap": 65536,
+    "output_tokens": 361987,
+    "per_round": [
+      {
+        "assistant_turns": 104,
+        "round": "round-000",
+        "tool_calls": 104,
+        "tools": {
+          "bash": 67,
+          "edit": 13,
+          "experiment_status": 1,
+          "ls": 1,
+          "read": 7,
+          "test_visible": 6,
+          "write": 9
+        }
+      },
+      {
+        "assistant_turns": 88,
+        "round": "round-001",
+        "tool_calls": 86,
+        "tools": {
+          "bash": 47,
+          "edit": 12,
+          "experiment_status": 1,
+          "read": 17,
+          "test_visible": 6,
+          "write": 3
+        }
+      },
+      {
+        "assistant_turns": 47,
+        "round": "round-002",
+        "tool_calls": 45,
+        "tools": {
+          "bash": 21,
+          "edit": 6,
+          "read": 15,
+          "test_visible": 3
+        }
+      },
+      {
+        "assistant_turns": 8,
+        "round": "round-003",
+        "tool_calls": 8,
+        "tools": {
+          "bash": 3,
+          "edit": 1,
+          "read": 3,
+          "test_visible": 1
+        }
+      }
+    ],
+    "planning_only_turns": 5,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 1,
+    "rounds": 4,
+    "run_id": "v2-spec-brief-r1",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "visible_complete_after_review",
+    "text_chars": 35972,
+    "thinking_blocks": 247,
+    "thinking_chars": 909555,
+    "tool_calls": 243,
+    "tools": {
+      "bash": 138,
+      "edit": 32,
+      "experiment_status": 2,
+      "ls": 1,
+      "read": 42,
+      "test_visible": 16,
+      "write": 12
+    },
+    "top_edited_files": {
+      "Cargo.toml": 1,
+      "PROGRESS.md": 5,
+      "ast.rs": 1,
+      "codegen.rs": 11,
+      "lexer.rs": 10,
+      "main.rs": 2,
+      "parser.rs": 8,
+      "ref6.py": 3
+    },
+    "truncated_turns": 4,
+    "visible_scores": [
+      0.9548,
+      0.9548,
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "active_minutes": 89.1,
+    "affordance_calls": {
+      "experiment_status": 3,
+      "reference_oracle": 0,
+      "test_visible": 9
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 256,
+    "bash_intents": {
+      "build": 22,
+      "inspect": 1,
+      "other": 46,
+      "self_test": 37,
+      "write_via_shell": 7
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 49,
+        "entries_total": 567,
+        "opening_request_evicted": true,
+        "tokens_before": 128858
+      },
+      {
+        "entries_evicted": 226,
+        "entries_total": 567,
+        "opening_request_evicted": true,
+        "tokens_before": 127046
+      },
+      {
+        "entries_evicted": 419,
+        "entries_total": 567,
+        "opening_request_evicted": true,
+        "tokens_before": 127800
+      }
+    ],
+    "compactions": 6,
+    "condition": "spec-brief",
+    "elapsed_minutes": 90.0,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 2405,
+    "guard_blocks": 10,
+    "guard_reasons": {
+      "credential/environment inspection is prohibited": 1,
+      "direct access to visible test files is withheld": 1,
+      "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 8
+    },
+    "hangs": [],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 1,
+      "unexpected_reject": 8
+    },
+    "hidden_final_score": 0.8981,
+    "idle_minutes": 0.9,
+    "input_tokens": 282096,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 14.7,
+    "median_turn_gap_seconds": 9.0,
+    "output_cap": 65536,
+    "output_tokens": 279477,
+    "per_round": [
+      {
+        "assistant_turns": 92,
+        "round": "round-000",
+        "tool_calls": 125,
+        "tools": {
+          "bash": 58,
+          "edit": 11,
+          "experiment_status": 1,
+          "grep": 2,
+          "ls": 1,
+          "read": 6,
+          "test_visible": 4,
+          "write": 42
+        }
+      },
+      {
+        "assistant_turns": 164,
+        "round": "round-001",
+        "tool_calls": 177,
+        "tools": {
+          "bash": 55,
+          "edit": 34,
+          "experiment_status": 2,
+          "grep": 12,
+          "read": 32,
+          "test_visible": 5,
+          "write": 37
+        }
+      }
+    ],
+    "planning_only_turns": 3,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 2,
+    "rounds": 2,
+    "run_id": "v2-spec-brief-r2",
+    "score_regressions": 0,
+    "self_authored_tests": [
+      "devtests"
+    ],
+    "termination": "round_timeout",
+    "text_chars": 9755,
+    "thinking_blocks": 256,
+    "thinking_chars": 630273,
+    "tool_calls": 302,
+    "tools": {
+      "bash": 113,
+      "edit": 45,
+      "experiment_status": 3,
+      "grep": 14,
+      "ls": 1,
+      "read": 38,
+      "test_visible": 9,
+      "write": 79
+    },
+    "top_edited_files": {
+      "ast.rs": 6,
+      "codegen.rs": 18,
+      "error.rs": 2,
+      "lexer.rs": 5,
+      "parser.rs": 8,
+      "rand.py": 2,
+      "rand5.py": 7,
+      "rand7.py": 4
+    },
+    "truncated_turns": 3,
+    "visible_scores": [
+      0.931,
+      0.9429
+    ]
+  },
+  {
+    "active_minutes": 89.8,
+    "affordance_calls": {
+      "experiment_status": 0,
+      "reference_oracle": 0,
+      "test_visible": 0
+    },
+    "affordance_uptake": {
+      "experiment_status": "declined",
+      "reference_oracle": "n/a",
+      "test_visible": "declined"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 259,
+    "bash_intents": {
+      "build": 19,
+      "inspect": 3,
+      "other": 46,
+      "self_test": 116,
+      "write_via_shell": 15
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 69,
+        "entries_total": 541,
+        "opening_request_evicted": true,
+        "tokens_before": 127053
+      },
+      {
+        "entries_evicted": 236,
+        "entries_total": 541,
+        "opening_request_evicted": true,
+        "tokens_before": 127449
+      },
+      {
+        "entries_evicted": 393,
+        "entries_total": 541,
+        "opening_request_evicted": true,
+        "tokens_before": 127146
+      }
+    ],
+    "compactions": 6,
+    "condition": "spec-brief",
+    "elapsed_minutes": 90.1,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 2823,
+    "guard_blocks": 6,
+    "guard_reasons": {
+      "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 5,
+      "reads are restricted by this condition's test/reference access policy": 1
+    },
+    "hangs": [],
+    "hidden_audit_ok": false,
+    "hidden_failure_types": {
+      "unexpected_accept": 2,
+      "unexpected_reject": 9
+    },
+    "hidden_final_score": 0.877,
+    "idle_minutes": 0.3,
+    "input_tokens": 264019,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 10.4,
+    "median_turn_gap_seconds": 10.8,
+    "output_cap": 65536,
+    "output_tokens": 297752,
+    "per_round": [
+      {
+        "assistant_turns": 113,
+        "round": "round-000",
+        "tool_calls": 129,
+        "tools": {
+          "bash": 60,
+          "edit": 40,
+          "find": 1,
+          "ls": 1,
+          "read": 21,
+          "write": 6
+        }
+      },
+      {
+        "assistant_turns": 146,
+        "round": "round-001",
+        "tool_calls": 144,
+        "tools": {
+          "bash": 139,
+          "edit": 2,
+          "read": 3
+        }
+      }
+    ],
+    "planning_only_turns": 3,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 3,
+    "rounds": 2,
+    "run_id": "v2-spec-brief-r3",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 15997,
+    "thinking_blocks": 259,
+    "thinking_chars": 592921,
+    "tool_calls": 273,
+    "tools": {
+      "bash": 199,
+      "edit": 42,
+      "find": 1,
+      "ls": 1,
+      "read": 24,
+      "write": 6
+    },
+    "top_edited_files": {
+      "Cargo.toml": 1,
+      "ast.rs": 7,
+      "codegen.rs": 19,
+      "lexer.rs": 4,
+      "main.rs": 3,
+      "parser.rs": 14
+    },
+    "truncated_turns": 3,
+    "visible_scores": [
+      0.9429,
+      0.9429
+    ]
+  },
+  {
+    "active_minutes": 87.3,
+    "affordance_calls": {
+      "experiment_status": 0,
+      "reference_oracle": 0,
+      "test_visible": 0
+    },
+    "affordance_uptake": {
+      "experiment_status": "declined",
+      "reference_oracle": "n/a",
+      "test_visible": "declined"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 237,
+    "bash_intents": {
+      "build": 23,
+      "other": 112,
+      "self_test": 41,
+      "write_via_shell": 2
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 74,
+        "entries_total": 486,
+        "opening_request_evicted": true,
+        "tokens_before": 127369
+      },
+      {
+        "entries_evicted": 234,
+        "entries_total": 486,
+        "opening_request_evicted": true,
+        "tokens_before": 127050
+      },
+      {
+        "entries_evicted": 447,
+        "entries_total": 486,
+        "opening_request_evicted": true,
+        "tokens_before": 127042
+      }
+    ],
+    "compactions": 6,
+    "condition": "spec-inline",
+    "elapsed_minutes": 90.1,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 2346,
+    "guard_blocks": 2,
+    "guard_reasons": {
+      "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 1,
+      "writes are restricted to /workspace": 1
+    },
+    "hangs": [
+      {
+        "command": "cd /workspace && python3 - <<'EOF'\np = 'src/codegen.rs'\ns = open(p).read()\n\nold = \"        RExpr::Bin(_, l, r) => rdepth(l).max(rdepth(r) + 1),\"\nnew = \"        RExpr::Bin(_, l, r) => rdepth(l) + rdepth(r),\"\nassert old in s; s = s.replace(old, new)\n\nold = '''    for i in 0..f.nparams.min(6) {\n       ",
+        "round": "round-000",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 1,
+      "unexpected_reject": 8
+    },
+    "hidden_final_score": 0.8981,
+    "idle_minutes": 2.8,
+    "input_tokens": 197385,
+    "kept_progress_file": false,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 11.6,
+    "median_turn_gap_seconds": 7.5,
+    "output_cap": 65536,
+    "output_tokens": 253515,
+    "per_round": [
+      {
+        "assistant_turns": 63,
+        "round": "round-000",
+        "tool_calls": 65,
+        "tools": {
+          "bash": 43,
+          "edit": 9,
+          "grep": 1,
+          "ls": 1,
+          "read": 2,
+          "write": 9
+        }
+      },
+      {
+        "assistant_turns": 174,
+        "round": "round-001",
+        "tool_calls": 176,
+        "tools": {
+          "bash": 135,
+          "edit": 39,
+          "read": 1,
+          "write": 1
+        }
+      }
+    ],
+    "planning_only_turns": 3,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 1,
+    "rounds": 2,
+    "run_id": "v2-spec-inline-r1",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 9695,
+    "thinking_blocks": 237,
+    "thinking_chars": 501107,
+    "tool_calls": 241,
+    "tools": {
+      "bash": 178,
+      "edit": 48,
+      "grep": 1,
+      "ls": 1,
+      "read": 3,
+      "write": 10
+    },
+    "top_edited_files": {
+      "Cargo.toml": 1,
+      "ast.rs": 2,
+      "codegen.rs": 29,
+      "fuzz.py": 1,
+      "lexer.rs": 4,
+      "main.rs": 1,
+      "parser.rs": 10,
+      "semantics.rs": 10
+    },
+    "truncated_turns": 5,
+    "visible_scores": [
+      0.8697,
+      0.9548
+    ]
+  },
+  {
+    "active_minutes": 104.1,
+    "affordance_calls": {
+      "experiment_status": 2,
+      "reference_oracle": 0,
+      "test_visible": 17
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 278,
+    "bash_intents": {
+      "build": 34,
+      "inspect": 2,
+      "other": 54,
+      "self_test": 12,
+      "write_via_shell": 46
+    },
+    "buildable_snapshots": "2/3",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 77,
+        "entries_total": 569,
+        "opening_request_evicted": true,
+        "tokens_before": 127164
+      },
+      {
+        "entries_evicted": 206,
+        "entries_total": 569,
+        "opening_request_evicted": true,
+        "tokens_before": 127051
+      },
+      {
+        "entries_evicted": 382,
+        "entries_total": 569,
+        "opening_request_evicted": true,
+        "tokens_before": 127155
+      }
+    ],
+    "compactions": 6,
+    "condition": "spec-inline",
+    "elapsed_minutes": 104.4,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 3188,
+    "guard_blocks": 0,
+    "guard_reasons": {},
+    "hangs": [],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2
+    },
+    "hidden_final_score": 0.9583,
+    "idle_minutes": 0.3,
+    "input_tokens": 255728,
+    "kept_progress_file": true,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 16.2,
+    "median_turn_gap_seconds": 8.1,
+    "output_cap": 65536,
+    "output_tokens": 342956,
+    "per_round": [
+      {
+        "assistant_turns": 3,
+        "round": "round-000",
+        "tool_calls": 4,
+        "tools": {
+          "bash": 2,
+          "ls": 1,
+          "read": 1
+        }
+      },
+      {
+        "assistant_turns": 88,
+        "round": "round-001",
+        "tool_calls": 93,
+        "tools": {
+          "bash": 32,
+          "edit": 31,
+          "read": 14,
+          "test_visible": 9,
+          "write": 7
+        }
+      },
+      {
+        "assistant_turns": 187,
+        "round": "round-002",
+        "tool_calls": 184,
+        "tools": {
+          "bash": 114,
+          "edit": 35,
+          "experiment_status": 2,
+          "read": 24,
+          "test_visible": 8,
+          "write": 1
+        }
+      }
+    ],
+    "planning_only_turns": 5,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 2,
+    "rounds": 3,
+    "run_id": "v2-spec-inline-r2",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "visible_complete_after_review",
+    "text_chars": 16233,
+    "thinking_blocks": 278,
+    "thinking_chars": 779765,
+    "tool_calls": 281,
+    "tools": {
+      "bash": 148,
+      "edit": 66,
+      "experiment_status": 2,
+      "ls": 1,
+      "read": 39,
+      "test_visible": 17,
+      "write": 8
+    },
+    "top_edited_files": {
+      "Cargo.toml": 1,
+      "PROGRESS.md": 5,
+      "ast.rs": 7,
+      "codegen.rs": 20,
+      "lexer.rs": 7,
+      "main.rs": 3,
+      "parser.rs": 10,
+      "preproc.rs": 20
+    },
+    "truncated_turns": 6,
+    "visible_scores": [
+      0.0,
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "active_minutes": 88.4,
+    "affordance_calls": {
+      "experiment_status": 3,
+      "reference_oracle": 0,
+      "test_visible": 24
+    },
+    "affordance_uptake": {
+      "experiment_status": "used",
+      "reference_oracle": "n/a",
+      "test_visible": "used"
+    },
+    "affordances_offered": {
+      "experiment_status": true,
+      "reference_oracle": false,
+      "test_visible": true
+    },
+    "assistant_turns": 264,
+    "bash_intents": {
+      "build": 20,
+      "inspect": 4,
+      "other": 77,
+      "self_test": 54,
+      "write_via_shell": 8
+    },
+    "buildable_snapshots": "2/2",
+    "compaction_count": 3,
+    "compaction_evictions": [
+      {
+        "entries_evicted": 78,
+        "entries_total": 559,
+        "opening_request_evicted": true,
+        "tokens_before": 126993
+      },
+      {
+        "entries_evicted": 253,
+        "entries_total": 559,
+        "opening_request_evicted": true,
+        "tokens_before": 127111
+      },
+      {
+        "entries_evicted": 434,
+        "entries_total": 559,
+        "opening_request_evicted": true,
+        "tokens_before": 127139
+      }
+    ],
+    "compactions": 6,
+    "condition": "spec-inline",
+    "elapsed_minutes": 90.1,
+    "errored_turns": 0,
+    "factor": "specification",
+    "final_loc": 3009,
+    "guard_blocks": 1,
+    "guard_reasons": {
+      "writes are restricted to /workspace": 1
+    },
+    "hangs": [
+      {
+        "command": "cd /tmp && python3 - <<'EOF'\nsrc = open('fuzz_loops.py').read()\nsrc = src.replace(\"\"\"def call_function(name, args, prog, env, steps):\n    fn = prog['funcs'][name]\n    cenv = {}\n    for i, p in enumerate(fn['params']):\n        cenv[p] = args[i]\n    cenv.update({k: v for k, v in env.items() if k.start",
+        "round": "round-001",
+        "tool": "bash"
+      }
+    ],
+    "hidden_audit_ok": true,
+    "hidden_failure_types": {
+      "unexpected_accept": 2
+    },
+    "hidden_final_score": 0.9583,
+    "idle_minutes": 1.7,
+    "input_tokens": 231764,
+    "kept_progress_file": true,
+    "max_stage": 6,
+    "max_turn_gap_minutes": 8.7,
+    "median_turn_gap_seconds": 8.8,
+    "output_cap": 65536,
+    "output_tokens": 284865,
+    "per_round": [
+      {
+        "assistant_turns": 105,
+        "round": "round-000",
+        "tool_calls": 123,
+        "tools": {
+          "bash": 59,
+          "edit": 34,
+          "experiment_status": 1,
+          "ls": 2,
+          "read": 8,
+          "test_visible": 2,
+          "write": 17
+        }
+      },
+      {
+        "assistant_turns": 159,
+        "round": "round-001",
+        "tool_calls": 164,
+        "tools": {
+          "bash": 104,
+          "edit": 25,
+          "experiment_status": 2,
+          "read": 7,
+          "test_visible": 22,
+          "write": 4
+        }
+      }
+    ],
+    "planning_only_turns": 3,
+    "profile": "pilot",
+    "provider_retries": 0,
+    "replicate": 3,
+    "rounds": 2,
+    "run_id": "v2-spec-inline-r3",
+    "score_regressions": 0,
+    "self_authored_tests": [],
+    "termination": "round_timeout",
+    "text_chars": 10979,
+    "thinking_blocks": 264,
+    "thinking_chars": 573758,
+    "tool_calls": 287,
+    "tools": {
+      "bash": 163,
+      "edit": 59,
+      "experiment_status": 3,
+      "ls": 2,
+      "read": 15,
+      "test_visible": 24,
+      "write": 21
+    },
+    "top_edited_files": {
+      "ast.rs": 5,
+      "codegen.rs": 15,
+      "compiler.rs": 27,
+      "lexer.rs": 9,
+      "main.rs": 6,
+      "preproc.rs": 4,
+      "run.sh": 2,
+      "stub.s": 8
+    },
+    "truncated_turns": 3,
+    "visible_scores": [
+      0.9429,
+      1.0
+    ]
   }
 ]

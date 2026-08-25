@@ -72,7 +72,7 @@ e0987408bb0f6c1db0db7effd50c70fcf505f93dd3fb1b25d8fcc75ec84815c0  ./studies/asse
 0da74c7b80659743a8a90bb576c83ca6fd91fe3b5d51330d785283c2ca8da7fc  ./studies/assets/specs/architecture.md
 25c98cf20801d3a128f5c8da11e0710d62d58cf801187ab77c0d6f100343ac7d  ./studies/assets/specs/behavioral.md
 4684eff7296e464359579e6006bb9a18b8f4b041fe12159af00ae7173134bdb0  ./studies/assets/specs/brief.md
-9d54eb2bd405277d41b3aa13a3dacdc553723d301d3b61cf796d9a8b55153c59  ./studies/runtime/evaluate.py
+acc5f99c05b3fffffeda5659f8f34d13b0fbc6e9d4ae7778e7d8123da4c890f4  ./studies/runtime/evaluate.py
 d24b8c05fa818814f130c640a52caf8ad03432e568ea9e946bab43b9d70fee7b  ./studies/runtime/experiment-guard.ts.in
 cff724431afa0e07748503adb7cb10d2e15c8419cc8f1289f8d86fc3a7337031  ./studies/runtime/experiment-tools.ts.in
 4942aae4c48c9494930dd865a4f953ee0f43284a361f6404f55541e94f32fa6e  ./studies/runtime/study-setup.ts.in
