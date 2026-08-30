@@ -72,7 +72,7 @@ e0987408bb0f6c1db0db7effd50c70fcf505f93dd3fb1b25d8fcc75ec84815c0  ./studies/asse
 0da74c7b80659743a8a90bb576c83ca6fd91fe3b5d51330d785283c2ca8da7fc  ./studies/assets/specs/architecture.md
 25c98cf20801d3a128f5c8da11e0710d62d58cf801187ab77c0d6f100343ac7d  ./studies/assets/specs/behavioral.md
 4684eff7296e464359579e6006bb9a18b8f4b041fe12159af00ae7173134bdb0  ./studies/assets/specs/brief.md
-acc5f99c05b3fffffeda5659f8f34d13b0fbc6e9d4ae7778e7d8123da4c890f4  ./studies/runtime/evaluate.py
+112f248b0720bbe923d0bc490ae4c2f6cd0bd8729ba085f47ae9a6a42f16bf6d  ./studies/runtime/evaluate.py
 d24b8c05fa818814f130c640a52caf8ad03432e568ea9e946bab43b9d70fee7b  ./studies/runtime/experiment-guard.ts.in
 cff724431afa0e07748503adb7cb10d2e15c8419cc8f1289f8d86fc3a7337031  ./studies/runtime/experiment-tools.ts.in
 4942aae4c48c9494930dd865a4f953ee0f43284a361f6404f55541e94f32fa6e  ./studies/runtime/study-setup.ts.in
@@ -81,7 +81,7 @@ cff724431afa0e07748503adb7cb10d2e15c8419cc8f1289f8d86fc3a7337031  ./studies/runt
 b7ac610391817de7ab03bc4770cf741ff67138213e0e90e7c8cd8fcd0fddaa6b  ./tests/test_local_provider.py
 4cca081726fa59706e420502257184bd6e092f82db10d993f9a3eb38126992cc  ./tests/test_run_resume.py
 0a9cf31ff511d1c88c1113624fd9cf4732150059dedbd2ed82ffa98c38386057  ./tests/test_snapshot_evaluation.py
-bd46caca9a6d597ffe053e2481ce37244a2167954d1e6075f6d01a205bad0c99  ./tests/test_study.py
+4b25619e947a9d36e18f6026974253cf6a193b7d6c6705bb365445274ccec242  ./tests/test_study.py
 54d26f6a3bbf818a41c3075c9e062f615654825478cd9dd88be80f6c0a2ec673  ./tests/test_study_artifact_safety.py
 5a6b31bbd1f660b7286d1ca46d2dcf824c0fa71c859e443fccff78c03b3391d2  ./tests/test_study_candidate_audit.py
 83f440eef013c989fdc2ebb854d1a5c6099d97831037191a558eab950bc8713b  ./tests/test_study_evaluator.py

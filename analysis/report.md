@@ -207,6 +207,52 @@ stops. `spec-brief` got four rounds in one replicate and two in the next.
 Results in §1 use the corrected conditions. Earlier runs are not comparable to
 them.
 
+### 3.5 The corpus verifies semantics through a single byte
+
+Raised in review and confirmed. For valid programs the evaluator is genuine
+differential testing against GCC — it compares exit status, stdout and stderr —
+but **224 of the 227 valid tests produce no stdout**. They are
+`int main(void) { …; return <int>; }`, so the only compared observable is the
+process exit status: one byte. `chapter_2/valid/negate_int_max.c` returns
+-2147483647, which masks to exit status 1; the test nominally covers negating
+`INT_MAX` and actually checks "did it exit 1". Only 11 distinct literal return
+values appear across the whole valid set.
+
+The invalid class was weaker still: it checked nonzero exit and no output file,
+so a compiler rejecting for entirely the wrong reason scored identically to one
+diagnosing correctly, and a compiler rejecting *everything* passed the class
+outright. It now also requires a non-empty diagnostic (`silent_rejection`).
+
+The corpus is thin here partly by construction: the split excludes `libraries`
+and `helper_libs`, which are exactly the multi-file tests that check
+cross-translation-unit behaviour and ABI argument passing against real values.
+
+`analysis/fuzz_differential.py` implements the standard remedy — Csmith-style
+random generation with differential testing against GCC (Yang et al., PLDI 2011),
+undefined behaviour excluded at generation time, and generation policies in the
+spirit of YARPGen (OOPSLA 2020). Programs are generated and evaluated
+simultaneously under 32-bit semantics, so the tool's own computed value acts as a
+second oracle checked against GCC before the candidate is consulted; a generator
+error is reported as a skip rather than blamed on the compiler. Where the subset
+permits calls, `--stdout-checksum` emits the result through `putchar` to recover
+a wide observable; below that, resolution comes from volume.
+
+It discriminates, and it finds what the corpus cannot:
+
+| Candidate | Corpus hidden | Fuzz result |
+|---|---:|---|
+| `v2-baseline-r1` | 0.9583 | 0 mismatches in 3,600 programs |
+| `v2-spec-architecture-r2` | 0.8634 | 21/300 miscompilations at stage 6; **600/600 link failures at stage 10** |
+
+The stage-10 failure is a single concrete bug: that compiler emits file-scope
+objects as bare `g0` lines instead of `g0:` labels, so the assembler rejects them
+as unknown instructions. Every run in this study used stages 1–6, so no scoring
+in the entire project could have detected it.
+
+Read the other way, the exercise also *confirms* a corpus verdict: the compiler
+the corpus called complete survived 3,600 randomly generated programs without a
+single disagreement. The corpus is low-resolution, not wrong.
+
 ---
 
 ## 4. Secondary observations
@@ -246,6 +292,10 @@ generation.
 - **One model, one task.** A single local 27B checkpoint on a compiler task with an
   unusually crisp oracle. Conclusions about specification strategy may travel
   poorly to work with fuzzy requirements.
+- **Scores here predate the semantic-verification work (§3.5).** They measure
+  agreement with GCC's exit byte on 59 programs. The reported ceiling is partly
+  the measure's, not the task's — a one-byte oracle saturates sooner than the
+  underlying problem does.
 - **The server is not archived.** Client configuration is frozen; `llama-server`'s
   own behavior during runs is not captured.
 
@@ -253,17 +303,22 @@ generation.
 
 ## 6. What follows
 
-1. **Raise the difficulty.** Stages 1–10 (main profile), or a tighter budget, so
+1. **Fold differential fuzzing into scoring.** `analysis/fuzz_differential.py`
+   already discriminates between candidates the corpus rates similarly, and it
+   reaches stages the corpus never ran. Making it a scored component replaces a
+   1-byte, 59-sample oracle with an unbounded one and directly addresses the
+   ceiling.
+2. **Raise the difficulty.** Stages 1–10 (main profile), or a tighter budget, so
    conditions have headroom to differ in. Ranking is impossible against a ceiling.
-2. **Test tool uptake directly.** It is the largest signal observed and the most
+3. **Test tool uptake directly.** It is the largest signal observed and the most
    actionable if it holds.
-3. **Tell the agent which paths persist**, and record where it scaffolds. Cheap to
+4. **Tell the agent which paths persist**, and record where it scaffolds. Cheap to
    do, removes a confound, and is itself a finding about agent usage.
-4. **Capture tool-call durations.** No timing exists on tool events, so "where did
+5. **Capture tool-call durations.** No timing exists on tool events, so "where did
    the time go" is unanswerable and the data is unrecoverable after the fact.
-5. **Report audit-pass separately from quality** in all analyses, and treat every
+6. **Report audit-pass separately from quality** in all analyses, and treat every
    audit pattern as a hypothesis until a human has read the match.
-6. **Reconsider end-state scoring.** A run is scored on its final snapshot, so
+7. **Reconsider end-state scoring.** A run is scored on its final snapshot, so
    being killed mid-refactor reads as total failure.
 
 ---

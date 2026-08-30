@@ -271,6 +271,7 @@ if len(args) != 3 or args[1] != '-o':
 source = pathlib.Path(args[0]).read_text()
 match = re.fullmatch(r'\\s*int\\s+main\\(void\\)\\s*\\{\\s*return\\s+(\\d+)\\s*;\\s*\\}\\s*', source)
 if not match:
+    print('error: unsupported construct', file=sys.stderr)
     raise SystemExit(1)
 value = int(match.group(1))
 pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\n  ret\\n')

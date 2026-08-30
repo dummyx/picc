@@ -728,6 +728,12 @@ def evaluate_invalid(
             passed, failure = False, "unexpected_accept"
         elif has_output:
             passed, failure = False, "invalid_output_created"
+        elif not result.stderr.strip():
+            # Rejecting without saying why is not a correct rejection: a
+            # compiler that exits nonzero on everything would otherwise score
+            # full marks on this class. The diagnostic is the evidence that the
+            # program was actually analysed.
+            passed, failure = False, "silent_rejection"
         else:
             passed, failure = True, None
         return TestResult(
