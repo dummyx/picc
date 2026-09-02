@@ -49,6 +49,12 @@ from common import (
 
 METADATA_SCHEMA_VERSION = 2
 RESUMABLE_TERMINATION_REASONS = frozenset({"pi_process_failure", "round_timeout"})
+# Ceiling for one in-run visible evaluation. A candidate that hangs its
+# per-test compile timeout on many stage-1-10 visible tests can exceed any
+# fixed cap; that is a property of the snapshot, not a harness failure, so
+# reaching the ceiling records an unevaluatable round instead of aborting
+# the run. Post-hoc evaluation has its own, larger ceiling.
+VISIBLE_EVAL_TIMEOUT_SECONDS = 3600
 
 
 
@@ -298,7 +304,8 @@ def _run_visible_evaluation_in_workspace(
 ) -> dict[str, Any]:
     output_host = artifacts / "evaluations" / f"visible-round-{round_number:03d}.json"
     output_host.parent.mkdir(parents=True, exist_ok=True)
-    command = base_container_args(config)
+    container_name = f"picc-veval-{os.getpid()}-{round_number:03d}"
+    command = base_container_args(config, name=container_name)
     command += docker_mount(workspace, "/workspace")
     command += docker_mount(visible_tests, "/tests", readonly=True)
     command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
@@ -323,9 +330,38 @@ def _run_visible_evaluation_in_workspace(
         f"/run-artifacts/evaluations/{output_host.name}",
         "--summary-json",
     ]
-    result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=3600)
-    (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stdout.log").write_text(result.stdout, encoding="utf-8")
-    (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stderr.log").write_text(result.stderr, encoding="utf-8")
+    def captured(value: Any) -> str:
+        return value if isinstance(value, str) else (value or b"").decode("utf-8", errors="replace")
+
+    try:
+        result = subprocess.run(
+            command, check=False, capture_output=True, text=True, timeout=VISIBLE_EVAL_TIMEOUT_SECONDS
+        )
+        stdout_text, stderr_text = result.stdout, result.stderr
+    except subprocess.TimeoutExpired as error:
+        # subprocess.run kills only the docker client; stop the container too.
+        subprocess.run(["docker", "kill", container_name], check=False, capture_output=True, text=True)
+        note = (
+            f"visible evaluation exceeded {VISIBLE_EVAL_TIMEOUT_SECONDS}s and was killed; "
+            "the snapshot is recorded as unevaluatable for this round"
+        )
+        (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stdout.log").write_text(
+            captured(error.stdout), encoding="utf-8"
+        )
+        (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stderr.log").write_text(
+            note + "\n" + captured(error.stderr), encoding="utf-8"
+        )
+        return {
+            "score": 0.0,
+            "micro_score": 0.0,
+            "passed": 0,
+            "failed": 0,
+            "total": 0,
+            "build_ok": False,
+            "error": note,
+        }
+    (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stdout.log").write_text(stdout_text, encoding="utf-8")
+    (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stderr.log").write_text(stderr_text, encoding="utf-8")
     if result.returncode != 0 or not output_host.exists():
         return {
             "score": 0.0,

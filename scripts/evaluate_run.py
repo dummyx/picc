@@ -27,6 +27,13 @@ from common import (
 )
 
 
+# Ceiling for one post-hoc snapshot evaluation. Large enough for a full
+# hidden or visible pass even when the candidate hangs its per-test timeouts
+# on most inputs; reaching it records that snapshot as unevaluatable instead
+# of aborting the remaining snapshots.
+SNAPSHOT_EVAL_TIMEOUT_SECONDS = 7200
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-id", required=True)
@@ -87,7 +94,9 @@ def evaluate_snapshot(
     max_stage: int,
 ) -> tuple[int, str, str, Path]:
     output_path = artifacts / "evaluations" / output_name
+    container_name = f"picc-peval-{os.getpid()}-{output_name.removesuffix('.json')}"
     command = container_base(config)
+    command += ["--name", container_name]
     command += docker_mount(workspace, "/workspace")
     command += docker_mount(tests, "/tests", readonly=True)
     command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
@@ -112,7 +121,19 @@ def evaluate_snapshot(
         f"/run-artifacts/evaluations/{output_name}",
         "--summary-json",
     ]
-    result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=7200)
+    def captured(value: Any) -> str:
+        return value if isinstance(value, str) else (value or b"").decode("utf-8", errors="replace")
+
+    try:
+        result = subprocess.run(
+            command, check=False, capture_output=True, text=True, timeout=SNAPSHOT_EVAL_TIMEOUT_SECONDS
+        )
+    except subprocess.TimeoutExpired as error:
+        # subprocess.run kills only the docker client; stop the container too,
+        # then report a failed evaluation so remaining snapshots still run.
+        subprocess.run(["docker", "kill", container_name], check=False, capture_output=True, text=True)
+        note = f"snapshot evaluation exceeded {SNAPSHOT_EVAL_TIMEOUT_SECONDS}s and was killed"
+        return 124, captured(error.stdout), note + "\n" + captured(error.stderr), output_path
     return result.returncode, result.stdout, result.stderr, output_path
 
 

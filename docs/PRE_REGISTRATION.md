@@ -135,3 +135,30 @@ limits.
 - Disclose public-test contamination and the unarchivable local server.
 - Post-hoc differential fuzzing (`analysis/fuzz_differential.py`) of final
   snapshots is descriptive follow-up, not part of the frozen primary score.
+
+## Amendments
+
+### 2026-09-02 — harness defect before any completed run; cohort restarted
+
+Slot 1 (`v3-tests-none-r1`, launched 2026-09-01T07:20Z) aborted with
+`harness_exception` during its round-000 visible evaluation: the in-run
+evaluator subprocess had a fixed, uncaught 3600 s ceiling, and a candidate
+that hangs the evaluator's 30 s per-test compile timeout on many of the 227
+stage-1–10 visible tests legitimately needs longer (the killed evaluation
+had processed ~73 tests in its hour). The stages-1–6 cohorts could not
+trigger this. This is exclusion rule 3 (confirmed harness implementation
+defect); the aborted run and its materialization are retained under
+`runs/.quarantine-v3/` and excluded from all analyses.
+
+Fix, applied before any completed run: the visible-evaluation timeout is now
+caught — the evaluator container (now named) is killed and the round is
+recorded as unevaluatable (score 0.0 with an explicit error) instead of
+aborting the run — and the post-hoc snapshot evaluator gets the same
+containment at its 7200 s ceiling, so a timed-out snapshot no longer aborts
+the remaining snapshots. No budgets, prompts, partitions, per-test timeouts,
+or scoring semantics changed. All six pre-registered slots restart from
+scratch under the amended freeze commit so every run in the cohort executes
+the identical harness. Disclosure: a snapshot whose visible evaluation
+exceeds one hour reads as visible 0.0 in trajectory telemetry; the hidden
+primary endpoint is evaluated post hoc under the larger ceiling and is
+unaffected.
