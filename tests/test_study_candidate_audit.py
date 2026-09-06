@@ -85,6 +85,8 @@ class NodeCandidateAuditTests(unittest.TestCase):
     TS_ADAPTER = {
         "source_extensions": [".ts", ".mts", ".cts"],
         "audit": {
+            "roots": ["src"],
+            "entry": "src/picc.ts",
             "node_builtins_only": True,
             "allowed_node_modules": [],
             "exclude_paths": ["dist"],
@@ -93,6 +95,8 @@ class NodeCandidateAuditTests(unittest.TestCase):
     JS_ADAPTER = {
         "source_extensions": [".js", ".mjs", ".cjs"],
         "audit": {
+            "roots": ["src"],
+            "entry": "src/picc.js",
             "node_builtins_only": True,
             "allowed_node_modules": [],
             "exclude_paths": [],
@@ -230,6 +234,46 @@ class NodeCandidateAuditTests(unittest.TestCase):
             }
         )
         self.assertTrue(evaluator.source_audit(typed, self.TS_ADAPTER)["passed"])
+
+    def test_test_drivers_outside_the_source_roots_are_not_the_compiler(self) -> None:
+        # The v4 first-run case: a fuzz driver in .scratch/ spawns the candidate.
+        root = self.workspace(
+            {
+                "src/picc.js": 'const { lex } = require("./lexer");\nprocess.exitCode = lex() ? 0 : 1;\n',
+                "src/lexer.js": "module.exports = { lex: () => true };\n",
+                ".scratch/fuzz2.js": 'const { execFileSync } = require("child_process");\nexecFileSync("node", ["src/picc.js"]);\n',
+                "dev/runone.js": 'require("node:child_process").spawnSync("as");\n',
+            }
+        )
+        audit = evaluator.source_audit(root, self.JS_ADAPTER)
+        self.assertTrue(audit["passed"], audit["findings"])
+        self.assertEqual(audit["source_files_scanned"], 2)
+
+    def test_import_closure_still_reaches_modules_outside_the_roots(self) -> None:
+        root = self.workspace(
+            {
+                "src/picc.js": 'const helper = require("../lib/helper");\nhelper.run();\n',
+                "lib/helper.js": 'const cp = require("child_process");\nmodule.exports = { run: () => cp.execSync("gcc") };\n',
+            }
+        )
+        audit = evaluator.source_audit(root, self.JS_ADAPTER)
+        self.assertTrue(audit["blocking"], audit["findings"])
+        self.assertIn("lib/helper.js", {row.get("path") for row in audit["blocking_findings"]})
+        self.assertEqual(audit["source_files_scanned"], 2)
+
+        typed = self.workspace(
+            {
+                "src/picc.ts": 'import { lex } from "./lexer";\nimport * as util from "../tools/util";\nlex(); util.x;\n',
+                "src/lexer.ts": "export function lex(): void {}\n",
+                "tools/util.ts": 'import { spawn } from "node:child_process";\nexport const x = spawn;\n',
+                "tools/bench.ts": 'import "node:child_process";\n',
+            }
+        )
+        audit = evaluator.source_audit(typed, self.TS_ADAPTER)
+        self.assertTrue(audit["blocking"])
+        paths = {row.get("path") for row in audit["blocking_findings"]}
+        self.assertIn("tools/util.ts", paths)
+        self.assertNotIn("tools/bench.ts", paths)
 
     def test_comments_cannot_trigger_blocking_findings(self) -> None:
         root = self.workspace(

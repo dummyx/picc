@@ -240,4 +240,45 @@ and are part of the frozen commit.
 
 ## Amendments
 
-(none yet)
+### 2026-09-06 — audit scope defect found on the first JavaScript run; cohort restarted
+
+Slot 2 (`v4-js-untyped-r1`, launched 18:25 UTC) had its round-0 snapshot
+scored 0.0 by a **blocking** source-audit finding: the agent had written a
+fuzz-test driver, `.scratch/fuzz2.js`, that spawns its own compiler through
+`child_process`. The compiler itself (`src/picc.js` and its imports) was
+clean. The frozen audit scanned every file of the adapter's source
+extensions anywhere in the workspace, so an agent-authored test driver was
+treated as the "submitted compiler" that the specification forbids from
+spawning subprocesses. Slot 1 (`v4-ts-strict-r1`) had completed under the
+same harness (hidden 0.7587, advisory `process.env` finding only).
+
+Why this is a harness defect under exclusion rule 3 rather than an outcome:
+the rule interacts with the treatment asymmetrically. A JavaScript agent's
+natural self-test tooling is JavaScript, which the untyped adapter scans; a
+TypeScript agent's quick helpers are bash or `.js` files, which the typed
+adapter does not scan. A run that ends with such a driver present scores 0
+on the primary endpoint by artifact, which would invert the typed-vs-untyped
+contrast for reasons unrelated to typing (the v2 cohort's audit-gate failure
+mode). The v3 Rust runs never triggered the equivalent Rust rule because
+those agents self-tested through bash.
+
+Fix, applied before any further run and frozen in this commit: the Node
+adapters declare `audit.roots = ["src"]` and `audit.entry` (`src/picc.js` /
+`src/picc.ts`); the evaluator's per-file scan (prohibited/non-built-in
+imports, blocking and advisory text patterns) covers the roots plus the
+entry module's relative import closure, so a module the compiler actually
+imports from outside `src/` is still audited, while test drivers elsewhere
+are not. Workspace-wide checks (symlinks, binary artifacts, `package.json`
+dependencies, vendored `node_modules`) are unchanged, as are the Rust and
+Python adapters. Re-auditing the two affected workspaces and both pilots
+with the fixed rule: the stopped JavaScript workspace passes (4 files scanned, all under
+`src/`), the others are unchanged. No budgets,
+prompts, partitions, per-test timeouts, or scoring semantics changed.
+
+Disposition: both runs executed so far (`v4-ts-strict-r1`, complete;
+`v4-js-untyped-r1`, stopped during round 1 at 19:13 UTC) and their
+materializations are retained under `runs/.quarantine-v4/` and excluded from
+all analyses; all six pre-registered slots restart from scratch, in the same
+order, under the amended freeze commit so every run in the cohort executes
+the identical harness. Cost: about 3.5 hours of runs redone. Observations
+from the quarantined runs are not used for any decision beyond this fix.

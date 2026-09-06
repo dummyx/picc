@@ -186,6 +186,11 @@ NODE_ADVISORY_PATTERNS: list[tuple[re.Pattern[str], str]] = [
 # self-testing, and those files are ignored by the workspace .gitignore anyway.
 BINARY_ARTIFACT_EXTENSIONS = {".wasm", ".node", ".so", ".dylib", ".dll"}
 JS_COMMENT_PATTERN = re.compile(r"//[^\n]*|/\*[\s\S]*?\*/")
+# Resolution order for a relative Node/TypeScript import specifier.
+NODE_LOCAL_IMPORT_SUFFIXES = (
+    "", ".js", ".cjs", ".mjs", ".ts", ".mts", ".cts",
+    "/index.js", "/index.cjs", "/index.mjs", "/index.ts",
+)
 
 
 @dataclass
@@ -525,6 +530,47 @@ def node_import_specifiers(text: str) -> list[str]:
     return specifiers
 
 
+def node_import_closure(workspace: Path, entry: Path, prefixes: Sequence[tuple[str, ...]]) -> list[Path]:
+    """Source files reachable from the entry through relative require/import specifiers.
+
+    The audit's file scan is scoped to the adapter's declared source roots so
+    that agent-authored test drivers elsewhere in the workspace (which
+    legitimately spawn the candidate) are not mistaken for the compiler. The
+    closure closes the obvious hole: a module outside the roots that the
+    compiler itself imports is still scanned. Dynamic `require(variable)` is
+    not resolvable statically and remains a documented limitation.
+    """
+    closure: list[Path] = []
+    seen: set[Path] = set()
+    queue = [entry]
+    while queue:
+        path = queue.pop()
+        if path.is_symlink() or not path.is_file():
+            continue
+        resolved = path.resolve()
+        if resolved in seen:
+            continue
+        try:
+            relative = resolved.relative_to(workspace)
+        except ValueError:
+            continue
+        if is_excluded(relative, prefixes) or resolved.suffix not in NODE_SOURCE_EXTENSIONS:
+            continue
+        seen.add(resolved)
+        closure.append(resolved)
+        text = strip_js_comments(resolved.read_text(encoding="utf-8", errors="replace"))
+        for specifier in node_import_specifiers(text):
+            if not specifier.startswith("."):
+                continue
+            base = resolved.parent / specifier
+            for suffix in NODE_LOCAL_IMPORT_SUFFIXES:
+                candidate = Path(str(base) + suffix)
+                if candidate.is_file() and not candidate.is_symlink():
+                    queue.append(candidate)
+                    break
+    return closure
+
+
 def audit_node(workspace: Path, files: list[Path], policy: dict[str, Any], findings: list[dict[str, Any]]) -> None:
     builtins_only = bool(policy.get("node_builtins_only", False))
     allowed = {str(item) for item in policy.get("allowed_node_modules", [])}
@@ -656,6 +702,13 @@ def source_audit(workspace: Path, adapter: dict[str, Any]) -> dict[str, Any]:
     roots = policy.get("roots") if isinstance(policy.get("roots"), list) else None
     prefixes = excluded_prefixes(policy)
     files = list(iter_source_files(workspace, extensions, roots, prefixes))
+    entry = policy.get("entry")
+    if isinstance(entry, str) and entry and extensions & NODE_SOURCE_EXTENSIONS:
+        known = {path.resolve() for path in files}
+        for path in node_import_closure(workspace, workspace / entry, prefixes):
+            if path not in known:
+                files.append(path)
+                known.add(path)
     audit_symlinks(workspace, findings)
     audit_binary_artifacts(workspace, prefixes, findings)
     audit_cargo(workspace, policy, findings)

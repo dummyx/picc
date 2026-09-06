@@ -198,6 +198,18 @@ def validate_adapter(path: Path, condition_id: str) -> dict[str, Any]:
     audit = adapter.get("audit", {})
     if not isinstance(audit, dict):
         raise StudyError(f"{condition_id}: adapter audit must be an object")
+    for key in ("roots",):
+        values = audit.get(key, [])
+        if not isinstance(values, list) or not all(
+            isinstance(item, str) and item and not item.startswith("/") and ".." not in Path(item).parts
+            for item in values
+        ):
+            raise StudyError(f"{condition_id}: adapter audit.{key} must be relative paths without '..'")
+    entry = audit.get("entry")
+    if entry is not None and (
+        not isinstance(entry, str) or not entry or entry.startswith("/") or ".." in Path(entry).parts
+    ):
+        raise StudyError(f"{condition_id}: adapter audit.entry must be a relative path without '..'")
     excluded = audit.get("exclude_paths", [])
     if not isinstance(excluded, list) or not all(
         isinstance(item, str) and item and not item.startswith("/") and ".." not in Path(item).parts

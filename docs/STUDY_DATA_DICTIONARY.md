@@ -67,8 +67,14 @@ one-factor condition because they change compute or tooling.
 - `source_extensions` used for artifact measurement/audit;
 - audit allowlists/patterns; source audit covers Rust, Python, and
   JavaScript/TypeScript files, including test paths, and rejects symlinks.
-  `audit.exclude_paths` names build-output directories (for example `dist`)
-  that no audit walk inspects; `audit.node_builtins_only` and
+  `audit.roots` restricts the per-file scan to the compiler's own source
+  tree (the Node adapters use `src`), and `audit.entry` names the entry
+  module whose relative import closure is scanned even when it leaves the
+  roots, so agent-authored test drivers elsewhere in the workspace are not
+  mistaken for the compiler while a module the compiler actually imports
+  cannot escape the scan; `audit.exclude_paths` names build-output
+  directories (for example `dist`) that no audit walk inspects;
+  `audit.node_builtins_only` and
   `audit.allowed_node_modules` bound Node imports the way
   `python_stdlib_only`/`allowed_python_modules` bound Python imports;
 - `agent_notes`: adapter-specific layout or typing rules appended to the

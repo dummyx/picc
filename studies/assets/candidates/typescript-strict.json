@@ -44,6 +44,10 @@
     ".cts"
   ],
   "audit": {
+    "roots": [
+      "src"
+    ],
+    "entry": "src/picc.ts",
     "node_builtins_only": true,
     "allowed_node_modules": [],
     "exclude_paths": [
