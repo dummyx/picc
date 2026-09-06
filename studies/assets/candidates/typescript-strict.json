@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "language": "typescript",
+  "framework": "strict-static-typing",
+  "dependency_policy": "Node.js 24 built-in modules only; no npm packages, no node_modules, no package.json dependencies",
+  "build": {
+    "command": [
+      "tsc",
+      "--strict",
+      "--noEmitOnError",
+      "--target",
+      "es2022",
+      "--lib",
+      "es2022",
+      "--module",
+      "commonjs",
+      "--esModuleInterop",
+      "--skipLibCheck",
+      "--types",
+      "node",
+      "--typeRoots",
+      "/usr/local/lib/node_modules/@types",
+      "--rootDir",
+      "src",
+      "--outDir",
+      "dist",
+      "src/picc.ts"
+    ],
+    "artifact": "dist/picc.js",
+    "timeout_seconds": 300
+  },
+  "run": {
+    "command": [
+      "node",
+      "{artifact}",
+      "{input}",
+      "-o",
+      "{output}"
+    ]
+  },
+  "source_extensions": [
+    ".ts",
+    ".mts",
+    ".cts"
+  ],
+  "audit": {
+    "node_builtins_only": true,
+    "allowed_node_modules": [],
+    "exclude_paths": [
+      "dist"
+    ]
+  },
+  "agent_policy": {
+    "blocked_bash_patterns": []
+  },
+  "agent_notes": "Keep every TypeScript source file under `src/` with the entry module `src/picc.ts`; the fixed build command compiles that tree into `dist/` and fails on any type error under `--strict`, so a snapshot that does not type-check has no compiler. Write explicit type annotations for function signatures and data structures (for example interfaces or type aliases for tokens, AST nodes, and IR), prefer precise types over `any`, and never suppress the checker with `// @ts-nocheck`, `// @ts-ignore`, or `// @ts-expect-error`. The emitted code is CommonJS; do not add a `package.json`.",
+  "spec_variables": {
+    "LANGUAGE": "TypeScript",
+    "FRAMEWORK": "strict static typing (Node.js 24, `tsc --strict` must pass)",
+    "DEPENDENCY_POLICY": "Node.js 24 built-in modules only; do not add package.json dependencies, node_modules, or install packages",
+    "BUILD_COMMAND": "tsc --strict --noEmitOnError --target es2022 --lib es2022 --module commonjs --esModuleInterop --skipLibCheck --types node --typeRoots /usr/local/lib/node_modules/@types --rootDir src --outDir dist src/picc.ts",
+    "ENTRY_COMMAND": "node dist/picc.js INPUT.c -o OUTPUT.s"
+  }
+}

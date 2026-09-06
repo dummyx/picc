@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "language": "javascript",
+  "framework": "dynamic-typing",
+  "dependency_policy": "Node.js 24 built-in modules only; no npm packages, no node_modules, no package.json dependencies",
+  "build": {
+    "command": [
+      "node",
+      "--check",
+      "src/picc.js"
+    ],
+    "artifact": "src/picc.js",
+    "timeout_seconds": 300
+  },
+  "run": {
+    "command": [
+      "node",
+      "{artifact}",
+      "{input}",
+      "-o",
+      "{output}"
+    ]
+  },
+  "source_extensions": [
+    ".js",
+    ".mjs",
+    ".cjs"
+  ],
+  "audit": {
+    "node_builtins_only": true,
+    "allowed_node_modules": [],
+    "exclude_paths": []
+  },
+  "agent_policy": {
+    "blocked_bash_patterns": [
+      {
+        "pattern": "(^|[;&|]\\s*)(?:\\/[^\\s;&|]+\\/)?(?:npx\\s+)?(?:tsc|tsserver)(?=\\s|$)",
+        "reason": "static type checking is unavailable in this condition"
+      },
+      {
+        "pattern": "node_modules\\/typescript\\b|require\\(\\s*['\"]typescript['\"]\\s*\\)|from\\s+['\"]typescript['\"]",
+        "reason": "static type checking is unavailable in this condition"
+      }
+    ]
+  },
+  "agent_notes": "Keep every JavaScript source file under `src/` with the entry module `src/picc.js`, loaded directly by Node.js 24 (CommonJS `require`/`module.exports` or ES module syntax; Node detects which). This condition has no static type checker: do not run one, and do not write type annotations, `.ts` files, or JSDoc type comments; plain JavaScript only. Do not add a `package.json`.",
+  "spec_variables": {
+    "LANGUAGE": "JavaScript",
+    "FRAMEWORK": "dynamic typing (Node.js 24, no static type checker)",
+    "DEPENDENCY_POLICY": "Node.js 24 built-in modules only; do not add package.json dependencies, node_modules, or install packages",
+    "BUILD_COMMAND": "node --check src/picc.js",
+    "ENTRY_COMMAND": "node src/picc.js INPUT.c -o OUTPUT.s"
+  }
+}

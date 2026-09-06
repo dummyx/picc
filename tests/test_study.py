@@ -340,5 +340,144 @@ pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\
             self.assertTrue(summary["audit_ok"])
 
 
+class TypesStudyTests(unittest.TestCase):
+    """The static-typing study: TypeScript under tsc --strict versus plain JavaScript."""
+
+    STUDY = ROOT / "studies" / "types" / "study.json"
+
+    def setUp(self) -> None:
+        self.partition_root = ROOT / "data" / ".study-types-test-partitions"
+        self.ids = ["unit-types-ts-strict", "unit-types-js-untyped"]
+        shutil.rmtree(self.partition_root, ignore_errors=True)
+        for run_id in self.ids:
+            shutil.rmtree(ROOT / "runs" / ".study-materializations" / run_id, ignore_errors=True)
+        write_partition(self.partition_root, "visible")
+        write_partition(self.partition_root, "hidden")
+
+    def tearDown(self) -> None:
+        shutil.rmtree(self.partition_root, ignore_errors=True)
+        for run_id in self.ids:
+            shutil.rmtree(ROOT / "runs" / ".study-materializations" / run_id, ignore_errors=True)
+
+    def condition(self, condition_id: str):
+        payload, conditions = study.load_study(self.STUDY)
+        condition = next(row for row in conditions if row["id"] == condition_id)
+        condition = study.deep_merge(
+            condition,
+            {
+                "tests": {
+                    "visible_partition": str(self.partition_root.relative_to(ROOT) / "visible"),
+                    "hidden_partition": str(self.partition_root.relative_to(ROOT) / "hidden"),
+                }
+            },
+        )
+        return payload, condition
+
+    def test_manifest_is_a_one_factor_candidate_contrast(self) -> None:
+        payload, conditions = study.load_study(self.STUDY)
+        self.assertEqual(payload["id"], "picc-types-v1")
+        self.assertEqual(payload["baseline_condition"], "js-untyped")
+        self.assertEqual([row["id"] for row in conditions], ["js-untyped", "ts-strict"])
+        starter, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        baseline = next(row for row in starter_conditions if row["id"] == "baseline")
+        for row in conditions:
+            self.assertEqual(row["factor"], "baseline" if row["id"] == "js-untyped" else "candidate")
+            # Every non-candidate block is the starter baseline, so the contrast
+            # shares prompts, specification, tests, and reference access with v3.
+            for block in ("prompt", "specification", "tests", "reference", "environment", "budget"):
+                self.assertEqual(row[block], baseline[block], block)
+        ts = next(row for row in conditions if row["id"] == "ts-strict")
+        js = next(row for row in conditions if row["id"] == "js-untyped")
+        self.assertEqual(ts["candidate"]["language"], "typescript")
+        self.assertEqual(js["candidate"]["language"], "javascript")
+
+    def test_materialization_renders_typing_policy_into_guard_and_prompts(self) -> None:
+        payload, ts_condition = self.condition("ts-strict")
+        ts_root = study.materialize(self.STUDY, payload, ts_condition, self.ids[0])
+        _, js_condition = self.condition("js-untyped")
+        js_root = study.materialize(self.STUDY, payload, js_condition, self.ids[1])
+
+        ts_guard = (ts_root / "pi" / "extensions" / "experiment-guard.ts").read_text(encoding="utf-8")
+        js_guard = (js_root / "pi" / "extensions" / "experiment-guard.ts").read_text(encoding="utf-8")
+        self.assertIn("const CANDIDATE_BLOCKED_BASH_PATTERNS = [] as Array<", ts_guard)
+        self.assertIn("static type checking is unavailable in this condition", js_guard)
+        self.assertIn("tsc|tsserver", js_guard)
+        self.assertNotIn("__CANDIDATE_BLOCKED_BASH_PATTERNS__", js_guard)
+        for root in (ts_root, js_root):
+            for name in ("experiment-guard.ts", "experiment-tools.ts", "study-setup.ts"):
+                text = (root / "pi" / "extensions" / name).read_text(encoding="utf-8")
+                self.assertNotRegex(text, r"__[A-Z0-9_]+__")
+
+        ts_agents = (ts_root / "prompts" / "AGENTS.md").read_text(encoding="utf-8")
+        js_agents = (js_root / "prompts" / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("never suppress the checker", ts_agents)
+        self.assertIn("no static type checker", js_agents)
+        self.assertNotIn("{{", ts_agents + js_agents)
+        ts_task = (ts_root / "prompts" / "TASK.md").read_text(encoding="utf-8")
+        js_task = (js_root / "prompts" / "TASK.md").read_text(encoding="utf-8")
+        self.assertIn("tsc --strict --noEmitOnError", ts_task)
+        self.assertIn("node dist/picc.js INPUT.c -o OUTPUT.s", ts_task)
+        self.assertIn("node --check src/picc.js", js_task)
+        self.assertIn("node src/picc.js INPUT.c -o OUTPUT.s", js_task)
+        # The specification text differs between arms only through the adapter variables.
+        strip = lambda text: [line for line in text.splitlines() if "tsc" not in line and "node" not in line and "TypeScript" not in line and "JavaScript" not in line and "Node.js" not in line]
+        self.assertEqual(len(strip(ts_task)), len(strip(js_task)))
+
+        adapter = json.loads((ts_root / "evaluator" / "candidate.json").read_text(encoding="utf-8"))
+        self.assertEqual(adapter["build"]["artifact"], "dist/picc.js")
+        runner = (ts_root / "scripts" / "run_experiment.py").read_text(encoding="utf-8")
+        self.assertIn("dist/", runner)
+        self.assertIn("node_modules/", runner)
+
+    def test_javascript_mock_candidate_scores_through_the_generic_evaluator(self) -> None:
+        if shutil.which("node") is None or not Path("/usr/bin/gcc").exists():
+            self.skipTest("node and /usr/bin/gcc are required for the end-to-end evaluator check")
+        with tempfile.TemporaryDirectory(prefix="picc-types-eval-") as temporary:
+            temp = Path(temporary)
+            workspace = temp / "workspace"
+            shutil.copytree(ROOT / "fixtures" / "mock-picc-js", workspace)
+            tests = temp / "tests"
+            (tests / "valid").mkdir(parents=True)
+            (tests / "invalid").mkdir(parents=True)
+            valid = tests / "valid" / "return_7.c"
+            valid.write_text("int main(void) { return 7; }\n", encoding="utf-8")
+            invalid = tests / "invalid" / "missing_semicolon.c"
+            invalid.write_text("int main(void) { return 7 }\n", encoding="utf-8")
+            manifest = {
+                "schema_version": 1,
+                "partition": "unit",
+                "source": {"revision": "unit"},
+                "tests": [
+                    {"id": "valid/return_7.c", "relative_path": "valid/return_7.c", "stage": 1, "validity": "valid", "family": "valid", "sha256": sha(valid)},
+                    {"id": "invalid/missing_semicolon.c", "relative_path": "invalid/missing_semicolon.c", "stage": 1, "validity": "invalid", "family": "invalid", "sha256": sha(invalid)},
+                ],
+            }
+            manifest_path = tests / "manifest.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            output = temp / "result.json"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "studies" / "runtime" / "evaluate.py"),
+                    "--workspace", str(workspace),
+                    "--tests-root", str(tests),
+                    "--manifest", str(manifest_path),
+                    "--candidate-config", str(ROOT / "studies" / "assets" / "candidates" / "javascript-node.json"),
+                    "--max-stage", "1",
+                    "--cache-dir", str(temp / "cache"),
+                    "--output", str(output),
+                    "--summary-json",
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary = json.loads(result.stdout)
+            self.assertEqual(summary["score"], 1.0, summary)
+            self.assertTrue(summary["build_ok"])
+            self.assertTrue(summary["audit_ok"])
+
+
 if __name__ == "__main__":
     unittest.main()

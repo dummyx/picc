@@ -86,6 +86,29 @@ analyzed as external-validity blocks. Language changes affect syntax,
 toolchain speed, available abstractions, and source-size metrics simultaneously;
 therefore they are not interchangeable with a prompt ablation.
 
+### Static typing (`studies/types/study.json`, study `picc-types-v1`)
+
+A second one-factor manifest holds every non-candidate block at the starter
+baseline and contrasts two candidate adapters on the same Node.js 24 runtime:
+
+- `js-untyped` (the study baseline): plain JavaScript, no type annotations, no
+  static checker; the build step is `node --check`. The condition's Pi guard
+  withholds `tsc`, which is present in the shared image, so the untyped arm
+  cannot opt into checking.
+- `ts-strict`: TypeScript with explicit annotations required and
+  `tsc --strict --noEmitOnError` as the build gate, mirroring how `cargo build`
+  gates the Rust baseline: a snapshot that does not type-check has no compiler
+  and scores 0 on that snapshot.
+
+The primary contrast is `ts-strict` − `js-untyped`, paired by replicate, which
+the summarizer reports directly because `js-untyped` is the manifest's baseline.
+JavaScript was chosen over an "unannotated Python" arm because the absence of
+annotations is syntactically guaranteed rather than an instruction the agent may
+ignore. Treatment fidelity (annotation density, `any`, suppressions, JSDoc type
+tags, `tsc` invocations, guard blocks) is measured post hoc from the final
+snapshots and event streams. Both arms run in image `picc-experiment:0.2`,
+which adds only `typescript@5.9.3` and `@types/node@24.13.3` to image 0.1.
+
 ### Reference
 
 `reference-oracle` exposes at most 50 small, self-contained queries to an
@@ -265,10 +288,11 @@ namespace with the selected visible or hidden partition and the run-local
 reference cache. Hidden scores are therefore valid only for policy-compliant,
 non-adversarial candidates; they are auditable but not tamper-resistant.
 
-Candidate source audit covers Rust and Python source, including recognized test
-paths, and treats symlinks as policy failures. Consequently, committed integration
-tests that invoke subprocesses can make an otherwise functional candidate fail
-the audit; keep such tests policy-compliant or treat that result as an outcome.
+Candidate source audit covers Rust, Python, and JavaScript/TypeScript source,
+including recognized test paths, and treats symlinks as policy failures.
+Consequently, committed integration tests that invoke subprocesses can make an
+otherwise functional candidate fail the audit; keep such tests policy-compliant
+or treat that result as an outcome.
 
 Treat bypass attempts as protocol violations and report them. A stronger later
 study should move tests/reference compilation into a separate service and mount

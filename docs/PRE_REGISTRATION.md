@@ -162,3 +162,21 @@ the identical harness. Disclosure: a snapshot whose visible evaluation
 exceeds one hour reads as visible 0.0 in trajectory telemetry; the hidden
 primary endpoint is evaluated post hoc under the larger ceiling and is
 unaffected.
+
+### 2026-09-07 — provenance correction (model file digest)
+
+The GGUF digest and HF snapshot recorded under "Frozen configuration" were
+copied from the 2026-08-18 endpoint record. Verified on 2026-09-07: the
+llama-server process serving this cohort was started on 2026-08-25 10:38 UTC
+(after the v2 cohort finished) from a re-downloaded snapshot
+`4ca720788d1e01f1bff70c033e0d0028fd02e502`, file SHA-256
+`3f227079003add2511437e5b1e94812e363385225bf6a9b47b0054a72bc8b01e`
+(17,559,178,144 bytes), not `f1bfb127…`/`bee238bb…` (17,923,394,624 bytes).
+All six v3 runs and the quarantined attempt executed against the `3f227079…`
+file; the server build (`b1-3cb7ffb`) and every client-side setting are as
+recorded. Both files are unsloth `UD-Q4_K_XL` quantizations of the same model
+but are not byte-identical, so v3 and the v2 cohort differ in the served model
+file as well as in difficulty. Corrected record:
+`runs/local-endpoint-provenance-2026-09-07.json`. No analysis or conclusion in
+this document changes; the disclosure is added so that cross-cohort
+comparisons are qualified correctly.

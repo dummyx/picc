@@ -8,6 +8,12 @@ const REFERENCE = resolve(VISIBLE_TESTS, "reference");
 const AUDIT_PATH = process.env.PICC_GUARD_LOG ?? "/run-artifacts/guard.jsonl";
 const ALLOW_TEST_FILES = __ALLOW_TEST_FILES__;
 const ALLOW_REFERENCE_FILES = __ALLOW_REFERENCE_FILES__;
+// Candidate-adapter bash blocks: commands the frozen candidate policy withholds
+// in this condition (for example a static type checker in an untyped arm).
+const CANDIDATE_BLOCKED_BASH_PATTERNS = __CANDIDATE_BLOCKED_BASH_PATTERNS__ as Array<{
+  pattern: string;
+  reason: string;
+}>;
 
 function inside(path: string, root: string): boolean {
   return path === root || path.startsWith(root + sep);
@@ -113,6 +119,10 @@ const bashBlocks: Array<{ pattern: RegExp; reason: string }> = [
     pattern: /(?:^|[;&|]\s*)(?:rm|mv|cp|install|chmod|chown|truncate|tee)(?:\s+[^;&|]*)?(?:AGENTS\.md|TASK\.md|SPEC\.md|\/visible-tests|\/opt\/picc-eval|\/run-artifacts|\/workspace\/\.pi)/i,
     reason: "mutation of experiment-control files is prohibited",
   },
+  ...CANDIDATE_BLOCKED_BASH_PATTERNS.map((row) => ({
+    pattern: new RegExp(row.pattern, "i"),
+    reason: row.reason,
+  })),
 ];
 
 export default function experimentGuard(pi: ExtensionAPI) {

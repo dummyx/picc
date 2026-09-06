@@ -40,7 +40,7 @@ are frozen, but the exact server-side checkpoint cannot be pinned.
 
 ## What is included
 
-- a pinned Pi and Rust Docker image;
+- a pinned Pi, Rust, and TypeScript Docker image;
 - hosted Coding Plan authentication through `ZAI_API_KEY` or
   `ZAI_CODING_CN_API_KEY`, or a local OpenAI-compatible endpoint;
 - fixed `AGENTS.md`, task, initial, and continuation prompts;

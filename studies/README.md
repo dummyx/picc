@@ -40,6 +40,23 @@ implementation substrate.
 | `scaffold-rust` | Starting framework/scaffold |
 | `reference-oracle` | Black-box reference access |
 
+## Static-typing study
+
+`types/study.json` (`picc-types-v1`) reuses the starter defaults and contrasts
+two candidate adapters on one Node.js 24 runtime:
+
+| Condition | Role | Candidate |
+|---|---|---|
+| `js-untyped` | study baseline | plain JavaScript, `node --check` build, `tsc` withheld by the guard |
+| `ts-strict` | variant (`candidate`) | TypeScript, `tsc --strict --noEmitOnError` build gate |
+
+```bash
+make study-validate STUDY=studies/types/study.json
+make study-schedule STUDY=studies/types/study.json REPLICATES=3 PROFILE=main
+make study-run STUDY=studies/types/study.json CONDITION=ts-strict PROFILE=main RUN_ID=v4-ts-strict-r1 REPLICATE=1
+make study-summary STUDY=studies/types/study.json
+```
+
 The starter deliberately does **not** claim to identify the causal effect of
 "human-created" versus "LLM-created" specifications/tests. Provenance is
 recorded, but creation method is only identifiable when several independently
@@ -152,6 +169,7 @@ and namespace with the selected visible or hidden partition and the run-local
 reference cache. Hidden scores are valid only for policy-compliant,
 non-adversarial candidates; these artifacts are auditable, not tamper-resistant.
 
-Candidate source audit scans Rust and Python source, including recognized test
-paths, and rejects symlinks. Committed integration tests that invoke subprocesses
-can therefore fail policy audit even when product behavior is otherwise correct.
+Candidate source audit scans Rust, Python, and JavaScript/TypeScript source,
+including recognized test paths, and rejects symlinks. Committed integration
+tests that invoke subprocesses can therefore fail policy audit even when product
+behavior is otherwise correct.

@@ -65,9 +65,26 @@ one-factor condition because they change compute or tooling.
 - `run.command`, with `{artifact}`, `{input}`, `{output}`, and `{workspace}`
   placeholders;
 - `source_extensions` used for artifact measurement/audit;
-- audit allowlists/patterns; source audit covers Rust/Python files,
-  including test paths, and rejects symlinks;
+- audit allowlists/patterns; source audit covers Rust, Python, and
+  JavaScript/TypeScript files, including test paths, and rejects symlinks.
+  `audit.exclude_paths` names build-output directories (for example `dist`)
+  that no audit walk inspects; `audit.node_builtins_only` and
+  `audit.allowed_node_modules` bound Node imports the way
+  `python_stdlib_only`/`allowed_python_modules` bound Python imports;
+- `agent_notes`: adapter-specific layout or typing rules appended to the
+  candidate bullet of the rendered `AGENTS.md`; adapters without notes render
+  byte-identically to earlier cohorts;
+- `agent_policy.blocked_bash_patterns`: `{pattern, reason}` rows rendered into
+  the condition's Pi guard as additional bash blocks (the untyped JavaScript
+  adapter withholds `tsc`, which the shared image contains);
 - specification-rendering variables.
+
+Audit findings are either blocking (delegation or unsafe execution: prohibited
+imports, dependencies, vendored `node_modules`, binary artifacts, dynamic
+loading) or advisory (environment inspection, `@ts-nocheck`/`@ts-ignore`/
+`@ts-expect-error` suppression). Advisory findings set `audit_ok=false` but do
+not gate scoring. For JavaScript/TypeScript the blocking text and import checks
+run on comment-stripped code so that a comment cannot zero a run.
 
 The evaluator requires the same external PiCC contract for every adapter.
 

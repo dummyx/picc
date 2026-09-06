@@ -16,6 +16,8 @@ docker build \
   --build-arg "NODE_IMAGE=$NODE_IMAGE" \
   --build-arg "PI_VERSION=$PI_VERSION" \
   --build-arg "RUST_TOOLCHAIN=$RUST_TOOLCHAIN" \
+  --build-arg "TYPESCRIPT_VERSION=$TYPESCRIPT_VERSION" \
+  --build-arg "NODE_TYPES_VERSION=$NODE_TYPES_VERSION" \
   --tag "$EXPERIMENT_IMAGE" \
   --file "$ROOT/docker/Dockerfile" \
   "$ROOT"

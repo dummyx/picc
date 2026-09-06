@@ -93,7 +93,7 @@ def copy_control_files(run_dir: Path, config: dict[str, str]) -> Path:
 def initialize_workspace(workspace: Path) -> None:
     workspace.mkdir(parents=True)
     (workspace / ".gitignore").write_text(
-        "target/\n*.o\n*.out\n*.tmp\n.DS_Store\nAGENTS.md\nTASK.md\n.pi/\n",
+        "target/\n__pycache__/\n*.py[cod]\ndist/\nnode_modules/\n*.o\n*.out\n*.tmp\n.DS_Store\nAGENTS.md\nTASK.md\n.pi/\n",
         encoding="utf-8",
     )
     # Pre-create nested bind-mount targets. They remain ignored and are not product artifacts.

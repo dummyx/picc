@@ -8,6 +8,9 @@ The product contract is held constant across implementation languages:
 Candidate build/run commands and source-audit policy are declared in the frozen
 ``candidate.json`` adapter.  GCC exists only on the evaluator side: it
 establishes expected behavior and assembles/links emitted assembly.
+
+The source audit covers Rust (Cargo manifests), Python (imports), and
+JavaScript/TypeScript (imports, package manifests, vendored modules) candidates.
 """
 
 from __future__ import annotations
@@ -48,7 +51,7 @@ SUBPROCESS_ENV_ALLOWLIST = {
 # rule that leaves the compiler both safe to run and honestly measurable — it is
 # reported as its own compliance outcome rather than nullifying the score, so a
 # single debug flag cannot erase an otherwise working compiler.
-ADVISORY_AUDIT_REASONS = frozenset({"credential or environment inspection"})
+ADVISORY_AUDIT_REASONS = frozenset({"credential or environment inspection", "type-check suppression"})
 
 DEFAULT_SOURCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (
@@ -90,6 +93,99 @@ PROHIBITED_PYTHON_MODULES = {
     "subprocess",
     "urllib",
 }
+NODE_SOURCE_EXTENSIONS = {".js", ".mjs", ".cjs", ".ts", ".mts", ".cts"}
+# Node.js 24 built-in module roots (the `node:` prefix is stripped before lookup).
+NODE_BUILTIN_MODULES = {
+    "assert",
+    "async_hooks",
+    "buffer",
+    "child_process",
+    "cluster",
+    "console",
+    "constants",
+    "crypto",
+    "dgram",
+    "diagnostics_channel",
+    "dns",
+    "domain",
+    "events",
+    "fs",
+    "http",
+    "http2",
+    "https",
+    "inspector",
+    "module",
+    "net",
+    "os",
+    "path",
+    "perf_hooks",
+    "process",
+    "punycode",
+    "querystring",
+    "readline",
+    "repl",
+    "sea",
+    "sqlite",
+    "stream",
+    "string_decoder",
+    "sys",
+    "test",
+    "timers",
+    "tls",
+    "trace_events",
+    "tty",
+    "url",
+    "util",
+    "v8",
+    "vm",
+    "wasi",
+    "worker_threads",
+    "zlib",
+}
+PROHIBITED_NODE_MODULES = {
+    "child_process",
+    "cluster",
+    "dgram",
+    "dns",
+    "http",
+    "http2",
+    "https",
+    "inspector",
+    "net",
+    "repl",
+    "tls",
+    "wasi",
+}
+NODE_IMPORT_PATTERNS = [
+    re.compile(r"""\brequire\s*\(\s*['"]([^'"]+)['"]\s*\)"""),
+    re.compile(r"""\bimport\s*\(\s*['"]([^'"]+)['"]\s*\)"""),
+    re.compile(r"""\bimport\s+(?:type\s+)?(?:[\w*{}\s,$]+?\s+from\s+)?['"]([^'"]+)['"]"""),
+    re.compile(r"""\bexport\s+(?:type\s+)?(?:\*|\{[^}]*\})\s*(?:as\s+\w+\s+)?from\s+['"]([^'"]+)['"]"""),
+]
+# Line patterns applied only to JavaScript/TypeScript sources. Method-shaped
+# names that are common in compilers (`exec`, `fetch`, `spawn` as identifiers)
+# are deliberately not matched; delegation through Node requires importing a
+# prohibited module, which the import audit catches. Blocking patterns run on
+# comment-stripped code so that a comment mentioning a prohibited module cannot
+# zero a run; advisory patterns run on the raw text because the suppression
+# pragmas are comments.
+NODE_BLOCKING_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"\bchild_process\b"), "subprocess invocation"),
+    (re.compile(r"\bWebSocket\b|\bXMLHttpRequest\b|\bEventSource\b"), "network access"),
+    (
+        re.compile(r"\bprocess\.(?:dlopen|binding)\s*\(|\bWebAssembly\.(?:instantiate|compile|Module|Instance)\b"),
+        "dynamic loading or embedded binary execution",
+    ),
+]
+NODE_ADVISORY_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"\bprocess\.env\b"), "credential or environment inspection"),
+    (re.compile(r"@ts-(?:nocheck|ignore|expect-error)\b"), "type-check suppression"),
+]
+# Compiled/native artifacts that could carry an embedded compiler. Object files
+# and archives are deliberately absent: agents assemble their own output while
+# self-testing, and those files are ignored by the workspace .gitignore anyway.
+BINARY_ARTIFACT_EXTENSIONS = {".wasm", ".node", ".so", ".dylib", ".dll"}
+JS_COMMENT_PATTERN = re.compile(r"//[^\n]*|/\*[\s\S]*?\*/")
 
 
 @dataclass
@@ -276,10 +372,31 @@ def iter_dependency_tables(value: Any, path: tuple[str, ...] = ()) -> Iterable[t
             yield from iter_dependency_tables(child, child_path)
 
 
+def excluded_prefixes(policy: Mapping[str, Any]) -> list[tuple[str, ...]]:
+    """Workspace-relative directories the adapter declares as build output.
+
+    They are skipped by every audit walk so that a previous in-container build
+    (for example `dist/` emitted by tsc) is never mistaken for candidate source.
+    """
+    prefixes: list[tuple[str, ...]] = []
+    for raw in policy.get("exclude_paths", []) if isinstance(policy, Mapping) else []:
+        parts = tuple(part for part in str(raw).split("/") if part and part != ".")
+        if parts and ".." not in parts:
+            prefixes.append(parts)
+    return prefixes
+
+
+def is_excluded(relative: Path, prefixes: Sequence[tuple[str, ...]]) -> bool:
+    if any(part in SKIP_PARTS for part in relative.parts):
+        return True
+    return any(relative.parts[: len(prefix)] == prefix for prefix in prefixes)
+
+
 def iter_source_files(
     workspace: Path,
     extensions: set[str],
     roots: Sequence[str] | None = None,
+    prefixes: Sequence[tuple[str, ...]] = (),
 ) -> Iterable[Path]:
     candidates: list[Path] = []
     for raw_root in roots or ["."]:
@@ -298,7 +415,7 @@ def iter_source_files(
             continue
         seen.add(path)
         relative = path.relative_to(workspace)
-        if any(part in SKIP_PARTS for part in relative.parts):
+        if is_excluded(relative, prefixes):
             continue
         if path.suffix in extensions:
             yield path
@@ -383,6 +500,138 @@ def audit_python(workspace: Path, files: list[Path], policy: dict[str, Any], fin
                 )
 
 
+def node_module_root(specifier: str) -> str | None:
+    """Return the package root of an import specifier, or None for local paths."""
+    value = specifier.strip()
+    if value.startswith("node:"):
+        value = value[len("node:"):]
+    if not value or value.startswith((".", "/")):
+        return None
+    if value.startswith("@"):
+        parts = value.split("/")
+        return "/".join(parts[:2]) if len(parts) >= 2 else value
+    return value.split("/", 1)[0]
+
+
+def strip_js_comments(text: str) -> str:
+    """Blank out `//` and `/* */` comments while preserving line numbers."""
+    return JS_COMMENT_PATTERN.sub(lambda match: "\n" * match.group(0).count("\n"), text)
+
+
+def node_import_specifiers(text: str) -> list[str]:
+    specifiers: list[str] = []
+    for pattern in NODE_IMPORT_PATTERNS:
+        specifiers.extend(match.group(1) for match in pattern.finditer(text))
+    return specifiers
+
+
+def audit_node(workspace: Path, files: list[Path], policy: dict[str, Any], findings: list[dict[str, Any]]) -> None:
+    builtins_only = bool(policy.get("node_builtins_only", False))
+    allowed = {str(item) for item in policy.get("allowed_node_modules", [])}
+    prefixes = excluded_prefixes(policy)
+    for path in files:
+        relative = path.relative_to(workspace).as_posix()
+        text = path.read_text(encoding="utf-8", errors="replace")
+        code = strip_js_comments(text)
+        for specifier in node_import_specifiers(code):
+            root = node_module_root(specifier)
+            if root is None:
+                continue
+            if root in PROHIBITED_NODE_MODULES:
+                findings.append(
+                    {
+                        "path": relative,
+                        "kind": "node_import",
+                        "value": specifier,
+                        "reason": "subprocess, network, or dynamic-loading module is prohibited",
+                    }
+                )
+            elif builtins_only and root not in NODE_BUILTIN_MODULES and root not in allowed:
+                findings.append(
+                    {
+                        "path": relative,
+                        "kind": "node_import",
+                        "value": specifier,
+                        "reason": "non-built-in module import is outside the frozen candidate policy",
+                    }
+                )
+        raw_lines = text.splitlines()
+        for source, patterns in ((code.splitlines(), NODE_BLOCKING_PATTERNS), (raw_lines, NODE_ADVISORY_PATTERNS)):
+            for line_number, line in enumerate(source, 1):
+                for pattern, reason in patterns:
+                    if pattern.search(line):
+                        excerpt = raw_lines[line_number - 1] if line_number <= len(raw_lines) else line
+                        findings.append(
+                            {
+                                "path": relative,
+                                "line": line_number,
+                                "kind": "source_pattern",
+                                "reason": reason,
+                                "excerpt": truncate(excerpt.strip(), 300),
+                            }
+                        )
+
+    for manifest in sorted(workspace.rglob("package.json")):
+        if not manifest.is_file() or manifest.is_symlink():
+            continue
+        relative_path = manifest.relative_to(workspace)
+        if is_excluded(relative_path, prefixes):
+            continue
+        relative = relative_path.as_posix()
+        try:
+            package = json.loads(manifest.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            findings.append({"path": relative, "kind": "json_error", "reason": str(error)})
+            continue
+        if not isinstance(package, dict):
+            continue
+        for table in ("dependencies", "devDependencies", "peerDependencies", "optionalDependencies"):
+            dependencies = package.get(table)
+            if not isinstance(dependencies, dict):
+                continue
+            for name in dependencies:
+                if str(name) not in allowed:
+                    findings.append(
+                        {
+                            "path": relative,
+                            "kind": "dependency",
+                            "table": table,
+                            "value": name,
+                            "reason": "dependency is outside the frozen candidate policy",
+                        }
+                    )
+    for vendored in sorted(workspace.rglob("node_modules")):
+        if not vendored.is_dir() or vendored.is_symlink():
+            continue
+        relative_path = vendored.relative_to(workspace)
+        parents = relative_path.parts[:-1]
+        if parents and is_excluded(Path(*parents), prefixes):
+            continue
+        if any(child.is_file() and not child.name.startswith(".") for child in vendored.rglob("*")):
+            findings.append(
+                {
+                    "path": relative_path.as_posix(),
+                    "kind": "dependency",
+                    "reason": "dependency is outside the frozen candidate policy",
+                }
+            )
+
+
+def audit_binary_artifacts(workspace: Path, prefixes: Sequence[tuple[str, ...]], findings: list[dict[str, Any]]) -> None:
+    for path in sorted(workspace.rglob("*")):
+        relative = path.relative_to(workspace)
+        if is_excluded(relative, prefixes) or path.is_symlink() or not path.is_file():
+            continue
+        if path.suffix.lower() in BINARY_ARTIFACT_EXTENSIONS:
+            findings.append(
+                {
+                    "path": relative.as_posix(),
+                    "kind": "binary_artifact",
+                    "reason": "binary artifact is prohibited in candidate source",
+                }
+            )
+
+
 def audit_symlinks(workspace: Path, findings: list[dict[str, Any]]) -> None:
     for path in sorted(workspace.rglob("*")):
         relative = path.relative_to(workspace)
@@ -405,11 +654,15 @@ def source_audit(workspace: Path, adapter: dict[str, Any]) -> dict[str, Any]:
         policy = {}
     extensions = {str(item) for item in adapter.get("source_extensions", [])}
     roots = policy.get("roots") if isinstance(policy.get("roots"), list) else None
-    files = list(iter_source_files(workspace, extensions, roots))
+    prefixes = excluded_prefixes(policy)
+    files = list(iter_source_files(workspace, extensions, roots, prefixes))
     audit_symlinks(workspace, findings)
+    audit_binary_artifacts(workspace, prefixes, findings)
     audit_cargo(workspace, policy, findings)
     if ".py" in extensions:
         audit_python(workspace, [path for path in files if path.suffix == ".py"], policy, findings)
+    if extensions & NODE_SOURCE_EXTENSIONS:
+        audit_node(workspace, [path for path in files if path.suffix in NODE_SOURCE_EXTENSIONS], policy, findings)
 
     patterns = list(DEFAULT_SOURCE_PATTERNS)
     for row in policy.get("prohibited_patterns", []):
@@ -875,7 +1128,10 @@ def main() -> int:
         detail = (
             truncate(json.dumps(audit["blocking_findings"][:10], sort_keys=True), 2000)
             if audit["blocking"]
-            else truncate(build_result.stderr if build_result else "candidate artifact or build command missing", 2000)
+            else truncate(
+                (build_result.stderr or build_result.stdout) if build_result else "candidate artifact or build command missing",
+                2000,
+            )
         )
         results = [
             TestResult(

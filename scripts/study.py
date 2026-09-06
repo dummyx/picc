@@ -192,6 +192,37 @@ def validate_adapter(path: Path, condition_id: str) -> dict[str, Any]:
         isinstance(item, str) and item.startswith(".") for item in extensions
     ):
         raise StudyError(f"{condition_id}: adapter source_extensions must be a nonempty extension array")
+    notes = adapter.get("agent_notes")
+    if notes is not None and not isinstance(notes, str):
+        raise StudyError(f"{condition_id}: adapter agent_notes must be a string")
+    audit = adapter.get("audit", {})
+    if not isinstance(audit, dict):
+        raise StudyError(f"{condition_id}: adapter audit must be an object")
+    excluded = audit.get("exclude_paths", [])
+    if not isinstance(excluded, list) or not all(
+        isinstance(item, str) and item and not item.startswith("/") and ".." not in Path(item).parts
+        for item in excluded
+    ):
+        raise StudyError(f"{condition_id}: adapter audit.exclude_paths must be relative paths without '..'")
+    agent_policy = adapter.get("agent_policy", {})
+    if not isinstance(agent_policy, dict):
+        raise StudyError(f"{condition_id}: adapter agent_policy must be an object")
+    blocked = agent_policy.get("blocked_bash_patterns", [])
+    if not isinstance(blocked, list):
+        raise StudyError(f"{condition_id}: adapter agent_policy.blocked_bash_patterns must be an array")
+    for row in blocked:
+        if (
+            not isinstance(row, dict)
+            or not isinstance(row.get("pattern"), str)
+            or not row["pattern"]
+            or not isinstance(row.get("reason"), str)
+            or not row["reason"].strip()
+        ):
+            raise StudyError(f"{condition_id}: each blocked bash pattern needs a nonempty pattern and reason")
+        try:
+            re.compile(row["pattern"])
+        except re.error as error:
+            raise StudyError(f"{condition_id}: invalid blocked bash pattern {row['pattern']!r}: {error}") from error
     return adapter
 
 
@@ -460,6 +491,11 @@ def operational_guidance(condition: dict[str, Any], adapter: dict[str, Any]) -> 
         f"The evaluator invokes `{' '.join(adapter['run']['command'])}`. "
         f"Dependency policy: {adapter.get('dependency_policy', 'preinstalled dependencies only')}."
     )
+    # Adapter-specific layout or typing rules travel with the candidate factor;
+    # adapters without notes render byte-identically to earlier cohorts.
+    notes = str(adapter.get("agent_notes") or "").strip()
+    if notes:
+        candidate_guidance += " " + notes
     return {
         "TEST_GUIDANCE": test_guidance,
         "REFERENCE_GUIDANCE": reference_guidance,
@@ -927,6 +963,10 @@ def _materialize_direct(
         "ALLOW_TEST_FILES": condition["tests"]["access"] == "files",
         "ALLOW_REFERENCE_FILES": reference["mode"] == "source",
         "HAS_SCAFFOLD": has_scaffold,
+        "CANDIDATE_BLOCKED_BASH_PATTERNS": [
+            {"pattern": str(row["pattern"]), "reason": str(row["reason"])}
+            for row in adapter.get("agent_policy", {}).get("blocked_bash_patterns", [])
+        ],
     }
     runtime = REPO_ROOT / "studies" / "runtime"
     render_extension(runtime / "experiment-tools.ts.in", extensions / "experiment-tools.ts", replacements)

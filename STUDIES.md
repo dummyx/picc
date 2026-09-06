@@ -14,5 +14,9 @@ make study-schedule REPLICATES=3 PROFILE=main
 make study-run CONDITION=baseline PROFILE=pilot RUN_ID=baseline-pilot-r1 REPLICATE=1
 ```
 
+A second manifest, `studies/types/study.json`, contrasts TypeScript under
+`tsc --strict` with plain JavaScript on the same runtime; pass
+`STUDY=studies/types/study.json` to the same targets.
+
 See [`docs/STUDY_PROTOCOL.md`](docs/STUDY_PROTOCOL.md) before running the main
 matrix.

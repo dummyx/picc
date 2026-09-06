@@ -32,10 +32,10 @@ AFFORDANCE_TOOLS = ("test_visible", "experiment_status", "reference_oracle")
 # Rough intent buckets for shell commands. First match wins, so order matters:
 # a command that both builds and runs a test is counted as a self-test.
 BASH_INTENTS: tuple[tuple[str, re.Pattern[str]], ...] = (
-    ("self_test", re.compile(r"\./[\w./-]*test|run_test|\btests?-local\b|\./t\d|\.bin\b|/target/release/picc\s+\S|python3?\s+picc\.py\s+\S")),
-    ("build", re.compile(r"\bcargo\s+(build|check|clippy)\b|py_compile|\brustc\b")),
+    ("self_test", re.compile(r"\./[\w./-]*test|run_test|\btests?-local\b|\./t\d|\.bin\b|/target/release/picc\s+\S|python3?\s+picc\.py\s+\S|\bnode\s+(?:\S*/)?(?:src|dist)/picc\.[jt]s\s+\S|\bnode\s+--test\b")),
+    ("build", re.compile(r"\bcargo\s+(build|check|clippy)\b|py_compile|\brustc\b|(^|[;&|]\s*)(?:\S*/)?(?:npx\s+)?tsc(?=\s|$)|\bnode\s+--check\b")),
     ("inspect", re.compile(r"^\s*(ls|cat|head|tail|wc|find|grep|rg|file|pwd|which|tree|stat|diff)\b")),
-    ("write_via_shell", re.compile(r"\bcat\s*>|\bsed\s+-i\b|\btee\b|>>?\s*\S+\.(c|rs|py|sh|md)\b")),
+    ("write_via_shell", re.compile(r"\bcat\s*>|\bsed\s+-i\b|\btee\b|>>?\s*\S+\.(c|rs|py|js|ts|sh|md)\b")),
     ("vcs", re.compile(r"\bgit\b")),
 )
 
@@ -243,8 +243,35 @@ def analyse_trajectory(run: Path) -> dict[str, Any]:
         "hidden_final_score": round(float(hidden_final.get("score") or 0.0), 4),
         "hidden_audit_ok": hidden_final.get("audit_ok"),
         "hidden_failure_types": dict(failures.most_common()),
-        "final_loc": (snapshots[-1].get("rust_loc") if snapshots else None),
+        "final_loc": final_source_loc(run, snapshots),
     }
+
+
+def final_source_loc(run: Path, snapshots: list[dict[str, Any]]) -> int | None:
+    """LOC of the final workspace by the adapter's source extensions.
+
+    The runner's snapshot ledger only counts `*.rs`, so Python and JS/TS runs
+    would otherwise read as 0 LOC. Falls back to that ledger value for runs
+    without a study adapter.
+    """
+    adapter_path = run / "study-control" / "candidate.json"
+    workspace = run / "workspace"
+    if not adapter_path.is_file() or not workspace.is_dir():
+        return snapshots[-1].get("rust_loc") if snapshots else None
+    adapter = json.loads(adapter_path.read_text(encoding="utf-8"))
+    extensions = {str(item) for item in adapter.get("source_extensions", [])}
+    excluded = [Path(str(item)).parts for item in (adapter.get("audit") or {}).get("exclude_paths", [])]
+    total = 0
+    for path in workspace.rglob("*"):
+        if not path.is_file() or path.is_symlink() or path.suffix not in extensions:
+            continue
+        parts = path.relative_to(workspace).parts
+        if any(part in {".git", ".pi", "target", "node_modules", "__pycache__"} for part in parts):
+            continue
+        if any(parts[: len(prefix)] == prefix for prefix in excluded):
+            continue
+        total += len(path.read_text(encoding="utf-8", errors="replace").splitlines())
+    return total
 
 
 def analyse_run(run: Path) -> dict[str, Any] | None:
