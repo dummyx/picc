@@ -616,6 +616,18 @@ class PrimarySummaryTests(unittest.TestCase):
         variant["budget_sha256"] = "b" * 64
         summarize_study.reject_cohort_drift([first, variant])
 
+    def test_paired_deltas_use_the_declared_baseline_condition(self) -> None:
+        rows = [
+            {"condition_id": "js-untyped", "replicate": 1, "hidden_score": 0.8, "elapsed_seconds": 3600, "finished": False},
+            {"condition_id": "ts-strict", "replicate": 1, "hidden_score": 0.9, "elapsed_seconds": 5400, "finished": False},
+        ]
+        self.assertEqual(summarize_study.baseline_deltas(rows), [])
+        deltas = summarize_study.baseline_deltas(rows, baseline="js-untyped")
+        self.assertEqual(len(deltas), 1)
+        self.assertEqual(deltas[0]["condition_id"], "ts-strict")
+        self.assertAlmostEqual(deltas[0]["delta_hidden_score"], 0.1)
+        self.assertAlmostEqual(deltas[0]["delta_elapsed_hours"], 0.5)
+
     def test_planned_cells_and_unpaired_baselines_are_warned(self) -> None:
         study = dict(self.study)
         study["conditions"] = [

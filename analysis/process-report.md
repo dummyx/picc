@@ -4,15 +4,18 @@ Descriptive only: one run per condition, and run length was set by when the agen
 
 ## By condition
 
-Output cap `65536` — 24 run(s)
+Output cap `65536` — 38 run(s)
 
 | Condition | n | Scores (audit-passing) | Median | Spread | Audit pass | Declined tool |
 |---|---:|---|---:|---:|---:|---:|
-| `baseline` | 6 | 0.958, 0.819, 0.898, 0.771, 0.898, 0.877 | 0.8981 | 0.188 | 6/6 | 4/6 |
+| `baseline` | 9 | 0.958, 0.819, 0.819, 0.898, 0.931, 0.771, 0.898, 0.877 | 0.8981 | 0.188 | 8/9 | 4/9 |
+| `js-untyped` | 4 | 0.883, 1.000, 0.839, 0.828 | 0.8833 | 0.172 | 4/4 | 1/4 |
 | `prompt-minimal` | 4 | 0.958, 0.958 | 0.9583 | 0.000 | 2/4 | 1/4 |
 | `spec-architecture` | 6 | 0.898, 0.870, 0.877, 0.863, 0.000, 0.958 | 0.8773 | 0.958 | 6/6 | 2/6 |
 | `spec-brief` | 4 | 0.958, 0.898, 0.898 | 0.8981 | 0.060 | 3/4 | 1/4 |
 | `spec-inline` | 4 | 0.863, 0.898, 0.958, 0.958 | 0.9583 | 0.095 | 4/4 | 1/4 |
+| `tests-none` | 3 | 0.846, 0.749, 0.684 | 0.7492 | 0.162 | 3/3 | 0/3 |
+| `ts-strict` | 4 | 0.958, 0.839, 0.865, 0.899 | 0.8986 | 0.119 | 4/4 | 1/4 |
 
 Output cap `32768` — 6 run(s)
 
@@ -56,6 +59,20 @@ Output cap `32768` — 6 run(s)
 | v2-spec-inline-r1 | spec-inline | 1 | 65536 | 2 | 87.3/90.1 | 237 | 241 | 5 | experiment_status=0, test_visible=0 | 0.8981 |
 | v2-spec-inline-r2 | spec-inline | 2 | 65536 | 3 | 104.1/104.4 | 278 | 281 | 6 | all used / none offered | 0.9583 |
 | v2-spec-inline-r3 | spec-inline | 3 | 65536 | 2 | 88.4/90.1 | 264 | 287 | 3 | all used / none offered | 0.9583 |
+| v3-baseline-r1 | baseline | 1 | 65536 | 2 | 48.7/90.4 | 209 | 216 | 1 | experiment_status=0 | 0.8188 |
+| v3-baseline-r2 | baseline | 2 | 65536 | 2 | 89.7/90.1 | 340 | 350 | 3 | experiment_status=0 | 0.9306 |
+| v3-baseline-r3 | baseline | 3 | 65536 | 2 | 55.3/90.1 | 160 | 169 | 3 | experiment_status=0 | 0.8194 |
+| v3-tests-none-r1 | tests-none | 1 | 65536 | 4 | 119.5/120.0 | 502 | 501 | 6 | all used / none offered | 0.8458 |
+| v3-tests-none-r2 | tests-none | 2 | 65536 | 2 | 45.9/91.7 | 30 | 36 | 0 | experiment_status=0 | 0.7492 |
+| v3-tests-none-r3 | tests-none | 3 | 65536 | 2 | 45.3/90.5 | 36 | 52 | 0 | experiment_status=0 | 0.6839 |
+| v4-js-untyped-r1 | js-untyped | 1 | 65536 | 2 | 89.6/90.1 | 289 | 369 | 4 | all used / none offered | 0.8833 |
+| v4-js-untyped-r2 | js-untyped | 2 | 65536 | 2 | 45.7/90.2 | 123 | 127 | 2 | test_visible=0 | 0.8389 |
+| v4-js-untyped-r3 | js-untyped | 3 | 65536 | 2 | 86.3/90.1 | 170 | 171 | 2 | all used / none offered | 0.8278 |
+| v4-pilot-js-untyped-smoke1 | js-untyped | 1 | 65536 | 2 | 23.9/24.0 | 31 | 32 | 0 | experiment_status=0 | 1.0 |
+| v4-pilot-ts-strict-smoke1 | ts-strict | 1 | 65536 | 2 | 23.4/24.0 | 75 | 84 | 0 | test_visible=0 | 0.9583 |
+| v4-ts-strict-r1 | ts-strict | 1 | 65536 | 2 | 89.4/90.7 | 253 | 261 | 5 | all used / none offered | 0.8389 |
+| v4-ts-strict-r2 | ts-strict | 2 | 65536 | 2 | 89.5/90.2 | 258 | 271 | 4 | all used / none offered | 0.8653 |
+| v4-ts-strict-r3 | ts-strict | 3 | 65536 | 2 | 55.9/90.2 | 166 | 167 | 3 | experiment_status=0 | 0.8986 |
 
 ## baseline-main-r1  (condition `baseline`, factor `baseline`)
 
@@ -128,7 +145,7 @@ int main(v`
 ## language-python-pilot-r1  (condition `language-python`, factor `candidate`)
 
 - termination: `round_timeout`, visible trajectory: [0.0, 0.0, 0.0, 0.7949]
-- regressions: 0, buildable snapshots: 1/4, final LOC: 0
+- regressions: 0, buildable snapshots: 1/4, final LOC: 2927
 - tools: {'write': 13, 'bash': 6, 'edit': 6, 'ls': 2, 'read': 1, 'experiment_status': 1}
 - shell intent: {'self_test': 3, 'other': 2, 'inspect': 1}
 - affordances: test_visible=0 (offered), experiment_status=1 (offered), reference_oracle=0 (not offered)
@@ -490,4 +507,209 @@ new = "        `
 src = open('fuzz_loops.py').read()
 src = src.replace("""def call_function(name, args, prog, env, steps):
     fn = prog['funcs'][nam`
+
+## v3-baseline-r1  (condition `baseline`, factor `baseline`)
+
+- termination: `round_timeout`, visible trajectory: [0.8705, 0.8705]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 2357
+- tools: {'bash': 164, 'edit': 41, 'write': 7, 'test_visible': 2, 'read': 1, 'ls': 1}
+- shell intent: {'self_test': 77, 'other': 45, 'inspect': 24, 'build': 14, 'write_via_shell': 4}
+- affordances: test_visible=2 (offered), experiment_status=0 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: False; self-authored test artifacts: ['runtest.sh', 'tests-local']
+- thinking 367,187 chars vs prose 4,798 chars; output tokens 170,683
+- guard blocks: 1 {'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1}; compactions: 2; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 1, 'execution_timeout': 1}
+- **stalled** in round-001 on `bash`: `cd /workspace/tests-local && sed -i 's|// EXPECT_EXIT 0|// EXPECT_EXIT 42|' t01_basics.c && sed -i 's/if (hex != 39) return 9;/if (hex != 49) return 9;/' t03_ar`
+
+## v3-baseline-r2  (condition `baseline`, factor `baseline`)
+
+- termination: `round_timeout`, visible trajectory: [0.931, 0.9548]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 3535
+- tools: {'bash': 173, 'edit': 96, 'read': 45, 'test_visible': 18, 'write': 13, 'grep': 4, 'ls': 1}
+- shell intent: {'other': 80, 'build': 35, 'self_test': 32, 'write_via_shell': 23, 'inspect': 3}
+- affordances: test_visible=18 (offered), experiment_status=0 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: False; self-authored test artifacts: none
+- thinking 643,920 chars vs prose 12,144 chars; output tokens 299,741
+- guard blocks: 4 {'writes are restricted to /workspace': 2, 'direct access to visible test files is withheld': 1, 'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1}; compactions: 6; provider retries: 0
+- hidden failure types: {'unexpected_accept': 6, 'wrong_behavior': 2, 'unexpected_reject': 1}
+
+## v3-baseline-r3  (condition `baseline`, factor `baseline`)
+
+- termination: `round_timeout`, visible trajectory: [0.8618, 0.8618]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 2272
+- tools: {'bash': 110, 'edit': 27, 'read': 16, 'write': 12, 'ls': 2, 'test_visible': 2}
+- shell intent: {'other': 53, 'self_test': 25, 'build': 16, 'write_via_shell': 7, 'vcs': 7, 'inspect': 2}
+- affordances: test_visible=2 (offered), experiment_status=0 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: none
+- thinking 423,067 chars vs prose 8,279 chars; output tokens 188,510
+- guard blocks: 1 {'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1}; compactions: 4; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 2}
+- **stalled** in round-001 on `bash`: `cd /tmp/piccdv && cat > al.s <<'EOF'
+	.globl _start
+	.type _start, @function
+_start:
+	movq	%rsp, %rax
+	andl	$15, %eax
+	movl	$1, %edi
+	movq	$0, %rsi
+	movl	$1, %e`
+
+## v3-tests-none-r1  (condition `tests-none`, factor `tests`)
+
+- termination: `wall_time_budget`, visible trajectory: [0.8578, 0.8686, 0.8686, 0.8686]
+- regressions: 0, buildable snapshots: 4/4, final LOC: 2378
+- tools: {'bash': 380, 'edit': 86, 'read': 16, 'write': 16, 'experiment_status': 2, 'ls': 1}
+- shell intent: {'self_test': 182, 'other': 177, 'build': 16, 'write_via_shell': 4, 'vcs': 1}
+- affordances: test_visible=0 (not offered), experiment_status=2 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: ['tests']
+- thinking 767,870 chars vs prose 29,011 chars; output tokens 381,928
+- guard blocks: 0 ; compactions: 10; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 2}
+
+## v3-tests-none-r2  (condition `tests-none`, factor `tests`)
+
+- termination: `round_timeout`, visible trajectory: [0.7839, 0.7839]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 2703
+- tools: {'bash': 14, 'write': 10, 'edit': 9, 'read': 2, 'ls': 1}
+- shell intent: {'build': 6, 'self_test': 3, 'inspect': 2, 'vcs': 1, 'write_via_shell': 1, 'other': 1}
+- affordances: test_visible=0 (not offered), experiment_status=0 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: False; self-authored test artifacts: ['tests']
+- thinking 224,964 chars vs prose 909 chars; output tokens 102,080
+- guard blocks: 1 {'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1}; compactions: 0; provider retries: 0
+- hidden failure types: {'unexpected_reject': 8, 'wrong_behavior': 2, 'unexpected_accept': 2}
+- **stalled** in round-000 on `bash`: `cd /workspace && cargo build --release --offline 2>/dev/null; ./tests/run.sh 2>&1 | grep -v "^ok" ; echo; ./tests/run.sh 2>&1 | tail -2`
+- **stalled** in round-001 on `bash`: `cd /workspace && cargo build --release --offline 2>&1 | grep -E "^error" | head; echo "BUILD: ${PIPESTATUS[0]}"; ./tests/run.sh 2>&1 | tail -25`
+
+## v3-tests-none-r3  (condition `tests-none`, factor `tests`)
+
+- termination: `round_timeout`, visible trajectory: [0.7271, 0.7271]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 1748
+- tools: {'bash': 21, 'edit': 19, 'write': 10, 'read': 1, 'ls': 1}
+- shell intent: {'self_test': 11, 'build': 5, 'write_via_shell': 3, 'other': 2}
+- affordances: test_visible=0 (not offered), experiment_status=0 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: False; self-authored test artifacts: ['run_tests.sh', 'tests']
+- thinking 242,101 chars vs prose 2,015 chars; output tokens 103,613
+- guard blocks: 0 ; compactions: 0; provider retries: 0
+- hidden failure types: {'unexpected_reject': 6, 'wrong_behavior': 5, 'unexpected_accept': 1}
+- **stalled** in round-000 on `bash`: `cd /workspace && cargo build --release --offline 2>&1 | grep -E '^error'; ./run_tests.sh 2>&1 | grep -E '^(FAIL|pass=)'`
+- **stalled** in round-001 on `bash`: `cd /workspace && ./run_tests.sh 2>&1 | grep -E '^(FAIL|pass=)'`
+
+## v4-js-untyped-r1  (condition `js-untyped`, factor `baseline`)
+
+- termination: `round_timeout`, visible trajectory: [0.893, 0.893]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 1423
+- tools: {'bash': 149, 'test_visible': 138, 'edit': 47, 'read': 24, 'write': 6, 'grep': 3, 'ls': 1, 'experiment_status': 1}
+- shell intent: {'other': 61, 'write_via_shell': 59, 'self_test': 13, 'build': 10, 'inspect': 6}
+- affordances: test_visible=138 (offered), experiment_status=1 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: none
+- thinking 637,711 chars vs prose 17,841 chars; output tokens 276,545
+- guard blocks: 4 {'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 2, 'direct access to visible test files is withheld': 1, "reads are restricted by this condition's test/reference access policy": 1}; compactions: 6; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 2}
+- **stalled** in round-000 on `bash`: `cd /tmp/piccdev && cat > fuzz1.js <<'EOF'
+const { execFileSync } = require('child_process');
+const fs = require('fs');
+let seed = 12345;
+function rnd(n) { seed `
+
+## v4-js-untyped-r2  (condition `js-untyped`, factor `baseline`)
+
+- termination: `round_timeout`, visible trajectory: [0.8641, 0.8641]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 1678
+- tools: {'bash': 78, 'edit': 28, 'write': 13, 'read': 4, 'ls': 3, 'experiment_status': 1}
+- shell intent: {'other': 45, 'write_via_shell': 18, 'self_test': 10, 'inspect': 3, 'build': 2}
+- affordances: test_visible=0 (offered), experiment_status=1 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: False; self-authored test artifacts: none
+- thinking 268,582 chars vs prose 6,528 chars; output tokens 140,068
+- guard blocks: 2 {'direct access to visible test files is withheld': 1, 'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1}; compactions: 2; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 2}
+- **stalled** in round-000 on `bash`: `cd /workspace/scratch
+cat > s12_flow.c <<'EOF'
+int main(void) {
+  int s = 0;
+  int i;
+  for (i = 0; i < 10; i++) {
+    if (i == 3) break;
+    if (i % 2) continu`
+- **stalled** in round-001 on `bash`: `cd /workspace/scratch && ./run.sh s12_flow 0 && node -e "
+const {interpret}=require('./interp.js');
+const fs=require('fs');
+const w=interpret(fs.readFileSync('s`
+
+## v4-js-untyped-r3  (condition `js-untyped`, factor `baseline`)
+
+- termination: `round_timeout`, visible trajectory: [0.8736, 0.8736]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 1274
+- tools: {'bash': 132, 'edit': 21, 'write': 6, 'test_visible': 6, 'read': 4, 'ls': 1, 'experiment_status': 1}
+- shell intent: {'other': 78, 'self_test': 42, 'write_via_shell': 9, 'inspect': 2, 'build': 1}
+- affordances: test_visible=6 (offered), experiment_status=1 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: none
+- thinking 437,579 chars vs prose 10,173 chars; output tokens 221,091
+- guard blocks: 4 {"reads are restricted by this condition's test/reference access policy": 2, 'direct evaluator execution is prohibited; use the condition-controlled tools': 1, 'writes are restricted to /workspace': 1}; compactions: 4; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 2}
+- **stalled** in round-001 on `bash`: `cd /tmp/picc-t && python3 - <<'PYEOF'
+s = open('df3.py').read()
+old = """        if o == '+': return wrap(a + b)
+        if o == '-': return wrap(a - b)
+       `
+
+## v4-pilot-js-untyped-smoke1  (condition `js-untyped`, factor `baseline`)
+
+- termination: `round_timeout`, visible trajectory: [0.5, 0.9848]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 1503
+- tools: {'bash': 15, 'write': 6, 'test_visible': 4, 'edit': 4, 'read': 2, 'ls': 1}
+- shell intent: {'other': 8, 'build': 3, 'self_test': 2, 'inspect': 1, 'write_via_shell': 1}
+- affordances: test_visible=4 (offered), experiment_status=0 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: False; self-authored test artifacts: none
+- thinking 147,112 chars vs prose 2,636 chars; output tokens 90,195
+- guard blocks: 2 {'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1, 'writes are restricted to /workspace': 1}; compactions: 0; provider retries: 0
+- hidden failure types: none
+
+## v4-pilot-ts-strict-smoke1  (condition `ts-strict`, factor `candidate`)
+
+- termination: `round_timeout`, visible trajectory: [0.0, 0.9242]
+- regressions: 0, buildable snapshots: 1/2, final LOC: 1705
+- tools: {'bash': 53, 'edit': 16, 'write': 8, 'read': 5, 'ls': 1, 'experiment_status': 1}
+- shell intent: {'other': 23, 'write_via_shell': 13, 'self_test': 9, 'build': 7, 'inspect': 1}
+- affordances: test_visible=0 (offered), experiment_status=1 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: ['tests']
+- thinking 179,626 chars vs prose 2,445 chars; output tokens 87,499
+- guard blocks: 0 ; compactions: 0; provider retries: 0
+- hidden failure types: {'wrong_behavior': 1}
+
+## v4-ts-strict-r1  (condition `ts-strict`, factor `candidate`)
+
+- termination: `round_timeout`, visible trajectory: [0.8276, 0.8602]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 2096
+- tools: {'bash': 180, 'edit': 39, 'read': 21, 'write': 16, 'test_visible': 3, 'ls': 1, 'experiment_status': 1}
+- shell intent: {'self_test': 94, 'other': 65, 'write_via_shell': 16, 'build': 4, 'inspect': 1}
+- affordances: test_visible=3 (offered), experiment_status=1 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: none
+- thinking 611,687 chars vs prose 13,626 chars; output tokens 297,427
+- guard blocks: 0 ; compactions: 6; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 2}
+
+## v4-ts-strict-r2  (condition `ts-strict`, factor `candidate`)
+
+- termination: `round_timeout`, visible trajectory: [0.8709, 0.8709]
+- regressions: 0, buildable snapshots: 2/2, final LOC: 2113
+- tools: {'bash': 149, 'edit': 72, 'read': 24, 'write': 14, 'test_visible': 8, 'experiment_status': 3, 'ls': 1}
+- shell intent: {'other': 70, 'self_test': 67, 'write_via_shell': 6, 'build': 5, 'inspect': 1}
+- affordances: test_visible=8 (offered), experiment_status=3 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: none
+- thinking 698,740 chars vs prose 14,060 chars; output tokens 301,658
+- guard blocks: 1 {'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1}; compactions: 6; provider retries: 0
+- hidden failure types: {'unexpected_reject': 10, 'unexpected_accept': 2}
+
+## v4-ts-strict-r3  (condition `ts-strict`, factor `candidate`)
+
+- termination: `round_timeout`, visible trajectory: [0.9333, 0.9202]
+- regressions: 1, buildable snapshots: 2/2, final LOC: 1514
+- tools: {'bash': 125, 'edit': 21, 'write': 8, 'test_visible': 7, 'read': 5, 'ls': 1}
+- shell intent: {'other': 59, 'self_test': 45, 'write_via_shell': 15, 'build': 4, 'inspect': 2}
+- affordances: test_visible=7 (offered), experiment_status=0 (offered), reference_oracle=0 (not offered)
+- PROGRESS.md kept: True; self-authored test artifacts: none
+- thinking 417,548 chars vs prose 9,361 chars; output tokens 185,333
+- guard blocks: 1 {'direct use of an existing C/C++ compiler is prohibited; use the experimental tools': 1}; compactions: 4; provider retries: 0
+- hidden failure types: {'unexpected_reject': 7, 'unexpected_accept': 2, 'assembly_or_link_failure': 1}
+- **stalled** in round-001 on `bash`: `cd /workspace && tsc --strict --noEmitOnError --target es2022 --lib es2022 --module commonjs --esModuleInterop --skipLibCheck --types node --typeRoots /usr/loca`
 

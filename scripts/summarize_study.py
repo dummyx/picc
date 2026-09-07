@@ -1356,7 +1356,7 @@ def main() -> int:
         print(f"warning: {warning}", file=sys.stderr)
 
     groups = grouped(rows)
-    deltas = baseline_deltas(rows)
+    deltas = baseline_deltas(rows, baseline=str(study.get("baseline_condition", "baseline")))
     output.mkdir(parents=True, exist_ok=True)
     write_csv(output / "runs.csv", rows)
     write_csv(output / "conditions.csv", groups)

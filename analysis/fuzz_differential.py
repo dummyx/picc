@@ -318,6 +318,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path, required=True, help="candidate repository")
     parser.add_argument("--artifact", default="target/release/picc")
+    parser.add_argument(
+        "--runner",
+        default="",
+        help="interpreter prepended to the artifact, e.g. `node` for the JavaScript/TypeScript candidates",
+    )
     parser.add_argument("--max-stage", type=int, default=10)
     parser.add_argument("--count", type=int, default=200)
     parser.add_argument("--seed", type=int, default=20260830)
@@ -368,7 +373,7 @@ def main() -> int:
             # the evaluator uses.
             assembly = temp / "case.s"
             assembly.unlink(missing_ok=True)
-            compiled = run([str(compiler), str(src), "-o", str(assembly)], temp)
+            compiled = run(([args.runner] if args.runner else []) + [str(compiler), str(src), "-o", str(assembly)], temp)
             if compiled.returncode != 0 or not assembly.exists():
                 mismatches.append(
                     {

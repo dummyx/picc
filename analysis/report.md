@@ -10,7 +10,7 @@ that. The instructive results are elsewhere: the harness defects we found while
 looking were each large enough to have manufactured a false answer, and the least
 instructed condition performed at least as well as the most instructed one.
 
-- Date: 2026-08-25
+- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10
 - Model: local Qwen3.8-27B (UD-Q4_K_XL) via llama.cpp, single RTX 5090
 - Profile: pilot — 45-min round cap, 2 h wall budget, stages 1–6
 - Scoring: hidden-partition macro average over 59 held-out tests, never shown to
@@ -320,6 +320,194 @@ generation.
    audit pattern as a hypothesis until a human has read the match.
 7. **Reconsider end-state scoring.** A run is scored on its final snapshot, so
    being killed mid-refactor reads as total failure.
+
+---
+
+## 7. v3: withholding tests at stages 1–10 (summary)
+
+Pre-registered (`docs/PRE_REGISTRATION.md`), run 2026-09-02, main profile: 2 h
+wall, 45-min round cap, stages 1–10, hidden partition of 104 tests. Three
+replicates of `baseline` (Rust, failure-level `test_visible`) against
+`tests-none` (no agent-visible tests or scores).
+
+| Rep | `baseline` hidden | `tests-none` hidden | Δ (none − baseline) |
+|---:|---:|---:|---:|
+| 1 | 0.8188 | 0.8458 | +0.027 |
+| 2 | 0.9306 | 0.7492 | −0.181 |
+| 3 | 0.8194 | 0.6839 | −0.136 |
+
+Paired median −0.136 against the pre-declared 0.13 threshold: a candidate
+effect warranting replication, not a confirmed one (one replicate reversed).
+At this difficulty the saturation of §2.3 is gone (no run reached 0.95;
+cohort SD 0.084), and `tests-none` used roughly half the tokens of `baseline`.
+Provenance correction recorded 2026-09-07: this cohort ran on the re-downloaded
+model file (SHA-256 `3f227079…`), not the file its pre-registration quoted.
+
+---
+
+## 8. v4: static typing — TypeScript strict versus plain JavaScript
+
+**Headline: requiring static types with a strict type-checker as the build gate
+did not measurably change hidden correctness.** Paired median +0.026 in favour
+of the typed arm, below the pre-declared 0.13 threshold; the largest paired
+difference (+0.071) is one agent's handling of a lexer corner case, and the
+typed arm's best-scoring compiler cannot compile a call with two arguments.
+
+Pre-registered before the first run (`docs/PRE_REGISTRATION_v4.md`, commits
+`6ebc1a3`/`3ff1e68`, amended `5a35741`); run 2026-09-06/07 on the same model
+file, prompts, specification, tests, and budgets as v3.
+
+### 8.1 Design
+
+Two candidate adapters on the same Node.js 24 runtime, everything else held at
+the v3 baseline (the initial and continuation prompts are byte-identical to v3;
+`TASK.md` and `AGENTS.md` differ only in the language, build, entry, and
+dependency-policy slots):
+
+| Condition | Language | Build gate | Type checker |
+|---|---|---|---|
+| `js-untyped` (study baseline) | plain JavaScript | `node --check src/picc.js` (syntax only) | withheld: `tsc` is in the image but the condition's guard blocks it |
+| `ts-strict` | TypeScript, explicit annotations required | `tsc --strict --noEmitOnError` — a snapshot with a type error has no compiler and scores 0 | available and mandatory |
+
+JavaScript, rather than "Python without annotations", was the untyped arm
+because in JavaScript the absence of annotations is a property of the language
+rather than an instruction — and §4 showed prompt instructions are followed
+about half the time. Image `picc-experiment:0.2` adds only `typescript@5.9.3`
+and `@types/node@24.13.3` to the v3 image. Order: randomized blocks from the
+study seed, six 2-hour runs in sequence.
+
+### 8.2 Results
+
+| Rep | Condition | Rounds | Min | Visible | Hidden macro | Hidden micro | `tsc` calls | `test_visible` | Out tokens | LOC |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | `ts-strict` | 2 | 91 | 0.8602 | **0.8389** | 0.8365 | 19 | 3 | 297k | 2096 |
+| 1 | `js-untyped` | 2 | 90 | 0.8930 | **0.8833** | 0.8654 | 0 | 137 | 278k | 1423 |
+| 2 | `ts-strict` | 2 | 90 | 0.8709 | **0.8653** | 0.8462 | 24 | 8 | 302k | 2113 |
+| 2 | `js-untyped` | 2 | 90 | 0.8641 | **0.8389** | 0.8365 | 0 | 0 | 143k | 1678 |
+| 3 | `ts-strict` | 2 | 90 | 0.9202 | **0.8986** | 0.9038 | 14 | 7 | 186k | 1514 |
+| 3 | `js-untyped` | 2 | 90 | 0.8736 | **0.8278** | 0.8173 | 0 | 6 | 223k | 1274 |
+
+| Condition | n | Median | Mean | Range | SD | Hidden AUC (median) |
+|---|---:|---:|---:|---|---:|---:|
+| `ts-strict` | 3 | 0.8653 | 0.8676 | 0.839–0.899 | 0.030 | 0.654 |
+| `js-untyped` | 3 | 0.8389 | 0.8500 | 0.828–0.883 | 0.029 | 0.629 |
+
+Paired differences (typed − untyped): −0.044, +0.026, +0.071; **median +0.026**
+(mean +0.018). Cohort n=6, mean 0.859, SD 0.028 — the tightest cohort so far.
+Every run ended by two consecutive 45-minute stalls at 1.5 h, every final
+snapshot built and passed the audit, and no `ts-strict` snapshot was ever lost
+to the type gate: all six typed snapshots type-checked. The visible–hidden gap
+is 0.01–0.05 in both arms.
+
+Under the pre-registered rule the contrast is compatible with no detectable
+effect at this sample size. Two further observations make it weaker than that
+number suggests.
+
+**The variance is one lexer corner case.** Ten hidden tests (chapters 4–7)
+begin with `#ifdef SUPPRESS_WARNINGS` preprocessor lines. Five of the six
+compilers reject them at line 1 ("unexpected character '#'", each in its own
+wording); only `ts-strict` replicate 3 skips such lines. That single feature is
+the entire +0.071 of replicate 3 and most of the spread between arms. Three
+tests fail in all six runs (a block-scope function declaration, an assignment to
+a conditional expression that every compiler accepts, and a `#`-prefixed
+chapter-9 file); four of six reject block-scope `static`. If only the tests
+that every run fails had failed, the macro score would be 0.971; the cohort's
+0.83–0.90 range is a handful of shared gaps plus the `#` lottery. The same gap
+appeared in eight of nine v2 runs (§2.3).
+
+**The corpus and the fuzzer disagree about the best typed compiler.**
+Differential fuzzing of each final snapshot against GCC (200 generated programs,
+stage-10 features, seed 20260830; `analysis/fuzz_differential.py --runner node`):
+
+| Final snapshot | Corpus hidden | Fuzz mismatches / 200 |
+|---|---:|---:|
+| `v4-ts-strict-r1` | 0.8389 | 0 |
+| `v4-ts-strict-r2` | 0.8653 | 0 |
+| `v4-ts-strict-r3` | 0.8986 | **190** (rejects every call with ≥2 arguments) |
+| `v4-js-untyped-r1` | 0.8833 | 0 |
+| `v4-js-untyped-r2` | 0.8389 | 0 |
+| `v4-js-untyped-r3` | 0.8278 | 0 |
+| `v3-baseline-r1` (Rust) | 0.8188 | 0 |
+| `v3-baseline-r2` (Rust) | 0.9306 | 43 (wrong results, crashes) |
+| `v3-baseline-r3` (Rust) | 0.8194 | 26 (wrong results, crashes) |
+
+`v4-ts-strict-r3`'s round-1 edit added comma-separated file-scope declarators
+and broke argument-list parsing: `f(1, 2)` now fails with "expects 2, got 1".
+Round 0 had passed the chapter-9 multi-argument tests; the final snapshot fails
+the two hidden tests that exercise them and is otherwise the corpus's favourite.
+A strict type-checker is silent on this kind of regression, and the visible
+corpus exercises multi-argument calls too rarely for `test_visible` to flag it.
+Under the fuzz oracle the typed arm has the only broken compiler in the cohort
+and the paired contrast for replicate 3 reverses sign. §6.1's recommendation to
+fold the fuzzer into scoring stands; here it would have changed the ranking.
+
+### 8.3 Was the treatment delivered?
+
+Yes, cleanly in both directions (`analysis/typing-metrics.md`):
+
+- `ts-strict`: `tsc` invoked 14–24 times per run; every function parameter
+  annotated (share 1.0 in all three runs); explicit return types on 15/16,
+  38/38, 8/8 declared functions; 5–28 interfaces and 9–10 type aliases per run;
+  `any` used 0, 5, and 0 times; no `@ts-nocheck`/`@ts-ignore`/`@ts-expect-error`
+  anywhere; no `.js` source in `src/`.
+- `js-untyped`: zero JSDoc type tags, zero `.ts` files, zero attempts to run
+  `tsc` (the typing guard never fired); `node --check` used 2–12 times per run.
+
+So the null is not "the agent ignored the types". The typed agents wrote fully
+annotated, strictly checked code and paid for it: median output tokens 297k
+versus 223k, median tool calls 261 versus 171, median 2096 versus 1423 lines,
+hidden score per million generation tokens 1.67 versus 1.96. The extra work
+bought no measurable hidden correctness and, in one run, coincided with a
+regression the checker could not see.
+
+### 8.4 Process notes
+
+- Every run ended by double stall at 1.5 h (as in v3): the stall-dominated regime
+  is now the default at this difficulty. Compactions 1–3 per run, truncated
+  thinking turns 2–5 per run, in both arms.
+- `test_visible` uptake stays erratic: 137 calls in `js-untyped` replicate 1
+  (the highest-scoring untyped run) against 0 and 6 in its siblings, 3–8 in the
+  typed arm. The tool-uptake correlation of §2 does not appear here at n=6.
+- The JavaScript agents self-test by spawning their own compiler from JavaScript
+  drivers (`.scratch/`, `dev/`); the TypeScript agents self-test from bash. That
+  difference produced the harness incident below.
+- `js-untyped` replicate 2 committed ~3,000 scratch files (fuzz outputs), so its
+  churn metrics are meaningless; source LOC is unaffected.
+- Against the v3 Rust baseline (same prompts, tests, budget, and model file;
+  different image patch level and harness revision, so descriptive only): Rust
+  median 0.819, both Node arms 0.839–0.865. The best single run remains Rust
+  replicate 2 (0.931), which the fuzzer rates as broken.
+
+### 8.5 A harness incident, and what it says about audits
+
+The first launch was aborted after 2.6 hours and restarted under an amendment.
+The untyped agent's fuzz driver (`.scratch/fuzz2.js`) spawned the compiler via
+`child_process`, and the source audit — which scanned every `.js` file in the
+workspace — zeroed the snapshot as a blocking "subprocess" finding although
+`src/picc.js` was clean. Because JavaScript agents write JavaScript drivers and
+the typed adapter never scans a TypeScript agent's `.js` helpers, the rule cut
+the arms asymmetrically: a run ending with such a driver would have scored 0 on
+the primary endpoint by artifact, inverting the contrast for reasons unrelated
+to typing — the §3.2 failure mode again, in a new language. The audit now scans
+the adapter's declared source root plus the entry module's import closure, so a
+module the compiler imports is still audited while test drivers are not; the two
+affected runs are quarantined (`runs/.quarantine-v4/`). General lesson: a
+blocking audit must be scoped to the artifact actually submitted, never to the
+workspace, or it measures the agent's testing habits.
+
+### 8.6 Limitations
+
+- Three replicates resolve ~0.13; the observed difference is ~0.03.
+- Both arms are the same model's competence in one language family; the result
+  says nothing about a language the model knows less well, or about a project
+  large enough for types to matter as documentation.
+- The type gate never bound. A task that stresses data-structure invariants
+  more than this parser-to-assembly pipeline might behave differently.
+- The typed treatment bundles "annotate everything" with "the checker must
+  pass"; this design cannot separate them.
+- The corpus samples multi-argument calls and preprocessor-prefixed files
+  thinly; §8.2 shows both distorting the ranking. Fuzz-based scoring (§6.1) is
+  the remedy and is still descriptive here.
 
 ---
 
