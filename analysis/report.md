@@ -10,7 +10,7 @@ that. The instructive results are elsewhere: the harness defects we found while
 looking were each large enough to have manufactured a false answer, and the least
 instructed condition performed at least as well as the most instructed one.
 
-- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10
+- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle)
 - Model: local Qwen3.8-27B (UD-Q4_K_XL) via llama.cpp, single RTX 5090
 - Profile: pilot — 45-min round cap, 2 h wall budget, stages 1–6
 - Scoring: hidden-partition macro average over 59 held-out tests, never shown to
@@ -508,6 +508,88 @@ workspace, or it measures the agent's testing habits.
 - The corpus samples multi-argument calls and preprocessor-prefixed files
   thinly; §8.2 shows both distorting the ranking. Fuzz-based scoring (§6.1) is
   the remedy and is still descriptive here.
+
+---
+
+## 9. Every final re-scored with the fuzz oracle
+
+**Headline: the corpus and the fuzz oracle disagree about which compilers are good,
+and the disagreement is not noise.** All 27 cohort finals (v2, v3, v4) were rebuilt
+from their committed snapshots and fuzzed against GCC. The v3 result gets stronger
+under the fuzz oracle, the v4 null stays null with its best typed run becoming its
+worst, and thirteen v2 compilers that the corpus spreads over 0.877–0.958 are
+indistinguishable at the fuzzer's resolution. Full tables:
+[`fuzz-rescore.md`](fuzz-rescore.md); regenerate with `analysis/fuzz_rescore.py`.
+
+### 9.1 Method
+
+Each final snapshot is exported from its run workspace, built inside the pinned image
+exactly as the evaluator builds it, and run through `analysis/fuzz_differential.py`
+on the host, which generates UB-free C programs from the cohort's cumulative feature
+subset, compiles them with GCC as the reference, and compares exit status and stdout.
+Two views: **full scope** (300 programs using every feature of the cohort's task at
+once, one seed) and **fuzz macro** (100 programs at each of stages 1..K, seeded per
+stage, averaged with equal stage weights like the corpus macro score). A single broken
+feature fails every full-scope program; the stage average grades it. Rejecting a valid
+program, failing to assemble, crashing, hanging, and wrong results all count as
+failures. No score here changes any pre-registered primary endpoint.
+
+### 9.2 What the fuzzer found that the corpus did not
+
+| Final | Corpus hidden | Fuzz macro | Defect (stages affected) |
+|---|---:|---:|---|
+| `v3-tests-none-r3` | 0.684 | 0.228 | SIGFPE on nested `%`/`/` and wrong results from stage 3; invalid register forms at stages 9–10 |
+| `v3-tests-none-r2` | 0.749 | 0.715 | wrong `&&`/`\|\|` results with bitwise operands from stage 4; loops that hang from stage 8 (47 of 100 programs time out); invalid assembly at stage 9; cannot parse an initialized file-scope variable (stage 10: 0.00) |
+| `v3-baseline-r2` | **0.931** (cohort best) | 0.953 | segfaults on calls with seven or more arguments (stages 9–10: 0.72, 0.81) |
+| `v3-baseline-r3` | 0.819 | 0.956 | wrong results in nested conditionals from stage 6 |
+| `v4-ts-strict-r3` | **0.899** (cohort best) | 0.806 | rejects every call with two or more arguments (stages 9–10: 0.04, 0.02) |
+| `v2-spec-architecture-r1` | 0.870 | 0.820 | wrong results from stage 2 (unary/binary nesting) |
+| `v2-spec-architecture-r2` | 0.863 | 0.968 | wrong results from stage 4 |
+
+Every other final (20 of 27) agrees with GCC on every generated program at every
+stage. The corpus's residual spread among those twenty is the `#ifdef` lexer gap
+(§8.2), invalid-program rejection, and a few shared parse gaps; none of it is
+codegen quality.
+
+### 9.3 Cohort conclusions under both oracles
+
+| Cohort | Pre-registered contrast | Corpus paired median | Fuzz macro paired median | Rank agreement (Spearman ρ, corpus vs fuzz macro) |
+|---|---|---:|---:|---:|
+| v3 | `tests-none` − `baseline` | −0.136 | −0.238 (per-replicate 0.000, −0.238, −0.728) | 0.55 |
+| v4 | `ts-strict` − `js-untyped` | +0.026 | 0.000 (per-replicate 0.000, 0.000, −0.193) | −0.17 |
+| v2 | five conditions vs `baseline` | no separation (§2.1) | no separation: 13/15 finals at 1.000 | 0.62 |
+
+- **v3 gets stronger.** Two of the three compilers built without test access have
+  deep semantic defects that the corpus priced at 0.68 and 0.75 but that break
+  most generated programs from stage 3 or 4 onward. Withholding tests did not
+  merely lower scores; it produced compilers that are wrong on ordinary arithmetic
+  and logic. The candidate effect of §7 is, if anything, understated by the
+  corpus. (n=3, one replicate at zero difference under both oracles.)
+- **v4 stays null, and the typed arm's best run is its worst compiler.** Under
+  the fuzz oracle the two arms are identical in two replicates and the third
+  reverses sign. Nothing in the re-score suggests a typing effect hiding behind
+  the corpus.
+- **v2's ranking dissolves.** Thirteen of fifteen finals are perfect at the
+  fuzzer's stage-6 resolution; the corpus spread them across 0.877–0.958 and
+  ranked conditions by it. The two imperfect ones are both `spec-architecture`,
+  which §2.2 already flagged as the condition with the blown-out floor.
+
+### 9.4 What this means for scoring
+
+The two oracles see different things. The corpus checks invalid-program rejection,
+diagnostics, and a fixed set of valid programs with shallow expressions; the fuzzer
+checks deep, composed valid programs and never touches rejection. Neither alone
+ranks these compilers correctly: the corpus promotes crashing and argument-blind
+compilers to the top of two cohorts, and the fuzzer cannot see a compiler that
+accepts every invalid program. The scoring change proposed in §6.1 should therefore
+add the fuzz macro as a co-primary endpoint alongside the corpus macro rather than
+replace it, with the stage-averaged form so that one broken feature does not zero a
+compiler, and it should be pre-registered before the next cohort. Two mechanical
+follow-ups: the fuzzer now records a hanging program as a `timeout` mismatch instead
+of aborting the batch (it lost two stage cells on the first pass), and the
+preprocessor-prefixed test files (§8.2) should be handled at the corpus or
+specification level so that the corpus measures compilation rather than an
+unstated rule.
 
 ---
 

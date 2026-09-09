@@ -310,8 +310,19 @@ class Generator:
         return "\n".join(lines) + "\n", expected, expected_stdout
 
 
+TIMEOUT_STATUS = -124
+
+
 def run(args: list[str], cwd: Path, timeout: int = 20) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(args, cwd=cwd, capture_output=True, text=True, timeout=timeout, check=False)
+    """Run a step; a hang is reported as status TIMEOUT_STATUS instead of aborting the fuzz run.
+
+    A candidate that emits an infinite loop is a wrong-behavior mismatch, not a
+    reason to lose the rest of the batch.
+    """
+    try:
+        return subprocess.run(args, cwd=cwd, capture_output=True, text=True, timeout=timeout, check=False)
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(args, TIMEOUT_STATUS, "", f"timed out after {timeout}s")
 
 
 def main() -> int:
@@ -333,6 +344,12 @@ def main() -> int:
     )
     parser.add_argument("--json", type=Path)
     parser.add_argument("--keep-failures", type=Path)
+    parser.add_argument(
+        "--run-timeout",
+        type=int,
+        default=20,
+        help="seconds allowed for each compiled program to run; a hang is a `timeout` mismatch",
+    )
     args = parser.parse_args()
 
     workspace = args.workspace.resolve()
@@ -364,7 +381,7 @@ def main() -> int:
             if built.returncode != 0:
                 skipped += 1
                 continue
-            ref_run = run([str(reference)], temp)
+            ref_run = run([str(reference)], temp, timeout=args.run_timeout)
             if ref_run.returncode != expected_status or ref_run.stdout != expected_stdout:
                 skipped += 1
                 continue
@@ -400,13 +417,13 @@ def main() -> int:
                 )
                 continue
 
-            got = run([str(candidate)], temp)
+            got = run([str(candidate)], temp, timeout=args.run_timeout)
             checked += 1
             if got.returncode != expected_status or got.stdout != expected_stdout:
                 mismatches.append(
                     {
                         "index": index,
-                        "kind": "wrong_behavior",
+                        "kind": "timeout" if got.returncode == TIMEOUT_STATUS else "wrong_behavior",
                         "detail": (
                             f"expected status {expected_status} stdout {expected_stdout!r}; "
                             f"got status {got.returncode} stdout {got.stdout!r}"
