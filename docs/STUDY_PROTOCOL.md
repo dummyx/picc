@@ -134,7 +134,10 @@ conditions. Do not tune prompts based on which condition appears better.
 
 ### 2. Freeze
 
-Before confirmatory runs, freeze and commit:
+Before confirmatory runs, run `make preflight`: with `LOCAL_MODEL_SHA256` set
+it hashes the file the local endpoint reports serving and refuses a different
+one (the served model file changed once between cohorts without anything in
+the repository changing). Then freeze and commit:
 
 - study manifest and all artifacts;
 - Docker image ID;
@@ -157,7 +160,8 @@ not a bit-reproducible seed.
 
 ### 4. Post-hoc evaluation
 
-For every run:
+For every run (`study-hidden-all` also scores the final snapshot with the fuzz
+oracle and writes `artifacts/fuzz-scores.jsonl`):
 
 ```bash
 make study-hidden-all RUN_ID=<id>
@@ -170,13 +174,40 @@ Then aggregate:
 make study-summary
 ```
 
+## Candidate inputs
+
+The evaluator hands the candidate each test after the C preprocessor
+(`gcc -E -P -C -nostdinc`), the way the upstream test suite's driver hands a
+student compiler its input: `#ifdef`/`#pragma` blocks are resolved, the test's
+own comments are kept, and nothing is added. The GCC reference compile still
+uses the original file. Ten hidden and eighteen visible tests begin with an
+`#ifdef SUPPRESS_WARNINGS` block; before this change (cohorts v2–v4) they
+measured an unstated rule about `#` lines rather than compilation, and five of
+six v4 compilers lost the same ten tests to it. A test whose preprocessing
+fails falls back to its raw text and is recorded in the evaluation's
+`input_policy`.
+
 ## Outcomes
 
 ### Co-primary
 
-1. Final hidden macro score, equally averaging stages and valid/invalid classes.
-2. Hidden-score area under active-time trajectory.
-3. Completion: hidden macro score at or above 0.95 with successful build and
+1. Final hidden macro score, equally averaging stages and valid/invalid classes
+   (the corpus oracle).
+2. Final-snapshot **fuzz macro**: for each stage 1..K the share of generated
+   valid programs (restricted to that stage's cumulative feature subset) on
+   which the candidate agrees with GCC, averaged over stages with equal weight
+   (`studies/runtime/fuzz_evaluate.py`, frozen parameters `FUZZ_*` in the
+   materialized configuration). Rejecting a valid program, a compiler hang,
+   assembly that does not assemble, and a wrong, crashing, or hanging result
+   all count against the candidate; a stage not reached within the deadline
+   scores 0. The two oracles see different defects: the corpus checks
+   invalid-program rejection and shallow hand-written programs, the fuzzer
+   deep composed programs and the calling convention. Re-scoring the v2–v4
+   finals showed each oracle promoting compilers the other rates as broken
+   (`analysis/report.md` §9), so both are reported and pre-registered
+   thresholds apply to each.
+3. Hidden-score area under active-time trajectory.
+4. Completion: hidden macro score at or above 0.95 with successful build and
    source audit.
 
 Report finish rate and time-to-completion among completed runs. Do not replace

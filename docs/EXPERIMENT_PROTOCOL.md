@@ -50,7 +50,9 @@ never sees hidden tests, hidden scores, or hidden failure diagnostics during a
 run.
 
 The outer harness evaluates each round's immutable Git snapshot on visible
-tests. Hidden evaluation happens only after the run.
+tests. Hidden evaluation happens only after the run. Every test is handed to
+the candidate after the C preprocessor (`gcc -E -P -C -nostdinc`), as the
+upstream suite's driver does; the reference compile uses the original file.
 
 ## Budgets
 
@@ -160,5 +162,6 @@ Record before main runs:
 - visible and hidden manifest hashes;
 - upstream test revision;
 - effective `.env` overrides, excluding secrets;
+- the served model file's SHA-256 (`LOCAL_MODEL_SHA256`, verified by `make preflight`);
 - host and Docker platform;
 - run IDs and planned number of repetitions.

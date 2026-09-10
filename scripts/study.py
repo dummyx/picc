@@ -912,7 +912,8 @@ def _materialize_direct(
     (prompt_dir / "TASK.md").write_text(task.rstrip() + "\n", encoding="utf-8")
 
     evaluator_dir = materialization_root / "evaluator"
-    shutil.copy2(REPO_ROOT / "studies" / "runtime" / "evaluate.py", evaluator_dir / "evaluate.py")
+    for name in ("evaluate.py", "fuzz_generator.py", "fuzz_evaluate.py"):
+        shutil.copy2(REPO_ROOT / "studies" / "runtime" / name, evaluator_dir / name)
     shutil.copy2(adapter_source, evaluator_dir / "candidate.json")
 
     visible_source, hidden_source = source_partitions(condition)

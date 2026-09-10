@@ -340,6 +340,20 @@ pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\
             self.assertTrue(summary["audit_ok"])
 
 
+class TestsStudyManifestTests(unittest.TestCase):
+    """The v5 manifest: the starter's baseline and tests-none, nothing else changed."""
+
+    def test_manifest_matches_the_starter_conditions(self) -> None:
+        payload, conditions = study.load_study(ROOT / "studies" / "tests" / "study.json")
+        self.assertEqual(payload["id"], "picc-tests-v2")
+        self.assertEqual(payload["baseline_condition"], "baseline")
+        self.assertEqual([row["id"] for row in conditions], ["baseline", "tests-none"])
+        _, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        starter = {row["id"]: row for row in starter_conditions}
+        for row in conditions:
+            self.assertEqual(row, starter[row["id"]])
+
+
 class TypesStudyTests(unittest.TestCase):
     """The static-typing study: TypeScript under tsc --strict versus plain JavaScript."""
 
@@ -425,6 +439,14 @@ class TypesStudyTests(unittest.TestCase):
 
         adapter = json.loads((ts_root / "evaluator" / "candidate.json").read_text(encoding="utf-8"))
         self.assertEqual(adapter["build"]["artifact"], "dist/picc.js")
+        for name in ("evaluate.py", "fuzz_generator.py", "fuzz_evaluate.py"):
+            self.assertEqual(
+                (ts_root / "evaluator" / name).read_bytes(),
+                (ROOT / "studies" / "runtime" / name).read_bytes(),
+                name,
+            )
+        hashes = json.loads((ts_root / "study-materialization.json").read_text(encoding="utf-8"))["materialized_harness"]["file_hashes"]
+        self.assertIn("evaluator/fuzz_evaluate.py", hashes)
         runner = (ts_root / "scripts" / "run_experiment.py").read_text(encoding="utf-8")
         self.assertIn("dist/", runner)
         self.assertIn("node_modules/", runner)

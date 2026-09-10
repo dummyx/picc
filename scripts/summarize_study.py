@@ -912,6 +912,80 @@ def verified_hidden_trajectory(
     return visible_points, hidden_points, snapshots, final_full
 
 
+FUZZ_EMPTY = {
+    "fuzz_macro": None,
+    "fuzz_stage_pass_rates": None,
+    "fuzz_programs_per_stage": None,
+    "fuzz_mismatches_total": None,
+    "fuzz_deadline_hit": None,
+}
+
+
+def verified_fuzz_score(
+    run_dir: Path,
+    snapshots: list[dict[str, Any]],
+    metadata: dict[str, Any],
+    candidate_adapter_sha256: str,
+    report: dict[str, Any],
+) -> tuple[dict[str, Any], str | None]:
+    """The fuzz-oracle columns for a run, verified against the final snapshot.
+
+    A run without a fuzz ledger is still included (its columns are None) but
+    is reported as a coverage warning; an inconsistent ledger is a provenance
+    failure and raises, excluding the run like a bad hidden ledger would.
+    """
+    rows = read_jsonl(run_dir / "artifacts" / "fuzz-scores.jsonl")
+    if not rows:
+        return dict(FUZZ_EMPTY), f"{run_dir.name}: no fuzz-oracle score (artifacts/fuzz-scores.jsonl missing)"
+    if len(rows) != 1:
+        raise SummaryError("fuzz ledger must hold exactly one row, for the final snapshot")
+    row = rows[0]
+    final = snapshots[-1]
+    if row.get("partition") != "fuzz":
+        raise SummaryError("fuzz ledger row has the wrong partition")
+    if row.get("round") != final.get("round") or row.get("git_commit") != final.get("git_commit") or row.get("git_tree") != final.get("git_tree"):
+        raise SummaryError("fuzz ledger row does not describe the final snapshot")
+    expected_docker_image = require_object(metadata.get("docker_image"), "metadata.docker_image")
+    if row.get("docker_image") != expected_docker_image:
+        raise SummaryError("fuzz ledger row used a different Docker image")
+    expected_output = "artifacts/evaluations/fuzz-final.json"
+    if row.get("output") != expected_output:
+        raise SummaryError("fuzz ledger row points at an unexpected output")
+    full = load_object(run_dir / expected_output)
+    full_snapshot = require_object(full.get("snapshot"), "fuzz evaluation snapshot")
+    if full_snapshot.get("git_commit") != final.get("git_commit") or full_snapshot.get("git_tree") != final.get("git_tree"):
+        raise SummaryError("fuzz evaluation was produced from a different snapshot")
+    if full.get("docker_image") != expected_docker_image:
+        raise SummaryError("fuzz evaluation used a different Docker image")
+    candidate = require_object(full.get("candidate"), "fuzz evaluation candidate")
+    if candidate.get("adapter_sha256") != candidate_adapter_sha256:
+        raise SummaryError("fuzz evaluation used a different candidate adapter")
+    budget = require_object(metadata.get("budget"), "metadata.budget")
+    policy = require_object(full.get("policy"), "fuzz evaluation policy")
+    if policy.get("max_stage") != int(budget["max_stage"]):
+        raise SummaryError("fuzz evaluation did not use the run's stage budget")
+    summary = require_object(full.get("summary"), "fuzz evaluation summary")
+    if summary != row.get("summary"):
+        raise SummaryError("fuzz evaluation summary disagrees with its ledger row")
+    rates = summary.get("stage_pass_rates")
+    if not isinstance(rates, list) or len(rates) != int(budget["max_stage"]) or any(numeric(r) is None for r in rates):
+        raise SummaryError("fuzz evaluation has an inconsistent stage_pass_rates array")
+    recomputed = sum(float(r) for r in rates) / len(rates)
+    if not numbers_equal(summary.get("fuzz_macro"), recomputed):
+        raise SummaryError("fuzz evaluation fuzz_macro disagrees with its per-stage rates")
+    if report.get("fuzz_final") != row:
+        raise SummaryError("report fuzz_final is stale or disagrees with artifacts/fuzz-scores.jsonl")
+    if summary.get("error"):
+        raise SummaryError(f"fuzz evaluation recorded an error: {str(summary['error'])[:200]}")
+    return {
+        "fuzz_macro": float(summary["fuzz_macro"]),
+        "fuzz_stage_pass_rates": json.dumps([round(float(r), 4) for r in rates]),
+        "fuzz_programs_per_stage": summary.get("programs_per_stage"),
+        "fuzz_mismatches_total": summary.get("mismatches_total"),
+        "fuzz_deadline_hit": bool(summary.get("deadline_hit")),
+    }, None
+
+
 def excluded_run(run_dir: Path, reason: str) -> tuple[None, str]:
     return None, f"{run_dir.name}: excluded from primary analysis: {reason}"
 
@@ -983,6 +1057,12 @@ def collect_run(
             metadata,
             hidden_manifest,
             str(provenance["candidate_adapter_sha256"]),
+        )
+    except SummaryError as error:
+        return excluded_run(run_dir, str(error))
+    try:
+        fuzz_columns, fuzz_warning = verified_fuzz_score(
+            run_dir, snapshots, metadata, str(provenance["candidate_adapter_sha256"]), report
         )
     except SummaryError as error:
         return excluded_run(run_dir, str(error))
@@ -1076,8 +1156,9 @@ def collect_run(
         **extension,
         **calls,
         **snapshot,
+        **fuzz_columns,
     }
-    return row, None
+    return row, fuzz_warning
 
 
 def reject_duplicate_included_runs(rows: list[dict[str, Any]]) -> None:
@@ -1215,6 +1296,8 @@ def grouped(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "median_test_calls": median(row["visible_test_calls"] for row in group),
                 "median_oracle_calls": median(row["oracle_calls"] for row in group),
                 "median_source_loc": median(row["source_loc"] for row in group),
+                "median_fuzz_macro": median(row["fuzz_macro"] for row in group if row.get("fuzz_macro") is not None),
+                "fuzz_scored": sum(1 for row in group if row.get("fuzz_macro") is not None),
                 "median_agent_test_loc": median(row["agent_test_loc"] for row in group),
                 "median_specification_words": median(row["specification_words"] for row in group),
                 "median_prompt_total_bytes": median(row["prompt_total_bytes"] for row in group),
@@ -1254,6 +1337,7 @@ def baseline_deltas(rows: list[dict[str, Any]], baseline: str = "baseline") -> l
                 "replicate": row.get("replicate"),
                 "delta_hidden_score": difference("hidden_score"),
                 "delta_hidden_auc": difference("hidden_auc"),
+                "delta_fuzz_macro": difference("fuzz_macro"),
                 "delta_elapsed_hours": elapsed_delta / 3600 if elapsed_delta is not None else None,
                 "delta_input_tokens": difference("input_tokens"),
                 "delta_output_tokens": difference("output_tokens"),
@@ -1285,13 +1369,14 @@ def markdown(study: dict[str, Any], rows: list[dict[str, Any]], groups: list[dic
         "",
         "## Condition results",
         "",
-        "| Condition | Profile | Factor | n | Finished | Finish rate | Hidden score | Hidden AUC | Hours | Input tokens | Output tokens | Test calls | Oracle calls | Source LOC |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Condition | Profile | Factor | n | Finished | Finish rate | Hidden score | Fuzz macro (n scored) | Hidden AUC | Hours | Input tokens | Output tokens | Test calls | Oracle calls | Source LOC |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for group in groups:
         lines.append(
             f"| `{group['condition_id']}` | `{group.get('profile')}` | `{group.get('factor')}` | {group['n']} | {group['finished']} | "
             f"{fmt(group['finish_rate'])} | {fmt(group['median_hidden_score'])} | "
+            f"{fmt(group['median_fuzz_macro'])} ({group['fuzz_scored']}) | "
             f"{fmt(group['median_hidden_auc'])} | {fmt(group['median_elapsed_hours'], 2)} | "
             f"{fmt(group['median_input_tokens'], 0)} | {fmt(group['median_output_tokens'], 0)} | "
             f"{fmt(group['median_test_calls'], 1)} | {fmt(group['median_oracle_calls'], 1)} | "
@@ -1306,6 +1391,7 @@ def markdown(study: dict[str, Any], rows: list[dict[str, Any]], groups: list[dic
         "- Language, framework, and scaffold conditions are external-validity blocks. Their effects include the implementation substrate and should not be interpreted as pure prompt effects.",
         "- Provenance records how a specification or test suite was created. Creation method is causal only when multiple independently created, coverage-matched artifacts are replicated.",
         "- Artifact quality here is objective behavioral correctness, build/audit status, authored tests, regressions, and size/churn. No LLM-as-judge score is used.",
+        "- Hidden score is the corpus oracle (hand-written tests, valid and invalid). Fuzz macro is the generated-program oracle (stage-averaged agreement with GCC on valid programs) of the final snapshot; the two see different defects and are reported side by side.",
         "- LOC and style metrics are descriptive and should not be compared naively across languages.",
     ]
     if warnings:

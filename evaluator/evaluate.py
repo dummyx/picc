@@ -159,6 +159,35 @@ def iter_dependency_tables(value: Any, path: tuple[str, ...] = ()) -> Iterable[t
             yield from iter_dependency_tables(child, child_path)
 
 
+# The candidate is handed the test the way the upstream test suite's driver
+# hands it to a student compiler: after the C preprocessor. `-P` drops line
+# markers, `-C` keeps the test's own comments (the lexical subset includes
+# them), `-nostdinc` keeps GCC's pre-included system header out of the output.
+# The reference compile below still uses the original file. A test that fails
+# to preprocess falls back to its raw text and is recorded in `input_policy`.
+PREPROCESS_COMMAND = ["/usr/bin/gcc", "-E", "-P", "-C", "-nostdinc", "-x", "c"]
+PREPROCESS_FALLBACKS: list[str] = []
+
+
+def candidate_input(source: Path, temp: Path, timeout: int) -> Path:
+    """Write the candidate's input for `source` into `temp` and return its path."""
+    copied = temp / "input.c"
+    result = run_command(PREPROCESS_COMMAND + [str(source), "-o", str(copied)], cwd=temp, timeout=timeout)
+    if result.returncode == 0 and not result.timed_out and copied.is_file():
+        return copied
+    PREPROCESS_FALLBACKS.append(f"{source.name}: {truncate(result.stderr.strip(), 200) or 'preprocessor failed'}")
+    shutil.copy2(source, copied)
+    return copied
+
+
+def input_policy() -> dict[str, Any]:
+    return {
+        "preprocess": " ".join(PREPROCESS_COMMAND[1:]),
+        "fallback_to_raw_on_failure": True,
+        "raw_fallbacks": list(PREPROCESS_FALLBACKS),
+    }
+
+
 def source_audit(workspace: Path) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     cargo_toml = workspace / "Cargo.toml"
@@ -323,10 +352,9 @@ def evaluate_valid(
 
     with tempfile.TemporaryDirectory(prefix="picc-test-") as temporary:
         temp = Path(temporary)
-        copied = temp / "input.c"
         assembly = temp / "output.s"
         executable = temp / "candidate"
-        shutil.copy2(source, copied)
+        copied = candidate_input(source, temp, compile_timeout)
 
         compile_result = run_command(
             [str(compiler), str(copied), "-o", str(assembly)],
@@ -395,9 +423,8 @@ def evaluate_invalid(
 ) -> TestResult:
     with tempfile.TemporaryDirectory(prefix="picc-invalid-") as temporary:
         temp = Path(temporary)
-        copied = temp / "input.c"
         assembly = temp / "output.s"
-        shutil.copy2(source, copied)
+        copied = candidate_input(source, temp, compile_timeout)
         result = run_command(
             [str(compiler), str(copied), "-o", str(assembly)],
             cwd=temp,
@@ -563,6 +590,7 @@ def main() -> int:
         },
         "source_audit": audit,
         "build": asdict(build_result) if build_result else None,
+        "input_policy": input_policy(),
         "summary": summary,
         "tests": [asdict(result) for result in results],
     }

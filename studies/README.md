@@ -57,6 +57,13 @@ make study-run STUDY=studies/types/study.json CONDITION=ts-strict PROFILE=main R
 make study-summary STUDY=studies/types/study.json
 ```
 
+## Test-availability study (revised oracle)
+
+`tests/study.json` (`picc-tests-v2`) holds the starter's `baseline` and
+`tests-none` unchanged, for the v5 replication under the revised harness
+(preprocessed candidate inputs, corpus macro and fuzz macro as co-primary
+endpoints). It is a separate manifest so the v3 aggregation stays intact.
+
 The starter deliberately does **not** claim to identify the causal effect of
 "human-created" versus "LLM-created" specifications/tests. Provenance is
 recorded, but creation method is only identifiable when several independently

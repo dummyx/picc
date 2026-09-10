@@ -32,6 +32,27 @@ from common import (
 # on most inputs; reaching it records that snapshot as unevaluatable instead
 # of aborting the remaining snapshots.
 SNAPSHOT_EVAL_TIMEOUT_SECONDS = 7200
+# Extra wall-clock allowed for the fuzz oracle beyond its own deadline: the
+# candidate build plus process start-up and tear-down inside the container.
+FUZZ_TIMEOUT_SLACK_SECONDS = 1800
+FUZZ_OUTPUT_NAME = "fuzz-final.json"
+
+
+def fuzz_policy(config: dict[str, str]) -> dict[str, int] | None:
+    """The frozen fuzz-oracle parameters, or None when FUZZ_STAGE_PROGRAMS is 0/unset."""
+    try:
+        programs = int(config.get("FUZZ_STAGE_PROGRAMS", "0") or 0)
+        if programs <= 0:
+            return None
+        return {
+            "programs_per_stage": programs,
+            "seed_base": int(config.get("FUZZ_SEED_BASE", "20260830") or 20260830),
+            "run_timeout_seconds": int(config.get("FUZZ_RUN_TIMEOUT_SECONDS", "3") or 3),
+            "compile_timeout_seconds": int(config.get("FUZZ_COMPILE_TIMEOUT_SECONDS", "10") or 10),
+            "deadline_seconds": int(config.get("FUZZ_DEADLINE_SECONDS", "5400") or 5400),
+        }
+    except ValueError as error:
+        raise ExperimentError(f"Invalid FUZZ_* configuration: {error}") from error
 
 
 def parse_args() -> argparse.Namespace:
@@ -133,6 +154,64 @@ def evaluate_snapshot(
         # then report a failed evaluation so remaining snapshots still run.
         subprocess.run(["docker", "kill", container_name], check=False, capture_output=True, text=True)
         note = f"snapshot evaluation exceeded {SNAPSHOT_EVAL_TIMEOUT_SECONDS}s and was killed"
+        return 124, captured(error.stdout), note + "\n" + captured(error.stderr), output_path
+    return result.returncode, result.stdout, result.stderr, output_path
+
+
+def fuzz_snapshot(
+    config: dict[str, str],
+    workspace: Path,
+    evaluator: Path,
+    artifacts: Path,
+    max_stage: int,
+    policy: dict[str, int],
+) -> tuple[int, str, str, Path]:
+    """Run the stage-averaged fuzz oracle on one checked-out snapshot."""
+    output_path = artifacts / "evaluations" / FUZZ_OUTPUT_NAME
+    container_name = f"picc-pfuzz-{os.getpid()}"
+    command = container_base(config)
+    command += ["--name", container_name]
+    command += docker_mount(workspace, "/workspace")
+    command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
+    command += docker_mount(artifacts, "/run-artifacts")
+    command += [
+        "-e",
+        "CARGO_NET_OFFLINE=true",
+        "--workdir",
+        "/workspace",
+        config["EXPERIMENT_IMAGE"],
+        "python3",
+        "/opt/picc-eval/fuzz_evaluate.py",
+        "--workspace",
+        "/workspace",
+        "--candidate-config",
+        "/opt/picc-eval/candidate.json",
+        "--max-stage",
+        str(max_stage),
+        "--count",
+        str(policy["programs_per_stage"]),
+        "--seed-base",
+        str(policy["seed_base"]),
+        "--run-timeout",
+        str(policy["run_timeout_seconds"]),
+        "--compile-timeout",
+        str(policy["compile_timeout_seconds"]),
+        "--deadline-seconds",
+        str(policy["deadline_seconds"]),
+        "--output",
+        f"/run-artifacts/evaluations/{FUZZ_OUTPUT_NAME}",
+        "--summary-json",
+    ]
+
+    def captured(value: Any) -> str:
+        return value if isinstance(value, str) else (value or b"").decode("utf-8", errors="replace")
+
+    ceiling = max(SNAPSHOT_EVAL_TIMEOUT_SECONDS, policy["deadline_seconds"] + FUZZ_TIMEOUT_SLACK_SECONDS)
+    try:
+        result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=ceiling)
+    except subprocess.TimeoutExpired as error:
+        subprocess.run(["docker", "kill", container_name], check=False, capture_output=True, text=True)
+        note = f"fuzz evaluation exceeded {ceiling}s and was killed"
         return 124, captured(error.stdout), note + "\n" + captured(error.stderr), output_path
     return result.returncode, result.stdout, result.stderr, output_path
 
@@ -299,7 +378,108 @@ def evaluate_locked(args: argparse.Namespace, run_id: str, run_dir: Path) -> int
                 )
 
     print(f"Wrote {output_log}")
+
+    if args.partition == "hidden":
+        fuzz_final_snapshot(
+            args, run_id, run_dir, config, evaluation_config, verified_image, workspace, artifacts, snapshots[-1], max_stage
+        )
     return 0
+
+
+def fuzz_final_snapshot(
+    args: argparse.Namespace,
+    run_id: str,
+    run_dir: Path,
+    config: dict[str, str],
+    evaluation_config: dict[str, str],
+    verified_image: dict[str, str],
+    workspace: Path,
+    artifacts: Path,
+    snapshot: dict[str, Any],
+    max_stage: int,
+) -> None:
+    """Score the final snapshot with the fuzz oracle and write artifacts/fuzz-scores.jsonl.
+
+    The ledger holds exactly one row, for the final snapshot, and is rewritten
+    on every hidden evaluation so that it can never disagree with the corpus
+    ledger produced alongside it.
+    """
+    fuzz_log = artifacts / "fuzz-scores.jsonl"
+    if fuzz_log.exists():
+        fuzz_log.unlink()
+    policy = fuzz_policy(config)
+    evaluator = REPO_ROOT / "evaluator"
+    if policy is None:
+        print("fuzz oracle: disabled (FUZZ_STAGE_PROGRAMS is 0 or unset)", flush=True)
+        return
+    if not (evaluator / "fuzz_evaluate.py").is_file() or not (evaluator / "candidate.json").is_file():
+        print("fuzz oracle: unavailable (evaluator has no fuzz_evaluate.py and candidate.json)", flush=True)
+        return
+
+    round_number = int(snapshot["round"])
+    commit = str(snapshot["git_commit"])
+    print(f"fuzz oracle: round {round_number:03d}, {commit[:12]}, {policy['programs_per_stage']} programs x {max_stage} stages", flush=True)
+    with tempfile.TemporaryDirectory(prefix=f".picc-{run_id}-fuzz-", dir=run_dir) as temporary:
+        worktree = Path(temporary) / "workspace"
+        result = subprocess.run(
+            ["git", "worktree", "add", "--detach", str(worktree), commit],
+            cwd=workspace,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise ExperimentError(f"git worktree failed for the fuzz oracle: {result.stderr}")
+        try:
+            evaluated_commit = git_revision(worktree, "HEAD")
+            evaluated_tree = git_revision(worktree, "HEAD^{tree}")
+            if evaluated_commit != commit or evaluated_tree != str(snapshot.get("git_tree", "")):
+                raise ExperimentError("Detached fuzz worktree does not match the snapshot ledger")
+            returncode, stdout, stderr, output_path = fuzz_snapshot(
+                evaluation_config, worktree, evaluator, artifacts, max_stage, policy
+            )
+            (artifacts / "evaluations" / "fuzz-final.stdout.log").write_text(stdout, encoding="utf-8")
+            (artifacts / "evaluations" / "fuzz-final.stderr.log").write_text(stderr, encoding="utf-8")
+            full: dict[str, Any] | None = None
+            if output_path.exists():
+                loaded = json.loads(output_path.read_text(encoding="utf-8"))
+                if not isinstance(loaded, dict):
+                    raise ExperimentError(f"Fuzz evaluator output is not a JSON object: {output_path}")
+                loaded["snapshot"] = {"git_commit": evaluated_commit, "git_tree": evaluated_tree}
+                loaded["docker_image"] = dict(verified_image)
+                atomic_write_json(output_path, loaded)
+                full = loaded
+            if returncode != 0 or full is None or not isinstance(full.get("summary"), dict):
+                summary: dict[str, Any] = {
+                    "fuzz_macro": 0.0,
+                    "stage_pass_rates": [0.0] * max_stage,
+                    "max_stage": max_stage,
+                    "build_ok": False,
+                    "error": f"fuzz evaluator exit {returncode}: {stderr[-2000:]}",
+                }
+            else:
+                summary = dict(full["summary"])
+            row = {
+                "partition": "fuzz",
+                "round": round_number,
+                "git_commit": commit,
+                "git_tree": evaluated_tree,
+                "docker_image": dict(verified_image),
+                "elapsed_seconds": snapshot.get("elapsed_seconds"),
+                "policy": policy,
+                "summary": summary,
+                "output": str(output_path.relative_to(run_dir)),
+            }
+            append_jsonl(fuzz_log, row)
+            print(
+                f"  fuzz_macro={float(summary.get('fuzz_macro', 0.0)):.4f}, "
+                f"stages={[round(float(r), 2) for r in summary.get('stage_pass_rates', [])]}",
+                flush=True,
+            )
+        finally:
+            subprocess.run(["git", "worktree", "remove", "--force", str(worktree)], cwd=workspace, check=False, capture_output=True, text=True)
+            subprocess.run(["git", "worktree", "prune"], cwd=workspace, check=False, capture_output=True, text=True)
+    print(f"Wrote {fuzz_log}")
 
 
 

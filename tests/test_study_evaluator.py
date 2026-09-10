@@ -70,3 +70,45 @@ class TestSourceIntegrityTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CandidateInputPreprocessingTests(unittest.TestCase):
+    """The candidate sees the test after the C preprocessor, as upstream's driver does."""
+
+    def setUp(self) -> None:
+        evaluator.PREPROCESS_FALLBACKS.clear()
+
+    def test_directives_are_resolved_and_comments_kept(self) -> None:
+        if not Path("/usr/bin/gcc").exists():
+            self.skipTest("/usr/bin/gcc is required")
+        with tempfile.TemporaryDirectory(prefix="picc-preprocess-") as temporary:
+            temp = Path(temporary)
+            source = temp / "test.c"
+            source.write_text(
+                "#ifdef SUPPRESS_WARNINGS\n#pragma GCC diagnostic ignored \"-Wunused\"\n#endif\n"
+                "/* keep me */\nint main(void) {\n    return 2; // trailing\n}\n",
+                encoding="utf-8",
+            )
+            copied = evaluator.candidate_input(source, temp, 30)
+            text = copied.read_text(encoding="utf-8")
+            self.assertEqual(copied.name, "input.c")
+            self.assertNotIn("#", text)
+            self.assertIn("/* keep me */", text)
+            self.assertIn("// trailing", text)
+            self.assertIn("return 2;", text)
+            self.assertNotIn("Free Software Foundation", text)
+            self.assertEqual(evaluator.PREPROCESS_FALLBACKS, [])
+            self.assertEqual(evaluator.input_policy()["raw_fallbacks"], [])
+
+    def test_failed_preprocessing_falls_back_to_the_raw_file(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="picc-preprocess-") as temporary:
+            temp = Path(temporary)
+            source = temp / "odd.c"
+            source.write_text("#error deliberate\nint main(void) { return 1; }\n", encoding="utf-8")
+            copied = evaluator.candidate_input(source, temp, 30)
+            self.assertEqual(copied.read_text(encoding="utf-8"), source.read_text(encoding="utf-8"))
+            self.assertEqual(len(evaluator.PREPROCESS_FALLBACKS), 1)
+            self.assertTrue(evaluator.PREPROCESS_FALLBACKS[0].startswith("odd.c:"))
+            policy = evaluator.input_policy()
+            self.assertTrue(policy["fallback_to_raw_on_failure"])
+            self.assertEqual(policy["preprocess"], "-E -P -C -nostdinc -x c")

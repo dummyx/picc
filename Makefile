@@ -9,7 +9,7 @@ CONDITION ?= baseline
 PROFILE ?= pilot
 REPLICATES ?= 3
 
-.PHONY: doctor validate image tests smoke-tests evaluator-smoke setup auth-check pilot main resume visible hidden hidden-all report \
+.PHONY: doctor validate image tests smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
 	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs
 
 doctor:
@@ -34,6 +34,9 @@ setup: doctor validate image tests evaluator-smoke
 
 auth-check:
 	python3 scripts/auth_check.py
+
+preflight:
+	python3 scripts/preflight_endpoint.py
 
 pilot:
 	python3 scripts/run_experiment.py --profile pilot --run-id "$(RUN_ID)" $(REPLICATE_ARG)

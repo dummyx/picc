@@ -15,8 +15,9 @@ make study-run CONDITION=baseline PROFILE=pilot RUN_ID=baseline-pilot-r1 REPLICA
 ```
 
 A second manifest, `studies/types/study.json`, contrasts TypeScript under
-`tsc --strict` with plain JavaScript on the same runtime; pass
-`STUDY=studies/types/study.json` to the same targets.
+`tsc --strict` with plain JavaScript on the same runtime, and a third,
+`studies/tests/study.json`, replicates the test-availability contrast under
+the revised oracle; pass `STUDY=<manifest>` to the same targets.
 
 See [`docs/STUDY_PROTOCOL.md`](docs/STUDY_PROTOCOL.md) before running the main
 matrix.

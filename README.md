@@ -434,7 +434,8 @@ During main runs:
 ```bash
 make doctor                 # local prerequisites
 make validate               # syntax and deterministic-split checks
-make image                  # build pinned experiment image
+make image                  # build pinned experiment image (base pinned by digest)
+make preflight              # verify the local endpoint serves the pinned model file
 make tests                  # fetch pinned corpus and partition it
 make evaluator-smoke        # verify Stage-1 evaluator path
 make auth-check             # minimal request via the configured provider

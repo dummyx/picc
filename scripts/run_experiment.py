@@ -1089,9 +1089,14 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
         }
         if is_local_provider(config):
             model_record.update(local_model_metadata(config))
+            model_digest = (config.get("LOCAL_MODEL_SHA256", "") or "").strip().lower()
             model_record["serving_revision"] = (
-                "self-hosted endpoint; the harness freezes client configuration only. "
-                "Record the server build and model file digest alongside the run."
+                f"gguf-sha256:{model_digest}"
+                if model_digest
+                else (
+                    "self-hosted endpoint; the harness freezes client configuration only. "
+                    "Record the server build and model file digest alongside the run."
+                )
             )
             replicate_note = (
                 "The local endpoint is operator-managed; unless the server pins a "

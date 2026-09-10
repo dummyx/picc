@@ -94,10 +94,37 @@ run on comment-stripped code so that a comment cannot zero a run.
 
 The evaluator requires the same external PiCC contract for every adapter.
 
+## Fuzz oracle ledger
+
+`runs/<run-id>/artifacts/fuzz-scores.jsonl` holds exactly one row, written by
+the hidden post-hoc evaluation for the final snapshot: `partition` (`fuzz`),
+`round`, `git_commit`, `git_tree`, `docker_image`, `elapsed_seconds`, the frozen
+`policy` (`programs_per_stage`, `seed_base`, `run_timeout_seconds`,
+`compile_timeout_seconds`, `deadline_seconds`), a `summary` (`fuzz_macro`,
+`stage_pass_rates`, `evaluated_total`, `mismatches_total`, `skipped_total`,
+`mismatch_kinds`, `stages_complete`, `deadline_hit`, `build_ok`, `audit_ok`),
+and `output` (`artifacts/evaluations/fuzz-final.json`, the full per-stage
+record with up to three sample failures per stage). The study summary verifies
+the row against the final snapshot, image, adapter, and stage budget, recomputes
+the macro from the per-stage rates, and exposes `fuzz_macro`,
+`fuzz_stage_pass_rates`, `fuzz_programs_per_stage`, `fuzz_mismatches_total`,
+and `fuzz_deadline_hit` per run, `median_fuzz_macro` per condition, and
+`delta_fuzz_macro` in the paired deltas. A run without the ledger is included
+with null fuzz columns and a coverage warning.
+
+Corpus evaluations record `input_policy`: the preprocessing command applied
+to candidate inputs and any tests that fell back to their raw text.
+
+Configuration keys frozen per materialization: `FUZZ_STAGE_PROGRAMS` (0
+disables the oracle), `FUZZ_SEED_BASE`, `FUZZ_RUN_TIMEOUT_SECONDS`,
+`FUZZ_COMPILE_TIMEOUT_SECONDS`, `FUZZ_DEADLINE_SECONDS`, and
+`LOCAL_MODEL_SHA256` (recorded as `model.serving_revision =
+gguf-sha256:<digest>` and enforced by `make preflight`).
+
 ## `runs/.study-materializations/<run-id>/`
 
 Condition-specific copy of the current harness. It contains rendered prompts,
-condition-aware extensions, generic evaluator and adapter, visible subset,
+condition-aware extensions, generic evaluator, fuzz-oracle runtime, adapter, visible subset,
 constant hidden partition, optional scaffold/reference, and effective nonsecret
 configuration.
 

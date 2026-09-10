@@ -109,7 +109,12 @@ def make_run(
     replicate: object = 1,
     usage: object = DEFAULT_USAGE,
     round_count: int = 2,
+    fuzz: object = "default",
 ) -> Path:
+    # A complete run carries a fuzz-oracle ledger for its final snapshot; pass
+    # fuzz=None to build a run without one (older cohorts) and a dict to tamper.
+    if fuzz == "default":
+        fuzz = {"rates": [1.0]}
     run_dir = runs_root / run_id
     materialization = summarize_study.REPO_ROOT / "runs" / ".study-materializations" / run_id
     condition = resolved_condition(study)
@@ -363,6 +368,51 @@ def make_run(
 
     write_jsonl(run_dir / "artifacts" / "snapshots.jsonl", snapshots)
     write_jsonl(run_dir / "artifacts" / "hidden-scores.jsonl", hidden_rows)
+    fuzz_row: dict[str, object] | None = None
+    if isinstance(fuzz, dict):
+        # `fuzz` describes the fuzz-oracle ledger for the final snapshot; keys
+        # override the consistent default so tests can inject tampering.
+        final = snapshots[-1]
+        rates = fuzz.get("rates", [1.0])
+        fuzz_summary = {
+            "fuzz_macro": sum(rates) / len(rates),
+            "stage_pass_rates": rates,
+            "max_stage": len(rates),
+            "programs_per_stage": 5,
+            "evaluated_total": 5 * len(rates),
+            "passed_total": int(round(sum(rates) * 5)),
+            "mismatches_total": 5 * len(rates) - int(round(sum(rates) * 5)),
+            "skipped_total": 0,
+            "mismatch_kinds": {},
+            "stages_complete": len(rates),
+            "deadline_hit": False,
+            "build_ok": True,
+            "audit_ok": True,
+            "audit_blocking": False,
+        }
+        fuzz_summary.update(fuzz.get("summary_overrides", {}))
+        fuzz_full = {
+            "schema_version": 1,
+            "snapshot": {"git_commit": fuzz.get("commit", final["git_commit"]), "git_tree": final["git_tree"]},
+            "docker_image": dict(metadata["docker_image"]),
+            "candidate": {"adapter_sha256": candidate_sha256},
+            "policy": {"max_stage": fuzz.get("policy_max_stage", len(rates)), "programs_per_stage": 5},
+            "summary": fuzz_summary,
+            "stages": {},
+        }
+        write_json(run_dir / "artifacts" / "evaluations" / "fuzz-final.json", fuzz_full)
+        fuzz_row = {
+            "partition": "fuzz",
+            "round": final["round"],
+            "git_commit": final["git_commit"],
+            "git_tree": final["git_tree"],
+            "docker_image": dict(metadata["docker_image"]),
+            "elapsed_seconds": final["elapsed_seconds"],
+            "policy": {"programs_per_stage": 5},
+            "summary": fuzz_summary,
+            "output": "artifacts/evaluations/fuzz-final.json",
+        }
+        write_jsonl(run_dir / "artifacts" / "fuzz-scores.jsonl", [fuzz_row])
     event_rows: list[dict[str, object]] = []
     if isinstance(usage, dict) and usage:
         event_rows.append(
@@ -391,6 +441,7 @@ def make_run(
         "hidden_score_auc": canonical_hidden_auc,
         "pi_events": {"usage": dict(usage) if isinstance(usage, dict) else usage},
         "guard": {"blocked_calls": 0, "reasons": {}, "tools": {}},
+        "fuzz_final": None if not isinstance(fuzz, dict) else (fuzz.get("report_row", fuzz_row)),
     }
     write_json(run_dir / "report.json", report)
     write_text(run_dir / "workspace" / "main.rs", "fn main() {}\n")
@@ -627,6 +678,49 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertEqual(deltas[0]["condition_id"], "ts-strict")
         self.assertAlmostEqual(deltas[0]["delta_hidden_score"], 0.1)
         self.assertAlmostEqual(deltas[0]["delta_elapsed_hours"], 0.5)
+
+    def test_fuzz_oracle_columns_are_verified_against_the_final_snapshot(self) -> None:
+        # Without a fuzz ledger the run is included, with None columns and a coverage warning.
+        run_dir = make_run(self.runs, "nofuzz-r1", self.study, self.study_sha256, fuzz=None)
+        row, warning = self.collect(run_dir)
+        self.assertIsNotNone(row)
+        self.assertIsNone(row["fuzz_macro"])
+        self.assertIn("no fuzz-oracle score", warning)
+
+        run_dir = make_run(self.runs, "fuzz-r2", self.study, self.study_sha256, replicate=2, fuzz={"rates": [1.0]})
+        row, warning = self.collect(run_dir)
+        self.assertIsNone(warning)
+        self.assertEqual(row["fuzz_macro"], 1.0)
+        self.assertEqual(json.loads(row["fuzz_stage_pass_rates"]), [1.0])
+        self.assertEqual(row["fuzz_programs_per_stage"], 5)
+        self.assertFalse(row["fuzz_deadline_hit"])
+
+        # A ledger for a different commit, a stale report, or an inconsistent macro excludes the run.
+        for label, tampering in (
+            ("commit", {"rates": [1.0], "commit": "f" * 40}),
+            ("stale report", {"rates": [1.0], "report_row": {"partition": "fuzz", "summary": {}}}),
+            ("macro", {"rates": [1.0], "summary_overrides": {"fuzz_macro": 0.5}}),
+            ("stage budget", {"rates": [1.0], "policy_max_stage": 3}),
+        ):
+            with self.subTest(label=label):
+                run_dir = make_run(self.runs, f"tampered-{label.replace(' ', '-')}", self.study, self.study_sha256, replicate=3, fuzz=tampering)
+                row, warning = self.collect(run_dir)
+                self.assertIsNone(row)
+                self.assertIn("fuzz", str(warning))
+
+    def test_fuzz_macro_is_aggregated_and_paired(self) -> None:
+        study = dict(self.study)
+        study["conditions"] = [
+            {"id": "baseline", "factor": "baseline", "description": "b"},
+            {"id": "variant", "factor": "tests", "description": "v", "tests": {"access": "none", "feedback": "none"}},
+        ]
+        rows = [
+            {"condition_id": "baseline", "replicate": 1, "profile": "main", "factor": "baseline", "hidden_score": 0.8, "hidden_auc": 0.5, "fuzz_macro": 1.0, "elapsed_seconds": 10, "finished": False, "source_loc": 1, "input_tokens": 1, "output_tokens": 1, "visible_test_calls": 0, "oracle_calls": 0},
+            {"condition_id": "variant", "replicate": 1, "profile": "main", "factor": "tests", "hidden_score": 0.7, "hidden_auc": 0.4, "fuzz_macro": 0.25, "elapsed_seconds": 10, "finished": False, "source_loc": 1, "input_tokens": 1, "output_tokens": 1, "visible_test_calls": 0, "oracle_calls": 0},
+        ]
+        deltas = summarize_study.baseline_deltas(rows)
+        self.assertAlmostEqual(deltas[0]["delta_fuzz_macro"], -0.75)
+        self.assertAlmostEqual(deltas[0]["delta_hidden_score"], -0.1)
 
     def test_planned_cells_and_unpaired_baselines_are_warned(self) -> None:
         study = dict(self.study)

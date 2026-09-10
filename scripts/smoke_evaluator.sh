@@ -91,6 +91,8 @@ import json, sys
 result = json.load(open(sys.argv[1]))
 label, expect = sys.argv[2], sys.argv[3]
 summary = result["summary"]
+assert result["input_policy"]["preprocess"].startswith("-E -P"), result.get("input_policy")
+assert result["input_policy"]["raw_fallbacks"] == [], result["input_policy"]
 if expect == "pass":
     assert summary["audit_ok"] is True, result["source_audit"]
     assert summary["build_ok"] is True, result["build"]
@@ -109,3 +111,45 @@ PY
 run_study_evaluator typescript studies/assets/candidates/typescript-strict.json fixtures/mock-picc-ts pass
 run_study_evaluator javascript studies/assets/candidates/javascript-node.json fixtures/mock-picc-js pass
 run_study_evaluator typescript-gate studies/assets/candidates/typescript-strict.json fixtures/mock-picc-ts type-error
+
+# The fuzz oracle through the same frozen runtime: the JavaScript mock accepts
+# every stage-1 program (`return N;`) and rejects the stage-2 programs that use
+# a unary operator, so stage 1 must be perfect, stage 2 must be imperfect, and
+# the macro must be their mean.
+work="$tmp/fuzz"
+rm -rf "$work"
+mkdir -p "$work/eval" "$work/artifacts"
+cp -R "$ROOT/fixtures/mock-picc-js/." "$work/workspace"
+cp "$ROOT/studies/runtime/evaluate.py" "$ROOT/studies/runtime/fuzz_generator.py" "$ROOT/studies/runtime/fuzz_evaluate.py" "$work/eval/"
+cp "$ROOT/studies/assets/candidates/javascript-node.json" "$work/eval/candidate.json"
+docker run --rm --init \
+  --platform "$DOCKER_PLATFORM" \
+  --read-only \
+  --tmpfs /tmp:rw,exec,nosuid,nodev,size=512m \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
+  --user "$uid:$gid" \
+  --mount "type=bind,src=$work/workspace,dst=/workspace" \
+  --mount "type=bind,src=$work/eval,dst=/opt/picc-eval,readonly" \
+  --mount "type=bind,src=$work/artifacts,dst=/run-artifacts" \
+  --workdir /workspace \
+  "$EXPERIMENT_IMAGE" \
+  python3 /opt/picc-eval/fuzz_evaluate.py \
+    --workspace /workspace \
+    --candidate-config /opt/picc-eval/candidate.json \
+    --max-stage 2 \
+    --count 10 \
+    --output /run-artifacts/fuzz.json \
+    --summary-json
+python3 - "$work/artifacts/fuzz.json" <<'PY'
+import json, sys
+result = json.load(open(sys.argv[1]))
+summary = result["summary"]
+assert summary["build_ok"] and summary["audit_ok"], summary
+stage1, stage2 = result["stages"]["1"], result["stages"]["2"]
+assert stage1["status"] == "complete" and stage1["pass_rate"] == 1.0, stage1
+assert stage2["status"] == "complete" and 0.0 <= stage2["pass_rate"] < 1.0, stage2
+assert "rejected_valid_program" in stage2["mismatch_kinds"], stage2
+assert abs(summary["fuzz_macro"] - (1.0 + stage2["pass_rate"]) / 2) < 1e-9, summary
+print("Evaluator smoke test passed (fuzz oracle, study runtime).")
+PY

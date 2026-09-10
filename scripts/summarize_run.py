@@ -138,6 +138,27 @@ def score_auc(points: list[dict[str, Any]]) -> float | None:
     return area / usable[-1][0]
 
 
+def fuzz_lines(row: dict[str, Any] | None) -> list[str]:
+    if not isinstance(row, dict):
+        return ["- Not evaluated (no `artifacts/fuzz-scores.jsonl`)."]
+    summary = row.get("summary") or {}
+    rates = summary.get("stage_pass_rates") or []
+    lines = [
+        f"- Fuzz macro (mean over stages): {numeric(summary.get('fuzz_macro')):.4f}",
+        "- Per-stage pass rate: " + (" ".join(f"{numeric(rate):.2f}" for rate in rates) if rates else "n/a"),
+        f"- Programs per stage: {summary.get('programs_per_stage', '—')}; evaluated {summary.get('evaluated_total', '—')}, "
+        f"mismatches {summary.get('mismatches_total', '—')}, skipped {summary.get('skipped_total', '—')}",
+    ]
+    kinds = summary.get("mismatch_kinds") or {}
+    if kinds:
+        lines.append("- Mismatch kinds: " + ", ".join(f"{key}={value}" for key, value in sorted(kinds.items())))
+    if summary.get("deadline_hit"):
+        lines.append("- Deadline reached: at least one stage was cut short or not run.")
+    if summary.get("error"):
+        lines.append(f"- Error: {str(summary['error'])[:300]}")
+    return lines
+
+
 def markdown_report(report: dict[str, Any]) -> str:
     metadata = report["metadata"]
     resume = report["resume"]
@@ -167,6 +188,10 @@ def markdown_report(report: dict[str, Any]) -> str:
         "|---|---:|---:|---:|---:|",
         f"| Visible | {numeric(final_visible.get('score')):.4f} | {numeric(final_visible.get('micro_score')):.4f} | {final_visible.get('passed', '—')} | {final_visible.get('total', '—')} |",
         f"| Hidden | {numeric(final_hidden.get('score')):.4f} | {numeric(final_hidden.get('micro_score')):.4f} | {final_hidden.get('passed', '—')} | {final_hidden.get('total', '—')} |",
+        "",
+        "## Fuzz oracle (final snapshot)",
+        "",
+        *fuzz_lines(report.get("fuzz_final")),
         "",
         "## Trajectory summary",
         "",
@@ -263,6 +288,7 @@ def summarize_locked(run_id: str, run_dir: Path) -> int:
         for snapshot in snapshots
     ]
     hidden_rows = read_jsonl(artifacts / "hidden-scores.jsonl")
+    fuzz_rows = read_jsonl(artifacts / "fuzz-scores.jsonl")
 
     visible_trajectory = trajectory(visible_rows)
     hidden_trajectory = trajectory(hidden_rows)
@@ -284,6 +310,7 @@ def summarize_locked(run_id: str, run_dir: Path) -> int:
         "hidden_trajectory": hidden_trajectory,
         "visible_score_auc": score_auc(visible_trajectory),
         "hidden_score_auc": score_auc(hidden_trajectory),
+        "fuzz_final": fuzz_rows[-1] if fuzz_rows else None,
     }
     atomic_write_json(run_dir / "report.json", report)
     (run_dir / "report.md").write_text(markdown_report(report), encoding="utf-8")
