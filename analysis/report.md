@@ -10,7 +10,7 @@ that. The instructive results are elsewhere: the harness defects we found while
 looking were each large enough to have manufactured a false answer, and the least
 instructed condition performed at least as well as the most instructed one.
 
-- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle)
+- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle); §10 added 2026-09-11 (the v5 cohort under the revised oracle)
 - Model: local Qwen3.8-27B (UD-Q4_K_XL) via llama.cpp, single RTX 5090
 - Profile: pilot — 45-min round cap, 2 h wall budget, stages 1–6
 - Scoring: hidden-partition macro average over 59 held-out tests, never shown to
@@ -590,6 +590,141 @@ of aborting the batch (it lost two stage cells on the first pass), and the
 preprocessor-prefixed test files (§8.2) should be handled at the corpus or
 specification level so that the corpus measures compilation rather than an
 unstated rule.
+
+---
+
+## 10. v5: test availability under the revised oracle
+
+**Headline: the v3 candidate effect did not replicate.** Four replicates per arm
+under the revised harness give paired medians of −0.022 (corpus) and −0.044
+(fuzz macro), with one replicate past the 0.13 threshold in each direction on
+both oracles. What the cohort shows instead is a bimodal outcome: five of eight
+compilers are near-perfect and three are broken on every valid program, and the
+broken ones are the runs that hung early on their own self-tests, in either arm.
+
+Pre-registered (`docs/PRE_REGISTRATION_v5.md`, commits `e6e79f6`/`c50610f`),
+run 2026-09-10, main profile (2 h, 45-min round cap, stages 1–10), same
+prompts, partitions, adapter, budgets, and model file as v3.
+
+### 10.1 What changed from v3
+
+The harness revision of §9.4, applied and frozen before any v5 run: candidate
+inputs are preprocessed the way the upstream suite's driver does it (the ten
+hidden `#ifdef`-prefixed tests no longer measure an unstated rule), the
+stage-averaged fuzz macro runs inside the frozen harness on every final
+snapshot as a co-primary endpoint (100 generated programs per stage, verified
+by the summarizer like the corpus ledger), and the chain verifies the served
+model file's digest before each slot. Both pilots exercised the whole path.
+
+### 10.2 Results
+
+| Rep | Condition | Rounds | Min | Turns | `test_visible` | Visible | Hidden macro | Fuzz macro | Per-stage fuzz |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---|
+| 1 | `baseline` | 2 | 90 | 342 | 27 | 0.9830 | **0.9667** | **1.000** | all 1.00 |
+| 1 | `tests-none` | 2 | 90 | 141 | 0 | 0.9251 | **0.9038** | **0.912** | 1 1 1 .80 .91 .93 .84 .93 .84 .87 |
+| 2 | `baseline` | 2 | 90 | 336 | 17 | 0.9618 | **0.9556** | **1.000** | all 1.00 |
+| 2 | `tests-none` | 2 | 90 | 158 | 0 | 0.9445 | **0.9736** | **1.000** | all 1.00 |
+| 3 | `baseline` | 2 | 90 | 131 | 0 | 0.7863 | **0.7222** | **0.392** | 1 1 1 .47 .24 .08 .07 .05 .01 0 |
+| 3 | `tests-none` | 2 | 91 | 72 | 0 | 0.5152 | **0.4764** | **0.000** | all 0.00 |
+| 4 | `baseline` | 2 | 92 | 32 | 0 | 0.5898 | **0.5847** | **0.019** | 0 .19 0 0 0 0 0 0 0 0 |
+| 4 | `tests-none` | 2 | 90 | 307 | 0 | 0.9322 | **0.9181** | **1.000** | all 1.00 |
+
+| Endpoint | `baseline` median (range) | `tests-none` median (range) | Paired Δ by replicate | Paired median | Past ±0.13 |
+|---|---|---|---|---:|---|
+| Hidden macro (corpus) | 0.839 (0.585–0.967) | 0.911 (0.476–0.974) | −0.063, +0.018, −0.246, +0.333 | −0.022 | 1 below, 1 above |
+| Fuzz macro | 0.696 (0.019–1.000) | 0.956 (0.000–1.000) | −0.088, 0.000, −0.392, +0.981 | −0.044 | 1 below, 1 above |
+
+Under the pre-registered rule both endpoints are compatible with no detectable
+effect, and the "three of four in one direction" reading does not apply. Three
+runs met the completion threshold (hidden ≥ 0.95 with a clean build and audit):
+`baseline` replicates 1 and 2 and `tests-none` replicate 2, the first
+completions at stages 1–10 in the project. Every run again ended by two
+consecutive 45-minute stalls; all eight final snapshots built and passed the
+audit.
+
+### 10.3 The cohort is bimodal, and the mode is set by hangs, not by tests
+
+The eight finals split cleanly: five score ≥ 0.90 on the corpus and ≥ 0.91 on
+the fuzzer, three are broken on valid programs. The three defects:
+
+- `tests-none` replicate 3 emits `ret` before restoring the stack frame, so
+  every compiled program segfaults: hidden valid 0/57, fuzz 0.000. Its corpus
+  score of 0.476 is entirely invalid-program rejections (44/47).
+- `baseline` replicate 4 stores the return value to a stack slot and never
+  loads it into `%eax`, so every program exits 0: hidden valid 15/57, fuzz
+  0.019 (the 0.19 at stage 2 is programs whose expected result happens to be 0).
+- `baseline` replicate 3 names local labels `.0`, `.1`, … which the assembler
+  treats as undefined symbols, and mixes operand sizes, so anything needing a
+  jump (stage 4 on) fails to assemble: hidden valid 24/57, fuzz 0.392.
+
+None of these is a test-availability effect; two of the three are in the arm
+that *had* tests. What the three share is the process signature of §3.3 and
+§4: they are the three runs with the fewest assistant turns (131, 32, 72
+against 141–342 for the rest) because both of their rounds hung inside a
+self-authored test or build command until the 45-minute cap, leaving the
+round-0 snapshot, already broken, as the final one. `baseline` replicate 4 made
+39 tool calls in 92 minutes. The two `baseline` runs that called
+`test_visible` (27 and 17 times) are the two perfect baseline compilers; the
+two that never called it are the two broken ones. That is the tool-uptake
+pattern of §2 again, at n=4 and still correlational, but it is now the only
+structure in the data: test *availability* moved nothing, test *use* and
+hang-free execution went together with success.
+
+The corpus gives a compiler that rejects every invalid program and crashes on
+every valid one about 0.47, because invalid classes count for half of each
+stage; the fuzzer gives it 0. Under the revised oracle the two endpoints now
+rank the eight finals alike (the same three at the bottom, the same five at the
+top), which is what the §9 disagreement predicted once the `#ifdef` noise was
+removed: the corpus spread of §8.2 was measurement, and this spread is
+outcome.
+
+### 10.4 The v3 bridge
+
+The six v3 finals re-scored under the revised oracle (`analysis/v3-bridge.json`;
+descriptive only, never pooled with v5):
+
+| v3 final | Corpus, original → preprocessed | Fuzz macro |
+|---|---:|---:|
+| `baseline` r1 / r2 / r3 | 0.819 → 0.901 / 0.931 → 0.931 / 0.819 → 0.910 | 1.000 / 0.953 / 0.956 |
+| `tests-none` r1 / r2 / r3 | 0.846 → 0.936 / 0.749 → 0.809 / 0.684 → 0.746 | 1.000 / 0.680 / 0.228 |
+
+Preprocessing raises every compiler that lacked `#`-line handling by
+0.06–0.09 and leaves the v3 paired median at −0.122 (from −0.136); the fuzz
+paired median is −0.273. So the v3 cohort, re-read with the better oracle,
+still leans negative, and v5 does not. Taken together (seven replicate pairs
+across two harness revisions, so a reading rather than a test) the paired
+deltas on the preprocessed corpus are −0.246, −0.163, −0.122, −0.063, +0.018,
++0.035, +0.333: a weak negative lean with two large positive exceptions, both
+of which are a broken `baseline` run rather than a strong `tests-none` one.
+
+### 10.5 What this changes
+
+- **The v3 claim is retracted to "not replicated."** With the oracle fixed and
+  four fresh replicates, withholding the visible tests produced compilers as
+  good as the baseline's in three replicates and a broken one in the fourth,
+  while the baseline arm produced two broken compilers of its own.
+- **The dominant variance is the hang hazard, and it is condition-blind.** A
+  round that blocks inside a self-test until the cap costs 45 minutes and
+  leaves whatever snapshot preceded it; a run that does this twice ends with
+  its round-0 compiler. That happened to three of eight runs here and to one
+  of six in v3. Bounding the agent's shell commands in the fixed environment
+  layer (a per-command timeout the guard extension can enforce; §6.5 asked for
+  the timing this would need) is now the harness change most likely to reduce
+  noise, ahead of more replicates.
+- **The revised oracle behaves.** Corpus and fuzz agree on the ranking, the
+  fuzz macro separates broken from working compilers unambiguously, and the
+  preprocessing fix removed a systematic ten-test penalty. Three compilers
+  reached the completion threshold at stages 1–10 for the first time.
+
+### 10.6 Limitations
+
+- Four replicates per arm resolve about 0.13 on a bimodal outcome; the
+  observed medians are within noise, and the exceptions are single broken runs.
+- The stall-dominated regime means "2 hours" is really "until the second
+  hang"; effective budgets varied from 32 to 342 assistant turns.
+- Tool-use and hang-free execution are correlated with success but are
+  behaviors of the run, not manipulated factors.
+- One model, one task, one language.
 
 ---
 

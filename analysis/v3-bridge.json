@@ -1,0 +1,122 @@
+{
+  "v3-baseline-r1": {
+    "corpus_original": 0.8188492063492063,
+    "corpus_preprocessed": 0.9007936507936508,
+    "fuzz_macro": 1.0,
+    "mismatch_kinds": {},
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "v3-baseline-r2": {
+    "corpus_original": 0.9305555555555557,
+    "corpus_preprocessed": 0.9305555555555557,
+    "fuzz_macro": 0.953,
+    "mismatch_kinds": {
+      "wrong_behavior": 47
+    },
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.72,
+      0.81
+    ]
+  },
+  "v3-baseline-r3": {
+    "corpus_original": 0.8194444444444444,
+    "corpus_preprocessed": 0.9097222222222223,
+    "fuzz_macro": 0.956,
+    "mismatch_kinds": {
+      "wrong_behavior": 44
+    },
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.92,
+      0.88,
+      0.95,
+      0.89,
+      0.92
+    ]
+  },
+  "v3-tests-none-r1": {
+    "corpus_original": 0.8458333333333334,
+    "corpus_preprocessed": 0.9361111111111111,
+    "fuzz_macro": 1.0,
+    "mismatch_kinds": {},
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "v3-tests-none-r2": {
+    "corpus_original": 0.7492063492063492,
+    "corpus_preprocessed": 0.8089285714285716,
+    "fuzz_macro": 0.6799999999999999,
+    "mismatch_kinds": {
+      "assembly_or_link_failure": 48,
+      "rejected_valid_program": 100,
+      "timeout": 66,
+      "wrong_behavior": 106
+    },
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      0.86,
+      0.8,
+      0.82,
+      0.82,
+      0.31,
+      0.19,
+      0.0
+    ]
+  },
+  "v3-tests-none-r3": {
+    "corpus_original": 0.6839285714285714,
+    "corpus_preprocessed": 0.7464285714285714,
+    "fuzz_macro": 0.228,
+    "mismatch_kinds": {
+      "assembly_or_link_failure": 200,
+      "wrong_behavior": 572
+    },
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      0.02,
+      0.07,
+      0.02,
+      0.06,
+      0.04,
+      0.07,
+      0.0,
+      0.0
+    ]
+  }
+}

@@ -1,0 +1,349 @@
+[
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "baseline",
+    "fuzz": 1.0,
+    "fuzz_kinds": {},
+    "fuzz_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden": 0.9667,
+    "hidden_failures": {
+      "unexpected_accept": 3,
+      "unexpected_reject": 1,
+      "wrong_behavior": 1
+    },
+    "hidden_invalid": "44/47",
+    "hidden_passed": "99/104",
+    "hidden_valid": "55/57",
+    "hours": 1.5,
+    "in_tokens": 229203,
+    "out_tokens": 304924,
+    "replicate": 1,
+    "rounds": 2,
+    "run_id": "v5-baseline-r1",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 27,
+    "traj": [
+      0.9403,
+      0.9667
+    ],
+    "visible": 0.983
+  },
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "tests-none",
+    "fuzz": 0.912,
+    "fuzz_kinds": {
+      "wrong_behavior": 88
+    },
+    "fuzz_stages": [
+      1.0,
+      1.0,
+      1.0,
+      0.8,
+      0.91,
+      0.93,
+      0.84,
+      0.93,
+      0.84,
+      0.87
+    ],
+    "hidden": 0.9038,
+    "hidden_failures": {
+      "execution_timeout": 1,
+      "unexpected_accept": 5,
+      "unexpected_reject": 4
+    },
+    "hidden_invalid": "42/47",
+    "hidden_passed": "94/104",
+    "hidden_valid": "52/57",
+    "hours": 1.5,
+    "in_tokens": 159668,
+    "out_tokens": 191141,
+    "replicate": 1,
+    "rounds": 2,
+    "run_id": "v5-tests-none-r1",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 0,
+    "traj": [
+      0.8927,
+      0.9038
+    ],
+    "visible": 0.9251
+  },
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "baseline",
+    "fuzz": 1.0,
+    "fuzz_kinds": {},
+    "fuzz_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden": 0.9556,
+    "hidden_failures": {
+      "unexpected_accept": 3,
+      "unexpected_reject": 1,
+      "wrong_behavior": 1
+    },
+    "hidden_invalid": "44/47",
+    "hidden_passed": "99/104",
+    "hidden_valid": "55/57",
+    "hours": 1.5,
+    "in_tokens": 227064,
+    "out_tokens": 303024,
+    "replicate": 2,
+    "rounds": 2,
+    "run_id": "v5-baseline-r2",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 17,
+    "traj": [
+      0.9139,
+      0.9556
+    ],
+    "visible": 0.9618
+  },
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "tests-none",
+    "fuzz": 1.0,
+    "fuzz_kinds": {},
+    "fuzz_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden": 0.9736,
+    "hidden_failures": {
+      "unexpected_accept": 2,
+      "unexpected_reject": 1
+    },
+    "hidden_invalid": "45/47",
+    "hidden_passed": "101/104",
+    "hidden_valid": "56/57",
+    "hours": 1.5,
+    "in_tokens": 178232,
+    "out_tokens": 209410,
+    "replicate": 2,
+    "rounds": 2,
+    "run_id": "v5-tests-none-r2",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 0,
+    "traj": [
+      0.9569,
+      0.9736
+    ],
+    "visible": 0.9445
+  },
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "baseline",
+    "fuzz": 0.392,
+    "fuzz_kinds": {
+      "assembly_or_link_failure": 607,
+      "wrong_behavior": 1
+    },
+    "fuzz_stages": [
+      1.0,
+      1.0,
+      1.0,
+      0.47,
+      0.24,
+      0.08,
+      0.07,
+      0.05,
+      0.01,
+      0.0
+    ],
+    "hidden": 0.7222,
+    "hidden_failures": {
+      "assembly_or_link_failure": 25,
+      "unexpected_accept": 4,
+      "unexpected_reject": 8
+    },
+    "hidden_invalid": "43/47",
+    "hidden_passed": "67/104",
+    "hidden_valid": "24/57",
+    "hours": 1.5,
+    "in_tokens": 141318,
+    "out_tokens": 165141,
+    "replicate": 3,
+    "rounds": 2,
+    "run_id": "v5-baseline-r3",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 0,
+    "traj": [
+      0.7222,
+      0.7222
+    ],
+    "visible": 0.7863
+  },
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "tests-none",
+    "fuzz": 0.0,
+    "fuzz_kinds": {
+      "wrong_behavior": 1000
+    },
+    "fuzz_stages": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hidden": 0.4764,
+    "hidden_failures": {
+      "unexpected_accept": 3,
+      "unexpected_reject": 4,
+      "wrong_behavior": 53
+    },
+    "hidden_invalid": "44/47",
+    "hidden_passed": "44/104",
+    "hidden_valid": "0/57",
+    "hours": 1.52,
+    "in_tokens": 116807,
+    "out_tokens": 93848,
+    "replicate": 3,
+    "rounds": 2,
+    "run_id": "v5-tests-none-r3",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 0,
+    "traj": [
+      0.4764,
+      0.4764
+    ],
+    "visible": 0.5152
+  },
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "baseline",
+    "fuzz": 0.019,
+    "fuzz_kinds": {
+      "assembly_or_link_failure": 200,
+      "timeout": 62,
+      "wrong_behavior": 719
+    },
+    "fuzz_stages": [
+      0.0,
+      0.19,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hidden": 0.5847,
+    "hidden_failures": {
+      "assembly_or_link_failure": 4,
+      "compiler_crash": 1,
+      "unexpected_accept": 4,
+      "unexpected_reject": 12,
+      "wrong_behavior": 26
+    },
+    "hidden_invalid": "42/47",
+    "hidden_passed": "57/104",
+    "hidden_valid": "15/57",
+    "hours": 1.53,
+    "in_tokens": 39370,
+    "out_tokens": 61032,
+    "replicate": 4,
+    "rounds": 2,
+    "run_id": "v5-baseline-r4",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 0,
+    "traj": [
+      0.5847,
+      0.5847
+    ],
+    "visible": 0.5898
+  },
+  {
+    "audit_ok": true,
+    "build_ok": true,
+    "condition": "tests-none",
+    "fuzz": 1.0,
+    "fuzz_kinds": {},
+    "fuzz_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden": 0.9181,
+    "hidden_failures": {
+      "unexpected_accept": 4,
+      "unexpected_reject": 4
+    },
+    "hidden_invalid": "43/47",
+    "hidden_passed": "96/104",
+    "hidden_valid": "53/57",
+    "hours": 1.5,
+    "in_tokens": 251385,
+    "out_tokens": 299760,
+    "replicate": 4,
+    "rounds": 2,
+    "run_id": "v5-tests-none-r4",
+    "stalls": 2,
+    "termination": "round_timeout",
+    "test_visible_calls": 0,
+    "traj": [
+      0.8806,
+      0.9181
+    ],
+    "visible": 0.9322
+  }
+]
