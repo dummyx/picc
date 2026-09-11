@@ -118,5 +118,117 @@
       0.0,
       0.0
     ]
+  },
+  "v4-js-untyped-r1": {
+    "corpus_original": 0.8833333333333334,
+    "corpus_preprocessed": 0.9736111111111111,
+    "fuzz_macro": 1.0,
+    "mismatch_kinds": {},
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "v4-js-untyped-r2": {
+    "corpus_original": 0.8388888888888889,
+    "corpus_preprocessed": 0.9291666666666666,
+    "fuzz_macro": 1.0,
+    "mismatch_kinds": {},
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "v4-js-untyped-r3": {
+    "corpus_original": 0.8277777777777778,
+    "corpus_preprocessed": 0.9180555555555555,
+    "fuzz_macro": 0.999,
+    "mismatch_kinds": {
+      "wrong_behavior": 1
+    },
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.99,
+      1.0
+    ]
+  },
+  "v4-ts-strict-r1": {
+    "corpus_original": 0.8388888888888889,
+    "corpus_preprocessed": 0.9291666666666666,
+    "fuzz_macro": 1.0,
+    "mismatch_kinds": {},
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "v4-ts-strict-r2": {
+    "corpus_original": 0.8652777777777778,
+    "corpus_preprocessed": 0.9555555555555555,
+    "fuzz_macro": 1.0,
+    "mismatch_kinds": {},
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "v4-ts-strict-r3": {
+    "corpus_original": 0.898611111111111,
+    "corpus_preprocessed": 0.898611111111111,
+    "fuzz_macro": 0.806,
+    "mismatch_kinds": {
+      "rejected_valid_program": 194
+    },
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.04,
+      0.02
+    ]
   }
 }

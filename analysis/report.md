@@ -697,6 +697,25 @@ deltas on the preprocessed corpus are −0.246, −0.163, −0.122, −0.063, +0
 +0.035, +0.333: a weak negative lean with two large positive exceptions, both
 of which are a broken `baseline` run rather than a strong `tests-none` one.
 
+### 10.4b The typing experiment under the revised oracle
+
+The six v4 finals re-scored the same way (`analysis/v3-bridge.json` also
+carries them):
+
+| Rep | `ts-strict` corpus original → preprocessed / fuzz | `js-untyped` corpus original → preprocessed / fuzz | Δ preprocessed | Δ fuzz |
+|---:|---|---|---:|---:|
+| 1 | 0.839 → 0.929 / 1.000 | 0.883 → 0.974 / 1.000 | −0.044 | 0.000 |
+| 2 | 0.865 → 0.956 / 1.000 | 0.839 → 0.929 / 1.000 | +0.026 | 0.000 |
+| 3 | 0.899 → 0.899 / 0.806 | 0.828 → 0.918 / 0.999 | −0.019 | −0.193 |
+
+Condition medians are identical on the preprocessed corpus (0.929 each) and
+on the fuzz oracle (1.000 each); paired medians −0.019 and 0.000. The +0.071
+of replicate 3 in §8 was the `#ifdef` quirk in its entirety; with it removed
+the typed arm's replicate 3 is the worse compiler, by its argument-list bug.
+Five of the six compilers are within 0.05 of each other on the corpus and
+perfect on the fuzzer. The §8 verdict stands with less residual doubt: strict
+static typing changed nothing measurable, at roughly a third more tokens.
+
 ### 10.5 What this changes
 
 - **The v3 claim is retracted to "not replicated."** With the oracle fixed and
