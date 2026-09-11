@@ -1,0 +1,394 @@
+{
+  "build": {
+    "args": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "elapsed_seconds": 0.008515229914337397,
+    "returncode": 0,
+    "stderr": "warning: variant `Cond` is never constructed\n  --> src/analysis.rs:88:5\n   |\n71 | pub enum Op {\n   |          -- variant in this enum\n...\n88 |     Cond { op: Cmp, lhs: Loc, rhs: Loc, label: u32 },\n   |     ^^^^\n   |\n   = note: `Op` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis\n   = note: `#[warn(dead_code)]` on by default\n\nwarning: field `0` is never read\n   --> src/analysis.rs:170:11\n    |\n170 |     Array(u32),\n    |     ----- ^^^\n    |     |\n    |     field in this variant\n    |\n    = note: `LocalKind` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis\nhelp: consider changing the field to be of unit type to suppress this warning while preserving the field numbering, or remove the field\n    |\n170 -     Array(u32),\n170 +     Array(()),\n    |\n\nwarning: method `binop` is never used\n  --> src/ast.rs:45:12\n   |\n44 | impl AssignOp {\n   | ------------- method in this implementation\n45 |     pub fn binop(self) -> Option<BinOp> {\n   |            ^^^^^\n\nwarning: field `post` is never read\n  --> src/ast.rs:66:25\n   |\n66 |     Inc { e: Box<Expr>, post: bool },\n   |     ---                 ^^^^\n   |     |\n   |     field in this variant\n   |\n   = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `post` is never read\n  --> src/ast.rs:67:25\n   |\n67 |     Dec { e: Box<Expr>, post: bool },\n   |     ---                 ^^^^\n   |     |\n   |     field in this variant\n   |\n   = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: fields `params`, `is_func`, and `void_params` are never read\n  --> src/ast.rs:77:9\n   |\n72 | pub struct Declarator {\n   |            ---------- fields in this struct\n...\n77 |     pub params: Vec<String>,\n   |         ^^^^^^\n78 |     /// True if this declarator is a function type.\n79 |     pub is_func: bool,\n   |         ^^^^^^^\n80 |     /// Function declarator used an explicit `(void)`.\n81 |     pub void_params: bool,\n   |         ^^^^^^^^^^^\n   |\n   = note: `Declarator` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `void_params` is never read\n   --> src/ast.rs:122:9\n    |\n118 |     FuncDef {\n    |     ------- field in this variant\n...\n122 |         void_params: bool,\n    |         ^^^^^^^^^^^\n    |\n    = note: `Item` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `void_params` is never read\n   --> src/ast.rs:130:9\n    |\n126 |     FuncDecl {\n    |     -------- field in this variant\n...\n130 |         void_params: bool,\n    |         ^^^^^^^^^^^\n    |\n    = note: `Item` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `file` is never read\n   --> src/ast.rs:142:9\n    |\n140 | pub struct Program {\n    |            ------- field in this struct\n141 |     pub items: Vec<Item>,\n142 |     pub file: String,\n    |         ^^^^\n\nwarning: associated function `new` is never used\n  --> src/lexer.rs:10:12\n   |\n9  | impl Pos {\n   | -------- associated function in this implementation\n10 |     pub fn new() -> Self {\n   |            ^^^\n\nwarning: variants `PostInc` and `PostDec` are never constructed\n  --> src/lexer.rs:82:5\n   |\n51 | pub enum P {\n   |          - variants in this enum\n...\n82 |     PostInc,\n   |     ^^^^^^^\n83 |     PostDec,\n   |     ^^^^^^^\n   |\n   = note: `P` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: `picc` (bin \"picc\") generated 11 warnings\n    Finished `release` profile [optimized] target(s) in 0.00s\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "elapsed_seconds": 19.234307289123535,
+  "policy": {
+    "build_timeout_seconds": 900,
+    "compile_timeout_seconds": 10,
+    "deadline_seconds": 5400,
+    "max_stage": 10,
+    "min_evaluated_for_stage": 20,
+    "programs_per_stage": 100,
+    "reference_build": [
+      "/usr/bin/gcc",
+      "-std=c17",
+      "-O0",
+      "-w"
+    ],
+    "run_timeout_seconds": 3,
+    "seed_base": 20260830
+  },
+  "schema_version": 1,
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 6
+  },
+  "stages": {
+    "1": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260831,
+      "skipped": 0,
+      "stage": 1,
+      "status": "complete"
+    },
+    "10": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 38,
+        "wrong_behavior": 15
+      },
+      "mismatches": 53,
+      "pass_rate": 0.47,
+      "passed": 47,
+      "samples": [
+        {
+          "detail": "expected status 250 stdout ''; got status 5 stdout ''",
+          "index": 6,
+          "kind": "wrong_behavior",
+          "source": "int g0 = 57;\nint g1 = 10;\n\nint f0(int p0, int p1, int p2) {\n    return 4 * p0 + 3 * p1 + 4 * p2;\n}\n\nint main(void) {\n    int cf0 = f0(15, (!52), (35 - 0));\n    int v0 = ((6 / 2) ? 30 : (!cf0));\n    int v1 = ((g0 * v0) ? (28 * 30) : (~g0));\n    int result = ((~(cf0 == v0)) % 19);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-z2f01hpa/case.s: Assembler messages:\n/tmp/picc-fuzz-z2f01hpa/case.s:14: Error: operand size mismatch for `mov'",
+          "index": 7,
+          "kind": "assembly_or_link_failure",
+          "source": "int g0 = 45;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 5 * p0 + 5 * p1 + 1 * p2 + 1 * p3 + 2 * p4 + 4 * p5 + 4 * p6;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 3 * p0 + 2 * p1 + 5 * p2 + 5 * p3 + 3 * p4 + 4 * p5;\n}\n\nint main(void) {\n    int cf0 = f0(38, 12, (g0 >= g0), 10, 25, (10 % 17), (!43));\n    int cf1 = f1((50 && 25), 35, (4 ? 33 : 50), (26 >= cf0), 10, (32 && 59));\n    int v0 = ((51 ? 17 : cf0) % 3);\n    int result = (((13 % 11) * (cf0 - 59)) * ((43 ? 25 : 59) * (24 > cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-z2f01hpa/case.s: Assembler messages:\n/tmp/picc-fuzz-z2f01hpa/case.s:14: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-z2f01hpa/case.s:15: Error: operand size mismatch for `mov'",
+          "index": 9,
+          "kind": "assembly_or_link_failure",
+          "source": "int g0 = 23;\nint g1 = 35;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 3 * p0 + 3 * p1 + 4 * p2 + 4 * p3 + 3 * p4 + 2 * p5 + 3 * p6 + 4 * p7;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 2 * p0 + 1 * p1 + 3 * p2;\n}\n\nint f2(int p0) {\n    return 2 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((g0 % 5), 21, 38, g0, g0, (30 > 29), 29, 1);\n    int cf1 = f1((38 || g0), 40, 2);\n    int cf2 = f2((40 || g1));\n    int v0 = (40 + (5 - 24));\n    int v1 = ((cf2 % 8) - (~40));\n    int v2 = (-(51 < 55));\n    int acc = (v2 ? g0 : g0);\n    int i = 0;\n    while (i < 4) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (!((g1 ? g1 : v2) && (cf1 < v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260840,
+      "skipped": 0,
+      "stage": 10,
+      "status": "complete"
+    },
+    "2": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260832,
+      "skipped": 0,
+      "stage": 2,
+      "status": "complete"
+    },
+    "3": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "wrong_behavior": 26
+      },
+      "mismatches": 26,
+      "pass_rate": 0.74,
+      "passed": 74,
+      "samples": [
+        {
+          "detail": "expected status 250 stdout ''; got status 122 stdout ''",
+          "index": 2,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    return ((((~((!57) * (!46)))) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "expected status 213 stdout ''; got status -8 stdout ''",
+          "index": 3,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    return ((((36 * ((-15) / 1))) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "expected status 250 stdout ''; got status 238 stdout ''",
+          "index": 14,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    return (((((22 % 3) + ((-25) / 11))) % 251) + 251) % 251;\n}\n"
+        }
+      ],
+      "seed": 20260833,
+      "skipped": 0,
+      "stage": 3,
+      "status": "complete"
+    },
+    "4": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "wrong_behavior": 13
+      },
+      "mismatches": 13,
+      "pass_rate": 0.87,
+      "passed": 87,
+      "samples": [
+        {
+          "detail": "expected status 195 stdout ''; got status 67 stdout ''",
+          "index": 3,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    return ((((-56)) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "expected status 250 stdout ''; got status 122 stdout ''",
+          "index": 8,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    return ((((-((41 + 50) || (-16)))) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "expected status 18 stdout ''; got status 206 stdout ''",
+          "index": 11,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    return ((((2 - ((~32) / 2))) % 251) + 251) % 251;\n}\n"
+        }
+      ],
+      "seed": 20260834,
+      "skipped": 0,
+      "stage": 4,
+      "status": "complete"
+    },
+    "5": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "wrong_behavior": 25
+      },
+      "mismatches": 25,
+      "pass_rate": 0.75,
+      "passed": 75,
+      "samples": [
+        {
+          "detail": "expected status 250 stdout ''; got status 122 stdout ''",
+          "index": 6,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = (~(41 >= 58));\n    int v1 = (v0 >= 24);\n    int result = ((!(57 && v0)) - ((21 && 44) >= (v0 - v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 250 stdout ''; got status 122 stdout ''",
+          "index": 7,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = (20 + (-33));\n    int v1 = ((45 - 47) + (!v0));\n    int v2 = ((v0 > v1) && (v0 + 57));\n    int result = ((~(v1 == v2)) + ((17 > 55) && (v2 - v1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 250 stdout ''; got status 122 stdout ''",
+          "index": 8,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = ((47 && 1) || (-36));\n    int v1 = ((38 < 19) == (49 * v0));\n    int v2 = (v0 && (21 % 8));\n    int result = (((v0 || v2) <= (v2 > v0)) - ((23 && 26) || (-v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260835,
+      "skipped": 0,
+      "stage": 5,
+      "status": "complete"
+    },
+    "6": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "wrong_behavior": 22
+      },
+      "mismatches": 22,
+      "pass_rate": 0.78,
+      "passed": 78,
+      "samples": [
+        {
+          "detail": "expected status 104 stdout ''; got status 48 stdout ''",
+          "index": 2,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = (~(29 ? 54 : 21));\n    int v1 = ((~v0) + (v0 ? 1 : v0));\n    int result = (((22 ? v1 : 57) + (-5)) + ((v1 ? v0 : 41) ? (~v0) : (v0 / 18)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 237 stdout ''; got status 4 stdout ''",
+          "index": 8,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = ((18 >= 5) || (4 || 32));\n    int v1 = 40;\n    int v2 = ((35 / 2) * (25 - 32));\n    int result = (((41 - 60) - v0) ? ((~47) % 17) : (-(25 / 9)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 206 stdout ''; got status 78 stdout ''",
+          "index": 18,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = (~(54 ? 44 : 17));\n    int v1 = ((55 / 8) + (v0 != 32));\n    int result = v0;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260836,
+      "skipped": 0,
+      "stage": 6,
+      "status": "complete"
+    },
+    "7": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "wrong_behavior": 16
+      },
+      "mismatches": 16,
+      "pass_rate": 0.84,
+      "passed": 84,
+      "samples": [
+        {
+          "detail": "expected status 250 stdout ''; got status 122 stdout ''",
+          "index": 23,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = ((25 * 15) || (6 * 33));\n    int v1 = 29;\n    int v2 = ((v0 ? 6 : 15) || (47 && v0));\n    int v3 = (!(v0 ? 42 : v2));\n    int result = (((42 / 12) >= (v1 || v0)) - 2);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 0 stdout ''; got status 4 stdout ''",
+          "index": 25,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = ((30 % 6) - (41 > 25));\n    int result = (((7 >= 45) ? (v0 < 45) : (v0 % 14)) + ((~v0) - v0));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 250 stdout ''; got status 122 stdout ''",
+          "index": 27,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = ((50 - 48) - (26 ? 45 : 5));\n    int result = (-((42 && v0) ? (v0 == v0) : (v0 / 17)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260837,
+      "skipped": 0,
+      "stage": 7,
+      "status": "complete"
+    },
+    "8": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "wrong_behavior": 20
+      },
+      "mismatches": 20,
+      "pass_rate": 0.8,
+      "passed": 80,
+      "samples": [
+        {
+          "detail": "expected status 198 stdout ''; got status 70 stdout ''",
+          "index": 1,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = (53 - (49 > 36));\n    int v1 = (40 - (33 % 9));\n    int v2 = (v1 || (15 ? 33 : 3));\n    int v3 = ((v2 % 19) ? (13 <= v1) : (20 || v0));\n    int acc = (~v3);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (~v0);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+          "index": 7,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = 11;\n    int v1 = ((-53) != (51 ? v0 : 52));\n    int v2 = 10;\n    int v3 = ((56 && 38) + (8 && v2));\n    int result = (((~v2) / 17) && ((~13) != (21 / 11)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 208 stdout ''; got status 80 stdout ''",
+          "index": 9,
+          "kind": "wrong_behavior",
+          "source": "int main(void) {\n    int v0 = ((18 > 36) && (51 ? 16 : 40));\n    int v1 = (!(v0 * 2));\n    int v2 = ((29 || 59) && (32 % 6));\n    int acc = (30 <= v1);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = (((-53) && (5 != acc)) - ((17 || i) ? 44 : (v0 < 25)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260838,
+      "skipped": 0,
+      "stage": 8,
+      "status": "complete"
+    },
+    "9": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 48,
+        "wrong_behavior": 21
+      },
+      "mismatches": 69,
+      "pass_rate": 0.31,
+      "passed": 31,
+      "samples": [
+        {
+          "detail": "expected status 116 stdout ''; got status 121 stdout ''",
+          "index": 0,
+          "kind": "wrong_behavior",
+          "source": "int f0(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 4 * p1 + 2 * p2 + 5 * p3 + 3 * p4;\n}\n\nint main(void) {\n    int cf0 = f0(1, (55 ? 2 : 18), (20 ? 6 : 38), (!39), 37);\n    int v0 = ((cf0 || cf0) ? (!cf0) : (cf0 - 5));\n    int v1 = ((46 + 40) - (~cf0));\n    int result = (~((v0 / 13) ? (21 / 20) : cf0));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-wbufbieu/case.s: Assembler messages:\n/tmp/picc-fuzz-wbufbieu/case.s:44: Error: operand size mismatch for `mov'",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int f0(int p0, int p1) {\n    return 4 * p0 + 4 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 3 * p0 + 1 * p1 + 3 * p2 + 1 * p3 + 4 * p4 + 2 * p5 + 3 * p6;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 2 * p1 + 3 * p2 + 3 * p3 + 1 * p4 + 5 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((38 || 33), (31 / 9));\n    int cf1 = f1((cf0 || cf0), (cf0 && 11), (53 / 17), (cf0 - 15), (cf0 % 1), (!36), (cf0 % 11));\n    int cf2 = f2((20 / 19), (cf1 > 26), 21, (cf1 / 12), cf1, (cf0 / 5));\n    int v0 = 45;\n    int v1 = ((35 ? 1 : 9) - (!cf1));\n    int acc = (~cf0);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (32 || (~(v1 ? 45 : v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "expected status 40 stdout ''; got status 1 stdout ''",
+          "index": 2,
+          "kind": "wrong_behavior",
+          "source": "int f0(int p0) {\n    return 2 * p0;\n}\n\nint main(void) {\n    int cf0 = f0(32);\n    int v0 = ((23 ? 16 : cf0) || (12 <= 52));\n    int v1 = ((13 ? 16 : 33) + (1 * 0));\n    int v2 = ((v1 < cf0) ? (56 - v1) : (v1 || cf0));\n    int acc = (-7);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((50 ? v2 : i) - (i ? 9 : 36)) ? v2 : ((54 <= 42) || (35 * acc)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260839,
+      "skipped": 0,
+      "stage": 9,
+      "status": "complete"
+    }
+  },
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": true,
+    "deadline_hit": false,
+    "evaluated_total": 1000,
+    "fuzz_macro": 0.756,
+    "max_stage": 10,
+    "mismatch_kinds": {
+      "assembly_or_link_failure": 86,
+      "wrong_behavior": 158
+    },
+    "mismatches_total": 244,
+    "passed_total": 756,
+    "programs_per_stage": 100,
+    "skipped_total": 0,
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      0.74,
+      0.87,
+      0.75,
+      0.78,
+      0.84,
+      0.8,
+      0.31,
+      0.47
+    ],
+    "stages_complete": 10
+  },
+  "timestamp": "2026-09-11T20:42:10Z",
+  "workspace": "/workspace"
+}

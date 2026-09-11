@@ -796,6 +796,163 @@ the next cohort (tokens, active minutes, turns, source LOC and function count,
 self-test LOC, cut-off count), where the per-command timeout removes the
 confound that dominates them here.
 
+## 12. v6: test availability with the hang hazard removed
+
+### 12.1 What changed from v5
+
+Two harness changes, both applied before any v6 run and pre-registered in
+`docs/PRE_REGISTRATION_v6.md` (manifest `picc-tests-v3`, conditions
+byte-identical to v3 and v5):
+
+- **Pi 0.84.1 → 0.85.1** (image 0.3), verified by a pilot to change nothing
+  the harness parses.
+- **A default timeout on the agent's bash tool** (image 0.4): the community
+  package `@cad0p/pi-bash-timeout@0.1.0`, pinned in the image and loaded from
+  the frozen settings, re-registers Pi's `bash` tool so a command without an
+  agent-set timeout is killed after 120 s. Pi ships no default and its
+  maintainer declined one (earendil-works/pi#2987). The choice followed the
+  measurement in §11: across the 20 v3–v5 main runs, 2670 completed bash calls
+  had p99 = 5.1 s, while 18 calls that never returned cost a median 34
+  minutes each, 8.9 of 40 budget hours.
+
+Same budget (two 45-minute rounds), model, prompts, partitions, adapter,
+oracles, and fuzz parameters as v5; eight runs in the frozen block order.
+
+### 12.2 The harness check
+
+The pre-declared expectation was that no run would lose time to a hang and
+that the v5 bimodality would collapse. Both held:
+
+| | v5 | v6 |
+|---|---|---|
+| runs idling ≥ 5 min | 5 of 8 (30–46 min each) | 0 of 8 (max 2.4 min) |
+| commands cut by the default timeout | — | 3 (in 3 runs) |
+| fuzz macro below 0.9 | 3 of 8 | 1 of 8 |
+| corpus range | 0.476–0.974 | 0.897–0.975 |
+| active minutes, median | 57–68 by arm | 88.5–88.8 by arm |
+
+All three cut-offs were the agent's own test loops running a program its
+compiler had miscompiled into an infinite loop; each run continued and
+finished at the ceiling or near it. Every round still ends at the 45-minute
+cap (Amendment 1 corrected the check from "stalls", which count that, to
+idle time). Assistant turns per run now range 187–395, against 32–342 in v5.
+
+### 12.3 Results
+
+Primary endpoints per Amendment 2 (below); the frozen-protocol values are
+in `analysis/v6-results.md` and `runs/study-results/picc-tests-v3/`.
+
+| Run | Corpus | Fuzz | Active / idle min | Cut-offs | Output tokens | Turns | Source LOC | Self-tests |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| baseline r1 | 0.932 | 1.000 | 89.6 / 0.4 | 0 | 260,210 | 308 | 1,883 | 181 |
+| tests-none r1 | 0.923 | 1.000 | 89.8 / 0.3 | 0 | 299,569 | 244 | 2,575 | 92 |
+| baseline r2 | 0.950 | 1.000 | 88.8 / 1.3 | 0 | 295,812 | 187 | 2,080 | 1 |
+| tests-none r2 | 0.924 | 1.000 | 87.9 / 2.2 | 0 | 287,118 | 297 | 2,716 | 169 |
+| baseline r3 | 0.975 | 1.000 | 88.8 / 1.3 | 1 | 286,084 | 235 | 2,788 | 194 |
+| tests-none r3 | 0.911 | 1.000 | 88.6 / 1.5 | 0 | 289,850 | 395 | 1,821 | 142 |
+| baseline r4 | 0.904 | 1.000 | 87.7 / 2.4 | 1 | 243,185 | 193 | 2,301 | 0 |
+| tests-none r4 | 0.897 | 0.756 | 88.4 / 1.9 | 1 | 268,609 | 279 | 2,777 | 50 |
+
+Paired `tests-none` − `baseline`:
+
+| Endpoint | r1 | r2 | r3 | r4 | Paired median | Beyond ±0.13 |
+|---|---:|---:|---:|---:|---:|---|
+| Corpus (hidden macro) | −0.008 | −0.026 | −0.064 | −0.007 | **−0.017** | 0 of 4 |
+| Fuzz macro | 0.000 | 0.000 | 0.000 | −0.244 | **0.000** | 1 of 4 below |
+
+Per arm: corpus median 0.941 (baseline, sd 0.030) vs 0.917 (`tests-none`, sd
+0.012); fuzz 1.000 in all four baseline runs and in three of four
+`tests-none` runs. Two baseline runs reached the pre-registered completion
+threshold (0.95 with a clean build and audit); no `tests-none` run did (best
+0.924). Under the interpretation rule this is no detectable effect on either
+endpoint at n=4, now with the variance that v3 and v5 lacked: every paired
+corpus difference is negative and every one is inside the noise band.
+
+The one imperfect compiler, `tests-none` r4, is the §9 pattern again: the
+corpus rates it 0.897 (93 of 104), the fuzzer 0.756, with 86 assembly
+failures and 158 wrong results concentrated at stage 3 and stages 9–10.
+
+### 12.4 A second audit incident, and the re-score
+
+`tests-none` r3's final snapshot scored 0 on both oracles under the frozen
+protocol: the agent had written a differential fuzzer under `tests/` that
+assembles, links, and runs its compiler's output with `std::process::Command`,
+and the study evaluator's blocking audit scanned every `.rs` file in the
+workspace for the Rust adapter, although `cargo build` never compiles
+`tests/`. `src/` had no finding; the same run's round-0 snapshot built and
+scored 0.694. This is the §8.5 defect, fixed for the Node adapters after v4
+and left in place for Rust; the rule the agent was given binds "the
+submitted compiler", which the fuzzer obeyed, and two protocol documents
+still described the workspace-wide scan as intended. Amendment 2, logged
+after the run terminated and before its corrected score was known, fixed
+the handling: every final snapshot re-scored by the evaluator with the Rust
+audit scoped to `src/` plus its `#[path]`/`include!` closure, same image and
+parameters, applied to all eight runs. Seven of eight reproduce their frozen
+values exactly; r3 becomes 0.911 / 1.000. The evaluator fix, its tests, and
+the corrected documents are committed after the cohort; raw re-score
+outputs are in `analysis/v6-rescore/`.
+
+Had the frozen values stood, the fuzz endpoint would have read a paired
+median of −0.122 with two of four replicates below −0.13, "unresolved" under
+the rule, manufactured by an audit finding on a test helper. The measurement
+layer, not the agent, produced the only large difference in the cohort.
+
+### 12.5 What withholding the tests costs
+
+The paired resource and code endpoints (secondary, descriptive):
+
+| Endpoint | baseline median | tests-none median | Paired deltas (r1–r4) | Median delta |
+|---|---:|---:|---|---:|
+| output tokens | 273,147 | 288,484 | +39k, −9k, +4k, +25k | +14.6k |
+| active minutes | 88.8 | 88.5 | +0.2, −0.9, −0.2, +0.7 | 0.0 |
+| assistant turns | 214 | 288 | −64, +110, +160, +86 | +98 |
+| tool calls | 252 | 301 | −75, +94, +127, +83 | +89 |
+| `test_visible` calls | 16.5 | 0 | | −16.5 |
+| compiler source LOC | 2,191 | 2,646 | +692, +636, −967, +476 | +556 |
+| functions | 74 | 70 | +26, −6, −19, −2 | −4 |
+| self-written test programs | 91 | 117 | −89, +168, −52, +50 | −1 |
+| compile ms per hidden test | 7.31 | 7.37 | | +0.06 |
+
+Agents without the test tool take about a hundred more turns and tool calls
+in the same 88 active minutes, replacing the 13–24 `test_visible` calls a
+baseline agent makes with their own test scripts, and end with about 500 more
+lines of compiler for a slightly lower corpus score. Baseline agents used the
+tool in every run this time (v5: not always), which is itself a change: with
+no hang eating the second round, the tool gets used. Speed and build time do
+not differ. Token cost is within replicate noise either way; the v3
+observation that `tests-none` used 45% fewer tokens does not survive the
+hang fix.
+
+### 12.6 What this settles
+
+- **The hang hazard was the dominant variance in v3–v5, and it is gone.**
+  Eight of eight runs used their full budget; the spread of the corpus score
+  fell from 0.50 to 0.08. This is the harness change that made the contrast
+  readable, ahead of any additional replicate.
+- **Test availability does not detectably change behavioral correctness at
+  stages 1–10 under this budget.** Third cohort, first clean one: −0.017 on
+  the corpus, 0.000 on the fuzzer, no replicate beyond the threshold on the
+  corpus. The v3 candidate effect of −0.136 is not reproduced.
+- **What it changes is process, not product:** more turns, more self-written
+  tests, more code, same time, same correctness.
+- **Audits must be scoped to the artifact submitted.** The same measurement
+  defect has now appeared in two languages; the v6 fix closes it for Rust
+  and Node, and the protocol text finally says so.
+
+### 12.7 Limitations
+
+- Four replicates resolve about 0.13; the consistent small negative corpus
+  differences (−0.007 to −0.064) are below that and may be a real small
+  effect or noise.
+- The corpus score has a ceiling around 0.95–0.97 for these compilers
+  (invalid-program rejection tests), which compresses differences near the
+  top; the fuzzer is at 1.000 for seven of eight runs and cannot separate
+  them at all.
+- The 120 s default is the package's constant; an agent-set timeout still
+  wins, so a model that asks for a long timeout can still stall a round.
+  It did not happen here.
+- One model, one task, one language.
+
 ---
 
 Per-run process detail: [`process-report.md`](process-report.md). Raw metrics:

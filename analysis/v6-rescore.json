@@ -1,0 +1,178 @@
+{
+  "v6-baseline-r1": {
+    "fuzz_frozen": 1.0,
+    "fuzz_rescored": 1.0,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden_frozen": 0.9317,
+    "hidden_rescored": 0.9317,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  },
+  "v6-baseline-r2": {
+    "fuzz_frozen": 1.0,
+    "fuzz_rescored": 1.0,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden_frozen": 0.95,
+    "hidden_rescored": 0.95,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  },
+  "v6-baseline-r3": {
+    "fuzz_frozen": 1.0,
+    "fuzz_rescored": 1.0,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden_frozen": 0.9748,
+    "hidden_rescored": 0.9748,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  },
+  "v6-baseline-r4": {
+    "fuzz_frozen": 1.0,
+    "fuzz_rescored": 1.0,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden_frozen": 0.904,
+    "hidden_rescored": 0.904,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  },
+  "v6-tests-none-r1": {
+    "fuzz_frozen": 1.0,
+    "fuzz_rescored": 1.0,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden_frozen": 0.9234,
+    "hidden_rescored": 0.9234,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  },
+  "v6-tests-none-r2": {
+    "fuzz_frozen": 1.0,
+    "fuzz_rescored": 1.0,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden_frozen": 0.9236,
+    "hidden_rescored": 0.9236,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  },
+  "v6-tests-none-r3": {
+    "fuzz_frozen": 0.0,
+    "fuzz_rescored": 1.0,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "hidden_frozen": 0.0,
+    "hidden_rescored": 0.9109,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  },
+  "v6-tests-none-r4": {
+    "fuzz_frozen": 0.756,
+    "fuzz_rescored": 0.756,
+    "fuzz_rescored_stages": [
+      1.0,
+      1.0,
+      0.74,
+      0.87,
+      0.75,
+      0.78,
+      0.84,
+      0.8,
+      0.31,
+      0.47
+    ],
+    "hidden_frozen": 0.8972,
+    "hidden_rescored": 0.8972,
+    "rescore_audit": {
+      "findings": 0,
+      "passed": true
+    }
+  }
+}

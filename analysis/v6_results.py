@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """v6 results: both pre-registered endpoints per run, paired contrasts, the
-harness check (stalls and default-timeout cut-offs), and the paired resource
-and code secondary endpoints (docs/PRE_REGISTRATION_v6.md). Read-only.
+harness check (idle time, unanswered calls, cut-offs), and the paired resource
+and code secondary endpoints (docs/PRE_REGISTRATION_v6.md).
 
-Writes analysis/v6-results.md and analysis/v6-results.json.
+Per Amendment 2 the primary contrast uses every final snapshot re-scored by
+the evaluator with the Rust audit scoped to src/ (both oracles, same image and
+parameters); the frozen-protocol values are reported alongside. Read-only.
+
+Writes analysis/v6-results.md, analysis/v6-results.json, and a compact
+analysis/v6-rescore.json.
 
 Usage:
-    python3 analysis/v6_results.py
+    python3 analysis/v6_results.py [--rescore-dir DIR]
 """
 from __future__ import annotations
 
@@ -20,6 +25,7 @@ from pathlib import Path
 
 REPO = Path("/home/xie/picc")
 OUT = REPO / "analysis"
+RESCORE = Path("/tmp/claude-1003/-home-xie-picc/8b7aadf0-3d32-4755-86ac-4fecb9f08861/scratchpad/v6-rescore")
 sys.path.insert(0, str(OUT))
 import dimensions  # noqa: E402  (analysis/dimensions.py: tokens, time, code shape)
 
@@ -57,9 +63,26 @@ def run_row(rid: str) -> dict | None:
     guard_rows = dimensions.load_jsonl(run / "artifacts" / "guard.jsonl")
     cut = [r for r in guard_rows if r.get("event") == "bash_timeout_fired"]
     dims = dimensions.analyse(run, {}, {}) or {}
+    rescored_hidden = rescored_fuzz = None
+    rescore_audit = None
+    hp, fp = RESCORE / f"{rid}.hidden.json", RESCORE / f"{rid}.fuzz.json"
+    if hp.is_file():
+        rh = json.load(open(hp))
+        rescored_hidden = round(float(rh["summary"]["score"]), 4)
+        rescore_audit = {"passed": rh["source_audit"].get("passed"), "findings": len(rh["source_audit"].get("findings") or [])}
+    if fp.is_file():
+        rf = json.load(open(fp))["summary"]
+        rescored_fuzz = round(float(rf["fuzz_macro"]), 4)
+        rescored_stages = [round(x, 2) for x in rf["stage_pass_rates"]]
+    else:
+        rescored_stages = None
     return {
         "run_id": rid,
         "condition": "tests-none" if "tests-none" in rid else "baseline",
+        "hidden_rescored": rescored_hidden,
+        "fuzz_rescored": rescored_fuzz,
+        "fuzz_rescored_stages": rescored_stages,
+        "rescore_audit": rescore_audit,
         "replicate": meta.get("replicate"),
         "hours": round(meta["elapsed_seconds"] / 3600, 2),
         "termination": meta["termination_reason"],
@@ -113,8 +136,18 @@ def report_rows(ids: list[str], label: str) -> list[dict]:
     by: dict = {}
     for r in rows:
         by.setdefault(r["condition"], {})[r["replicate"]] = r
-    for endpoint in ("hidden", "fuzz"):
-        print(f"--- endpoint: {endpoint}")
+    endpoints = []
+    if rows and all(r.get("hidden_rescored") is not None and r.get("fuzz_rescored") is not None for r in rows):
+        endpoints += [("hidden_rescored", "hidden (PRIMARY: Amendment 2 re-score, audit scoped to src/)"),
+                      ("fuzz_rescored", "fuzz (PRIMARY: Amendment 2 re-score)")]
+        changed = [(r["run_id"], r["hidden"], r["hidden_rescored"], r["fuzz"], r["fuzz_rescored"]) for r in rows
+                   if r["hidden"] != r["hidden_rescored"] or r["fuzz"] != r["fuzz_rescored"]]
+        print(f"--- Amendment 2 re-score: {len(rows) - len(changed)}/{len(rows)} runs reproduce their frozen values exactly; changed: "
+              + (", ".join(f"{rid} hidden {h}->{hr} fuzz {f}->{fr}" for rid, h, hr, f, fr in changed) if changed else "none"))
+        print()
+    endpoints += [("hidden", "hidden (frozen protocol)"), ("fuzz", "fuzz (frozen protocol)")]
+    for endpoint, title in endpoints:
+        print(f"--- endpoint: {title}")
         for cond, reps in sorted(by.items()):
             vals = [reps[k][endpoint] for k in sorted(reps) if reps[k][endpoint] is not None]
             if vals:
@@ -135,8 +168,10 @@ def report_rows(ids: list[str], label: str) -> list[dict]:
         print(f"  runs with an unanswered bash call: {sum(1 for r in rows if r.get('hangs'))}/{len(rows)}; total {sum(len(r.get('hangs') or []) for r in rows)}")
         print(f"  runs with a cut-off: {sum(1 for r in rows if r['bash_timeouts'])}/{len(rows)}; total cut-offs {sum(r['bash_timeouts'] for r in rows)}")
         print(f"  rounds ended by the 45-min cap (normal for a working agent): {sum(r['stalls'] for r in rows)} of {sum(r['rounds'] for r in rows)}")
-        fz = [r['fuzz'] for r in rows if r['fuzz'] is not None]
-        print(f"  runs with fuzz macro < 0.9: {sum(1 for x in fz if x < 0.9)}/{len(fz)}; corpus < 0.30: {sum(1 for r in rows if r['hidden'] < 0.3)}/{len(rows)}")
+        key_f = "fuzz_rescored" if all(r.get("fuzz_rescored") is not None for r in rows) else "fuzz"
+        key_h = "hidden_rescored" if all(r.get("hidden_rescored") is not None for r in rows) else "hidden"
+        fz = [r[key_f] for r in rows if r[key_f] is not None]
+        print(f"  runs with fuzz macro < 0.9 ({key_f}): {sum(1 for x in fz if x < 0.9)}/{len(fz)}; corpus < 0.30 ({key_h}): {sum(1 for r in rows if r[key_h] < 0.3)}/{len(rows)}")
         print()
         print("--- secondary endpoints (tests-none - baseline, paired by replicate; per-condition medians)")
         for key, name in SECONDARY:
@@ -150,6 +185,11 @@ def report_rows(ids: list[str], label: str) -> list[dict]:
 
 
 def main() -> None:
+    global RESCORE
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--rescore-dir", type=Path, default=RESCORE)
+    RESCORE = parser.parse_args().rescore_dir
     buffer = io.StringIO()
     with contextlib.redirect_stdout(buffer):
         rows = report_rows(IDS, "v6")
@@ -159,6 +199,11 @@ def main() -> None:
     print(text)
     (OUT / "v6-results.md").write_text("# v6 results digest\n\n```\n" + text + "```\n", encoding="utf-8")
     (OUT / "v6-results.json").write_text(json.dumps({"v6": rows, "v5": v5}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    compact = {r["run_id"]: {"hidden_frozen": r["hidden"], "hidden_rescored": r["hidden_rescored"], "fuzz_frozen": r["fuzz"],
+                             "fuzz_rescored": r["fuzz_rescored"], "fuzz_rescored_stages": r["fuzz_rescored_stages"],
+                             "rescore_audit": r["rescore_audit"]} for r in rows}
+    if compact:
+        (OUT / "v6-rescore.json").write_text(json.dumps(compact, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
