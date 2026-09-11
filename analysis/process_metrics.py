@@ -325,8 +325,14 @@ def analyse_run(run: Path) -> dict[str, Any] | None:
         "self_authored_tests": [
             name for name in workspace_files if "test" in name.lower()
         ],
-        "guard_blocks": len(guard),
-        "guard_reasons": dict(Counter(row.get("reason") for row in guard).most_common()),
+        "guard_blocks": sum(1 for row in guard if row.get("event", "blocked_tool_call") == "blocked_tool_call"),
+        "guard_reasons": dict(
+            Counter(
+                row.get("reason") for row in guard if row.get("event", "blocked_tool_call") == "blocked_tool_call"
+            ).most_common()
+        ),
+        # Bash commands the per-command cap cut off (0 for cohorts before v6).
+        "bash_timeouts": sum(1 for row in guard if row.get("event") == "bash_timeout_fired"),
         "compactions": sum(1 for row in extension if "compact" in str(row.get("event"))),
         **events,
         **analyse_compaction(run),
@@ -427,7 +433,7 @@ def render(reports: list[dict[str, Any]]) -> str:
             f"output tokens {report['output_tokens']:,}"
         )
         lines.append(
-            f"- guard blocks: {report['guard_blocks']} {report['guard_reasons'] or ''}; "
+            f"- guard blocks: {report['guard_blocks']} {report['guard_reasons'] or ''}; bash timeouts: {report['bash_timeouts']}; "
             f"compactions: {report['compactions']}; provider retries: {report['provider_retries']}"
         )
         lines.append(f"- hidden failure types: {report['hidden_failure_types'] or 'none'}")

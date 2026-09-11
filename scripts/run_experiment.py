@@ -23,6 +23,7 @@ from common import (
     LEGACY_KEY_RENAMES,
     ExperimentError,
     REPO_ROOT,
+    agent_bash_timeout_seconds,
     api_key_for,
     append_jsonl,
     atomic_write_json,
@@ -233,6 +234,7 @@ def run_pi_round(
             "PICC_RUN_STATE": "/run-artifacts/state.json",
             "PICC_GUARD_LOG": "/run-artifacts/guard.jsonl",
             "PICC_MAX_STAGE": str(max_stage),
+            "PICC_BASH_TIMEOUT_SECONDS": str(agent_bash_timeout_seconds(config)),
         }.items():
             command += ["-e", f"{key}={value}"]
 
@@ -1131,6 +1133,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 "max_rounds": max_rounds,
                 "round_timeout_minutes": round_timeout_minutes,
                 "max_stage": max_stage,
+                "bash_timeout_seconds": agent_bash_timeout_seconds(config),
             },
             "resume_count": 0,
             "resumed": False,

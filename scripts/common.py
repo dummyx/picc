@@ -107,6 +107,20 @@ def config_bool(config: Mapping[str, str], key: str) -> bool:
     raise ExperimentError(f"Configuration {key} must be a boolean (0/1/true/false)")
 
 
+def agent_bash_timeout_seconds(config: Mapping[str, str]) -> int:
+    """Per-command wall-clock cap for the agent's bash tool; 0 disables it.
+
+    Frozen configurations from before the cap (cohorts v2-v5) lack the key and
+    resume exactly as they ran, without a cap.
+    """
+    if "AGENT_BASH_TIMEOUT_SECONDS" not in config:
+        return 0
+    value = config_int(config, "AGENT_BASH_TIMEOUT_SECONDS")
+    if value < 0:
+        raise ExperimentError("Configuration AGENT_BASH_TIMEOUT_SECONDS must be a non-negative integer")
+    return value
+
+
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 

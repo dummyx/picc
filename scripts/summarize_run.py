@@ -94,10 +94,18 @@ def collect_extension_events(path: Path) -> dict[str, Any]:
 
 
 def collect_guard(path: Path) -> dict[str, Any]:
+    """Guard ledger metrics: blocked calls (rows before the bash cap carry no
+    `event` field and are blocks) and the bash cap's clamps and cut-offs.
+    `summarize_study.guard_event_metrics` must compute exactly the same."""
     rows = read_jsonl(path)
-    reasons = Counter(str(row.get("reason", "unknown")) for row in rows)
-    tools = Counter(str(row.get("toolName", "unknown")) for row in rows)
-    return {"blocked_calls": len(rows), "reasons": dict(reasons), "tools": dict(tools)}
+    blocked = [row for row in rows if row.get("event", "blocked_tool_call") == "blocked_tool_call"]
+    return {
+        "blocked_calls": len(blocked),
+        "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in blocked)),
+        "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in blocked)),
+        "bash_timeouts_fired": sum(1 for row in rows if row.get("event") == "bash_timeout_fired"),
+        "bash_timeouts_clamped": sum(1 for row in rows if row.get("event") == "bash_timeout_clamped"),
+    }
 
 
 def trajectory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -200,6 +208,7 @@ def markdown_report(report: dict[str, Any]) -> str:
         f"- Compaction starts: {report['pi_events']['event_counts'].get('compaction_start', 0)}",
         f"- Compaction completions: {report['pi_events']['event_counts'].get('compaction_end', 0)}",
         f"- Guard-blocked tool calls: {report['guard']['blocked_calls']}",
+        f"- Bash commands cut by the per-command cap: {report['guard'].get('bash_timeouts_fired', 0)}",
         "",
         "## Model usage reported by Pi",
         "",

@@ -629,6 +629,27 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIsNone(row)
         self.assertIn("guard metrics", warning or "")
 
+    def test_bash_timeouts_are_counted_apart_from_guard_blocks(self) -> None:
+        run_dir = make_run(self.runs, "timeouts-r1", self.study, self.study_sha256)
+        write_jsonl(
+            run_dir / "artifacts" / "guard.jsonl",
+            [
+                {"event": "blocked_tool_call", "toolName": "bash", "reason": "network/download command is prohibited"},
+                {"event": "bash_timeout_clamped", "toolName": "bash", "requested": 900, "applied": 120},
+                {"event": "bash_timeout_fired", "toolName": "bash", "timeout": 120},
+                {"event": "bash_timeout_fired", "toolName": "bash", "timeout": 120},
+            ],
+        )
+        report_path = run_dir / "report.json"
+        report = summarize_study.load_object(report_path)
+        report["guard"] = summarize_study.guard_event_metrics(run_dir / "artifacts" / "guard.jsonl")
+        write_json(report_path, report)
+        row, warning = self.collect(run_dir)
+        self.assertIsNone(warning)
+        assert row is not None
+        self.assertEqual(row["guard_blocked_calls"], 1)
+        self.assertEqual(row["guard_bash_timeouts"], 2)
+
     def test_one_snapshot_early_stop_is_included_with_origin_auc(self) -> None:
         run_dir = make_run(
             self.runs,

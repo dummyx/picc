@@ -306,12 +306,26 @@ def pi_event_metrics(events_dir: Path) -> tuple[dict[str, int], dict[str, int]]:
 
 
 def guard_event_metrics(path: Path) -> dict[str, Any]:
+    """Same computation as `summarize_run.collect_guard`: blocked calls (rows
+    from before the bash cap carry no `event` field and are blocks) plus the
+    bash cap's clamps and cut-offs."""
     rows = read_jsonl(path)
+    blocked = [row for row in rows if row.get("event", "blocked_tool_call") == "blocked_tool_call"]
     return {
-        "blocked_calls": len(rows),
-        "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in rows)),
-        "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in rows)),
+        "blocked_calls": len(blocked),
+        "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in blocked)),
+        "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in blocked)),
+        "bash_timeouts_fired": sum(1 for row in rows if row.get("event") == "bash_timeout_fired"),
+        "bash_timeouts_clamped": sum(1 for row in rows if row.get("event") == "bash_timeout_clamped"),
     }
+
+
+def guard_report_is_stale(report_guard: Mapping[str, Any], guard: Mapping[str, Any]) -> bool:
+    """A report written before the bash cap lacks the timeout counters; every
+    field it does carry must still reproduce from the ledger."""
+    if not {"blocked_calls", "reasons", "tools"} <= set(report_guard):
+        return True
+    return any(report_guard[key] != value for key, value in guard.items() if key in report_guard)
 
 
 def snapshot_metrics(snapshots: list[dict[str, Any]]) -> dict[str, Any]:
@@ -1093,7 +1107,7 @@ def collect_run(
         guard = guard_event_metrics(run_dir / "artifacts" / "guard.jsonl")
         if usage != ledger_usage:
             raise SummaryError("report Pi usage is stale or disagrees with raw event ledgers")
-        if report_guard != guard:
+        if guard_report_is_stale(report_guard, guard):
             raise SummaryError("report guard metrics are stale or disagree with artifacts/guard.jsonl")
     except SummaryError as error:
         return excluded_run(run_dir, str(error))
@@ -1142,6 +1156,7 @@ def collect_run(
             else None
         ),
         "guard_blocked_calls": int(guard.get("blocked_calls", 0) or 0),
+        "guard_bash_timeouts": int(guard.get("bash_timeouts_fired", 0) or 0),
         "specification_bytes": numeric(rendered.get("specification_bytes")),
         "specification_words": numeric(rendered.get("specification_words")),
         "prompt_total_bytes": sum(

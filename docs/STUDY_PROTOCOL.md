@@ -189,6 +189,20 @@ six v4 compilers lost the same ten tests to it. A test whose preprocessing
 fails falls back to its raw text and is recorded in the evaluation's
 `input_policy`.
 
+## Agent shell cap
+
+Every bash command the agent runs is capped at `AGENT_BASH_TIMEOUT_SECONDS`
+(120 s) of wall-clock time by the guard extension, identically in every
+condition: a shorter timeout the agent requests is honored, a longer one is
+clamped, and each cut-off is logged as `bash_timeout_fired` and counted in the
+run report and study summary (`guard_bash_timeouts`). Pi's bash tool has no
+default timeout, so before this change (cohorts v2–v5) a program the candidate
+miscompiled into an infinite loop blocked the session until the round cap: 18
+of the 20 v3–v5 main runs lost a median 34 minutes to one such call (8.9 of 40
+budget hours), condition-blind but unevenly distributed, while 99% of completed
+commands finished within 5 s. Runs with and without the cap are not comparable;
+a cohort under the cap needs its own manifest version.
+
 ## Outcomes
 
 ### Co-primary

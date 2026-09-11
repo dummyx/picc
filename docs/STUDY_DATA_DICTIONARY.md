@@ -197,7 +197,8 @@ Important run columns include `profile`, `replicate`, study/condition and
 materialization/runtime fingerprints, model/provider/thinking/revision, image,
 condition axes, hidden score/AUC, finish status, time-to-completion, elapsed time,
 tokens, model/tool/test/oracle calls, compactions, regressions, buildability,
-guard events, source/test/scaffold LOC, and final build/audit status. Missing
+guard events (blocked calls and, from v6, bash commands cut by the per-command
+cap), source/test/scaffold LOC, and final build/audit status. Missing
 provider token fields remain null. A complete one-snapshot early stop receives
 the origin-anchored AUC `score / 2`.
 
