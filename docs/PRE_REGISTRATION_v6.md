@@ -166,10 +166,12 @@ and can now be read as outcomes of the conditions:
 - [x] guard-blocked calls
 - [x] completion per study manifest: hidden macro ≥ 0.95 with successful build
   and no blocking audit finding
-- [x] **harness check:** stalled rounds per run (expected 0 in every run) and
-  bash commands cut by the default timeout (`guard_bash_timeouts`; expected
-  > 0 in some runs); a run that still stalls a round is reported with the
-  command that blocked it
+- [x] **harness check** (operationalized per Amendment 1): idle minutes per
+  run (time between the agent's last turn and the round kill, summed over
+  rounds; expected below 5 in every run) and bash calls that never returned
+  (expected 0), alongside bash commands cut by the default timeout
+  (`guard_bash_timeouts`; expected > 0 in some runs); a run that still idles
+  is reported with the command that blocked it
 - [x] **resources, paired like the primary endpoints:** reported output tokens
   (and input tokens), active minutes (time between the first and last agent
   turn) and idle minutes, assistant turns, tool calls
@@ -194,8 +196,9 @@ verdict, two of four as unresolved. If six or more of eight runs score below
 0.30 on the corpus oracle, the budget rather than the conditions is the
 finding. Resource and code secondary endpoints are reported as paired medians
 with per-replicate values and no threshold; they describe cost at a given
-correctness, not correctness. If any run stalls a round, the harness check
-failed for that run and the reason is reported before any contrast is read.
+correctness, not correctness. If any run idles for five minutes or more, the harness
+check failed for that run and the reason is reported before any contrast is
+read.
 
 ## Exclusion rules
 
@@ -266,4 +269,13 @@ No harness change followed the pilots.
 
 ## Amendments
 
-(none yet)
+1. **2026-09-11 09:20Z, during run 1 of 8, before any hidden or fuzz result
+   was viewed.** The harness check was mis-operationalized. `stalls` counts
+   rounds ended by the 45-minute round cap, which is how every round of a
+   working agent ends under this budget (all eight v5 runs show 2 of 2), not
+   a hang. The pre-declared expectation "stalled rounds = 0" is replaced by:
+   idle minutes per run below 5 in every run (v5: five of eight runs idled
+   30–46 minutes), and zero bash calls without a result (`hangs` in the
+   process metrics). Cut-offs (`guard_bash_timeouts`) are unchanged.
+   `analysis/v6_results.py` reports the corrected check. No harness,
+   configuration, prompt, or image change; the running cohort is unaffected.

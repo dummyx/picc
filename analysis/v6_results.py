@@ -82,6 +82,7 @@ def run_row(rid: str) -> dict | None:
         "out_tokens": usage.get("output"),
         "test_visible_calls": events.get("test_visible", 0),
         "traj": [round(r["summary"].get("score", 0.0), 4) for r in hidden_rows],
+        "hangs": list(dims.get("hangs") or []),  # process_metrics: one record per bash call without a result
         **{k: dims.get(k) for k in ("active_minutes", "idle_minutes", "assistant_turns", "tool_calls", "source_loc", "functions",
                                     "self_test_programs", "self_test_loc", "final_build_seconds", "median_test_compile_ms", "compactions")},
     }
@@ -128,9 +129,12 @@ def report_rows(ids: list[str], label: str) -> list[dict]:
                   f"replicates below -{THRESHOLD}: {sum(1 for d in ds if d < -THRESHOLD)}/{len(ds)}, above +{THRESHOLD}: {sum(1 for d in ds if d > THRESHOLD)}/{len(ds)}")
         print()
     if rows:
-        print("--- harness check")
-        print(f"  runs with a stalled round: {sum(1 for r in rows if r['stalls'])}/{len(rows)}; total stalls {sum(r['stalls'] for r in rows)}")
+        print("--- harness check (Amendment 1: idle minutes and unanswered bash calls, not round-cap stalls)")
+        idle = [(r['run_id'], r['idle_minutes']) for r in rows if isinstance(r.get('idle_minutes'), (int, float))]
+        print(f"  runs idling >= 5 min: {sum(1 for _, m in idle if m >= 5)}/{len(idle)} {[(rid, round(m, 1)) for rid, m in idle if m >= 5]}")
+        print(f"  runs with an unanswered bash call: {sum(1 for r in rows if r.get('hangs'))}/{len(rows)}; total {sum(len(r.get('hangs') or []) for r in rows)}")
         print(f"  runs with a cut-off: {sum(1 for r in rows if r['bash_timeouts'])}/{len(rows)}; total cut-offs {sum(r['bash_timeouts'] for r in rows)}")
+        print(f"  rounds ended by the 45-min cap (normal for a working agent): {sum(r['stalls'] for r in rows)} of {sum(r['rounds'] for r in rows)}")
         fz = [r['fuzz'] for r in rows if r['fuzz'] is not None]
         print(f"  runs with fuzz macro < 0.9: {sum(1 for x in fz if x < 0.9)}/{len(fz)}; corpus < 0.30: {sum(1 for r in rows if r['hidden'] < 0.3)}/{len(rows)}")
         print()
