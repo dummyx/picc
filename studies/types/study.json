@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "id": "picc-types-v1",
-  "description": "Static-typing contrast for the PiCC construction task: TypeScript under `tsc --strict` versus plain JavaScript on the same Node.js 24 runtime, with prompts, specification, tests, reference access, and budgets held at the starter baseline.",
+  "id": "picc-types-v2",
+  "description": "Static-typing contrast for the PiCC construction task: TypeScript under `tsc --strict` versus plain JavaScript on the same Node.js 24 runtime, with prompts, specification, tests, reference access, and budgets held at the starter baseline. Second manifest version (v7 cohort): revised oracle (preprocessed inputs, corpus macro and stage-averaged fuzz macro as co-primary endpoints) and the bash default timeout (image 0.4, Pi 0.85.1, @cad0p/pi-bash-timeout@0.1.0); the v4 cohort (picc-types-v1) ran on image 0.2 without either.",
   "design": "one-factor-at-a-time",
   "baseline_condition": "js-untyped",
-  "seed": 20260907,
+  "seed": 20260912,
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {

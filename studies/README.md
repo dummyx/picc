@@ -42,13 +42,18 @@ implementation substrate.
 
 ## Static-typing study
 
-`types/study.json` (`picc-types-v1`) reuses the starter defaults and contrasts
+`types/study.json` reuses the starter defaults and contrasts
 two candidate adapters on one Node.js 24 runtime:
 
 | Condition | Role | Candidate |
 |---|---|---|
 | `js-untyped` | study baseline | plain JavaScript, `node --check` build, `tsc` withheld by the guard |
 | `ts-strict` | variant (`candidate`) | TypeScript, `tsc --strict --noEmitOnError` build gate |
+
+The manifest id is versioned per cohort: `picc-types-v1` was the v4 cohort
+(image 0.2, original oracle); `picc-types-v2` (seed 20260912) is the v7 cohort
+under the revised oracle and the bash default timeout on image 0.4
+(`docs/PRE_REGISTRATION_v7.md`). Conditions are unchanged between the two.
 
 ```bash
 make study-validate STUDY=studies/types/study.json

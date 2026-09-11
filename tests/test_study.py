@@ -389,7 +389,7 @@ class TypesStudyTests(unittest.TestCase):
 
     def test_manifest_is_a_one_factor_candidate_contrast(self) -> None:
         payload, conditions = study.load_study(self.STUDY)
-        self.assertEqual(payload["id"], "picc-types-v1")
+        self.assertRegex(payload["id"], r"^picc-types-v\d+$")
         self.assertEqual(payload["baseline_condition"], "js-untyped")
         self.assertEqual([row["id"] for row in conditions], ["js-untyped", "ts-strict"])
         starter, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
