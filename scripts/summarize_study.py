@@ -307,8 +307,8 @@ def pi_event_metrics(events_dir: Path) -> tuple[dict[str, int], dict[str, int]]:
 
 def guard_event_metrics(path: Path) -> dict[str, Any]:
     """Same computation as `summarize_run.collect_guard`: blocked calls (rows
-    from before the bash cap carry no `event` field and are blocks) plus the
-    bash cap's clamps and cut-offs."""
+    from before the bash default timeout carry no `event` field and are blocks)
+    plus the commands the default timeout cut off."""
     rows = read_jsonl(path)
     blocked = [row for row in rows if row.get("event", "blocked_tool_call") == "blocked_tool_call"]
     return {
@@ -316,13 +316,12 @@ def guard_event_metrics(path: Path) -> dict[str, Any]:
         "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in blocked)),
         "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in blocked)),
         "bash_timeouts_fired": sum(1 for row in rows if row.get("event") == "bash_timeout_fired"),
-        "bash_timeouts_clamped": sum(1 for row in rows if row.get("event") == "bash_timeout_clamped"),
     }
 
 
 def guard_report_is_stale(report_guard: Mapping[str, Any], guard: Mapping[str, Any]) -> bool:
-    """A report written before the bash cap lacks the timeout counters; every
-    field it does carry must still reproduce from the ledger."""
+    """A report written before the bash default timeout lacks the cut-off
+    counter; every field it does carry must still reproduce from the ledger."""
     if not {"blocked_calls", "reasons", "tools"} <= set(report_guard):
         return True
     return any(report_guard[key] != value for key, value in guard.items() if key in report_guard)

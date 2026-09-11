@@ -635,7 +635,6 @@ class PrimarySummaryTests(unittest.TestCase):
             run_dir / "artifacts" / "guard.jsonl",
             [
                 {"event": "blocked_tool_call", "toolName": "bash", "reason": "network/download command is prohibited"},
-                {"event": "bash_timeout_clamped", "toolName": "bash", "requested": 900, "applied": 120},
                 {"event": "bash_timeout_fired", "toolName": "bash", "timeout": 120},
                 {"event": "bash_timeout_fired", "toolName": "bash", "timeout": 120},
             ],

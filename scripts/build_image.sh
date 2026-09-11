@@ -18,6 +18,8 @@ docker build \
   --build-arg "RUST_TOOLCHAIN=$RUST_TOOLCHAIN" \
   --build-arg "TYPESCRIPT_VERSION=$TYPESCRIPT_VERSION" \
   --build-arg "NODE_TYPES_VERSION=$NODE_TYPES_VERSION" \
+  --build-arg "BASH_TIMEOUT_PACKAGE=$BASH_TIMEOUT_PACKAGE" \
+  --build-arg "BASH_TIMEOUT_PACKAGE_VERSION=$BASH_TIMEOUT_PACKAGE_VERSION" \
   --tag "$EXPERIMENT_IMAGE" \
   --file "$ROOT/docker/Dockerfile" \
   "$ROOT"

@@ -21,8 +21,9 @@ The starter has one condition:
 - the model declared in `MODEL_ID`;
 - thinking setting `max`;
 - stock Pi compaction with explicitly frozen settings;
-- project-local test and guard extensions, including a 120 s wall-clock cap on
-  every agent bash command (`AGENT_BASH_TIMEOUT_SECONDS`);
+- project-local test and guard extensions, plus the pinned
+  `@cad0p/pi-bash-timeout` package (bash commands default to a 120 s timeout
+  when the agent sets none);
 - one agent;
 - no human steering;
 - no web or source retrieval through agent tools;
@@ -102,7 +103,7 @@ Final hidden macro-score:
 - regressions between rounds;
 - Rust LOC and churn, as descriptive—not success—metrics;
 - Pi model calls, reported token usage, tool calls, retries, and compactions;
-- blocked guard events and bash commands cut by the per-command cap;
+- blocked guard events and bash commands cut by the default timeout;
 - run-to-run variability.
 
 ## Repetitions

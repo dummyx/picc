@@ -94,9 +94,10 @@ def collect_extension_events(path: Path) -> dict[str, Any]:
 
 
 def collect_guard(path: Path) -> dict[str, Any]:
-    """Guard ledger metrics: blocked calls (rows before the bash cap carry no
-    `event` field and are blocks) and the bash cap's clamps and cut-offs.
-    `summarize_study.guard_event_metrics` must compute exactly the same."""
+    """Guard ledger metrics: blocked calls (rows from before the bash default
+    timeout carry no `event` field and are blocks) and the commands the default
+    timeout cut off. `summarize_study.guard_event_metrics` must compute exactly
+    the same."""
     rows = read_jsonl(path)
     blocked = [row for row in rows if row.get("event", "blocked_tool_call") == "blocked_tool_call"]
     return {
@@ -104,7 +105,6 @@ def collect_guard(path: Path) -> dict[str, Any]:
         "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in blocked)),
         "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in blocked)),
         "bash_timeouts_fired": sum(1 for row in rows if row.get("event") == "bash_timeout_fired"),
-        "bash_timeouts_clamped": sum(1 for row in rows if row.get("event") == "bash_timeout_clamped"),
     }
 
 

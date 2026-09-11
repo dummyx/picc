@@ -23,7 +23,7 @@ conditions; see [`STUDIES.md`](STUDIES.md).
 | Model | Operator-declared in `MODEL_ID`; recorded per run |
 | Thinking setting | `max` |
 | Agent topology | One persistent Pi session |
-| Agent shell cap | Every bash command killed after 120 s (`AGENT_BASH_TIMEOUT_SECONDS`) |
+| Bash default timeout | `@cad0p/pi-bash-timeout@0.1.0`: 120 s when the agent sets none |
 | Implementation | Rust `1.88.0`, standard library only |
 | Product interface | `target/release/picc INPUT.c -o OUTPUT.s` |
 | Target assembly | GNU-compatible x86-64 System V assembly |
@@ -354,15 +354,16 @@ This extension blocks obvious attempts to:
 - modify task, test, Pi configuration, or Git-control files;
 - write outside `/workspace`.
 
-It also caps every bash command at `AGENT_BASH_TIMEOUT_SECONDS` of wall-clock
-time (default 120 s): a shorter per-call timeout the agent requests is honored,
-a longer one is clamped, and the command's process group is killed at the cap.
-Pi's bash tool has no default timeout, and an agent that runs a program its own
-half-built compiler miscompiled into an infinite loop otherwise blocks the
-session for the rest of the round: across the v3–v5 cohorts 18 of 20 runs lost
-a median 34 minutes to one such call, while 99% of completed commands finished
-within 5 s. Cut-off commands are logged as `bash_timeout_fired` in
-`guard.jsonl` and counted in the run report.
+Pi's bash tool has no default timeout, and its maintainer declined to add one
+(earendil-works/pi#2987). An agent that runs a program its own half-built
+compiler miscompiled into an infinite loop therefore blocks the session for the
+rest of the round: across the v3–v5 cohorts 18 of 20 runs lost a median 34
+minutes to one such call, while 99% of completed commands finished within 5 s.
+The image pins the community package `@cad0p/pi-bash-timeout` (loaded through
+`pi/settings.json`), which re-registers the bash tool with a 120 s default
+timeout when the agent sets none; an explicit timeout always wins, and Pi
+kills the command's process group when it fires. The guard logs each cut-off
+as `bash_timeout_fired` in `guard.jsonl`, and the run report counts them.
 
 It is an **audit and accident-prevention layer, not a security boundary**.
 Extensions and shell tools execute with the Pi process's container permissions.

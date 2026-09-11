@@ -6,13 +6,9 @@ const WORKSPACE = resolve(process.env.PICC_WORKSPACE ?? "/workspace");
 const VISIBLE_TESTS = resolve(process.env.PICC_VISIBLE_TESTS ?? "/visible-tests");
 const REFERENCE = resolve(VISIBLE_TESTS, "reference");
 const AUDIT_PATH = process.env.PICC_GUARD_LOG ?? "/run-artifacts/guard.jsonl";
-// Per-command wall-clock cap for the bash tool, in seconds (0 or unset disables
-// it). Pi's bash tool has no default timeout, so a program that the candidate
-// compiler miscompiled into an infinite loop blocks the session for the rest of
-// the round when the agent runs it. The cap is part of the fixed environment:
-// the harness sets it identically for every condition. A shorter timeout the
-// agent requests is honored; a longer one is clamped.
-const BASH_TIMEOUT_SECONDS = Number(process.env.PICC_BASH_TIMEOUT_SECONDS ?? "0");
+// The bash tool's default timeout comes from the @cad0p/pi-bash-timeout package
+// pinned in the image and loaded through the frozen settings (120 s when the
+// agent sets none). The guard only records the commands it cuts off.
 const BASH_TIMEOUT_MESSAGE = /Command timed out after (\d+(?:\.\d+)?) seconds/;
 const ALLOW_TEST_FILES = __ALLOW_TEST_FILES__;
 const ALLOW_REFERENCE_FILES = __ALLOW_REFERENCE_FILES__;
@@ -43,26 +39,6 @@ function audit(record: Record<string, unknown>): void {
   } catch {
     // Guard logging must not terminate Pi.
   }
-}
-
-function applyBashTimeout(input: { timeout?: unknown }, toolCallId: string, command: string): void {
-  if (!(BASH_TIMEOUT_SECONDS > 0)) return;
-  const requested = input.timeout;
-  let applied = BASH_TIMEOUT_SECONDS;
-  if (typeof requested === "number" && Number.isFinite(requested) && requested > 0) {
-    applied = Math.min(requested, BASH_TIMEOUT_SECONDS);
-  }
-  if (requested !== undefined && applied !== requested) {
-    audit({
-      event: "bash_timeout_clamped",
-      toolName: "bash",
-      toolCallId,
-      requested,
-      applied,
-      subject: command,
-    });
-  }
-  input.timeout = applied;
 }
 
 function protectedWrite(path: string): string | undefined {
@@ -166,7 +142,6 @@ export default function experimentGuard(pi: ExtensionAPI) {
       } else {
         reason = bashBlocks.find(({ pattern }) => pattern.test(command))?.reason;
         reason ??= visiblePathReason(command);
-        if (!reason) applyBashTimeout(event.input as { timeout?: unknown }, event.toolCallId, command);
       }
     } else if (event.toolName === "write" || event.toolName === "edit") {
       const rawPath = (event.input as { path?: unknown }).path;
@@ -191,8 +166,9 @@ export default function experimentGuard(pi: ExtensionAPI) {
     return { block: true, reason: `Experiment guard: ${reason}` };
   });
 
-  // A command the cap cut off returns an error result whose text ends with
-  // Pi's timeout status line; record it so reports can count hangs prevented.
+  // A command the default timeout cut off returns an error result whose text
+  // ends with Pi's timeout status line; record it so reports can count hangs
+  // prevented.
   pi.on("tool_result", async (event) => {
     if (event.toolName !== "bash" || !event.isError) return undefined;
     const text = event.content.map((part) => (part.type === "text" ? part.text : "")).join("\n");

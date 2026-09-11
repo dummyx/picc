@@ -418,8 +418,7 @@ class TypesStudyTests(unittest.TestCase):
         self.assertIn("tsc|tsserver", js_guard)
         self.assertNotIn("__CANDIDATE_BLOCKED_BASH_PATTERNS__", js_guard)
         for guard in (ts_guard, js_guard):
-            # The per-command bash cap is environment, rendered into every condition.
-            self.assertIn("process.env.PICC_BASH_TIMEOUT_SECONDS", guard)
+            # Every condition records the commands the bash default timeout cuts off.
             self.assertIn('"bash_timeout_fired"', guard)
         for root in (ts_root, js_root):
             for name in ("experiment-guard.ts", "experiment-tools.ts", "study-setup.ts"):

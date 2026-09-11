@@ -189,19 +189,21 @@ six v4 compilers lost the same ten tests to it. A test whose preprocessing
 fails falls back to its raw text and is recorded in the evaluation's
 `input_policy`.
 
-## Agent shell cap
+## Bash default timeout
 
-Every bash command the agent runs is capped at `AGENT_BASH_TIMEOUT_SECONDS`
-(120 s) of wall-clock time by the guard extension, identically in every
-condition: a shorter timeout the agent requests is honored, a longer one is
-clamped, and each cut-off is logged as `bash_timeout_fired` and counted in the
-run report and study summary (`guard_bash_timeouts`). Pi's bash tool has no
-default timeout, so before this change (cohorts v2–v5) a program the candidate
-miscompiled into an infinite loop blocked the session until the round cap: 18
-of the 20 v3–v5 main runs lost a median 34 minutes to one such call (8.9 of 40
-budget hours), condition-blind but unevenly distributed, while 99% of completed
-commands finished within 5 s. Runs with and without the cap are not comparable;
-a cohort under the cap needs its own manifest version.
+Pi's bash tool has no default timeout and its maintainer declined one
+(earendil-works/pi#2987), so before this change (cohorts v2–v5) a program the
+candidate miscompiled into an infinite loop blocked the session until the
+round cap: 18 of the 20 v3–v5 main runs lost a median 34 minutes to one such
+call (8.9 of 40 budget hours), condition-blind but unevenly distributed, while
+99% of completed commands finished within 5 s. The image now pins the
+community package `@cad0p/pi-bash-timeout@0.1.0`, loaded through the frozen
+`pi/settings.json` in every condition: it re-registers the bash tool so a
+command without an agent-set timeout is killed after 120 s (an explicit
+timeout always wins). Each cut-off is logged as `bash_timeout_fired` and
+counted in the run report and study summary (`guard_bash_timeouts`). Runs
+with and without the default are not comparable; a cohort under it needs its
+own manifest version.
 
 ## Outcomes
 

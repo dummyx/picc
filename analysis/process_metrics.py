@@ -331,7 +331,7 @@ def analyse_run(run: Path) -> dict[str, Any] | None:
                 row.get("reason") for row in guard if row.get("event", "blocked_tool_call") == "blocked_tool_call"
             ).most_common()
         ),
-        # Bash commands the per-command cap cut off (0 for cohorts before v6).
+        # Bash commands the default timeout cut off (0 for cohorts before v6).
         "bash_timeouts": sum(1 for row in guard if row.get("event") == "bash_timeout_fired"),
         "compactions": sum(1 for row in extension if "compact" in str(row.get("event"))),
         **events,
