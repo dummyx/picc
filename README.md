@@ -18,7 +18,7 @@ conditions; see [`STUDIES.md`](STUDIES.md).
 | Item | Default |
 |---|---|
 | Starter pack | `0.1.0` |
-| Pi | `@earendil-works/pi-coding-agent@0.84.1` |
+| Pi | `@earendil-works/pi-coding-agent@0.85.1` |
 | Provider | Operator-declared in `MODEL_PROVIDER`; recorded per run |
 | Model | Operator-declared in `MODEL_ID`; recorded per run |
 | Thinking setting | `max` |
@@ -459,8 +459,8 @@ only the `ZAI_API_KEY` and `ZAI_CODING_CN_API_KEY` credential names remain.
 ## Upstream references
 
 - Pi Coding Agent: <https://github.com/earendil-works/pi>
-- Pi JSON event mode: <https://github.com/earendil-works/pi/blob/v0.84.1/packages/coding-agent/docs/json.md>
-- Pi extension API: <https://github.com/earendil-works/pi/blob/v0.84.1/packages/coding-agent/docs/extensions.md>
+- Pi JSON event mode: <https://github.com/earendil-works/pi/blob/v0.85.1/packages/coding-agent/docs/json.md>
+- Pi extension API: <https://github.com/earendil-works/pi/blob/v0.85.1/packages/coding-agent/docs/extensions.md>
 - Compiler test corpus: <https://github.com/nlsandler/writing-a-c-compiler-tests>
 
 Provider-specific, relevant only when the declared provider is `zai` or

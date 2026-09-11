@@ -16,7 +16,7 @@ workspace is not a new independent run.
 
 The starter has one condition:
 
-- Pi `0.84.1`;
+- Pi `0.85.1`;
 - the provider declared in `MODEL_PROVIDER` (`zai`, `zai-coding-cn`, or `local`);
 - the model declared in `MODEL_ID`;
 - thinking setting `max`;

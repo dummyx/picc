@@ -106,8 +106,10 @@ JavaScript was chosen over an "unannotated Python" arm because the absence of
 annotations is syntactically guaranteed rather than an instruction the agent may
 ignore. Treatment fidelity (annotation density, `any`, suppressions, JSDoc type
 tags, `tsc` invocations, guard blocks) is measured post hoc from the final
-snapshots and event streams. Both arms run in image `picc-experiment:0.2`,
-which adds only `typescript@5.9.3` and `@types/node@24.13.3` to image 0.1.
+snapshots and event streams. Both arms run in the same image; the v4 cohort
+used `picc-experiment:0.2`, which adds only `typescript@5.9.3` and
+`@types/node@24.13.3` to image 0.1 (image 0.3 differs from 0.2 only by the Pi
+version, 0.85.1).
 
 ### Reference
 
