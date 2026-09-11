@@ -188,6 +188,45 @@ def input_policy() -> dict[str, Any]:
     }
 
 
+RUST_INCLUDE_PATTERNS = [
+    re.compile(r'#\s*\[\s*path\s*=\s*"([^"]+)"\s*\]'),
+    re.compile(r'\binclude(?:_str|_bytes)?!\s*\(\s*"([^"]+)"\s*\)'),
+]
+
+
+def rust_sources(workspace: Path) -> list[Path]:
+    """The compiler's sources: the Cargo package's src/ tree plus any file it
+    pulls in by path (`#[path = "..."]`, `include!`/`include_str!`/
+    `include_bytes!`). tests/, benches/, examples/, and ad-hoc helpers are the
+    agent's own tooling and are not part of the submitted compiler (the v4
+    lesson, report 8.5, applied to Rust after v6-tests-none-r3 was zeroed for
+    a fuzzer under tests/)."""
+    src = workspace / "src"
+    files = sorted(path for path in src.rglob("*.rs") if path.is_file() and not path.is_symlink()) if src.is_dir() else []
+    seen = {path.resolve() for path in files}
+    queue = list(files)
+    while queue:
+        current = queue.pop()
+        try:
+            text = current.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for pattern in RUST_INCLUDE_PATTERNS:
+            for match in pattern.finditer(text):
+                target = (current.parent / match.group(1)).resolve()
+                try:
+                    target.relative_to(workspace)
+                except ValueError:
+                    continue
+                if target in seen or not target.is_file() or target.is_symlink() or "target" in target.parts or ".git" in target.parts:
+                    continue
+                seen.add(target)
+                files.append(target)
+                if target.suffix == ".rs":
+                    queue.append(target)
+    return files
+
+
 def source_audit(workspace: Path) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     cargo_toml = workspace / "Cargo.toml"
@@ -222,9 +261,7 @@ def source_audit(workspace: Path) -> dict[str, Any]:
                 }
             )
 
-    for path in sorted(workspace.rglob("*.rs")):
-        if "target" in path.parts or ".git" in path.parts:
-            continue
+    for path in rust_sources(workspace):
         try:
             lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
         except OSError as error:

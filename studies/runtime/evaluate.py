@@ -722,6 +722,40 @@ def audit_symlinks(workspace: Path, findings: list[dict[str, Any]]) -> None:
             )
 
 
+RUST_INCLUDE_PATTERNS = [
+    re.compile(r'#\s*\[\s*path\s*=\s*"([^"]+)"\s*\]'),
+    re.compile(r'\binclude(?:_str|_bytes)?!\s*\(\s*"([^"]+)"\s*\)'),
+]
+
+
+def rust_include_closure(workspace: Path, seeds: Sequence[Path], prefixes: Sequence[tuple[str, ...]]) -> list[Path]:
+    """Files outside the scanned roots that a scanned Rust file pulls in by path
+    (`#[path = "..."]` modules, `include!`/`include_str!`/`include_bytes!`)."""
+    found: list[Path] = []
+    seen: set[Path] = {path.resolve() for path in seeds}
+    queue = list(seeds)
+    while queue:
+        current = queue.pop()
+        try:
+            text = current.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for pattern in RUST_INCLUDE_PATTERNS:
+            for match in pattern.finditer(text):
+                target = (current.parent / match.group(1)).resolve()
+                try:
+                    relative = target.relative_to(workspace)
+                except ValueError:
+                    continue
+                if target in seen or not target.is_file() or target.is_symlink() or is_excluded(relative, prefixes):
+                    continue
+                seen.add(target)
+                found.append(target)
+                if target.suffix == ".rs":
+                    queue.append(target)
+    return found
+
+
 def source_audit(workspace: Path, adapter: dict[str, Any]) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     policy = adapter.get("audit", {})
@@ -730,7 +764,20 @@ def source_audit(workspace: Path, adapter: dict[str, Any]) -> dict[str, Any]:
     extensions = {str(item) for item in adapter.get("source_extensions", [])}
     roots = policy.get("roots") if isinstance(policy.get("roots"), list) else None
     prefixes = excluded_prefixes(policy)
+    if roots is None and ".rs" in extensions:
+        # A Cargo package's binary is built from src/ alone; tests/, benches/,
+        # examples/, and ad-hoc helpers are the agent's own tooling, not the
+        # submitted compiler (the v4 lesson, report 8.5, applied to Rust after
+        # v6-tests-none-r3 was zeroed for a fuzzer under tests/). Files that
+        # src/ pulls in from elsewhere by path stay audited.
+        roots = ["src"]
     files = list(iter_source_files(workspace, extensions, roots, prefixes))
+    if ".rs" in extensions:
+        known = {path.resolve() for path in files}
+        for path in rust_include_closure(workspace, files, prefixes):
+            if path not in known:
+                files.append(path)
+                known.add(path)
     entry = policy.get("entry")
     if isinstance(entry, str) and entry and extensions & NODE_SOURCE_EXTENSIONS:
         known = {path.resolve() for path in files}

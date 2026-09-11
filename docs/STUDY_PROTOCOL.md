@@ -337,11 +337,16 @@ namespace with the selected visible or hidden partition and the run-local
 reference cache. Hidden scores are therefore valid only for policy-compliant,
 non-adversarial candidates; they are auditable but not tamper-resistant.
 
-Candidate source audit covers Rust, Python, and JavaScript/TypeScript source,
-including recognized test paths, and treats symlinks as policy failures.
-Consequently, committed integration tests that invoke subprocesses can make an
-otherwise functional candidate fail the audit; keep such tests policy-compliant
-or treat that result as an outcome.
+Candidate source audit is scoped to the artifact actually submitted: for
+Rust the Cargo package's `src/` tree plus any file it pulls in by path
+(`#[path]`, `include!`), for JavaScript/TypeScript the adapter's declared
+roots plus the entry module's import closure; symlinks and vendored binaries
+are policy failures everywhere. Test drivers and fuzzers the agent keeps
+outside those roots are its own tooling and are not audited. Until v6 this
+paragraph said the opposite for Rust ("treat that result as an outcome") while
+the Node audit had already been scoped after the v4 incident; v6 Amendment 2
+records the conflict and its resolution. Python candidates are still scanned
+workspace-wide.
 
 Treat bypass attempts as protocol violations and report them. A stronger later
 study should move tests/reference compilation into a separate service and mount

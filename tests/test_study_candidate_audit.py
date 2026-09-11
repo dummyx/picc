@@ -79,6 +79,81 @@ class CandidateIsolationTests(unittest.TestCase):
             self.assertTrue(audit["passed"], audit["findings"])
 
 
+class RustCandidateAuditTests(unittest.TestCase):
+    """Rust candidates: the audit covers the Cargo package's src/ and whatever
+    src/ pulls in by path, not the agent's own test tooling (v6 Amendment 2)."""
+
+    ADAPTER = {"source_extensions": [".rs"], "audit": {"allowed_dependencies": []}}
+
+    def workspace(self, files: dict[str, str]) -> Path:
+        temporary = tempfile.TemporaryDirectory(prefix="picc-rust-audit-")
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name).resolve()
+        (root / "Cargo.toml").write_text('[package]\nname = "picc"\nversion = "0.1.0"\nedition = "2021"\n', encoding="utf-8")
+        for relative, content in files.items():
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+        return root
+
+    def test_fuzzer_under_tests_is_not_the_compiler(self) -> None:
+        # The v6-tests-none-r3 case: a differential fuzzer under tests/ assembles,
+        # links, and runs the compiler's output with std::process::Command.
+        root = self.workspace(
+            {
+                "src/main.rs": "mod lex;\nfn main() { lex::run(); }\n",
+                "src/lex.rs": "pub fn run() {}\n",
+                "tests/fuzz.rs": 'use std::process::Command;\nfn main() { Command::new("as").output().unwrap(); }\n',
+                "devtest/run.sh": "#!/bin/sh\n./target/release/picc $1\n",
+            }
+        )
+        audit = evaluator.source_audit(root, self.ADAPTER)
+        self.assertTrue(audit["passed"], audit["findings"])
+        self.assertFalse(audit["blocking"])
+        self.assertEqual(audit["source_files_scanned"], 2)
+
+    def test_subprocess_use_inside_src_is_still_blocking(self) -> None:
+        root = self.workspace({"src/main.rs": 'use std::process::Command;\nfn main() { Command::new("gcc"); }\n'})
+        audit = evaluator.source_audit(root, self.ADAPTER)
+        self.assertTrue(audit["blocking"])
+        self.assertEqual({row.get("path") for row in audit["blocking_findings"]}, {"src/main.rs"})
+
+    def test_path_attribute_and_include_pull_outside_files_into_the_audit(self) -> None:
+        root = self.workspace(
+            {
+                "src/main.rs": '#[path = "../helpers/extra.rs"]\nmod extra;\nfn main() { extra::go(); }\n',
+                "helpers/extra.rs": 'use std::process::Command;\npub fn go() { Command::new("cc"); }\n',
+                "tests/bench.rs": "use std::process::Command;\n",
+            }
+        )
+        audit = evaluator.source_audit(root, self.ADAPTER)
+        self.assertTrue(audit["blocking"])
+        paths = {row.get("path") for row in audit["blocking_findings"]}
+        self.assertEqual(paths, {"helpers/extra.rs"})
+        self.assertEqual(audit["source_files_scanned"], 2)
+
+        included = self.workspace(
+            {
+                "src/main.rs": 'fn main() { let t = include_str!("../assets/table.rs"); }\n',
+                "assets/table.rs": 'pub const RUN: &str = "std::process::Command";\n',
+            }
+        )
+        audit = evaluator.source_audit(included, self.ADAPTER)
+        self.assertIn("assets/table.rs", {row.get("path") for row in audit["findings"]})
+
+    def test_declared_roots_still_win(self) -> None:
+        adapter = {"source_extensions": [".rs"], "audit": {"allowed_dependencies": [], "roots": ["compiler"]}}
+        root = self.workspace(
+            {
+                "compiler/main.rs": "fn main() {}\n",
+                "src/legacy.rs": "use std::process::Command;\n",
+            }
+        )
+        audit = evaluator.source_audit(root, adapter)
+        self.assertTrue(audit["passed"], audit["findings"])
+        self.assertEqual(audit["source_files_scanned"], 1)
+
+
 class NodeCandidateAuditTests(unittest.TestCase):
     """JavaScript/TypeScript candidates: imports, manifests, suppressions, and build output."""
 

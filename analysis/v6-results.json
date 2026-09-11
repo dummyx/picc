@@ -1,0 +1,504 @@
+{
+  "v5": [
+    {
+      "active_minutes": 89.7,
+      "assistant_turns": 342,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 6,
+      "condition": "baseline",
+      "cut_commands": [],
+      "final_build_seconds": 0.55,
+      "functions": 64,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9667,
+      "hidden_failures": {
+        "unexpected_accept": 3,
+        "unexpected_reject": 1,
+        "wrong_behavior": 1
+      },
+      "hidden_invalid": "44/47",
+      "hidden_passed": "99/104",
+      "hidden_valid": "55/57",
+      "hours": 1.5,
+      "idle_minutes": 0.4,
+      "in_tokens": 229203,
+      "median_test_compile_ms": 7.39,
+      "out_tokens": 304924,
+      "replicate": 1,
+      "rounds": 2,
+      "run_id": "v5-baseline-r1",
+      "self_test_loc": 350,
+      "self_test_programs": 35,
+      "source_loc": 2123,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 27,
+      "tool_calls": 351,
+      "traj": [
+        0.9403,
+        0.9667
+      ],
+      "visible": 0.983
+    },
+    {
+      "active_minutes": 55.1,
+      "assistant_turns": 141,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 4,
+      "condition": "tests-none",
+      "cut_commands": [],
+      "final_build_seconds": 0.42,
+      "functions": 78,
+      "fuzz": 0.912,
+      "fuzz_kinds": {
+        "wrong_behavior": 88
+      },
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        0.8,
+        0.91,
+        0.93,
+        0.84,
+        0.93,
+        0.84,
+        0.87
+      ],
+      "hangs": [
+        {
+          "command": "cd /workspace && python3 - <<'PYEOF'\nsrc = open('tests/cases.py').read()\nsrc = src.replace('s = s + j; } i = i + 1; } return s; }\", \"ok\", 6),',\n                  's = s + j; } i = i + 1; } return s; }\", \"ok\", 20),')\nsrc = src.replace('return (a + b) * (a - b) / (a / b + 1) + a % b - (1 << (b - 1)); ",
+          "round": "round-001",
+          "tool": "bash"
+        }
+      ],
+      "hidden": 0.9038,
+      "hidden_failures": {
+        "execution_timeout": 1,
+        "unexpected_accept": 5,
+        "unexpected_reject": 4
+      },
+      "hidden_invalid": "42/47",
+      "hidden_passed": "94/104",
+      "hidden_valid": "52/57",
+      "hours": 1.5,
+      "idle_minutes": 35.0,
+      "in_tokens": 159668,
+      "median_test_compile_ms": 7.27,
+      "out_tokens": 191141,
+      "replicate": 1,
+      "rounds": 2,
+      "run_id": "v5-tests-none-r1",
+      "self_test_loc": 254,
+      "self_test_programs": 0,
+      "source_loc": 2413,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 162,
+      "traj": [
+        0.8927,
+        0.9038
+      ],
+      "visible": 0.9251
+    },
+    {
+      "active_minutes": 90.0,
+      "assistant_turns": 336,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 6,
+      "condition": "baseline",
+      "cut_commands": [],
+      "final_build_seconds": 0.54,
+      "functions": 87,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9556,
+      "hidden_failures": {
+        "unexpected_accept": 3,
+        "unexpected_reject": 1,
+        "wrong_behavior": 1
+      },
+      "hidden_invalid": "44/47",
+      "hidden_passed": "99/104",
+      "hidden_valid": "55/57",
+      "hours": 1.5,
+      "idle_minutes": 0.1,
+      "in_tokens": 227064,
+      "median_test_compile_ms": 7.36,
+      "out_tokens": 303024,
+      "replicate": 2,
+      "rounds": 2,
+      "run_id": "v5-baseline-r2",
+      "self_test_loc": 821,
+      "self_test_programs": 172,
+      "source_loc": 3148,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 17,
+      "tool_calls": 347,
+      "traj": [
+        0.9139,
+        0.9556
+      ],
+      "visible": 0.9618
+    },
+    {
+      "active_minutes": 59.8,
+      "assistant_turns": 158,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 4,
+      "condition": "tests-none",
+      "cut_commands": [],
+      "final_build_seconds": 0.48,
+      "functions": 66,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [
+        {
+          "command": "cd /workspace/tests && cat > e50_funshadow.c <<'EOF'\nint f(void) { return 3; }\nint main(void) {\n    int f = 5;\n    return f;\n}\nEOF\ncat > e51_forredecl.c <<'EOF'\nint main(void) {\n    int s = 0;\n    for (int i = 0; i < 3; i = i + 1) {\n        int i = 1;\n        s = s + i;\n    }\n    return s;\n}\nEOF\ncat",
+          "round": "round-001",
+          "tool": "bash"
+        }
+      ],
+      "hidden": 0.9736,
+      "hidden_failures": {
+        "unexpected_accept": 2,
+        "unexpected_reject": 1
+      },
+      "hidden_invalid": "45/47",
+      "hidden_passed": "101/104",
+      "hidden_valid": "56/57",
+      "hours": 1.5,
+      "idle_minutes": 30.3,
+      "in_tokens": 178232,
+      "median_test_compile_ms": 7.16,
+      "out_tokens": 209410,
+      "replicate": 2,
+      "rounds": 2,
+      "run_id": "v5-tests-none-r2",
+      "self_test_loc": 756,
+      "self_test_programs": 107,
+      "source_loc": 2413,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 176,
+      "traj": [
+        0.9569,
+        0.9736
+      ],
+      "visible": 0.9445
+    },
+    {
+      "active_minutes": 45.3,
+      "assistant_turns": 131,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 2,
+      "condition": "baseline",
+      "cut_commands": [],
+      "final_build_seconds": 0.43,
+      "functions": 68,
+      "fuzz": 0.392,
+      "fuzz_kinds": {
+        "assembly_or_link_failure": 607,
+        "wrong_behavior": 1
+      },
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        0.47,
+        0.24,
+        0.08,
+        0.07,
+        0.05,
+        0.01,
+        0.0
+      ],
+      "hangs": [
+        {
+          "command": "cd /workspace/.dev && python3 - <<'PY'\ns = open('crtW.s').read()\n# make main spin ~200ms by counting\nold = '\tleaq main(%rip), %rdi\\n\tcall main'\n# we want a spinning main: replace dummy with spinner\nopen('spin.s','w').write('''  .text\n  .globl main\nmain:\n\txorl %eax, %eax\nspin:\n\tdecl %eax\n\tjne spin\n\td",
+          "round": "round-001",
+          "tool": "bash"
+        }
+      ],
+      "hidden": 0.7222,
+      "hidden_failures": {
+        "assembly_or_link_failure": 25,
+        "unexpected_accept": 4,
+        "unexpected_reject": 8
+      },
+      "hidden_invalid": "43/47",
+      "hidden_passed": "67/104",
+      "hidden_valid": "24/57",
+      "hours": 1.5,
+      "idle_minutes": 44.8,
+      "in_tokens": 141318,
+      "median_test_compile_ms": 7.12,
+      "out_tokens": 165141,
+      "replicate": 3,
+      "rounds": 2,
+      "run_id": "v5-baseline-r3",
+      "self_test_loc": 307,
+      "self_test_programs": 11,
+      "source_loc": 2124,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 138,
+      "traj": [
+        0.7222,
+        0.7222
+      ],
+      "visible": 0.7863
+    },
+    {
+      "active_minutes": 46.0,
+      "assistant_turns": 72,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 2,
+      "condition": "tests-none",
+      "cut_commands": [],
+      "final_build_seconds": 0.46,
+      "functions": 77,
+      "fuzz": 0.0,
+      "fuzz_kinds": {
+        "wrong_behavior": 1000
+      },
+      "fuzz_stages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hangs": [
+        {
+          "command": "cat > /tmp/trace.py <<'EOF'\nimport ctypes, os, struct, sys\n\nlibc = ctypes.CDLL(None, use_errno=True)\nPTRACE_TRACEME=0; PTRACE_PEEKTEXT=1; PTRACE_PEEKDATA=2; PTRACE_CONT=7; PTRACE_GETREGS=12; PTRACE_SYSCALL=24\npid = os.fork()\nif pid == 0:\n    libc.ptrace(PTRACE_TRACEME, 0, 0, 0)\n    os.execv(sys.argv",
+          "round": "round-000",
+          "tool": "bash"
+        },
+        {
+          "command": "mkdir -p /tmp/t && cat > /tmp/t/m.c <<'EOF'\nint main(void) { return 42; }\nEOF\ncat > /tmp/dbg.sh <<'EOF'\n#!/bin/bash\ncd /tmp/t\n/workspace/target/release/picc m.c -o m.s || exit 1\nas -o m.o m.s || exit 1\ngcc -o prog2 m.o 2>/dev/null || exit 1\n./prog2; echo \"rc=$?\"\nEOF\nchmod +x /tmp/dbg.sh && /tmp/dbg.",
+          "round": "round-001",
+          "tool": "bash"
+        }
+      ],
+      "hidden": 0.4764,
+      "hidden_failures": {
+        "unexpected_accept": 3,
+        "unexpected_reject": 4,
+        "wrong_behavior": 53
+      },
+      "hidden_invalid": "44/47",
+      "hidden_passed": "44/104",
+      "hidden_valid": "0/57",
+      "hours": 1.52,
+      "idle_minutes": 45.3,
+      "in_tokens": 116807,
+      "median_test_compile_ms": null,
+      "out_tokens": 93848,
+      "replicate": 3,
+      "rounds": 2,
+      "run_id": "v5-tests-none-r3",
+      "self_test_loc": 429,
+      "self_test_programs": 61,
+      "source_loc": 1929,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 75,
+      "traj": [
+        0.4764,
+        0.4764
+      ],
+      "visible": 0.5152
+    },
+    {
+      "active_minutes": 45.9,
+      "assistant_turns": 32,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 0,
+      "condition": "baseline",
+      "cut_commands": [],
+      "final_build_seconds": 0.36,
+      "functions": 69,
+      "fuzz": 0.019,
+      "fuzz_kinds": {
+        "assembly_or_link_failure": 200,
+        "timeout": 62,
+        "wrong_behavior": 719
+      },
+      "fuzz_stages": [
+        0.0,
+        0.19,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hangs": [
+        {
+          "command": "cd /workspace && cargo build --release --offline 2>&1 | grep -E \"^error\" | head; cd /tmp/picctest && for t in t1 t2 t3 t4; do\n  /workspace/target/release/picc $t.c -o $t.s && as -o $t.o $t.s 2>&1 && ld -o $t $t.o && ./$t; echo \"$t exit=$?\"\ndone",
+          "round": "round-000",
+          "tool": "bash"
+        },
+        {
+          "command": "mkdir -p /tmp/picctest && cd /tmp/picctest\ncat > t1.c <<'EOF'\nint main(void) {\n    return 42;\n}\nEOF\ncat > t2.c <<'EOF'\nint main(void) {\n    int x = 3;\n    int y = -x + 7 * 2 % 5;\n    if (x <= 3 && !(x == 4)) {\n        y = y + 100;\n    }\n    while (x < 10) {\n        x = x + 1;\n    }\n    return y + x;",
+          "round": "round-001",
+          "tool": "bash"
+        }
+      ],
+      "hidden": 0.5847,
+      "hidden_failures": {
+        "assembly_or_link_failure": 4,
+        "compiler_crash": 1,
+        "unexpected_accept": 4,
+        "unexpected_reject": 12,
+        "wrong_behavior": 26
+      },
+      "hidden_invalid": "42/47",
+      "hidden_passed": "57/104",
+      "hidden_valid": "15/57",
+      "hours": 1.53,
+      "idle_minutes": 45.9,
+      "in_tokens": 39370,
+      "median_test_compile_ms": 7.3,
+      "out_tokens": 61032,
+      "replicate": 4,
+      "rounds": 2,
+      "run_id": "v5-baseline-r4",
+      "self_test_loc": 0,
+      "self_test_programs": 0,
+      "source_loc": 2118,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 39,
+      "traj": [
+        0.5847,
+        0.5847
+      ],
+      "visible": 0.5898
+    },
+    {
+      "active_minutes": 89.5,
+      "assistant_turns": 307,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 6,
+      "condition": "tests-none",
+      "cut_commands": [],
+      "final_build_seconds": 0.4,
+      "functions": 57,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9181,
+      "hidden_failures": {
+        "unexpected_accept": 4,
+        "unexpected_reject": 4
+      },
+      "hidden_invalid": "43/47",
+      "hidden_passed": "96/104",
+      "hidden_valid": "53/57",
+      "hours": 1.5,
+      "idle_minutes": 0.6,
+      "in_tokens": 251385,
+      "median_test_compile_ms": 7.43,
+      "out_tokens": 299760,
+      "replicate": 4,
+      "rounds": 2,
+      "run_id": "v5-tests-none-r4",
+      "self_test_loc": 1261,
+      "self_test_programs": 145,
+      "source_loc": 2391,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 315,
+      "traj": [
+        0.8806,
+        0.9181
+      ],
+      "visible": 0.9322
+    }
+  ],
+  "v6": []
+}

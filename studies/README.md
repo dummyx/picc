@@ -179,7 +179,10 @@ and namespace with the selected visible or hidden partition and the run-local
 reference cache. Hidden scores are valid only for policy-compliant,
 non-adversarial candidates; these artifacts are auditable, not tamper-resistant.
 
-Candidate source audit scans Rust, Python, and JavaScript/TypeScript source,
-including recognized test paths, and rejects symlinks. Committed integration
-tests that invoke subprocesses can therefore fail policy audit even when product
-behavior is otherwise correct.
+Candidate source audit is scoped to the artifact actually submitted: for
+Rust the Cargo package's `src/` tree plus any file it pulls in by path
+(`#[path]`, `include!`), for JavaScript/TypeScript the adapter's declared
+roots plus the entry module's import closure. Test drivers, fuzzers, and
+helpers the agent keeps elsewhere are not audited (the v4 and v6 incidents,
+`analysis/report.md` §8.5 and §12). Python candidates are still scanned
+workspace-wide. Symlinks and vendored binaries are rejected everywhere.

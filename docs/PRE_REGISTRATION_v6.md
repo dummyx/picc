@@ -319,3 +319,18 @@ No harness change followed the pilots.
      evaluation (`test_visible` results, round snapshots) reported a blocking
      audit; a `baseline` run with such a result is reported separately as
      behaviorally affected. Runs 1–6: none.
+   - **Addendum, 2026-09-11 20:45Z (after the cohort, before the re-score of
+     the affected run completed).** Two documents bear on whether this is a
+     defect or an outcome, and they disagreed. `docs/STUDY_PROTOCOL.md` and
+     `studies/README.md` still said the audit scans "recognized test paths"
+     and that a subprocess-invoking integration test is "an outcome" — text
+     written before the v4 incident and left unchanged when the Node audit
+     was scoped. The rule the agent was actually given (`AGENTS.md` item 3,
+     `TASK.md` "the submitted compiler must not spawn subprocesses") binds
+     the submitted compiler, not the agent's tooling, and the fuzzer obeyed
+     it. The audit therefore enforced a rule the protocol never stated to
+     the agent, on files the build never compiles; that is the defect. Both
+     documents are corrected in the same commit as the evaluator fix, the
+     frozen-protocol values stay in the study summary, and this addendum
+     records that the stale text existed. Runs 7–8: contamination check
+     also none.

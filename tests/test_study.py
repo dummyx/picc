@@ -341,11 +341,11 @@ pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\
 
 
 class TestsStudyManifestTests(unittest.TestCase):
-    """The v5 manifest: the starter's baseline and tests-none, nothing else changed."""
+    """The tests manifest (versioned per cohort): the starter's baseline and tests-none, nothing else changed."""
 
     def test_manifest_matches_the_starter_conditions(self) -> None:
         payload, conditions = study.load_study(ROOT / "studies" / "tests" / "study.json")
-        self.assertEqual(payload["id"], "picc-tests-v2")
+        self.assertRegex(payload["id"], r"^picc-tests-v\d+$")
         self.assertEqual(payload["baseline_condition"], "baseline")
         self.assertEqual([row["id"] for row in conditions], ["baseline", "tests-none"])
         _, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
