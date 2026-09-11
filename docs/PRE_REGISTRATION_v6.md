@@ -279,3 +279,43 @@ No harness change followed the pilots.
    process metrics). Cut-offs (`guard_bash_timeouts`) are unchanged.
    `analysis/v6_results.py` reports the corrected check. No harness,
    configuration, prompt, or image change; the running cohort is unaffected.
+
+2. **2026-09-11 17:50Z, after run 6 of 8 (`v6-tests-none-r3`) terminated and
+   before runs 7–8 started producing results; no hidden or fuzz result of any
+   unfinished run viewed.** A confirmed harness defect (exclusion rule 3),
+   logged with its pre-declared handling:
+   - **Defect.** The frozen study evaluator's blocking source audit scans
+     every `.rs` file in the workspace for the Rust adapter
+     (`studies/assets/candidates/rust-std.json` declares no `audit.roots`, so
+     `iter_source_files` defaults to the whole workspace), although
+     `cargo build --release` compiles only `src/`. The v4 incident
+     (`analysis/report.md` §8.5) established that a blocking audit must be
+     scoped to the artifact actually submitted, and the Node adapters were
+     scoped accordingly; the Rust adapter was not.
+   - **Effect so far.** `v6-tests-none-r3`'s final snapshot was zeroed on
+     both oracles (`audit_blocking`, four "subprocess invocation" findings,
+     all in `tests/fuzz.rs`, a differential fuzzer the agent wrote that
+     assembles and links its compiler's output with `as`/`ld` and runs the
+     binary; `src/` has no finding and the same run's round-0 snapshot built
+     and scored). No earlier Rust run (v3, v5) had a blocking audit; runs 1–5
+     of v6 passed the audit. The affected run's agent could not have seen
+     the finding (`tests-none` exposes no scores), so its behavior is
+     unaffected; a `baseline` agent would see a blocked `test_visible`
+     result, so the contamination check below is part of the record.
+   - **Handling, fixed before the result is known.** The primary contrast is
+     computed on every final snapshot re-scored, after the cohort ends, by
+     the evaluator with the audit scoped to the Cargo package's `src/`
+     (plus any `#[path]`/`include!` file that `src/` pulls in), both oracles,
+     same image, same parameters, applied identically to all eight runs. The
+     audit is a gate, not a score, so this can change only runs with a
+     blocking finding outside `src/`; every other run's re-scored values
+     must reproduce its frozen ones, and the report shows both columns. The
+     frozen-protocol values remain in the study summary. The corrected
+     evaluator is committed only after `CHAIN COMPLETE`; nothing in the
+     running cohort changes. This is the §10.4 bridge method applied to the
+     cohort's own finals, not a new rule invented after seeing an outcome:
+     the affected run's corrected score is unknown at the time of writing.
+   - **Contamination check.** For each run, whether any in-run visible
+     evaluation (`test_visible` results, round snapshots) reported a blocking
+     audit; a `baseline` run with such a result is reported separately as
+     behaviorally affected. Runs 1–6: none.
