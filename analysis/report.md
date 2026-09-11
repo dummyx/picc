@@ -745,6 +745,57 @@ static typing changed nothing measurable, at roughly a third more tokens.
   behaviors of the run, not manipulated factors.
 - One model, one task, one language.
 
+## 11. Beyond the tests: tokens, time, and code shape (exploratory)
+
+`analysis/dimensions.py` puts every main run of v2–v5 (35 runs) on one table:
+generation tokens, active and idle minutes, turns and tool calls, compiler
+source size and shape (files, functions, function length, branch density,
+comment ratio, `unwrap`/`panic` sites), self-written tests, build time, and
+per-test compile time, next to both oracles. Full tables:
+[`dimensions.md`](dimensions.md); raw rows: `dimensions.json`/`.csv`. Nothing
+here was pre-registered; the code-shape metrics are regex approximations.
+
+- **Almost all generation is thinking.** Between 96.2% and 99.6% of generated
+  characters (median 98.1%) are reasoning; visible text and tool calls are the
+  remaining 2–4%. "Output tokens" measures deliberation, not code.
+- **The process variables that track correctness are the hang lottery.**
+  Pooled over 35 runs, output tokens, active minutes, turns, and tool calls all
+  correlate about +0.55 with both oracles and idle minutes −0.58; within v5
+  the magnitudes reach 0.8–0.9. Restricted to the 17 runs that never hung, the
+  same correlations fall to 0.04–0.24. Those 17 runs have a fuzz macro of at
+  least 0.953 (median 1.000); the 18 that hung include all seven compilers
+  below 0.9. Once a run keeps working it reaches the ceiling, and no amount of
+  extra tokens, time, or code distinguishes the survivors.
+- **Code shape does not predict fuzz correctness either.** Among hang-free
+  runs, source LOC (median 2,406 for Rust), function count, function length,
+  branch density, and comment ratio are all within ±0.3 of zero against the
+  fuzz macro. Several correlate with the *corpus* score (LOC +0.50, comment
+  ratio +0.60, `unwrap`/`expect` calls +0.61, build seconds +0.62): the corpus
+  rewards invalid-program rejection, which costs error-handling code; the fuzz
+  oracle rewards only translation of valid programs. Which oracle one reads
+  changes what "better code" appears to mean.
+- **The null contrasts had a resource side.** Paired by replicate, the v2
+  specification conditions cost +76k to +142k output tokens (+50–90%) and
+  14–43 more active minutes for the same fuzz macro; `ts-strict` cost +19k
+  tokens and +619 LOC (+54%) over `js-untyped` for the same fuzz macro;
+  `tests-none` used 35–45% fewer output tokens than baseline in both v3 and v5
+  with 117–124 fewer turns, and in v3 wrote +432 LOC of its own tests. Cost
+  for equal correctness is a finding the primary endpoints do not show.
+- **Self-testing is the norm and its size varies 1000-fold.** 22 of 35 runs
+  left C test programs in the workspace (median 61 among those; one wrote
+  999); test-script size ranges from 0 to 29,867 LOC. Among hang-free runs it
+  correlates +0.35 with the fuzz macro, the only code-side dimension that
+  keeps a positive sign after the hang confound is removed.
+- **Compilers differ by language, not by condition, in speed.** Median compile
+  time per hidden test is 7.2 ms for every Rust compiler and 18–20 ms for the
+  Node-hosted ones; final builds take under a second. Within a language the
+  spread is negligible.
+
+These dimensions are cheap to carry as pre-registered secondary endpoints in
+the next cohort (tokens, active minutes, turns, source LOC and function count,
+self-test LOC, cut-off count), where the per-command timeout removes the
+confound that dominates them here.
+
 ---
 
 Per-run process detail: [`process-report.md`](process-report.md). Raw metrics:
