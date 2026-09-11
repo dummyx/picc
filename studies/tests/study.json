@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "id": "picc-tests-v2",
-  "description": "Test-availability contrast at stages 1-10 under the revised oracle (preprocessed inputs, corpus macro and stage-averaged fuzz macro as co-primary endpoints): the starter baseline versus tests-none, every other factor held at the starter baseline.",
+  "id": "picc-tests-v3",
+  "description": "Test-availability contrast at stages 1-10 under the revised oracle (preprocessed inputs, corpus macro and stage-averaged fuzz macro as co-primary endpoints) and the bash default timeout (image 0.4, @cad0p/pi-bash-timeout@0.1.0): the starter baseline versus tests-none, every other factor held at the starter baseline. Separate manifest version from the v5 cohort (picc-tests-v2), whose runs had no default timeout.",
   "design": "one-factor-at-a-time",
   "baseline_condition": "baseline",
-  "seed": 20260910,
+  "seed": 20260911,
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {

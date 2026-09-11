@@ -59,10 +59,13 @@ make study-summary STUDY=studies/types/study.json
 
 ## Test-availability study (revised oracle)
 
-`tests/study.json` (`picc-tests-v2`) holds the starter's `baseline` and
-`tests-none` unchanged, for the v5 replication under the revised harness
+`tests/study.json` holds the starter's `baseline` and `tests-none`
+unchanged. Its manifest id is versioned per cohort so each aggregation stays
+intact: `picc-tests-v2` was the v5 replication under the revised harness
 (preprocessed candidate inputs, corpus macro and fuzz macro as co-primary
-endpoints). It is a separate manifest so the v3 aggregation stays intact.
+endpoints); `picc-tests-v3` (seed 20260911) is the v6 cohort under image 0.4,
+which adds the bash default timeout (`docs/PRE_REGISTRATION_v6.md`). The v5
+runs remain summarizable from their frozen materializations.
 
 The starter deliberately does **not** claim to identify the causal effect of
 "human-created" versus "LLM-created" specifications/tests. Provenance is
