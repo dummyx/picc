@@ -247,9 +247,13 @@ analysis; what they establish:
   recovered; one guard block; no malformed events. The fuzz ledger carries
   the `role: final` row and the report the new fields.
 - `v8-pilot-baseline-smoke1`: the same extension with the interval at 0
-  pushed nothing; the agent called `test_visible` on its own; hidden 1.0
-  (19/19), fuzz 0.88 (stages 1.00 / 0.83 / 0.81); no cut-off; no malformed
-  events.
+  pushed nothing; the agent never called `test_visible` in its 24 minutes
+  (21 bash calls, all self-testing); hidden 1.0 (19/19), fuzz 0.88 (stages
+  1.00 / 0.83 / 0.81); one command cut by the default timeout and one guard
+  block (a direct `gcc` attempt); no malformed events. (Corrected on
+  2026-09-12 13:30 UTC, during run 1, from a draft that had said the agent
+  called the tool and needed no cut-off; the numbers above are from the
+  run's report.)
 - The last-buildable path with a second ledger row cannot be forced in a
   pilot (both finals built); it is covered by the summarizer tests and will
   first exercise on a real cap-cut run.
