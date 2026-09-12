@@ -271,6 +271,7 @@ def extension_event_metrics(path: Path) -> dict[str, int]:
         "compactions": counts["session_compact"],
         "provider_errors": counts["provider_response_error"],
         "scaffold_applied": counts["study_scaffold_applied"],
+        "pushed_test_reports": counts["test_pushed_end"],
     }
 
 
@@ -931,7 +932,69 @@ FUZZ_EMPTY = {
     "fuzz_programs_per_stage": None,
     "fuzz_mismatches_total": None,
     "fuzz_deadline_hit": None,
+    "fuzz_macro_last_buildable": None,
 }
+
+
+def last_buildable_index(hidden_rows: list[dict[str, Any]]) -> int | None:
+    """Index of the last hidden-evaluated snapshot that built and passed the
+    audit; None when no snapshot did. The final snapshot is whatever the
+    workspace held when the round cap fell, so the last buildable snapshot is
+    the co-primary that ignores a rewrite cut in half (v8 pre-registration)."""
+    for index in range(len(hidden_rows) - 1, -1, -1):
+        summary = hidden_rows[index].get("summary")
+        if not isinstance(summary, dict):
+            continue
+        if summary.get("build_ok") is True and not summary.get("audit_blocking") and summary.get("audit_ok") is not False:
+            return index
+    return None
+
+
+def verified_fuzz_row(
+    run_dir: Path,
+    row: dict[str, Any],
+    snapshot: dict[str, Any],
+    metadata: dict[str, Any],
+    candidate_adapter_sha256: str,
+    expected_output: str,
+    label: str,
+) -> dict[str, Any]:
+    """Verify one fuzz ledger row against the snapshot it must describe and
+    return its summary."""
+    if row.get("partition") != "fuzz":
+        raise SummaryError(f"fuzz ledger row ({label}) has the wrong partition")
+    if row.get("round") != snapshot.get("round") or row.get("git_commit") != snapshot.get("git_commit") or row.get("git_tree") != snapshot.get("git_tree"):
+        raise SummaryError(f"fuzz ledger row ({label}) does not describe the {label} snapshot")
+    expected_docker_image = require_object(metadata.get("docker_image"), "metadata.docker_image")
+    if row.get("docker_image") != expected_docker_image:
+        raise SummaryError(f"fuzz ledger row ({label}) used a different Docker image")
+    if row.get("output") != expected_output:
+        raise SummaryError(f"fuzz ledger row ({label}) points at an unexpected output")
+    full = load_object(run_dir / expected_output)
+    full_snapshot = require_object(full.get("snapshot"), "fuzz evaluation snapshot")
+    if full_snapshot.get("git_commit") != snapshot.get("git_commit") or full_snapshot.get("git_tree") != snapshot.get("git_tree"):
+        raise SummaryError(f"fuzz evaluation ({label}) was produced from a different snapshot")
+    if full.get("docker_image") != expected_docker_image:
+        raise SummaryError(f"fuzz evaluation ({label}) used a different Docker image")
+    candidate = require_object(full.get("candidate"), "fuzz evaluation candidate")
+    if candidate.get("adapter_sha256") != candidate_adapter_sha256:
+        raise SummaryError(f"fuzz evaluation ({label}) used a different candidate adapter")
+    budget = require_object(metadata.get("budget"), "metadata.budget")
+    policy = require_object(full.get("policy"), "fuzz evaluation policy")
+    if policy.get("max_stage") != int(budget["max_stage"]):
+        raise SummaryError(f"fuzz evaluation ({label}) did not use the run's stage budget")
+    summary = require_object(full.get("summary"), "fuzz evaluation summary")
+    if summary != row.get("summary"):
+        raise SummaryError(f"fuzz evaluation ({label}) summary disagrees with its ledger row")
+    rates = summary.get("stage_pass_rates")
+    if not isinstance(rates, list) or len(rates) != int(budget["max_stage"]) or any(numeric(r) is None for r in rates):
+        raise SummaryError(f"fuzz evaluation ({label}) has an inconsistent stage_pass_rates array")
+    recomputed = sum(float(r) for r in rates) / len(rates)
+    if not numbers_equal(summary.get("fuzz_macro"), recomputed):
+        raise SummaryError(f"fuzz evaluation ({label}) fuzz_macro disagrees with its per-stage rates")
+    if summary.get("error"):
+        raise SummaryError(f"fuzz evaluation ({label}) recorded an error: {str(summary['error'])[:200]}")
+    return summary
 
 
 def verified_fuzz_score(
@@ -940,63 +1003,65 @@ def verified_fuzz_score(
     metadata: dict[str, Any],
     candidate_adapter_sha256: str,
     report: dict[str, Any],
+    hidden_rows: list[dict[str, Any]] | None = None,
 ) -> tuple[dict[str, Any], str | None]:
-    """The fuzz-oracle columns for a run, verified against the final snapshot.
+    """The fuzz-oracle columns for a run, verified against the final snapshot
+    and, when present, the last buildable snapshot.
 
-    A run without a fuzz ledger is still included (its columns are None) but
-    is reported as a coverage warning; an inconsistent ledger is a provenance
-    failure and raises, excluding the run like a bad hidden ledger would.
+    The ledger holds one row for the final snapshot (`role` "final", or no
+    role in ledgers from before v8) and optionally one for the last buildable
+    snapshot (`role` "last_buildable", written only when the final snapshot
+    did not build). A run without a fuzz ledger is still included (its columns
+    are None) but is reported as a coverage warning; an inconsistent ledger is
+    a provenance failure and raises, excluding the run like a bad hidden
+    ledger would. `fuzz_macro_last_buildable` is the final value when the
+    final snapshot built, the second row's value when it exists, 0.0 when no
+    snapshot built, and None (with a warning) for a pre-v8 ledger that lacks
+    the row.
     """
     rows = read_jsonl(run_dir / "artifacts" / "fuzz-scores.jsonl")
     if not rows:
         return dict(FUZZ_EMPTY), f"{run_dir.name}: no fuzz-oracle score (artifacts/fuzz-scores.jsonl missing)"
-    if len(rows) != 1:
-        raise SummaryError("fuzz ledger must hold exactly one row, for the final snapshot")
-    row = rows[0]
+    roles = [str(row.get("role", "final")) for row in rows]
+    if roles.count("final") != 1 or len(rows) > 2 or any(role not in {"final", "last_buildable"} for role in roles):
+        raise SummaryError("fuzz ledger must hold one final-snapshot row and at most one last-buildable row")
+    row = rows[roles.index("final")]
     final = snapshots[-1]
-    if row.get("partition") != "fuzz":
-        raise SummaryError("fuzz ledger row has the wrong partition")
-    if row.get("round") != final.get("round") or row.get("git_commit") != final.get("git_commit") or row.get("git_tree") != final.get("git_tree"):
-        raise SummaryError("fuzz ledger row does not describe the final snapshot")
-    expected_docker_image = require_object(metadata.get("docker_image"), "metadata.docker_image")
-    if row.get("docker_image") != expected_docker_image:
-        raise SummaryError("fuzz ledger row used a different Docker image")
-    expected_output = "artifacts/evaluations/fuzz-final.json"
-    if row.get("output") != expected_output:
-        raise SummaryError("fuzz ledger row points at an unexpected output")
-    full = load_object(run_dir / expected_output)
-    full_snapshot = require_object(full.get("snapshot"), "fuzz evaluation snapshot")
-    if full_snapshot.get("git_commit") != final.get("git_commit") or full_snapshot.get("git_tree") != final.get("git_tree"):
-        raise SummaryError("fuzz evaluation was produced from a different snapshot")
-    if full.get("docker_image") != expected_docker_image:
-        raise SummaryError("fuzz evaluation used a different Docker image")
-    candidate = require_object(full.get("candidate"), "fuzz evaluation candidate")
-    if candidate.get("adapter_sha256") != candidate_adapter_sha256:
-        raise SummaryError("fuzz evaluation used a different candidate adapter")
-    budget = require_object(metadata.get("budget"), "metadata.budget")
-    policy = require_object(full.get("policy"), "fuzz evaluation policy")
-    if policy.get("max_stage") != int(budget["max_stage"]):
-        raise SummaryError("fuzz evaluation did not use the run's stage budget")
-    summary = require_object(full.get("summary"), "fuzz evaluation summary")
-    if summary != row.get("summary"):
-        raise SummaryError("fuzz evaluation summary disagrees with its ledger row")
-    rates = summary.get("stage_pass_rates")
-    if not isinstance(rates, list) or len(rates) != int(budget["max_stage"]) or any(numeric(r) is None for r in rates):
-        raise SummaryError("fuzz evaluation has an inconsistent stage_pass_rates array")
-    recomputed = sum(float(r) for r in rates) / len(rates)
-    if not numbers_equal(summary.get("fuzz_macro"), recomputed):
-        raise SummaryError("fuzz evaluation fuzz_macro disagrees with its per-stage rates")
+    summary = verified_fuzz_row(run_dir, row, final, metadata, candidate_adapter_sha256, "artifacts/evaluations/fuzz-final.json", "final")
     if report.get("fuzz_final") != row:
         raise SummaryError("report fuzz_final is stale or disagrees with artifacts/fuzz-scores.jsonl")
-    if summary.get("error"):
-        raise SummaryError(f"fuzz evaluation recorded an error: {str(summary['error'])[:200]}")
-    return {
+    rates = summary["stage_pass_rates"]
+    columns = {
         "fuzz_macro": float(summary["fuzz_macro"]),
         "fuzz_stage_pass_rates": json.dumps([round(float(r), 4) for r in rates]),
         "fuzz_programs_per_stage": summary.get("programs_per_stage"),
         "fuzz_mismatches_total": summary.get("mismatches_total"),
         "fuzz_deadline_hit": bool(summary.get("deadline_hit")),
-    }, None
+        "fuzz_macro_last_buildable": None,
+    }
+    warning: str | None = None
+    ledger = hidden_rows if hidden_rows is not None else read_jsonl(run_dir / "artifacts" / "hidden-scores.jsonl")
+    buildable = last_buildable_index(ledger)
+    lb_row = rows[roles.index("last_buildable")] if "last_buildable" in roles else None
+    if buildable is not None and buildable == len(snapshots) - 1:
+        if lb_row is not None:
+            raise SummaryError("fuzz ledger has a last-buildable row although the final snapshot built")
+        columns["fuzz_macro_last_buildable"] = columns["fuzz_macro"]
+    elif buildable is None:
+        if lb_row is not None:
+            raise SummaryError("fuzz ledger has a last-buildable row although no snapshot built")
+        columns["fuzz_macro_last_buildable"] = 0.0
+    elif lb_row is None:
+        warning = f"{run_dir.name}: no fuzz-oracle score for the last buildable snapshot (ledger from before v8)"
+    else:
+        lb_summary = verified_fuzz_row(
+            run_dir, lb_row, snapshots[buildable], metadata, candidate_adapter_sha256,
+            "artifacts/evaluations/fuzz-last-buildable.json", "last buildable",
+        )
+        if report.get("fuzz_last_buildable") != lb_row:
+            raise SummaryError("report fuzz_last_buildable is stale or disagrees with artifacts/fuzz-scores.jsonl")
+        columns["fuzz_macro_last_buildable"] = float(lb_summary["fuzz_macro"])
+    return columns, warning
 
 
 def excluded_run(run_dir: Path, reason: str) -> tuple[None, str]:
@@ -1073,9 +1138,10 @@ def collect_run(
         )
     except SummaryError as error:
         return excluded_run(run_dir, str(error))
+    hidden_rows = read_jsonl(run_dir / "artifacts" / "hidden-scores.jsonl")
     try:
         fuzz_columns, fuzz_warning = verified_fuzz_score(
-            run_dir, snapshots, metadata, str(provenance["candidate_adapter_sha256"]), report
+            run_dir, snapshots, metadata, str(provenance["candidate_adapter_sha256"]), report, hidden_rows
         )
     except SummaryError as error:
         return excluded_run(run_dir, str(error))
@@ -1084,6 +1150,11 @@ def collect_run(
     final_hidden = final_point(hidden_points)
     hidden_score = numeric(final_hidden.get("score"))
     hidden_micro = numeric(final_hidden.get("micro_score"))
+    buildable_index = last_buildable_index(hidden_rows)
+    hidden_score_last_buildable = (
+        numeric(hidden_points[buildable_index].get("score")) if buildable_index is not None else 0.0
+    )
+    last_buildable_round = hidden_points[buildable_index].get("round") if buildable_index is not None else None
     hidden_time = first_threshold_time(hidden_points, threshold)
     final_summary = require_object(final_full.get("summary"), "final hidden evaluation summary")
     audit_ok = final_summary.get("audit_ok") is True
@@ -1137,6 +1208,8 @@ def collect_run(
         "visible_score": numeric(final_visible.get("score")),
         "hidden_score": hidden_score,
         "hidden_micro_score": hidden_micro,
+        "hidden_score_last_buildable": hidden_score_last_buildable,
+        "last_buildable_round": last_buildable_round,
         "completion_threshold": threshold,
         "finished": finished,
         "time_to_completion_seconds": hidden_time,
@@ -1312,6 +1385,10 @@ def grouped(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "median_source_loc": median(row["source_loc"] for row in group),
                 "median_fuzz_macro": median(row["fuzz_macro"] for row in group if row.get("fuzz_macro") is not None),
                 "fuzz_scored": sum(1 for row in group if row.get("fuzz_macro") is not None),
+                "median_hidden_score_last_buildable": median(row["hidden_score_last_buildable"] for row in group),
+                "median_fuzz_macro_last_buildable": median(
+                    row["fuzz_macro_last_buildable"] for row in group if row.get("fuzz_macro_last_buildable") is not None
+                ),
                 "median_agent_test_loc": median(row["agent_test_loc"] for row in group),
                 "median_specification_words": median(row["specification_words"] for row in group),
                 "median_prompt_total_bytes": median(row["prompt_total_bytes"] for row in group),
@@ -1352,6 +1429,8 @@ def baseline_deltas(rows: list[dict[str, Any]], baseline: str = "baseline") -> l
                 "delta_hidden_score": difference("hidden_score"),
                 "delta_hidden_auc": difference("hidden_auc"),
                 "delta_fuzz_macro": difference("fuzz_macro"),
+                "delta_hidden_score_last_buildable": difference("hidden_score_last_buildable"),
+                "delta_fuzz_macro_last_buildable": difference("fuzz_macro_last_buildable"),
                 "delta_elapsed_hours": elapsed_delta / 3600 if elapsed_delta is not None else None,
                 "delta_input_tokens": difference("input_tokens"),
                 "delta_output_tokens": difference("output_tokens"),
@@ -1383,14 +1462,15 @@ def markdown(study: dict[str, Any], rows: list[dict[str, Any]], groups: list[dic
         "",
         "## Condition results",
         "",
-        "| Condition | Profile | Factor | n | Finished | Finish rate | Hidden score | Fuzz macro (n scored) | Hidden AUC | Hours | Input tokens | Output tokens | Test calls | Oracle calls | Source LOC |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Condition | Profile | Factor | n | Finished | Finish rate | Hidden score | Fuzz macro (n scored) | Hidden (last buildable) | Fuzz (last buildable) | Hidden AUC | Hours | Input tokens | Output tokens | Test calls | Oracle calls | Source LOC |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for group in groups:
         lines.append(
             f"| `{group['condition_id']}` | `{group.get('profile')}` | `{group.get('factor')}` | {group['n']} | {group['finished']} | "
             f"{fmt(group['finish_rate'])} | {fmt(group['median_hidden_score'])} | "
             f"{fmt(group['median_fuzz_macro'])} ({group['fuzz_scored']}) | "
+            f"{fmt(group['median_hidden_score_last_buildable'])} | {fmt(group['median_fuzz_macro_last_buildable'])} | "
             f"{fmt(group['median_hidden_auc'])} | {fmt(group['median_elapsed_hours'], 2)} | "
             f"{fmt(group['median_input_tokens'], 0)} | {fmt(group['median_output_tokens'], 0)} | "
             f"{fmt(group['median_test_calls'], 1)} | {fmt(group['median_oracle_calls'], 1)} | "

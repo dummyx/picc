@@ -209,6 +209,18 @@ own manifest version.
 
 ### Co-primary
 
+Each oracle is scored on two snapshots: the **final snapshot** (whatever the
+workspace held when the last round ended) and the **last buildable snapshot**
+(the last frozen snapshot whose hidden evaluation built and passed the audit;
+the final one when it built, 0 when none did). The round cap is blind to what
+the agent is doing, and in v7 it fell inside a rewrite in two of eight runs,
+turning a 0.92 compiler into a final snapshot that does not build. The
+summarizer reports `hidden_score` / `fuzz_macro` for the final snapshot and
+`hidden_score_last_buildable` / `fuzz_macro_last_buildable`; `study-hidden-all`
+scores the last buildable snapshot with the fuzz oracle as well (a second
+row, `role: last_buildable`, in `artifacts/fuzz-scores.jsonl`) when it differs
+from the final one. A pre-registration names which snapshot rule is primary.
+
 1. Final hidden macro score, equally averaging stages and valid/invalid classes
    (the corpus oracle).
 2. Final-snapshot **fuzz macro**: for each stage 1..K the share of generated

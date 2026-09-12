@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import importlib.util
 import json
@@ -8,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -340,6 +342,51 @@ pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\
             self.assertTrue(summary["audit_ok"])
 
 
+class PushedFeedbackTests(unittest.TestCase):
+    """tests.push_interval_minutes: validated, rendered into the tools extension and the prompt."""
+
+    def conditions(self):
+        payload, conditions = study.load_study(ROOT / "studies" / "tests" / "study.json")
+        return payload, {row["id"]: row for row in conditions}
+
+    def test_manifest_declares_the_pushed_condition(self) -> None:
+        payload, by_id = self.conditions()
+        pushed = by_id["tests-pushed"]
+        self.assertEqual(pushed["tests"]["access"], "tool")
+        self.assertEqual(pushed["tests"]["feedback"], "failures")
+        self.assertEqual(pushed["tests"]["push_interval_minutes"], 10)
+        # The key is absent from conditions that do not push, so their resolved hashes are unchanged.
+        self.assertNotIn("push_interval_minutes", by_id["baseline"]["tests"])
+
+    def test_invalid_intervals_are_rejected(self) -> None:
+        payload, by_id = self.conditions()
+        for bad in (-1, 1.5, True, "10"):
+            condition = copy.deepcopy(by_id["tests-pushed"])
+            condition["tests"]["push_interval_minutes"] = bad
+            with self.subTest(value=bad), self.assertRaises(study.StudyError):
+                study.validate_condition(condition, payload)
+        withheld = copy.deepcopy(by_id["tests-none"])
+        withheld["tests"]["push_interval_minutes"] = 10
+        with self.assertRaises(study.StudyError):
+            study.validate_condition(withheld, payload)
+
+    def test_materialization_renders_the_interval_and_the_guidance(self) -> None:
+        payload, by_id = self.conditions()
+        run_id = f"test-pushed-{uuid.uuid4().hex[:8]}"
+        root = study.materialize(ROOT / "studies" / "tests" / "study.json", payload, by_id["tests-pushed"], run_id)
+        self.addCleanup(shutil.rmtree, root, True)
+        tools = (root / "pi" / "extensions" / "experiment-tools.ts").read_text(encoding="utf-8")
+        self.assertIn("const PUSH_INTERVAL_MINUTES = 10 as number;", tools)
+        self.assertIn('pi.on("turn_end"', tools)
+        self.assertIn('deliverAs: "steer"', tools)
+        agents = (root / "prompts" / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("about every 10 minutes", agents)
+        baseline_root = study.materialize(ROOT / "studies" / "tests" / "study.json", payload, by_id["baseline"], run_id + "-b")
+        self.addCleanup(shutil.rmtree, baseline_root, True)
+        self.assertIn("const PUSH_INTERVAL_MINUTES = 0 as number;", (baseline_root / "pi" / "extensions" / "experiment-tools.ts").read_text(encoding="utf-8"))
+        self.assertNotIn("about every", (baseline_root / "prompts" / "AGENTS.md").read_text(encoding="utf-8"))
+
+
 class TestsStudyManifestTests(unittest.TestCase):
     """The tests manifest (versioned per cohort): the starter's baseline and tests-none, nothing else changed."""
 
@@ -347,11 +394,17 @@ class TestsStudyManifestTests(unittest.TestCase):
         payload, conditions = study.load_study(ROOT / "studies" / "tests" / "study.json")
         self.assertRegex(payload["id"], r"^picc-tests-v\d+$")
         self.assertEqual(payload["baseline_condition"], "baseline")
-        self.assertEqual([row["id"] for row in conditions], ["baseline", "tests-none"])
+        self.assertEqual([row["id"] for row in conditions], ["baseline", "tests-none", "tests-pushed"])
         _, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
         starter = {row["id"]: row for row in starter_conditions}
-        for row in conditions:
-            self.assertEqual(row, starter[row["id"]])
+        by_id = {row["id"]: row for row in conditions}
+        for name in ("baseline", "tests-none"):
+            self.assertEqual(by_id[name], starter[name])
+        # tests-pushed is the baseline plus the push interval, nothing else.
+        pushed = copy.deepcopy(by_id["tests-pushed"])
+        self.assertEqual(pushed["tests"].pop("push_interval_minutes"), 10)
+        for block in ("prompt", "specification", "tests", "candidate", "reference", "environment", "budget"):
+            self.assertEqual(pushed[block], starter["baseline"][block], block)
 
 
 class TypesStudyTests(unittest.TestCase):

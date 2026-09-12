@@ -109,7 +109,13 @@ the row against the final snapshot, image, adapter, and stage budget, recomputes
 the macro from the per-stage rates, and exposes `fuzz_macro`,
 `fuzz_stage_pass_rates`, `fuzz_programs_per_stage`, `fuzz_mismatches_total`,
 and `fuzz_deadline_hit` per run, `median_fuzz_macro` per condition, and
-`delta_fuzz_macro` in the paired deltas. A run without the ledger is included
+`delta_fuzz_macro` in the paired deltas; `hidden_score_last_buildable`,
+`fuzz_macro_last_buildable`, `last_buildable_round`, and the matching
+`delta_*_last_buildable` columns score the last snapshot that built and passed
+the audit (the final one when it built, 0 when none did; `None` with a
+coverage warning when a pre-v8 ledger lacks the second fuzz row).
+`pushed_test_reports` counts the visible-test reports the harness pushed to
+the agent (`tests.push_interval_minutes` conditions). A run without the ledger is included
 with null fuzz columns and a coverage warning.
 
 Corpus evaluations record `input_policy`: the preprocessing command applied

@@ -279,6 +279,11 @@ def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None
     fraction = require_number(tests.get("visible_subset_fraction", 1.0), f"{condition_id}.tests.visible_subset_fraction")
     if not 0.0 < fraction <= 1.0:
         raise StudyError(f"{condition_id}.tests.visible_subset_fraction must be in (0, 1]")
+    push = tests.get("push_interval_minutes", 0)
+    if not isinstance(push, int) or isinstance(push, bool) or push < 0:
+        raise StudyError(f"{condition_id}.tests.push_interval_minutes must be a non-negative integer")
+    if push > 0 and access == "none":
+        raise StudyError(f"{condition_id}: tests.push_interval_minutes requires tests.access other than 'none'")
     require_int(tests.get("subset_seed", study.get("seed", 0)), f"{condition_id}.tests.subset_seed")
     validate_provenance(tests.get("provenance"), f"{condition_id}.tests.provenance")
     for source_key in ("visible_partition", "hidden_partition"):
@@ -481,6 +486,12 @@ def operational_guidance(condition: dict[str, Any], adapter: dict[str, Any]) -> 
         test_guidance = (
             f"Visible test files may be inspected under `/visible-tests`, and `test_visible` returns "
             f"{tests['feedback']} feedback."
+        )
+    push = int(tests.get("push_interval_minutes", 0) or 0)
+    if push > 0:
+        test_guidance += (
+            f" In addition, the harness runs the visible tests automatically about every {push} minutes and "
+            f"delivers the same {tests['feedback']} report to you as a message, whether or not you asked."
         )
 
     reference = condition["reference"]
@@ -971,6 +982,7 @@ def _materialize_direct(
     replacements = {
         "TEST_ACCESS": condition["tests"]["access"],
         "FEEDBACK_MODE": condition["tests"]["feedback"],
+        "PUSH_INTERVAL_MINUTES": int(condition["tests"].get("push_interval_minutes", 0) or 0),
         "REFERENCE_MODE": reference["mode"],
         "ORACLE_LIMIT": int(reference.get("oracle_limit", 0)),
         "ALLOW_TEST_FILES": condition["tests"]["access"] == "files",

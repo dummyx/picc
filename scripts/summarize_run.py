@@ -200,6 +200,11 @@ def markdown_report(report: dict[str, Any]) -> str:
         "## Fuzz oracle (final snapshot)",
         "",
         *fuzz_lines(report.get("fuzz_final")),
+        *(
+            ["", "## Fuzz oracle (last buildable snapshot; the final snapshot did not build)", "", *fuzz_lines(report["fuzz_last_buildable"])]
+            if report.get("fuzz_last_buildable")
+            else []
+        ),
         "",
         "## Trajectory summary",
         "",
@@ -319,7 +324,8 @@ def summarize_locked(run_id: str, run_dir: Path) -> int:
         "hidden_trajectory": hidden_trajectory,
         "visible_score_auc": score_auc(visible_trajectory),
         "hidden_score_auc": score_auc(hidden_trajectory),
-        "fuzz_final": fuzz_rows[-1] if fuzz_rows else None,
+        "fuzz_final": next((row for row in fuzz_rows if row.get("role", "final") == "final"), None),
+        "fuzz_last_buildable": next((row for row in fuzz_rows if row.get("role") == "last_buildable"), None),
     }
     atomic_write_json(run_dir / "report.json", report)
     (run_dir / "report.md").write_text(markdown_report(report), encoding="utf-8")

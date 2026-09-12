@@ -36,6 +36,26 @@ SNAPSHOT_EVAL_TIMEOUT_SECONDS = 7200
 # candidate build plus process start-up and tear-down inside the container.
 FUZZ_TIMEOUT_SLACK_SECONDS = 1800
 FUZZ_OUTPUT_NAME = "fuzz-final.json"
+FUZZ_LAST_BUILDABLE_OUTPUT_NAME = "fuzz-last-buildable.json"
+
+
+def last_buildable_snapshot(hidden_rows: list[dict[str, Any]], snapshots: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """The last snapshot whose hidden evaluation built and passed the audit.
+
+    The final snapshot is whatever the workspace held when the round cap
+    fell; two of eight v7 finals were half-finished rewrites. The last
+    buildable snapshot is the pre-registered co-primary that ignores that
+    accident; None when no snapshot built.
+    """
+    by_key = {(str(row.get("git_commit")), str(row.get("git_tree"))): row for row in hidden_rows}
+    for snapshot in reversed(snapshots):
+        row = by_key.get((str(snapshot.get("git_commit")), str(snapshot.get("git_tree"))))
+        if row is None:
+            continue
+        summary = row.get("summary") if isinstance(row.get("summary"), dict) else {}
+        if summary.get("build_ok") is True and not summary.get("audit_blocking") and summary.get("audit_ok") is not False:
+            return snapshot
+    return None
 
 
 def fuzz_policy(config: dict[str, str]) -> dict[str, int] | None:
@@ -165,9 +185,10 @@ def fuzz_snapshot(
     artifacts: Path,
     max_stage: int,
     policy: dict[str, int],
+    output_name: str = FUZZ_OUTPUT_NAME,
 ) -> tuple[int, str, str, Path]:
     """Run the stage-averaged fuzz oracle on one checked-out snapshot."""
-    output_path = artifacts / "evaluations" / FUZZ_OUTPUT_NAME
+    output_path = artifacts / "evaluations" / output_name
     container_name = f"picc-pfuzz-{os.getpid()}"
     command = container_base(config)
     command += ["--name", container_name]
@@ -199,7 +220,7 @@ def fuzz_snapshot(
         "--deadline-seconds",
         str(policy["deadline_seconds"]),
         "--output",
-        f"/run-artifacts/evaluations/{FUZZ_OUTPUT_NAME}",
+        f"/run-artifacts/evaluations/{output_name}",
         "--summary-json",
     ]
 
@@ -383,6 +404,13 @@ def evaluate_locked(args: argparse.Namespace, run_id: str, run_dir: Path) -> int
         fuzz_final_snapshot(
             args, run_id, run_dir, config, evaluation_config, verified_image, workspace, artifacts, snapshots[-1], max_stage
         )
+        if args.all_snapshots:
+            last_buildable = last_buildable_snapshot(read_jsonl(output_log), snapshots)
+            if last_buildable is not None and last_buildable is not snapshots[-1]:
+                fuzz_final_snapshot(
+                    args, run_id, run_dir, config, evaluation_config, verified_image, workspace, artifacts,
+                    last_buildable, max_stage, role="last_buildable",
+                )
     return 0
 
 
@@ -397,15 +425,19 @@ def fuzz_final_snapshot(
     artifacts: Path,
     snapshot: dict[str, Any],
     max_stage: int,
+    role: str = "final",
 ) -> None:
-    """Score the final snapshot with the fuzz oracle and write artifacts/fuzz-scores.jsonl.
+    """Score one snapshot with the fuzz oracle and append to artifacts/fuzz-scores.jsonl.
 
-    The ledger holds exactly one row, for the final snapshot, and is rewritten
-    on every hidden evaluation so that it can never disagree with the corpus
-    ledger produced alongside it.
+    The ledger holds one row for the final snapshot (role "final", written
+    first, replacing any earlier ledger so it can never disagree with the
+    corpus ledger produced alongside it) and, when the final snapshot did not
+    build but an earlier one did, a second row for that last buildable
+    snapshot (role "last_buildable").
     """
     fuzz_log = artifacts / "fuzz-scores.jsonl"
-    if fuzz_log.exists():
+    output_name = FUZZ_OUTPUT_NAME if role == "final" else FUZZ_LAST_BUILDABLE_OUTPUT_NAME
+    if role == "final" and fuzz_log.exists():
         fuzz_log.unlink()
     policy = fuzz_policy(config)
     evaluator = REPO_ROOT / "evaluator"
@@ -418,7 +450,7 @@ def fuzz_final_snapshot(
 
     round_number = int(snapshot["round"])
     commit = str(snapshot["git_commit"])
-    print(f"fuzz oracle: round {round_number:03d}, {commit[:12]}, {policy['programs_per_stage']} programs x {max_stage} stages", flush=True)
+    print(f"fuzz oracle ({role}): round {round_number:03d}, {commit[:12]}, {policy['programs_per_stage']} programs x {max_stage} stages", flush=True)
     with tempfile.TemporaryDirectory(prefix=f".picc-{run_id}-fuzz-", dir=run_dir) as temporary:
         worktree = Path(temporary) / "workspace"
         result = subprocess.run(
@@ -436,10 +468,11 @@ def fuzz_final_snapshot(
             if evaluated_commit != commit or evaluated_tree != str(snapshot.get("git_tree", "")):
                 raise ExperimentError("Detached fuzz worktree does not match the snapshot ledger")
             returncode, stdout, stderr, output_path = fuzz_snapshot(
-                evaluation_config, worktree, evaluator, artifacts, max_stage, policy
+                evaluation_config, worktree, evaluator, artifacts, max_stage, policy, output_name
             )
-            (artifacts / "evaluations" / "fuzz-final.stdout.log").write_text(stdout, encoding="utf-8")
-            (artifacts / "evaluations" / "fuzz-final.stderr.log").write_text(stderr, encoding="utf-8")
+            log_stem = output_name.removesuffix(".json")
+            (artifacts / "evaluations" / f"{log_stem}.stdout.log").write_text(stdout, encoding="utf-8")
+            (artifacts / "evaluations" / f"{log_stem}.stderr.log").write_text(stderr, encoding="utf-8")
             full: dict[str, Any] | None = None
             if output_path.exists():
                 loaded = json.loads(output_path.read_text(encoding="utf-8"))
@@ -461,6 +494,7 @@ def fuzz_final_snapshot(
                 summary = dict(full["summary"])
             row = {
                 "partition": "fuzz",
+                "role": role,
                 "round": round_number,
                 "git_commit": commit,
                 "git_tree": evaluated_tree,

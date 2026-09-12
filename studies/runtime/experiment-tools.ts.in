@@ -16,6 +16,10 @@ const EVENT_PATH = `${ARTIFACTS}/extension-events.jsonl`;
 const MAX_STAGE = Number.parseInt(process.env.PICC_MAX_STAGE ?? "10", 10);
 const TEST_ACCESS = __TEST_ACCESS__ as "none" | "tool" | "files";
 const FEEDBACK_MODE = __FEEDBACK_MODE__ as "none" | "aggregate" | "failures" | "detailed";
+// Pushed feedback: when > 0, the harness runs the visible tests itself about
+// every N minutes (checked at turn boundaries) and delivers the same report the
+// tool would return as a user message, whether or not the agent asked.
+const PUSH_INTERVAL_MINUTES = __PUSH_INTERVAL_MINUTES__ as number;
 const REFERENCE_MODE = __REFERENCE_MODE__ as "none" | "oracle" | "source";
 const ORACLE_LIMIT = __ORACLE_LIMIT__;
 const ORACLE_COUNT_PATH = `${ARTIFACTS}/oracle-count.json`;
@@ -165,6 +169,50 @@ function readOracleCount(): number {
   }
 }
 
+type VisibleRunResult = { summary: EvaluationSummary; code: number; stderr: string };
+
+async function runVisibleEvaluation(
+  outputPath: string,
+  stage: number,
+  options: { latestOnly?: boolean; testId?: string },
+  signal?: AbortSignal,
+): Promise<VisibleRunResult> {
+  const args = [
+    "/opt/picc-eval/evaluate.py",
+    "--workspace",
+    "/workspace",
+    "--tests-root",
+    "/visible-tests",
+    "--manifest",
+    "/visible-tests/manifest.json",
+    "--candidate-config",
+    "/opt/picc-eval/candidate.json",
+    "--max-stage",
+    String(stage),
+    "--output",
+    outputPath,
+    "--summary-json",
+  ];
+  if (options.latestOnly) args.push("--latest-only");
+  if (options.testId) args.push("--test-id", options.testId);
+  const result = await run("python3", args, signal);
+  let summary: EvaluationSummary;
+  try {
+    summary = JSON.parse(result.stdout.trim()) as EvaluationSummary;
+  } catch {
+    summary = {
+      score: 0,
+      build_ok: false,
+      audit_ok: false,
+      error: `Evaluator returned non-JSON output (exit ${result.code}): ${result.stderr.slice(0, 2000)}`,
+    };
+  }
+  if (result.code !== 0 && !summary.error) {
+    summary.error = `Evaluator exited ${result.code}: ${result.stderr.slice(0, 2000)}`;
+  }
+  return { summary, code: result.code, stderr: result.stderr };
+}
+
 export default function experimentTools(pi: ExtensionAPI) {
   pi.registerTool({
     name: "test_visible",
@@ -207,25 +255,6 @@ export default function experimentTools(pi: ExtensionAPI) {
       const stage = Math.min(params.stage ?? MAX_STAGE, MAX_STAGE);
       const safeId = toolCallId.replace(/[^a-zA-Z0-9_.-]/g, "_");
       const outputPath = `${ARTIFACTS}/tool-evaluations/${safeId}.json`;
-      const args = [
-        "/opt/picc-eval/evaluate.py",
-        "--workspace",
-        "/workspace",
-        "--tests-root",
-        "/visible-tests",
-        "--manifest",
-        "/visible-tests/manifest.json",
-        "--candidate-config",
-        "/opt/picc-eval/candidate.json",
-        "--max-stage",
-        String(stage),
-        "--output",
-        outputPath,
-        "--summary-json",
-      ];
-      if (params.latestOnly) args.push("--latest-only");
-      if (params.testId) args.push("--test-id", params.testId);
-
       appendEvent({
         event: "test_visible_start",
         toolCallId,
@@ -233,28 +262,19 @@ export default function experimentTools(pi: ExtensionAPI) {
         feedbackMode: FEEDBACK_MODE,
         outputPath,
       });
-      const result = await run("python3", args, signal);
-      let summary: EvaluationSummary;
-      try {
-        summary = JSON.parse(result.stdout.trim()) as EvaluationSummary;
-      } catch {
-        summary = {
-          score: 0,
-          build_ok: false,
-          audit_ok: false,
-          error: `Evaluator returned non-JSON output (exit ${result.code}): ${result.stderr.slice(0, 2000)}`,
-        };
-      }
-      if (result.code !== 0 && !summary.error) {
-        summary.error = `Evaluator exited ${result.code}: ${result.stderr.slice(0, 2000)}`;
-      }
+      const { summary, code, stderr } = await runVisibleEvaluation(
+        outputPath,
+        stage,
+        { latestOnly: params.latestOnly, testId: params.testId },
+        signal,
+      );
       appendEvent({
         event: "test_visible_end",
         toolCallId,
-        exitCode: result.code,
+        exitCode: code,
         feedbackMode: FEEDBACK_MODE,
         summary,
-        stderr: result.stderr.slice(0, 4000),
+        stderr: stderr.slice(0, 4000),
       });
       return {
         content: [{ type: "text", text: renderSummary(summary, outputPath) }],
@@ -262,6 +282,49 @@ export default function experimentTools(pi: ExtensionAPI) {
       };
     },
   });
+
+  // Pushed feedback (tests.push_interval_minutes > 0): at the end of any turn
+  // that continues (it produced tool calls), once the interval has elapsed
+  // since the round started or the last report, run the full visible
+  // evaluation and queue the report as a user message before the next model
+  // call. A turn without tool calls is the agent stopping; nothing is pushed
+  // then, so the push never prolongs a session that would have ended.
+  if (PUSH_INTERVAL_MINUTES > 0 && TEST_ACCESS !== "none") {
+    const intervalMs = PUSH_INTERVAL_MINUTES * 60_000;
+    let lastPushAt = Date.now();
+    let pushIndex = 0;
+    let pushing = false;
+    pi.on("turn_end", async (event) => {
+      if (pushing || event.toolResults.length === 0) return;
+      if (Date.now() - lastPushAt < intervalMs) return;
+      pushing = true;
+      try {
+        pushIndex += 1;
+        const outputPath = `${ARTIFACTS}/tool-evaluations/pushed-${String(pushIndex).padStart(3, "0")}.json`;
+        appendEvent({ event: "test_pushed_start", index: pushIndex, turnIndex: event.turnIndex, feedbackMode: FEEDBACK_MODE, outputPath });
+        const { summary, code, stderr } = await runVisibleEvaluation(outputPath, MAX_STAGE, {});
+        appendEvent({
+          event: "test_pushed_end",
+          index: pushIndex,
+          turnIndex: event.turnIndex,
+          exitCode: code,
+          feedbackMode: FEEDBACK_MODE,
+          summary,
+          stderr: stderr.slice(0, 4000),
+        });
+        const text =
+          `Automated visible test report #${pushIndex} (the harness runs the visible tests about every ` +
+          `${PUSH_INTERVAL_MINUTES} minutes and delivers this report unprompted):\n` +
+          renderSummary(summary, outputPath);
+        pi.sendUserMessage(text, { deliverAs: "steer" });
+        lastPushAt = Date.now();
+      } catch (error) {
+        appendEvent({ event: "test_pushed_error", index: pushIndex, error: String(error).slice(0, 2000) });
+      } finally {
+        pushing = false;
+      }
+    });
+  }
 
   pi.registerTool({
     name: "reference_oracle",

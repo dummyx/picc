@@ -110,6 +110,8 @@ def make_run(
     usage: object = DEFAULT_USAGE,
     round_count: int = 2,
     fuzz: object = "default",
+    final_unbuildable: bool = False,
+    last_buildable_fuzz: object = "default",
 ) -> Path:
     # A complete run carries a fuzz-oracle ledger for its final snapshot; pass
     # fuzz=None to build a run without one (older cohorts) and a dict to tamper.
@@ -313,9 +315,12 @@ def make_run(
             "git_commit": commit,
             **visible_summary,
         }
+        unbuildable = final_unbuildable and round_number == round_count - 1
+        if unbuildable:
+            passed, score = 0, 0.0
         hidden_results = [
-            evaluator_result(hidden_tests[0], True),
-            evaluator_result(hidden_tests[1], round_number > 0),
+            evaluator_result(hidden_tests[0], not unbuildable),
+            evaluator_result(hidden_tests[1], round_number > 0 and not unbuildable),
         ]
         hidden_summary = {
             "score": score,
@@ -323,7 +328,7 @@ def make_run(
             "passed": passed,
             "failed": 2 - passed,
             "total": 2,
-            "build_ok": True,
+            "build_ok": not unbuildable,
             "audit_ok": True,
         }
         hidden_point = {**point, **{key: hidden_summary[key] for key in point if key in hidden_summary}}
@@ -336,7 +341,7 @@ def make_run(
                 "micro_score": score,
                 "passed": passed,
                 "total": 2,
-                "build_ok": True,
+                "build_ok": not unbuildable,
             }
         )
         output = f"artifacts/evaluations/hidden-round-{round_number:03d}.json"
@@ -369,6 +374,7 @@ def make_run(
     write_jsonl(run_dir / "artifacts" / "snapshots.jsonl", snapshots)
     write_jsonl(run_dir / "artifacts" / "hidden-scores.jsonl", hidden_rows)
     fuzz_row: dict[str, object] | None = None
+    ledger_rows: list[dict[str, object]] = []
     if isinstance(fuzz, dict):
         # `fuzz` describes the fuzz-oracle ledger for the final snapshot; keys
         # override the consistent default so tests can inject tampering.
@@ -412,7 +418,27 @@ def make_run(
             "summary": fuzz_summary,
             "output": "artifacts/evaluations/fuzz-final.json",
         }
-        write_jsonl(run_dir / "artifacts" / "fuzz-scores.jsonl", [fuzz_row])
+        ledger_rows = [fuzz_row]
+        if final_unbuildable and isinstance(last_buildable_fuzz, dict) and round_count > 1:
+            # v8: a second row for the last snapshot that built (role last_buildable).
+            previous = snapshots[-2]
+            lb_rates = last_buildable_fuzz.get("rates", [1.0])
+            lb_summary = {**fuzz_summary, "fuzz_macro": sum(lb_rates) / len(lb_rates), "stage_pass_rates": lb_rates}
+            lb_full = {**fuzz_full, "snapshot": {"git_commit": previous["git_commit"], "git_tree": previous["git_tree"]}, "summary": lb_summary}
+            write_json(run_dir / "artifacts" / "evaluations" / "fuzz-last-buildable.json", lb_full)
+            lb_row = {
+                **fuzz_row,
+                "role": "last_buildable",
+                "round": previous["round"],
+                "git_commit": previous["git_commit"],
+                "git_tree": previous["git_tree"],
+                "elapsed_seconds": previous["elapsed_seconds"],
+                "summary": lb_summary,
+                "output": "artifacts/evaluations/fuzz-last-buildable.json",
+            }
+            fuzz_row = {**fuzz_row, "role": "final"}
+            ledger_rows = [fuzz_row, lb_row]
+        write_jsonl(run_dir / "artifacts" / "fuzz-scores.jsonl", ledger_rows)
     event_rows: list[dict[str, object]] = []
     if isinstance(usage, dict) and usage:
         event_rows.append(
@@ -442,6 +468,7 @@ def make_run(
         "pi_events": {"usage": dict(usage) if isinstance(usage, dict) else usage},
         "guard": {"blocked_calls": 0, "reasons": {}, "tools": {}},
         "fuzz_final": None if not isinstance(fuzz, dict) else (fuzz.get("report_row", fuzz_row)),
+        "fuzz_last_buildable": (ledger_rows[1] if isinstance(fuzz, dict) and len(ledger_rows) > 1 else None) if isinstance(fuzz, dict) else None,
     }
     write_json(run_dir / "report.json", report)
     write_text(run_dir / "workspace" / "main.rs", "fn main() {}\n")
@@ -628,6 +655,58 @@ class PrimarySummaryTests(unittest.TestCase):
         row, warning = self.collect(guard)
         self.assertIsNone(row)
         self.assertIn("guard metrics", warning or "")
+
+    def test_last_buildable_snapshot_scores_when_the_final_does_not_build(self) -> None:
+        # The v7 case: the final snapshot is a rewrite cut by the round cap.
+        run_dir = make_run(self.runs, "cut-r1", self.study, self.study_sha256, round_count=3,
+                           fuzz={"rates": [0.0]}, final_unbuildable=True, last_buildable_fuzz={"rates": [1.0]})
+        row, warning = self.collect(run_dir)
+        self.assertIsNone(warning)
+        assert row is not None
+        self.assertEqual(row["hidden_score"], 0.0)
+        self.assertEqual(row["hidden_score_last_buildable"], 1.0)
+        self.assertEqual(row["last_buildable_round"], 1)
+        self.assertEqual(row["fuzz_macro"], 0.0)
+        self.assertEqual(row["fuzz_macro_last_buildable"], 1.0)
+        self.assertFalse(row["final_build_ok"])
+
+    def test_final_snapshot_that_builds_is_its_own_last_buildable(self) -> None:
+        run_dir = make_run(self.runs, "built-r1", self.study, self.study_sha256)
+        row, warning = self.collect(run_dir)
+        self.assertIsNone(warning)
+        assert row is not None
+        self.assertEqual(row["hidden_score_last_buildable"], row["hidden_score"])
+        self.assertEqual(row["fuzz_macro_last_buildable"], row["fuzz_macro"])
+        self.assertEqual(row["last_buildable_round"], 1)
+
+    def test_pre_v8_ledger_without_the_second_row_warns_instead_of_excluding(self) -> None:
+        run_dir = make_run(self.runs, "legacy-cut-r1", self.study, self.study_sha256, round_count=3,
+                           fuzz={"rates": [0.0]}, final_unbuildable=True, last_buildable_fuzz=None)
+        row, warning = self.collect(run_dir)
+        assert row is not None
+        self.assertIn("last buildable", warning or "")
+        self.assertEqual(row["hidden_score_last_buildable"], 1.0)
+        self.assertIsNone(row["fuzz_macro_last_buildable"])
+
+    def test_last_buildable_row_for_a_building_final_is_a_provenance_failure(self) -> None:
+        run_dir = make_run(self.runs, "stray-r1", self.study, self.study_sha256, round_count=3,
+                           fuzz={"rates": [1.0]}, final_unbuildable=True, last_buildable_fuzz={"rates": [1.0]})
+        # Flip the final hidden row back to buildable without touching the ledger: the second row is now stray.
+        ledger_path = run_dir / "artifacts" / "hidden-scores.jsonl"
+        rows = [json.loads(line) for line in ledger_path.read_text(encoding="utf-8").splitlines()]
+        rows[-1]["summary"]["build_ok"] = True
+        write_jsonl(ledger_path, rows)
+        full_path = run_dir / rows[-1]["output"]
+        full = summarize_study.load_object(full_path)
+        full["summary"]["build_ok"] = True
+        write_json(full_path, full)
+        report_path = run_dir / "report.json"
+        report = summarize_study.load_object(report_path)
+        report["hidden_trajectory"][-1]["build_ok"] = True
+        write_json(report_path, report)
+        row, warning = self.collect(run_dir)
+        self.assertIsNone(row)
+        self.assertIn("last-buildable row although the final snapshot built", warning or "")
 
     def test_bash_timeouts_are_counted_apart_from_guard_blocks(self) -> None:
         run_dir = make_run(self.runs, "timeouts-r1", self.study, self.study_sha256)

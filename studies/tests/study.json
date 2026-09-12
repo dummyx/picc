@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "id": "picc-tests-v3",
-  "description": "Test-availability contrast at stages 1-10 under the revised oracle (preprocessed inputs, corpus macro and stage-averaged fuzz macro as co-primary endpoints) and the bash default timeout (image 0.4, @cad0p/pi-bash-timeout@0.1.0): the starter baseline versus tests-none, every other factor held at the starter baseline. Separate manifest version from the v5 cohort (picc-tests-v2), whose runs had no default timeout.",
+  "id": "picc-tests-v4",
+  "description": "Test-feedback gradient at stages 1-10 under the revised oracle and the bash default timeout (image 0.4): the starter baseline (tests on demand through test_visible), tests-none (withheld), and tests-pushed (on demand plus a failure-level report pushed by the harness about every 10 minutes), every other factor held at the starter baseline. The v8 cohort runs baseline and tests-pushed; tests-none has v6 data under the same harness (picc-tests-v3). Co-primary endpoints on the last buildable snapshot as well as the final one.",
   "design": "one-factor-at-a-time",
   "baseline_condition": "baseline",
-  "seed": 20260911,
+  "seed": 20260913,
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
@@ -67,6 +67,16 @@
       "tests": {
         "access": "none",
         "feedback": "none"
+      }
+    },
+    {
+      "id": "tests-pushed",
+      "factor": "tests",
+      "description": "Tests on demand as in baseline, plus the harness runs the visible tests about every 10 minutes and delivers the same failure-level report unprompted.",
+      "tests": {
+        "access": "tool",
+        "feedback": "failures",
+        "push_interval_minutes": 10
       }
     }
   ]
