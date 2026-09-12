@@ -953,6 +953,137 @@ hang fix.
   It did not happen here.
 - One model, one task, one language.
 
+## 13. v7: static typing on the clean harness
+
+### 13.1 Design
+
+The v4 contrast re-run under everything that changed since: preprocessed
+inputs, the fuzz macro as co-primary, Pi 0.85.1, the bash default timeout,
+and one more replicate. `ts-strict` (TypeScript, `tsc --strict
+--noEmitOnError` as the build gate) versus `js-untyped` (plain JavaScript,
+`node --check`, `tsc` withheld by the guard), same Node.js 24 runtime, same
+prompts apart from the adapter's typing notes, 4 replicates in the frozen
+block order (`docs/PRE_REGISTRATION_v7.md`, manifest `picc-types-v2`,
+conditions byte-identical to v4). Eight runs, 2026-09-11 21:33 to
+2026-09-12 09:28 UTC, no amendments.
+
+### 13.2 The harness check and treatment fidelity
+
+No run idled five minutes or more (maximum 1.6); no bash call went
+unanswered; five commands were cut by the default timeout, all in
+`js-untyped` runs, all recovered. `ts-strict` r4 is the first run in any
+cohort to finish by the perfect-visible rule (227 of 227, held through the
+review round) at 77 minutes rather than at the budget.
+
+The treatment was delivered: every typed run invoked `tsc` 21–27 times,
+declared 11–31 interfaces, annotated 94–100% of parameters, and used no
+`any` and no suppression; no untyped run wrote a JSDoc type, enabled
+`@ts-check`, or attempted `tsc` (`analysis/typing-metrics-v7.md`).
+
+### 13.3 Results
+
+| Run | Corpus | Last buildable | Fuzz | Active / idle min | Cut-offs | Output tokens | Turns | `tsc` calls | Source LOC | Self-tests |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| ts-strict r1 | 0.967 | 0.967 | 1.000 | 88.6 / 1.6 | 0 | 304,636 | 234 | 27 | 1,877 | 208 |
+| js-untyped r1 | 0.958 | 0.958 | 1.000 | 88.9 / 1.3 | 1 | 282,030 | 218 | 0 | 1,591 | 1 |
+| ts-strict r2 | 0.000 | 0.917 | 0.000 | 89.0 / 1.1 | 0 | 299,860 | 217 | 22 | 2,081 | 48 |
+| js-untyped r2 | 0.954 | 0.954 | 0.993 | 89.5 / 0.7 | 3 | 262,092 | 233 | 0 | 1,134 | 37 |
+| ts-strict r3 | 0.965 | 0.965 | 1.000 | 89.9 / 0.3 | 0 | 265,603 | 181 | 21 | 1,824 | 133 |
+| js-untyped r3 | 0.500 | 0.845 | 0.000 | 89.3 / 0.8 | 1 | 269,602 | 230 | 0 | 1,208 | 0 |
+| ts-strict r4 | 0.967 | 0.967 | 1.000 | 77.0 / 0.4 | 0 | 255,517 | 225 | 27 | 1,891 | 122 |
+| js-untyped r4 | 0.968 | 0.968 | 0.999 | 89.2 / 1.0 | 0 | 297,690 | 272 | 0 | 1,469 | 17 |
+
+"Last buildable" is the corpus score of the last snapshot that built
+(`analysis/typing_metrics.py`), a pre-declared descriptive column.
+
+Paired `ts-strict` − `js-untyped`:
+
+| Endpoint | r1 | r2 | r3 | r4 | Paired median | Beyond ±0.13 |
+|---|---:|---:|---:|---:|---:|---|
+| Corpus (hidden macro) | +0.009 | −0.954 | +0.465 | −0.001 | **+0.004** | 1 below, 1 above |
+| Fuzz macro | 0.000 | −0.993 | +1.000 | +0.001 | **+0.001** | 1 below, 1 above |
+
+No detectable effect on either endpoint, and the conclusion does not depend
+on the two outliers: the six runs whose final snapshot builds and runs sit
+between 0.954 and 0.968 on the corpus and between 0.993 and 1.000 on the
+fuzzer, with the typed arm at 0.965–0.967 and the untyped arm at
+0.954–0.968. Three of four runs in each arm reached the completion
+threshold. The v4 finding (§8, §10.4b: +0.026 on the original corpus,
+0.000 under the revised oracles, n=3) is reproduced with tighter data. The
+v4 typed compilers' stage-9 defect (rejecting two-argument calls) did not
+recur: all four typed compilers are perfect on the fuzzer.
+
+### 13.4 The cap now falls inside refactors
+
+With hangs gone, the largest differences in the cohort come from a new
+place: the 45-minute round cap landing in the middle of a rewrite. It
+happened once per arm. `ts-strict` r2 was rewriting `semantics.ts` when the
+cap hit; `tsc --strict` rejects the final snapshot on one arity error, so it
+scores 0 on both oracles although its previous snapshot scored 0.917.
+`js-untyped` r3 was applying an "all-or-nothing" refactor of `picc.js` that
+left a reference to an undefined variable; `node --check` accepts the file,
+every valid program is rejected at runtime, and the corpus scores it 0.500
+by crediting the rejection of every invalid program (the §9 floor) while
+the fuzzer scores 0. The event is condition-blind in occurrence and
+arm-asymmetric in how the two build gates score it; in this cohort the two
+cancel. Both were pre-declared outcomes (the type-gate loss is a listed
+secondary endpoint), and the primary endpoint stands as scored. Two of
+eight finals is a hazard of the same order as the hangs were (five of eight
+in v5), and the obvious remedies are endpoint-level, not harness-level: a
+pre-registered co-primary "last buildable snapshot", or a graceful wrap-up
+signal before the cap, either of which must be declared before the next
+cohort rather than applied to this one.
+
+### 13.5 What typing costs
+
+Paired resource and code endpoints (`ts-strict` − `js-untyped`, medians of
+per-replicate deltas):
+
+| Endpoint | js-untyped median | ts-strict median | Median delta |
+|---|---:|---:|---:|
+| output tokens | 275,816 | 282,732 | +9,304 (+23k, +38k, −4k, −42k) |
+| active minutes | 89.3 | 88.8 | −0.4 |
+| assistant turns | 232 | 221 | −32 |
+| tool calls | 240 | 232 | −31 |
+| `tsc` invocations | 0 | 24.5 | +24.5 |
+| compiler source LOC | 1,339 | 1,884 | +519 (+39%) |
+| functions | 163 | 226 | +58 |
+| self-written test programs | 9 | 128 | +119 |
+| self-test LOC | 129 | 959 | +958 |
+| final build seconds | 0.01 | 0.37 | +0.36 |
+| compile ms per hidden test | 19.2 | 19.5 | +0.1 |
+| commands cut by the timeout | 1 | 0 | −1 (all five in the untyped arm) |
+
+The typed arm writes about 40% more compiler source and, unexpectedly,
+an order of magnitude more self-tests (median 128 programs vs 9), in
+slightly fewer turns and the same time, for the same correctness; the v4
+observation of +54% lines and +9% tokens holds on lines and is within
+replicate noise on tokens. All five timeout cut-offs happened to untyped
+agents running their own test loops; none to typed agents. At n=4 that is a
+lead, not a finding.
+
+### 13.6 What this settles
+
+- **Static typing does not detectably change behavioral correctness on this
+  task**, in a second cohort and now without the hang and preprocessing
+  confounds: +0.004 corpus, +0.001 fuzz, six clean finals within 0.014 of
+  each other across the two arms.
+- **It changes what gets written:** more source, many more self-tests, a
+  type-checker invoked two dozen times per run, fewer turns.
+- **The harness is now limited by its snapshot rule, not by hangs.** The cap
+  cut a refactor in two of eight runs; the next pre-registration should
+  carry a last-buildable co-primary or a wrap-up signal.
+
+### 13.7 Limitations
+
+- Four replicates; two finals are cap artifacts, so the effective n for the
+  final-snapshot endpoint is three pairs plus two discordant ones.
+- Function and LOC counts are regex approximations and the two languages'
+  function syntax is counted alike.
+- The corpus ceiling (invalid-program tests) compresses differences near
+  0.96; the fuzzer is at 1.000 for six of eight runs.
+- One model, one task, two languages on one runtime.
+
 ---
 
 Per-run process detail: [`process-report.md`](process-report.md). Raw metrics:

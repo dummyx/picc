@@ -1,0 +1,412 @@
+[
+  {
+    "bash_commands": 134,
+    "command_intents": {
+      "compiler_runs": 46,
+      "node_check_invocations": 11,
+      "self_tests": 8
+    },
+    "condition": "js-untyped",
+    "elapsed_hours": 1.5,
+    "final_audit_findings": {},
+    "guard_blocks_total": 3,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 2
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": true,
+    "hidden_final_score": 0.9579,
+    "hidden_last_buildable_score": 0.9579,
+    "language": "javascript",
+    "profile": "main",
+    "replicate": 1,
+    "run_id": "v7-js-untyped-r1",
+    "source_files": 4,
+    "source_loc": 1679,
+    "stray_javascript_files": [],
+    "stray_typescript_files": [],
+    "termination": "round_timeout",
+    "typing": {
+      "classes": 2,
+      "function_declarations": 11,
+      "jsdoc_type_tags": {
+        "param": 0,
+        "returns": 0,
+        "type": 0,
+        "typedef": 0
+      },
+      "ts_check_pragmas": 0,
+      "typeof_guards": 2
+    },
+    "visible_build_outcomes": {
+      "ok": 2
+    }
+  },
+  {
+    "bash_commands": 164,
+    "command_intents": {
+      "compiler_runs": 40,
+      "node_check_invocations": 21
+    },
+    "condition": "js-untyped",
+    "elapsed_hours": 1.5,
+    "final_audit_findings": {},
+    "guard_blocks_total": 4,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 2
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": true,
+    "hidden_final_score": 0.9542,
+    "hidden_last_buildable_score": 0.9542,
+    "language": "javascript",
+    "profile": "main",
+    "replicate": 2,
+    "run_id": "v7-js-untyped-r2",
+    "source_files": 4,
+    "source_loc": 1228,
+    "stray_javascript_files": [],
+    "stray_typescript_files": [],
+    "termination": "round_timeout",
+    "typing": {
+      "classes": 3,
+      "function_declarations": 9,
+      "jsdoc_type_tags": {
+        "param": 0,
+        "returns": 0,
+        "type": 0,
+        "typedef": 0
+      },
+      "ts_check_pragmas": 0,
+      "typeof_guards": 4
+    },
+    "visible_build_outcomes": {
+      "ok": 2
+    }
+  },
+  {
+    "bash_commands": 142,
+    "command_intents": {
+      "compiler_runs": 67,
+      "node_check_invocations": 21
+    },
+    "condition": "js-untyped",
+    "elapsed_hours": 1.5,
+    "final_audit_findings": {},
+    "guard_blocks_total": 2,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 2
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": true,
+    "hidden_final_score": 0.5,
+    "hidden_last_buildable_score": 0.5,
+    "language": "javascript",
+    "profile": "main",
+    "replicate": 3,
+    "run_id": "v7-js-untyped-r3",
+    "source_files": 1,
+    "source_loc": 1283,
+    "stray_javascript_files": [],
+    "stray_typescript_files": [],
+    "termination": "round_timeout",
+    "typing": {
+      "classes": 1,
+      "function_declarations": 22,
+      "jsdoc_type_tags": {
+        "param": 0,
+        "returns": 0,
+        "type": 0,
+        "typedef": 0
+      },
+      "ts_check_pragmas": 0,
+      "typeof_guards": 0
+    },
+    "visible_build_outcomes": {
+      "ok": 2
+    }
+  },
+  {
+    "bash_commands": 179,
+    "command_intents": {
+      "compiler_runs": 44,
+      "node_check_invocations": 28,
+      "self_tests": 5
+    },
+    "condition": "js-untyped",
+    "elapsed_hours": 1.5,
+    "final_audit_findings": {},
+    "guard_blocks_total": 1,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 2
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": true,
+    "hidden_final_score": 0.9679,
+    "hidden_last_buildable_score": 0.9679,
+    "language": "javascript",
+    "profile": "main",
+    "replicate": 4,
+    "run_id": "v7-js-untyped-r4",
+    "source_files": 16,
+    "source_loc": 2398,
+    "stray_javascript_files": [],
+    "stray_typescript_files": [],
+    "termination": "round_timeout",
+    "typing": {
+      "classes": 5,
+      "function_declarations": 55,
+      "jsdoc_type_tags": {
+        "param": 0,
+        "returns": 0,
+        "type": 0,
+        "typedef": 0
+      },
+      "ts_check_pragmas": 0,
+      "typeof_guards": 0
+    },
+    "visible_build_outcomes": {
+      "ok": 2
+    }
+  },
+  {
+    "bash_commands": 140,
+    "command_intents": {
+      "compiler_runs": 69,
+      "tsc_invocations": 27
+    },
+    "condition": "ts-strict",
+    "elapsed_hours": 1.5,
+    "final_audit_findings": {},
+    "guard_blocks_total": 1,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 2
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": true,
+    "hidden_final_score": 0.9667,
+    "hidden_last_buildable_score": 0.9667,
+    "language": "typescript",
+    "profile": "main",
+    "replicate": 1,
+    "run_id": "v7-ts-strict-r1",
+    "source_files": 6,
+    "source_loc": 2013,
+    "stray_javascript_files": [],
+    "stray_typescript_files": [],
+    "termination": "round_timeout",
+    "typing": {
+      "any_count": 0,
+      "as_casts": 2,
+      "as_const": 2,
+      "classes": 4,
+      "enums": 0,
+      "function_declarations": 9,
+      "function_declarations_with_return_type": 8,
+      "interfaces": 31,
+      "method_declarations": 56,
+      "method_declarations_with_return_type": 56,
+      "non_null_assertions": 0,
+      "parameter_annotation_share": 1.0,
+      "parameters": 56,
+      "parameters_annotated": 56,
+      "ts_suppressions": {
+        "expect_error": 0,
+        "ignore": 0,
+        "nocheck": 0
+      },
+      "type_aliases": 8,
+      "unknown_count": 0
+    },
+    "visible_build_outcomes": {
+      "ok": 2
+    }
+  },
+  {
+    "bash_commands": 109,
+    "command_intents": {
+      "compiler_runs": 31,
+      "self_tests": 5,
+      "tsc_invocations": 22
+    },
+    "condition": "ts-strict",
+    "elapsed_hours": 1.5,
+    "final_audit_findings": {},
+    "guard_blocks_total": 2,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 1,
+      "type_error": 1
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": false,
+    "hidden_final_score": 0.0,
+    "hidden_last_buildable_score": 0.9167,
+    "language": "typescript",
+    "profile": "main",
+    "replicate": 2,
+    "run_id": "v7-ts-strict-r2",
+    "source_files": 6,
+    "source_loc": 2224,
+    "stray_javascript_files": [
+      "local-tests/tools/brute.js",
+      "local-tests/tools/difftest.js",
+      "local-tests/tools/fuzz1.js",
+      "local-tests/tools/fuzzcrash.js",
+      "local-tests/tools/rejects.js"
+    ],
+    "stray_typescript_files": [],
+    "termination": "round_timeout",
+    "typing": {
+      "any_count": 0,
+      "as_casts": 2,
+      "as_const": 0,
+      "classes": 2,
+      "enums": 0,
+      "function_declarations": 29,
+      "function_declarations_with_return_type": 28,
+      "interfaces": 11,
+      "method_declarations": 31,
+      "method_declarations_with_return_type": 31,
+      "non_null_assertions": 0,
+      "parameter_annotation_share": 1.0,
+      "parameters": 55,
+      "parameters_annotated": 55,
+      "ts_suppressions": {
+        "expect_error": 0,
+        "ignore": 0,
+        "nocheck": 0
+      },
+      "type_aliases": 6,
+      "unknown_count": 0
+    },
+    "visible_build_outcomes": {
+      "ok": 1,
+      "type_error": 1
+    }
+  },
+  {
+    "bash_commands": 93,
+    "command_intents": {
+      "compiler_runs": 33,
+      "direct_ts_runs": 1,
+      "tsc_invocations": 21
+    },
+    "condition": "ts-strict",
+    "elapsed_hours": 1.5,
+    "final_audit_findings": {},
+    "guard_blocks_total": 0,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 2
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": true,
+    "hidden_final_score": 0.9653,
+    "hidden_last_buildable_score": 0.9653,
+    "language": "typescript",
+    "profile": "main",
+    "replicate": 3,
+    "run_id": "v7-ts-strict-r3",
+    "source_files": 6,
+    "source_loc": 2082,
+    "stray_javascript_files": [],
+    "stray_typescript_files": [],
+    "termination": "round_timeout",
+    "typing": {
+      "any_count": 0,
+      "as_casts": 3,
+      "as_const": 1,
+      "classes": 4,
+      "enums": 0,
+      "function_declarations": 6,
+      "function_declarations_with_return_type": 6,
+      "interfaces": 30,
+      "method_declarations": 62,
+      "method_declarations_with_return_type": 62,
+      "non_null_assertions": 0,
+      "parameter_annotation_share": 0.941,
+      "parameters": 51,
+      "parameters_annotated": 48,
+      "ts_suppressions": {
+        "expect_error": 0,
+        "ignore": 0,
+        "nocheck": 0
+      },
+      "type_aliases": 5,
+      "unknown_count": 2
+    },
+    "visible_build_outcomes": {
+      "ok": 2
+    }
+  },
+  {
+    "bash_commands": 107,
+    "command_intents": {
+      "compiler_runs": 30,
+      "tsc_invocations": 26
+    },
+    "condition": "ts-strict",
+    "elapsed_hours": 1.29,
+    "final_audit_findings": {},
+    "guard_blocks_total": 1,
+    "guard_blocks_typing": 0,
+    "guard_typing_subjects": [],
+    "hidden_build_outcomes": {
+      "ok": 3
+    },
+    "hidden_final_audit_ok": true,
+    "hidden_final_build_ok": true,
+    "hidden_final_score": 0.9667,
+    "hidden_last_buildable_score": 0.9667,
+    "language": "typescript",
+    "profile": "main",
+    "replicate": 4,
+    "run_id": "v7-ts-strict-r4",
+    "source_files": 6,
+    "source_loc": 2015,
+    "stray_javascript_files": [
+      "scratch/gen.js"
+    ],
+    "stray_typescript_files": [],
+    "termination": "visible_complete_after_review",
+    "typing": {
+      "any_count": 0,
+      "as_casts": 3,
+      "as_const": 0,
+      "classes": 6,
+      "enums": 0,
+      "function_declarations": 19,
+      "function_declarations_with_return_type": 19,
+      "interfaces": 12,
+      "method_declarations": 42,
+      "method_declarations_with_return_type": 42,
+      "non_null_assertions": 0,
+      "parameter_annotation_share": 0.98,
+      "parameters": 50,
+      "parameters_annotated": 49,
+      "ts_suppressions": {
+        "expect_error": 0,
+        "ignore": 0,
+        "nocheck": 0
+      },
+      "type_aliases": 6,
+      "unknown_count": 0
+    },
+    "visible_build_outcomes": {
+      "ok": 3
+    }
+  }
+]
