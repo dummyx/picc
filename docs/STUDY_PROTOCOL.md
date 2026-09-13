@@ -303,9 +303,14 @@ baseline sharing its replicate identifier. Use paired bootstrap/permutation
 intervals when the repetition count supports it, and do not pool
 language/scaffold variants into a prompt/spec treatment estimate.
 
-A later factorial experiment should be limited to interactions justified by the
-first study, such as specification detail x test feedback. Running all factors
-as a full factorial initially would be expensive and difficult to interpret.
+A factorial manifest (`design: "factorial"`, `factors: [...]`) is limited to
+interactions justified by the one-factor cohorts; the first is specification
+detail x test access (`studies/spectests/study.json`). The validator requires a
+full crossing, and each combined cell must reuse the single-factor overlays it
+combines. Each cell is still paired with its replicate's baseline; main effects
+and the interaction are pre-registered per cohort and computed by the cohort's
+analysis script. Running all factors as a full factorial would be expensive and
+difficult to interpret.
 
 ## Creation-method studies
 

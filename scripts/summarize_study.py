@@ -1481,7 +1481,11 @@ def markdown(study: dict[str, Any], rows: list[dict[str, Any]], groups: list[dic
         "",
         "## Interpretation boundary",
         "",
-        "- Conditions are one-factor variants against a shared baseline; this is not a full factorial design.",
+        (
+            "- Conditions are a full crossing of the declared factors; every cell is paired with the baseline of its replicate, and interactions are for the per-cohort analysis script."
+            if study.get("design") == "factorial"
+            else "- Conditions are one-factor variants against a shared baseline; this is not a full factorial design."
+        ),
         "- Language, framework, and scaffold conditions are external-validity blocks. Their effects include the implementation substrate and should not be interpreted as pure prompt effects.",
         "- Provenance records how a specification or test suite was created. Creation method is causal only when multiple independently created, coverage-matched artifacts are replicated.",
         "- Artifact quality here is objective behavioral correctness, build/audit status, authored tests, regressions, and size/churn. No LLM-as-judge score is used.",

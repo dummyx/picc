@@ -129,6 +129,27 @@ find runs/.study-materializations/inspect-tests-none -maxdepth 3 -type f
 A study run keeps its materialization for audited resume and post-hoc evaluation.
 Generated materializations and results remain under ignored `runs/` paths.
 
+## Specification x tests study (factorial)
+
+`spectests/study.json` (`picc-spectests-v1`, seed 20260914) is the first
+factorial manifest: `design` is `factorial` and `factors` names the two
+crossed blocks, `specification` and `tests`. The four cells are the starter
+`baseline`, `spec-minimal` (a specification reduced to the product interface
+and a one-line-per-stage feature list, `studies/assets/specs/minimal.md`),
+the starter `tests-none`, and `spec-minimal-tests-none`, whose `factor` is
+`specification+tests`. The validator requires every non-empty combination of
+the factors exactly once and requires a combined cell to carry, block for
+block, the overlays of the single-factor cells it combines. Every cell is
+paired with the baseline of its replicate in the summary; the interaction is
+computed by the cohort's analysis script (`docs/PRE_REGISTRATION_v9.md`).
+
+```bash
+make study-validate STUDY=studies/spectests/study.json
+make study-schedule STUDY=studies/spectests/study.json REPLICATES=3 PROFILE=main
+make study-run STUDY=studies/spectests/study.json CONDITION=spec-minimal-tests-none PROFILE=main RUN_ID=v9-spec-minimal-tests-none-r1 REPLICATE=1
+make study-summary STUDY=studies/spectests/study.json
+```
+
 ## Adding a condition
 
 Add a small overlay to `conditions` in a study manifest. The condition is deep

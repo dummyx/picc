@@ -4,6 +4,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -559,3 +560,99 @@ class TypesStudyTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SpecTestsStudyManifestTests(unittest.TestCase):
+    """The specification x tests manifest: a full 2x2 crossing of the starter's spec and tests factors."""
+
+    STUDY = ROOT / "studies" / "spectests" / "study.json"
+
+    def test_manifest_is_a_full_crossing_of_the_two_factors(self) -> None:
+        payload, conditions = study.load_study(self.STUDY)
+        self.assertRegex(payload["id"], r"^picc-spectests-v\d+$")
+        self.assertEqual(payload["design"], "factorial")
+        self.assertEqual(payload["factors"], ["specification", "tests"])
+        self.assertEqual(payload["baseline_condition"], "baseline")
+        self.assertEqual(
+            [row["id"] for row in conditions],
+            ["baseline", "spec-minimal", "tests-none", "spec-minimal-tests-none"],
+        )
+        _, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        starter = {row["id"]: row for row in starter_conditions}
+        by_id = {row["id"]: row for row in conditions}
+        self.assertEqual(by_id["baseline"], starter["baseline"])
+        self.assertEqual(by_id["tests-none"], starter["tests-none"])
+        self.assertEqual(by_id["spec-minimal"]["factor"], "specification")
+        self.assertEqual(by_id["spec-minimal-tests-none"]["factor"], "specification+tests")
+        both = by_id["spec-minimal-tests-none"]
+        self.assertEqual(both["specification"], by_id["spec-minimal"]["specification"])
+        self.assertEqual(both["tests"], by_id["tests-none"]["tests"])
+        for block in ("prompt", "candidate", "reference", "environment", "budget"):
+            for row in conditions:
+                self.assertEqual(row[block], starter["baseline"][block], f"{row['id']}.{block}")
+
+    def test_minimal_specification_is_interface_and_feature_list_only(self) -> None:
+        text = (ROOT / "studies" / "assets" / "specs" / "minimal.md").read_text(encoding="utf-8")
+        for variable in ("{{LANGUAGE}}", "{{BUILD_COMMAND}}", "{{ENTRY_COMMAND}}", "{{DEPENDENCY_POLICY}}"):
+            self.assertIn(variable, text)
+        self.assertEqual(len([line for line in text.splitlines() if re.match(r"^\d+\. ", line)]), 10)
+        for behavioral_detail in ("precedence", "associativ", "System V", "short-circuit", "Sandler", "Writing a C Compiler"):
+            self.assertNotIn(behavioral_detail, text)
+        full = (ROOT / "studies" / "assets" / "specs" / "behavioral.md").read_text(encoding="utf-8")
+        self.assertLess(len(text.split()), len(full.split()) / 3)
+
+
+class FactorialDesignValidationTests(unittest.TestCase):
+    """validate_design accepts a full crossing and rejects partial or inconsistent ones."""
+
+    def load(self) -> tuple[dict, list[dict]]:
+        return study.load_study(ROOT / "studies" / "spectests" / "study.json")
+
+    def write(self, payload: dict) -> Path:
+        directory = Path(tempfile.mkdtemp(prefix="factorial-", dir=ROOT / "studies"))
+        self.addCleanup(shutil.rmtree, directory, True)
+        path = directory / "study.json"
+        path.write_text(json.dumps(payload), encoding="utf-8")
+        return path
+
+    def raw(self) -> dict:
+        return json.loads((ROOT / "studies" / "spectests" / "study.json").read_text(encoding="utf-8"))
+
+    def test_accepts_the_full_crossing(self) -> None:
+        payload, conditions = self.load()
+        self.assertEqual(len(conditions), 4)
+
+    def test_rejects_a_missing_cell(self) -> None:
+        raw = self.raw()
+        raw["conditions"] = [row for row in raw["conditions"] if row["id"] != "spec-minimal-tests-none"]
+        with self.assertRaisesRegex(study.StudyError, "every non-empty combination"):
+            study.load_study(self.write(raw))
+
+    def test_rejects_a_factor_label_that_does_not_match_the_changed_blocks(self) -> None:
+        raw = self.raw()
+        for row in raw["conditions"]:
+            if row["id"] == "spec-minimal-tests-none":
+                row["factor"] = "tests"
+        with self.assertRaisesRegex(study.StudyError, "declares \\['tests'\\] but changes"):
+            study.load_study(self.write(raw))
+
+    def test_rejects_a_combined_cell_whose_overlay_differs_from_the_single_factor_cell(self) -> None:
+        raw = self.raw()
+        for row in raw["conditions"]:
+            if row["id"] == "spec-minimal-tests-none":
+                row["specification"] = {"path": "studies/assets/specs/brief.md"}
+        with self.assertRaisesRegex(study.StudyError, "must equal the 'spec-minimal' overlay"):
+            study.load_study(self.write(raw))
+
+    def test_rejects_a_factor_outside_the_declared_factors(self) -> None:
+        raw = self.raw()
+        raw["factors"] = ["specification", "prompt"]
+        with self.assertRaisesRegex(study.StudyError, "subset of"):
+            study.load_study(self.write(raw))
+
+    def test_one_factor_manifests_still_reject_two_block_changes(self) -> None:
+        raw = self.raw()
+        raw["design"] = "one-factor-at-a-time"
+        del raw["factors"]
+        with self.assertRaisesRegex(study.StudyError, "OFAT"):
+            study.load_study(self.write(raw))

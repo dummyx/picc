@@ -37,6 +37,7 @@ from common import (
 
 SCHEMA_VERSION = 1
 MATERIALIZATION_SCHEMA_VERSION = 1
+VALID_DESIGNS = {"one-factor-at-a-time", "factorial"}
 VALID_DELIVERIES = {"task_file", "initial_prompt", "workspace_file"}
 VALID_TEST_ACCESS = {"none", "tool", "files"}
 VALID_FEEDBACK = {"none", "aggregate", "failures", "detailed"}
@@ -411,33 +412,91 @@ def load_study(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
 
 
 def validate_design(study: dict[str, Any], conditions: list[dict[str, Any]]) -> None:
+    """Check the declared design.
+
+    ``one-factor-at-a-time``: every non-baseline condition changes exactly the
+    one block its ``factor`` names.  ``factorial``: ``study.factors`` names two
+    or more blocks; every non-baseline condition's ``factor`` is the ``+``-joined
+    set of blocks it changes; every non-empty combination of the factors is
+    present exactly once; and a multi-factor cell carries, block for block, the
+    same overlay as the single-factor cells it combines, so the design is a
+    full crossing of the single-factor contrasts rather than an arbitrary set
+    of conditions.
+    """
     design = study.get("design")
     if design is None:
         return
-    if design != "one-factor-at-a-time":
+    if design not in VALID_DESIGNS:
         raise StudyError(f"Unsupported study design: {design!r}")
     baseline_id = require_string(study.get("baseline_condition"), "study.baseline_condition")
     baseline = next((row for row in conditions if row["id"] == baseline_id), None)
     if baseline is None:
         raise StudyError(f"Baseline condition not found: {baseline_id}")
     blocks = {"prompt", "specification", "tests", "candidate", "reference", "environment", "budget"}
+    factors: list[str] = []
+    if design == "factorial":
+        declared_factors = study.get("factors")
+        if (
+            not isinstance(declared_factors, list)
+            or len(declared_factors) < 2
+            or len(set(declared_factors)) != len(declared_factors)
+            or any(factor not in blocks for factor in declared_factors)
+        ):
+            raise StudyError("factorial design requires study.factors: two or more distinct condition blocks")
+        factors = [str(factor) for factor in declared_factors]
+    changed_by_id: dict[str, frozenset[str]] = {}
     for condition in conditions:
         if condition["id"] == baseline_id:
             continue
         factor = condition["factor"]
-        if factor not in blocks:
-            raise StudyError(
-                f"{condition['id']}: OFAT factor must name one condition block; got {factor!r}"
-            )
-        changed = {block for block in blocks if condition.get(block) != baseline.get(block)}
-        if changed != {factor}:
-            raise StudyError(
-                f"{condition['id']}: OFAT condition declares factor {factor!r} but changes {sorted(changed)}"
-            )
+        changed = frozenset(block for block in blocks if condition.get(block) != baseline.get(block))
+        if design == "one-factor-at-a-time":
+            if factor not in blocks:
+                raise StudyError(
+                    f"{condition['id']}: OFAT factor must name one condition block; got {factor!r}"
+                )
+            if changed != {factor}:
+                raise StudyError(
+                    f"{condition['id']}: OFAT condition declares factor {factor!r} but changes {sorted(changed)}"
+                )
+        else:
+            declared = frozenset(factor.split("+"))
+            if not declared or not declared <= set(factors):
+                raise StudyError(
+                    f"{condition['id']}: factorial factor must be a '+'-joined subset of {factors}; got {factor!r}"
+                )
+            if changed != declared:
+                raise StudyError(
+                    f"{condition['id']}: factorial condition declares {sorted(declared)} but changes {sorted(changed)}"
+                )
+            changed_by_id[condition["id"]] = changed
         if condition["tests"].get("hidden_partition") != baseline["tests"].get("hidden_partition"):
             raise StudyError(
-                f"{condition['id']}: hidden_partition must remain constant in an OFAT study"
+                f"{condition['id']}: hidden_partition must remain constant in a {design} study"
             )
+    if design != "factorial":
+        return
+    expected = {
+        frozenset(subset)
+        for mask in range(1, 1 << len(factors))
+        for subset in [[factors[index] for index in range(len(factors)) if mask & (1 << index)]]
+    }
+    seen = list(changed_by_id.values())
+    if sorted(map(sorted, seen)) != sorted(map(sorted, expected)):
+        raise StudyError(
+            "factorial design must contain every non-empty combination of "
+            f"{factors} exactly once; got {sorted(map(sorted, seen))}"
+        )
+    single = {next(iter(changed)): condition_id for condition_id, changed in changed_by_id.items() if len(changed) == 1}
+    by_id = {row["id"]: row for row in conditions}
+    for condition_id, changed in changed_by_id.items():
+        if len(changed) == 1:
+            continue
+        for factor in sorted(changed):
+            if by_id[condition_id][factor] != by_id[single[factor]][factor]:
+                raise StudyError(
+                    f"{condition_id}: block {factor!r} must equal the {single[factor]!r} overlay in a factorial design"
+                )
 
 
 def find_condition(study: dict[str, Any], conditions: list[dict[str, Any]], condition_id: str) -> dict[str, Any]:
