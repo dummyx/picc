@@ -1084,6 +1084,131 @@ lead, not a finding.
   0.96; the fuzzer is at 1.000 for six of eight runs.
 - One model, one task, two languages on one runtime.
 
+## 14. v8: pushed test feedback, and the last-buildable snapshot rule
+
+### 14.1 Design
+
+The last open question on the test factor: does feedback change anything
+when the agent cannot decline it? `tests-pushed` is `baseline` (on-demand
+`test_visible`, failure-level feedback) plus a harness-pushed report: at the
+end of any turn that continues, once ten minutes have elapsed since the round
+started or the last report, the tools extension runs the full visible
+evaluation and queues the same failure-level report the tool returns as a
+user message delivered before the next model call. The agent's guidance
+carries one sentence announcing it. Four replicates per arm in the frozen
+block order, image 0.4, same budget as v6/v7
+(`docs/PRE_REGISTRATION_v8.md`, manifest `picc-tests-v4`; baseline's
+resolved condition hash is unchanged since v3).
+
+The cohort also introduced the snapshot rule §13.4 asked for. The primary
+endpoints are both oracles on the **last buildable snapshot** (the last
+frozen snapshot whose hidden evaluation built and passed the audit); the
+harness scores that snapshot with the fuzz oracle as a second ledger row
+whenever the final one did not build, and the final-snapshot values are
+reported alongside for comparability.
+
+### 14.2 The harness check and treatment fidelity
+
+No run idled five minutes or more (maximum 0.7); the one "unanswered" bash
+call is the call in flight when baseline r1's cap fell (0.2 idle minutes);
+two commands were cut by the default timeout and recovered. Every
+`tests-pushed` run received exactly eight reports, at 10–13-minute
+spacing, carrying the visible score at that moment (for r4: 0, 0.88, 0.91,
+0.93, 0.93, 0.95, 0.98, 0.98). The pushed agents still called the tool
+themselves, less often (median 10.5 calls vs 16).
+
+### 14.3 Results
+
+| Run | Corpus (last buildable) | Fuzz (last buildable) | Corpus (final) | Fuzz (final) | Active / idle | Cut-offs | Output tokens | Turns | `test_visible` calls | Pushed | Source LOC | Self-tests |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| baseline r1 | 0.974 | 1.000 | 0.974 | 1.000 | 89.9 / 0.2 | 0 | 278,641 | 260 | 15 | 0 | 2,573 | 0 |
+| tests-pushed r1 | 0.940 | 0.996 | 0.940 | 0.996 | 89.3 / 0.7 | 0 | 282,709 | 283 | 8 | 8 | 2,240 | 0 |
+| baseline r2 | 0.961 | 1.000 | 0.961 | 1.000 | 89.5 / 0.6 | 0 | 292,619 | 267 | 11 | 0 | 2,657 | 0 |
+| tests-pushed r2 | 0.944 | 1.000 | 0.944 | 1.000 | 89.5 / 0.6 | 1 | 267,541 | 298 | 13 | 8 | 2,616 | 179 |
+| baseline r3 | 0.939 | 1.000 | 0.939 | 1.000 | 90.0 / 0.1 | 0 | 295,945 | 273 | 23 | 0 | 2,165 | 0 |
+| tests-pushed r3 | 0.951 | 1.000 | 0.951 | 1.000 | 89.5 / 0.6 | 0 | 295,139 | 301 | 13 | 8 | 2,454 | 173 |
+| baseline r4 | 0.950 | 1.000 | 0.950 | 1.000 | 89.8 / 0.3 | 0 | 301,838 | 297 | 17 | 0 | 2,282 | 227 |
+| tests-pushed r4 | 0.894 | 0.932 | 0.000 | 0.000 | 89.4 / 0.7 | 1 | 276,086 | 195 | 5 | 8 | 2,596 | 41 |
+
+Paired `tests-pushed` − `baseline`:
+
+| Endpoint | r1 | r2 | r3 | r4 | Paired median | Beyond ±0.13 |
+|---|---:|---:|---:|---:|---:|---|
+| Corpus, last buildable (primary) | −0.033 | −0.017 | +0.012 | −0.056 | **−0.025** | 0 of 4 |
+| Fuzz, last buildable (primary) | −0.004 | 0.000 | 0.000 | −0.068 | **−0.002** | 0 of 4 |
+| Corpus, final snapshot | −0.033 | −0.017 | +0.012 | −0.950 | −0.025 | 1 below |
+| Fuzz, final snapshot | −0.004 | 0.000 | 0.000 | −1.000 | −0.002 | 1 below |
+
+No detectable effect on either primary endpoint. Baseline medians 0.956
+(corpus, sd 0.015) and 1.000 (fuzz); pushed 0.942 (sd 0.026) and 0.998.
+Three of four corpus differences are small and negative, one small and
+positive; the fuzzer is at or within 0.07 of the ceiling everywhere. This is
+the fourth cohort on the test factor and the fourth null: none, on demand,
+and pushed feedback produce the same compilers.
+
+### 14.4 The snapshot rule did its job
+
+`tests-pushed` r4 was mid-edit of `parser.rs` when the cap fell (a struct
+field added on one side of a refactor and not the other), so its final
+snapshot does not build. Under the v6/v7 rule the replicate reads −0.950 on
+the corpus and −1.000 on the fuzzer, and the cohort's fuzz endpoint would
+have shown one replicate beyond the threshold. Under the pre-registered rule
+the run scores its round-0 snapshot, 0.894 / 0.932, and the contrast reads
+as the other three replicates do. Its own pushed reports show what the cap
+discarded: a compiler at 0.98 on the visible tests two minutes before the
+snapshot. That is the remaining limitation of round-end snapshots; the
+pushed condition's report trail is a finer trajectory the harness could
+snapshot on in a later cohort.
+
+### 14.5 What pushing changes
+
+Paired resource and code endpoints (`tests-pushed` − `baseline`, medians of
+per-replicate deltas):
+
+| Endpoint | baseline median | tests-pushed median | Median delta |
+|---|---:|---:|---:|
+| pushed reports | 0 | 8 | +8 |
+| `test_visible` calls | 16 | 10.5 | −8.5 |
+| assistant turns | 270 | 291 | +26 |
+| tool calls | 286 | 302 | +26 |
+| output tokens | 294,282 | 279,398 | −12,942 |
+| active minutes | 89.9 | 89.5 | −0.5 |
+| compiler source LOC | 2,428 | 2,471 | +83 |
+| functions | 72 | 62 | −12 |
+| self-written test programs | 0 | 107 | +87 |
+| self-test LOC | 134 | 907 | +742 |
+| compile ms per hidden test | 7.4 | 7.4 | 0.0 |
+
+Pushed reports partly displace asking (about half as many on-demand calls)
+and, unexpectedly, produce far more self-written test programs: three of
+four pushed agents left 41–179 C programs behind, against none in three of
+four baseline runs. The report names failing test ids (`chapter_5/valid/…`)
+but not their contents, and the agents reconstruct the cases they cannot
+see. Turns rise by about 10%, tokens and time do not.
+
+### 14.6 What this settles
+
+- **Test feedback, in any form this harness can deliver, does not change
+  behavioral correctness on this task.** Withheld (v3, v5, v6), on demand
+  (every cohort), or pushed every ten minutes (v8): the compilers are the
+  same within noise, with the clean cohorts' variance.
+- **It changes the work again, in a new direction:** pushed agents ask
+  less, test more by hand, and take more turns for the same result.
+- **The last-buildable rule removes the cap artifact without touching the
+  harness.** It caught the one cap-cut final in this cohort; with it, no
+  run in v8 is a measurement accident.
+
+### 14.7 Limitations
+
+- Four replicates resolve about 0.13; three small negative corpus
+  differences at n=4 are not evidence of a small harmful effect.
+- The round-end snapshot rule still discards work done after the last
+  buildable commit (up to 45 minutes; here about 2 minutes of a 0.98
+  compiler).
+- The pushed report is failure-level; a detailed or aggregate variant was
+  not tested.
+- One model, one task, one language.
+
 ---
 
 Per-run process detail: [`process-report.md`](process-report.md). Raw metrics:
