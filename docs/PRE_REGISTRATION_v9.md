@@ -304,4 +304,45 @@ No harness change followed the pilots.
 
 ## Amendments
 
-(none yet)
+### Amendment 1 (2026-09-13 18:20 UTC, during run 2 of 12): advisory audit findings and the last-buildable rule
+
+**What was observed.** Run 1 (`v9-spec-minimal-r1`) ended with a final
+snapshot that did not build (two unresolved references at the cap). Its
+round-0 snapshot built and scored 0.7835 on the corpus, with one *advisory*
+(non-blocking) audit finding: the compiler reads an environment variable
+`PICC_DEBUG` for a debug switch (`src/main.rs:77`), which the audit reports
+as "credential or environment inspection" without zeroing the score. The
+evaluator, the summarizer, and `analysis/v9_results.py` all implement the
+last-buildable rule as "built, no blocking finding, **and `audit_ok` not
+false**", and `audit_ok` is false whenever any finding exists, advisory ones
+included. So no last-buildable row was written for run 1, and the three
+implementations would score the run 0 / 0 on both primary endpoints, while
+the same snapshot as a final would have scored 0.7835 with the advisory
+finding noted. No run in v6–v8 had an advisory-only finding on any
+snapshot, so the clause never bit before; this is the first time.
+
+**Declared rule (before the corrected fuzz value is known).** "Passed the
+audit" in the last-buildable rule means *no blocking finding*, exactly as
+for a final snapshot: an advisory finding neither zeroes a final nor
+disqualifies a snapshot from being the last buildable one. The corpus value
+for run 1's last buildable snapshot is therefore the frozen round-0 value,
+0.7835; its fuzz value is unknown at the time of this amendment and will be
+computed post hoc.
+
+**Handling.** Per the exclusion rules, this is a measurement-layer
+implementation defect and is handled by amendment and re-score, not by
+exclusion and not by touching the running cohort: no script changes until
+the chain exits. After the twelfth run, the third clause is corrected in
+`scripts/evaluate_run.py`, `scripts/summarize_study.py`, and
+`analysis/v9_results.py` (with a unit test for an advisory-only snapshot),
+and `study-hidden-all` is re-run for every v9 run with the corrected rule.
+The re-score must reproduce every already-frozen corpus and fuzz value
+exactly (as in v6 Amendment 2); its only permitted effect is to add the
+missing `last_buildable` fuzz row for runs whose last buildable snapshot
+carries an advisory-only finding. Runs affected are listed in the results
+section with both the frozen and the corrected values. The v6–v8 frozen
+values are unaffected (no such snapshot exists in those cohorts).
+
+**Why it matters.** Under the frozen rule, run 1 would have read as a
+−0.95 / −1.0 replicate on the primary endpoints purely by artifact, the
+same failure mode the last-buildable rule was introduced to remove.
