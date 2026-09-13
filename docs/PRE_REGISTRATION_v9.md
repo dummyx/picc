@@ -346,3 +346,45 @@ values are unaffected (no such snapshot exists in those cohorts).
 **Why it matters.** Under the frozen rule, run 1 would have read as a
 −0.95 / −1.0 replicate on the primary endpoints purely by artifact, the
 same failure mode the last-buildable rule was introduced to remove.
+
+### Amendment 2 (2026-09-13 21:25 UTC, during run 4 of 12): workspace-wide dependency audit
+
+**What was observed.** Run 3 (`v9-tests-none-r1`, full specification, tests
+withheld) scored 0 on both snapshots with `audit_blocking: true`. The single
+blocking finding is `kind: dependency, path: devtools/Cargo.toml, value:
+picc`: the agent created a separate crate `devtools/` (its own x86-64
+simulator, assembler checker, and fuzzer for self-testing, after the guard
+blocked a `which gcc cc as ld …` probe and it concluded no assembler was
+available), with `picc = { path = ".." }` as its only dependency and its
+own `[workspace]` table. The product crate at the root has an empty
+dependency table and the frozen build command (`cargo build --release
+--offline` at the root) does not compile `devtools/`. The evaluator's
+dependency audit walks `workspace.rglob("Cargo.toml")` (both copies,
+`studies/runtime/evaluate.py:461` and `evaluator/evaluate.py`), so it
+audits manifests the build never uses. v6 Amendment 2 scoped the *source*
+scan to `src/` and the include closure; the *manifest* scan was left
+workspace-wide. The Node manifest scan (`package.json`) has the same shape.
+No v6–v8 snapshot carries a dependency finding, so the clause never bit
+before.
+
+**Declared rule (before any corrected value is known).** The dependency
+audit applies to the manifests the frozen build command compiles: the root
+manifest and, when the root declares a Cargo workspace with members, those
+members. A crate outside the build that depends on the candidate package by
+path is developer tooling, not a dependency of the candidate. The corpus and
+fuzz values of run 3's snapshots under this rule are unknown at the time of
+this amendment.
+
+**Handling.** Measurement-layer defect, handled as Amendment 1: no script
+changes until the chain exits; afterwards both evaluator copies are
+corrected (Rust and Node manifest scope, with a unit test for an
+out-of-build crate that depends on the candidate by path), and
+`study-hidden-all` is re-run for every v9 run. The re-score must reproduce
+every already-frozen corpus and fuzz value exactly except for snapshots
+whose only blocking finding is an out-of-build manifest, which are listed
+with both the frozen and the corrected values. The guard's block of the
+`which gcc cc as ld` probe is the frozen guard's documented behavior since
+v4 and is not amended; its consequence for this run (a self-written
+simulator instead of the system assembler) is reported as a process
+observation.
+
