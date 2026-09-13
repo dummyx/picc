@@ -13,6 +13,16 @@ study. An additive controlled-study layer covers prespecified prompt,
 specification, test-access, implementation-substrate, and reference-access
 conditions; see [`STUDIES.md`](STUDIES.md).
 
+## Results so far
+
+Seven pre-registered cohorts (59 main runs) varied prompts, specifications,
+test access, test feedback, and static typing one factor at a time. None
+detectably changed the compiler's behavioral correctness; each changed how
+the agent worked. The campaign summary, per-cohort sections, and the harness
+defects found along the way are in [`analysis/report.md`](analysis/report.md);
+pre-registrations are under `docs/PRE_REGISTRATION*.md`; session reports for
+the project owner under `docs/REPORT_*.md`.
+
 ## Frozen default configuration
 
 | Item | Default |

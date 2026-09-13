@@ -1,16 +1,50 @@
-# PiCC: prompt and specification strategy
+# PiCC: what changes the compiler a coding agent builds
 
-How prompt and specification strategy affect a coding agent building a C compiler
-from an empty repository.
+Seven cohorts, 59 pre-registered main runs, one model building a C compiler
+from an empty repository under a fixed budget. Prompts, specifications, test
+access, test feedback, and static typing were each varied one at a time.
 
-**Headline: no specification or prompt strategy separated from baseline.** Fifteen
-runs across five conditions, three replicates each, produced a cohort standard
-deviation of 0.039 — and no condition's median differs from baseline by more than
-that. The instructive results are elsewhere: the harness defects we found while
-looking were each large enough to have manufactured a false answer, and the least
-instructed condition performed at least as well as the most instructed one.
+## Summary of the campaign (v2–v8)
 
-- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle); §10 added 2026-09-11 (the v5 cohort under the revised oracle)
+**No manipulated factor detectably changed behavioral correctness.** Every
+contrast sits inside the pre-registered noise band on both oracles once the
+harness stopped manufacturing differences:
+
+| Cohort | Factor (variant vs baseline) | n per arm | Corpus, paired median | Fuzz, paired median | Harness state |
+|---|---|---:|---:|---:|---|
+| v2 (§1–6) | four prompt/specification strategies | 3 | within one sd (0.039) of baseline | all at ceiling | original oracle; hang hazard |
+| v3 (§7) | tests withheld | 3 | −0.136 (candidate effect) | −0.238 (re-score) | original oracle; hang hazard |
+| v4 (§8) | TypeScript strict vs JavaScript | 3 | +0.026 | 0.000 (re-score) | original oracle; hang hazard |
+| v5 (§10) | tests withheld | 4 | −0.022 | −0.044 | revised oracle; hang hazard |
+| v6 (§12) | tests withheld | 4 | −0.017 | 0.000 | clean |
+| v7 (§13) | TypeScript strict vs JavaScript | 4 | +0.004 | +0.001 | clean |
+| v8 (§14) | test reports pushed every 10 min | 4 | −0.025 | −0.002 | clean, last-buildable rule |
+
+The v3 candidate effect was the hang lottery (§10.3, §11): in every cohort
+before v6 the dominant variance was a shell command that never returned,
+and once bounded (§12.1) the spread of the corpus score fell from 0.50 to
+0.08 and every contrast collapsed to noise.
+
+**What the factors do change is the work, not the product.** Withholding
+tests costs about 100 more turns and 500 more lines of compiler (§12.5);
+pushing test reports halves on-demand test calls and multiplies self-written
+tests tenfold (§14.5); strict typing adds 40% more source and an order of
+magnitude more self-tests in fewer turns (§13.5); the specification
+strategies cost 50–90% more tokens for the same result (§11). Time and
+correctness are the same throughout: this model saturates stages 1–10 in
+90 active minutes whatever it is told.
+
+**The harness was the experiment.** Six measurement defects were found and
+fixed, each large enough to have produced a false result: an output-token
+cap (§3.1), workspace-wide source audits in two languages (§3.2, §8.5,
+§12.4), a terminal round timeout (§3.3), the `#ifdef` preprocessing artifact
+(§3.5, §9), Pi's shell tool having no default timeout (§12.1), and the
+round cap falling inside refactors (§13.4, §14.4). Each was found by a
+pre-registered check, logged as an amendment, and repaired for the next
+cohort without touching the running one. Analysis code, pre-registrations,
+and raw ledgers for every cohort are in this repository.
+
+- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle); §10 added 2026-09-11 (the v5 cohort under the revised oracle); §11–12 added 2026-09-12 (tokens/time/code exploration; v6 with the bash default timeout); §13 added 2026-09-12 (v7, static typing on the clean harness); §14 added 2026-09-13 (v8, pushed feedback and the last-buildable rule)
 - Model: local Qwen3.8-27B (UD-Q4_K_XL) via llama.cpp, single RTX 5090
 - Profile: pilot — 45-min round cap, 2 h wall budget, stages 1–6
 - Scoring: hidden-partition macro average over 59 held-out tests, never shown to
