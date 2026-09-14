@@ -15,10 +15,13 @@ conditions; see [`STUDIES.md`](STUDIES.md).
 
 ## Results so far
 
-Seven pre-registered cohorts (59 main runs) varied prompts, specifications,
-test access, test feedback, and static typing one factor at a time. None
-detectably changed the compiler's behavioral correctness; each changed how
-the agent worked. The campaign summary, per-cohort sections, and the harness
+Eight pre-registered cohorts (71 main runs) varied prompts, specifications,
+test access, test feedback, and static typing one factor at a time, then
+crossed specification detail with test access. None detectably changed the
+compiler's behavioral correctness on the corpus oracle; each changed how the
+agent worked. The one candidate effect with a mechanism (v9: without tests,
+two of three agents replaced the assembler with a self-written simulator) is
+awaiting replication. The campaign summary, per-cohort sections, and the harness
 defects found along the way are in [`analysis/report.md`](analysis/report.md);
 pre-registrations are under `docs/PRE_REGISTRATION*.md`; session reports for
 the project owner under `docs/REPORT_*.md`.

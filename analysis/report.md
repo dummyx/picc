@@ -1,14 +1,17 @@
 # PiCC: what changes the compiler a coding agent builds
 
-Seven cohorts, 59 pre-registered main runs, one model building a C compiler
+Eight cohorts, 71 pre-registered main runs, one model building a C compiler
 from an empty repository under a fixed budget. Prompts, specifications, test
-access, test feedback, and static typing were each varied one at a time.
+access, test feedback, and static typing were each varied one at a time; the
+last cohort crossed specification detail with test access.
 
-## Summary of the campaign (v2–v8)
+## Summary of the campaign (v2–v9)
 
-**No manipulated factor detectably changed behavioral correctness.** Every
-contrast sits inside the pre-registered noise band on both oracles once the
-harness stopped manufacturing differences:
+**No manipulated factor detectably changed behavioral correctness on the
+corpus oracle.** Every contrast sits inside the pre-registered noise band
+once the harness stopped manufacturing differences; the one contrast beyond
+the band on the fuzz oracle (v9, tests withheld under the full specification)
+has an identified mechanism and awaits replication (§15):
 
 | Cohort | Factor (variant vs baseline) | n per arm | Corpus, paired median | Fuzz, paired median | Harness state |
 |---|---|---:|---:|---:|---|
@@ -19,13 +22,18 @@ harness stopped manufacturing differences:
 | v6 (§12) | tests withheld | 4 | −0.017 | 0.000 | clean |
 | v7 (§13) | TypeScript strict vs JavaScript | 4 | +0.004 | +0.001 | clean |
 | v8 (§14) | test reports pushed every 10 min | 4 | −0.025 | −0.002 | clean, last-buildable rule |
+| v9 (§15) | minimal specification (with tests / without) | 3 | −0.070 / +0.046 | −0.020 / +0.200 | clean, 2×2 |
+| v9 (§15) | tests withheld (full spec / minimal spec) | 3 | −0.104 / −0.067 | **−0.200** / +0.016 | clean, 2×2 |
 
 The v3 candidate effect was the hang lottery (§10.3, §11): in every cohort
 before v6 the dominant variance was a shell command that never returned,
 and once bounded (§12.1) the spread of the corpus score fell from 0.50 to
 0.08 and every contrast collapsed to noise.
 
-**What the factors do change is the work, not the product.** Withholding
+**What the factors do change is the work, not the product.** A 143-word
+specification with no behavioral rules produces a compiler within noise of
+the full one on both oracles, but 60–80% larger and with features the task
+never asked for (§15.5); withholding
 tests costs about 100 more turns and 500 more lines of compiler (§12.5);
 pushing test reports halves on-demand test calls and multiplies self-written
 tests tenfold (§14.5); strict typing adds 40% more source and an order of
@@ -34,17 +42,19 @@ strategies cost 50–90% more tokens for the same result (§11). Time and
 correctness are the same throughout: this model saturates stages 1–10 in
 90 active minutes whatever it is told.
 
-**The harness was the experiment.** Six measurement defects were found and
+**The harness was the experiment.** Eight measurement defects were found and
 fixed, each large enough to have produced a false result: an output-token
 cap (§3.1), workspace-wide source audits in two languages (§3.2, §8.5,
 §12.4), a terminal round timeout (§3.3), the `#ifdef` preprocessing artifact
-(§3.5, §9), Pi's shell tool having no default timeout (§12.1), and the
-round cap falling inside refactors (§13.4, §14.4). Each was found by a
+(§3.5, §9), Pi's shell tool having no default timeout (§12.1), the
+round cap falling inside refactors (§13.4, §14.4), an advisory audit note
+disqualifying a buildable snapshot (§15.4), and a workspace-wide manifest
+audit zeroing a compiler for its developer tooling (§15.4). Each was found by a
 pre-registered check, logged as an amendment, and repaired for the next
 cohort without touching the running one. Analysis code, pre-registrations,
 and raw ledgers for every cohort are in this repository.
 
-- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle); §10 added 2026-09-11 (the v5 cohort under the revised oracle); §11–12 added 2026-09-12 (tokens/time/code exploration; v6 with the bash default timeout); §13 added 2026-09-12 (v7, static typing on the clean harness); §14 added 2026-09-13 (v8, pushed feedback and the last-buildable rule)
+- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle); §10 added 2026-09-11 (the v5 cohort under the revised oracle); §11–12 added 2026-09-12 (tokens/time/code exploration; v6 with the bash default timeout); §13 added 2026-09-12 (v7, static typing on the clean harness); §14 added 2026-09-13 (v8, pushed feedback and the last-buildable rule); §15 added 2026-09-14 (v9, specification detail × test access)
 - Model: local Qwen3.8-27B (UD-Q4_K_XL) via llama.cpp, single RTX 5090
 - Profile: pilot — 45-min round cap, 2 h wall budget, stages 1–6
 - Scoring: hidden-partition macro average over 59 held-out tests, never shown to
@@ -1248,3 +1258,215 @@ see. Turns rise by about 10%, tokens and time do not.
 Per-run process detail: [`process-report.md`](process-report.md). Raw metrics:
 [`process-metrics.json`](process-metrics.json). Regenerate with
 `python3 analysis/process_metrics.py --json analysis/process-metrics.json > analysis/process-report.md`.
+
+---
+
+## 15. The v9 cohort: specification detail × test access (2×2)
+
+Pre-registered in `docs/PRE_REGISTRATION_v9.md` (commit `1e566f5`, harness
+`f2e81b9`; two amendments during the cohort, `09f261d` and `2ff1245`, fixes
+applied after it, `198bbb0`). Twelve runs, 2026-09-13 16:35 to 09-14 10:42
+UTC, image 0.4, the same model, budget, and oracles as v6–v8. Four cells,
+three replicates each, in the frozen block order: `baseline` (full
+behavioral specification, tests on demand), `spec-minimal` (a 143-word
+specification: interface, output contract, ten one-line stage names,
+dependency policy; no behavioral rules, no mention of the book),
+`tests-none`, and `spec-minimal-tests-none`. Digest:
+`analysis/v9-results.md`; script: `analysis/v9_results.py`; corrected
+ledgers for the two amended runs: `analysis/v9-rescore/`.
+
+### 15.1 Every run
+
+Primary endpoints on the last buildable snapshot; the final-snapshot values
+differ only for `spec-minimal` r1 (final cut mid-rewrite, 0 / 0).
+
+| Cell | Rep | Corpus | Fuzz | Turns | Source LOC | Own tests | `as`/`ld` calls | Note |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| baseline | 1 | 0.974 | 1.000 | 292 | 2012 | 72 | 18 | |
+| baseline | 2 | 0.955 | 0.996 | 291 | 2159 | 1 | — | |
+| baseline | 3 | 0.971 | 1.000 | 199 | 2159 | 10 | — | |
+| spec-minimal | 1 | 0.784 | 0.727 | 334 | 2964 | 0 | — | round-0 snapshot; final did not build (Amendment 1) |
+| spec-minimal | 2 | 0.946 | 1.000 | 302 | 4351 | 0 | — | |
+| spec-minimal | 3 | 0.901 | 0.980 | 338 | 3529 | 0 | — | |
+| tests-none | 1 | 0.869 | 0.800 | 258 | 2016 | 0 | 0 | own simulator crate; frozen 0 / 0 (Amendment 2) |
+| tests-none | 2 | 0.924 | 1.000 | 336 | 2346 | 137 | 54 | |
+| tests-none | 3 | 0.682 | 0.200 | 276 | 2100 | 0 | 0 | own interpreter; 800 fuzz programs fail to assemble |
+| spec-minimal-tests-none | 1 | 0.915 | 1.000 | 241 | 3545 | 34 | 7 | |
+| spec-minimal-tests-none | 2 | 0.879 | 0.996 | 210 | 4268 | 12 | 2 | |
+| spec-minimal-tests-none | 3 | 0.825 | 0.996 | 190 | 3918 | 13 | 34 | |
+
+Per cell, corpus median (range): baseline 0.971 (0.955–0.974),
+spec-minimal 0.901 (0.784–0.946), tests-none 0.869 (0.682–0.924),
+spec-minimal-tests-none 0.879 (0.825–0.915). Fuzz: 1.000, 0.980, 0.800,
+0.996.
+
+### 15.2 The pre-registered contrasts
+
+Paired by replicate, median with the per-replicate deltas; threshold 0.13.
+
+| Contrast | Corpus | Fuzz |
+|---|---|---|
+| specification: `spec-minimal` − `baseline` (tests on demand) | −0.070 (−0.190, −0.010, −0.070); 1 of 3 beyond | −0.020 (−0.273, +0.004, −0.020); 1 of 3 beyond |
+| specification: both − `tests-none` (tests withheld) | +0.046 (+0.046, −0.045, +0.142); 1 of 3 beyond | **+0.200** (+0.200, −0.004, +0.796); 2 of 3 above |
+| tests: `tests-none` − `baseline` (full specification) | −0.104 (−0.104, −0.032, −0.289); 1 of 3 beyond | **−0.200** (−0.200, +0.004, −0.800); 2 of 3 below |
+| tests: both − `spec-minimal` (minimal specification) | −0.067 (+0.131, −0.067, −0.077); 1 of 3 beyond | +0.016 (+0.273, −0.004, +0.016); 1 of 3 beyond |
+| both − `baseline` | −0.076 (−0.059, −0.076, −0.146); 1 of 3 beyond | 0.000 (0, 0, −0.004); 0 of 3 |
+| interaction (both − `tests-none`) − (`spec-minimal` − `baseline`) | +0.212 (+0.236, −0.035, +0.212) | +0.473 (+0.473, −0.008, +0.816) |
+
+**Specification.** On the corpus, both simple effects of the minimal
+specification are inside the band, negative with tests on demand (−0.070)
+and positive without tests (+0.046). On the fuzz oracle the minimal
+specification costs nothing with tests (−0.020, one replicate beyond, the
+cap-cut r1) and is *ahead* by +0.200 without tests, two of three above the
+threshold, because the cell it is compared with (`tests-none` under the
+full specification) contains the two worst compilers of the cohort. So the
+first pre-declared reading applies to the specification factor: the
+behavioral specification is redundant with what the model brings, and the
+agent with the 143-word version builds a compiler that agrees with GCC on
+random programs as often as the agent with the 114-line one. What the
+minimal specification does lose is the rejection conventions of the test
+suite (§15.3).
+
+**Tests.** Under the full specification, withholding tests reads −0.104 on
+the corpus (inside the band) and **−0.200 on the fuzz oracle, two of three
+replicates below the threshold**: by the pre-registered fuzz rule an
+unresolved verdict, and by the corpus rule a candidate effect warranting
+replication. This is the first tests contrast in five cohorts (v3, v5, v6,
+v8, v9) with a mechanism rather than a lottery behind it (§15.4). Under the
+minimal specification the same contrast is null (−0.067 / +0.016).
+
+**Interaction.** Positive on both oracles in two of three replicates: the
+specification effect is more favorable, and the tests effect less
+favorable, under the full specification than under the minimal one. Both
+are the same two runs.
+
+### 15.3 What the minimal specification costs: rejection conventions
+
+The minimal-specification cells lose their corpus points on invalid
+programs the compiler accepts: 6, 6, 8 (with tests) and 6, 7, 11 (without)
+wrongly accepted per run, against 2, 4, 4 in `baseline` and 3, 4, 4 in
+`tests-none`. Which malformed programs must be rejected, and how strictly,
+is a convention of this test suite that the full specification states and
+the minimal one does not; the fuzz oracle, which only generates valid
+programs, does not see it. Valid-program behavior is the same in all four
+cells (fuzz within 0.02 for every buildable final except the two simulator
+runs).
+
+### 15.4 What withholding tests costs: the self-oracle substitution
+
+Two of the three `tests-none` runs under the full specification never
+invoked the system assembler. Both wrote their own model of the machine and
+tested the compiler against that:
+
+- r1 built a separate `devtools/` crate (an x86-64 simulator, assembler
+  checker, and fuzzer, 1500 lines) after the guard blocked its
+  `which gcc cc as ld …` probe and it concluded no assembler existed. Its
+  compiler builds and scores 0.869 / 0.800; 200 fuzz programs fail to
+  assemble.
+- r3 wrote a 1492-line interpreter "that understands exactly the
+  instruction subset PiCC emits" under `tests/` and used it for 143 shell
+  commands without once calling `as`. Its compiler scores 0.682 / 0.200;
+  800 of 1000 fuzz programs fail to assemble from stage 3 on.
+
+The third run (r2) called `as`/`ld` 54 times, wrote 137 C programs, and
+scores 0.924 / 1.000, like the v6 `tests-none` runs (42–63 assembler calls
+each; one also wrote a simulator, alongside the assembler). No
+minimal-specification run substituted a simulator; all six called the
+assembler (2–34 times) and all six agree with GCC on at least 99.6% of
+random programs. The pilots showed why: the minimal specification says
+nothing about the assembly dialect, so the agent goes to the assembler to
+find out; the full specification describes GNU-compatible x86-64 System V
+output in enough detail that an agent can convince itself it knows the
+target without checking. The agent is a reliable oracle for C semantics,
+which it knows, and an unreliable one for assembler syntax, which it must
+check empirically; when it replaces the empirical check with its own model,
+it validates its compiler against its own misunderstanding.
+
+Two measurement defects surfaced on these runs and were handled by
+amendment before any corrected value was known:
+
+- **Amendment 1** (`spec-minimal` r1): the final snapshot did not build;
+  the round-0 snapshot built at 0.784 with one *advisory* audit finding
+  (`std::env::var("PICC_DEBUG")`, a debug switch). All three
+  implementations of the last-buildable rule required `audit_ok`, which is
+  false for advisory findings too, so the run would have read 0 / 0 by
+  artifact. Rule declared: "passed the audit" means no blocking finding,
+  as for a final. Corrected: 0.784 / 0.727.
+- **Amendment 2** (`tests-none` r1): the dependency audit walked every
+  `Cargo.toml` in the workspace and flagged the `devtools/` crate's path
+  dependency on the compiler, zeroing both snapshots although the product
+  crate's dependency table is empty and the crate is never built. Rule
+  declared: the dependency audit applies to the manifests the frozen build
+  compiles. Corrected: 0.869 / 0.800 (frozen 0 / 0).
+
+Both fixes (`198bbb0`, with unit tests for each case and the Node analogue)
+were applied after the twelfth run, and every v9 run was re-scored with the
+corrected evaluator from a scratch copy of its frozen materialization: 9 of
+12 reproduce their frozen corpus and fuzz values exactly, the two amended
+runs change as declared, and one unaffected run
+(`spec-minimal-tests-none` r2) moves from 0.996 to 0.997 because one of
+1000 fuzz programs flips between wrong behavior and pass across executions
+(a nondeterministic candidate, not the evaluator); its frozen value is kept.
+The frozen ledgers are untouched; the corrected ones are in
+`analysis/v9-rescore/` and are primary only for the two amended runs. The
+study summarizer (`runs/study-results/picc-spectests-v1/`) still reads the
+frozen ledgers and therefore shows the pre-amendment zeros for those two
+runs.
+
+### 15.5 Secondary endpoints
+
+Per-cell medians, paired deltas against `baseline` in brackets:
+
+| | baseline | spec-minimal | tests-none | spec-minimal-tests-none |
+|---|---:|---:|---:|---:|
+| output tokens | 290k | 290k [−3k] | 280k [−12k] | 282k [−9k] |
+| active minutes | 89.0 | 90.3 [+1.1] | 88.8 [−0.2] | 89.2 [0.0] |
+| assistant turns | 291 | 334 [+42] | 276 [+45] | 210 [−51] |
+| `test_visible` calls | 18 | 19 [−6] | 0 | 0 |
+| source LOC | 2159 | 3529 [+1370] | 2100 [+4] | 3918 [+1759] |
+| functions | 61 | 108 [+45] | 67 [+4] | 124 [+61] |
+| self-written test programs | 10 | 0 [−10] | 0 [−10] | 13 [+3] |
+| self-test LOC | 55 | 0 | 1303 [+1300] | 306 [+303] |
+
+Time and tokens are flat, as in every cohort. The minimal specification
+adds 60–80% more compiler source and 70–100% more functions in the same
+time: the agents implement shifts, pointers, unsigned and long integers,
+and other features the stage list never names (the self-written test files
+are named `03_types.c`, `06_shift.c`, `s11_ptr.c`). With the minimal
+specification *and* the test tool, no run wrote a single test program of
+its own; the tool was called 19 times per run and did all the checking.
+
+Fidelity and harness check: every materialization's `TASK.md` is the cell's
+specification; the `tests-none` cells made one `test_visible` call in
+twelve runs (r1, answered "withheld", no information returned); no session
+in the `tests-none` cells names the book, its author, or its chapters,
+except one design-pattern reference to "the writing a C compiler blog" in
+`spec-minimal-tests-none` r3 (the with-tests cells see `chapter_N` test ids
+in the tool's reports). No run had an unanswered shell call; five commands
+were cut by the default timeout and all recovered; one run
+(`spec-minimal-tests-none` r1) is flagged at 5.7 idle minutes, which is a
+14-minute first turn plus the turn in progress when the cap fell, not a
+hang; one final snapshot was cut by the cap and scored by the
+last-buildable rule.
+
+### 15.6 Reading
+
+The question the cohort was built to answer, whether the agent needs the
+specification or the tests, has a two-part answer. It does not need the
+specification: on this task the language itself is the specification, the
+model knows it, and the written document's only measurable contribution is
+the test suite's rejection conventions, worth about 0.05 on the corpus and
+nothing on the fuzz oracle. It does need *an* oracle for the parts it
+cannot derive: when the visible tests are withheld under a specification
+that describes the target in detail, two of three agents replaced the
+assembler with a model of the assembler and shipped compilers whose output
+does not assemble. That is a candidate effect with a mechanism, not a
+lottery, and the natural replication is a `tests-none` cohort with four or
+more replicates that records assembler use as a pre-declared mediator.
+
+The cohort also closes the specification factor on this task: no wording of
+a C specification can test whether specifications matter for a model that
+already has C. The next task has to carry rules the model cannot recall
+(altered semantics, or an unseen language), which the v2 and v9 results
+together now justify.
+

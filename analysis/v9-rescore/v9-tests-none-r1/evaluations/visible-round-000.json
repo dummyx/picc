@@ -1,0 +1,2800 @@
+{
+  "build": null,
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "elapsed_seconds": 0.011829853057861328,
+  "input_policy": {
+    "fallback_to_raw_on_failure": true,
+    "preprocess": "-E -P -C -nostdinc -x c",
+    "raw_fallbacks": []
+  },
+  "partition": "visible",
+  "schema_version": 1,
+  "selection": {
+    "count": 227,
+    "latest_only": false,
+    "max_stage": 10,
+    "test_id": null
+  },
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": true,
+    "blocking_findings": [
+      {
+        "kind": "dependency",
+        "path": "devtools/Cargo.toml",
+        "reason": "dependency is outside the frozen candidate policy",
+        "table": "dependencies",
+        "value": "picc"
+      }
+    ],
+    "findings": [
+      {
+        "kind": "dependency",
+        "path": "devtools/Cargo.toml",
+        "reason": "dependency is outside the frozen candidate policy",
+        "table": "dependencies",
+        "value": "picc"
+      }
+    ],
+    "passed": false,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 6
+  },
+  "source_revision": "ae12014d2dec14488f3f80d14df4b6d8e4634d7d",
+  "summary": {
+    "audit_blocking": true,
+    "audit_ok": false,
+    "build_ok": false,
+    "failed": 227,
+    "failures": [
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_lex/backslash.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_lex/backtick.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_lex/invalid_identifier.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/end_before_expr.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/extra_junk.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/invalid_function_name.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/missing_type.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/no_semicolon.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/not_expression.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/space_in_keyword.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/unclosed_brace.c",
+        "stage": 1,
+        "validity": "invalid"
+      },
+      {
+        "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "chapter_1/invalid_parse/unclosed_paren.c",
+        "stage": 1,
+        "validity": "invalid"
+      }
+    ],
+    "micro_score": 0.0,
+    "passed": 0,
+    "score": 0.0,
+    "stages": {
+      "1": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 12
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 16,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "10": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 20
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 28,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 8
+        }
+      },
+      "2": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 5
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 14,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 9
+        }
+      },
+      "3": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 6
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 17,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 11
+        }
+      },
+      "4": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 25,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 21
+        }
+      },
+      "5": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 15
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 29,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 14
+        }
+      },
+      "6": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 8
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 23,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 15
+        }
+      },
+      "7": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 6
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 14,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 8
+        }
+      },
+      "8": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 11
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 26,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 15
+        }
+      },
+      "9": {
+        "invalid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 21
+        },
+        "passed": 0,
+        "score": 0.0,
+        "total": 35,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 14
+        }
+      }
+    },
+    "total": 227
+  },
+  "tests": [
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_lex/backslash.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_lex/backtick.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_lex/invalid_identifier.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/end_before_expr.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/extra_junk.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/invalid_function_name.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/missing_type.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/no_semicolon.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/not_expression.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/space_in_keyword.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/unclosed_brace.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/invalid_parse/unclosed_paren.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/valid/multi_digit.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/valid/newlines.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/valid/no_newlines.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_1/valid/tabs.c",
+      "passed": false,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/invalid_parse/extra_paren.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/invalid_parse/missing_const.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/invalid_parse/nested_missing_const.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/invalid_parse/parenthesize_operand.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/invalid_parse/wrong_order.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/bitwise_int_min.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/neg.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/negate_int_max.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/nested_ops.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/nested_ops_2.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/parens.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/parens_2.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/parens_3.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_2/valid/redundant_parens.c",
+      "passed": false,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/invalid_parse/double_operation.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/invalid_parse/imbalanced_paren.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/invalid_parse/misplaced_semicolon.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/invalid_parse/missing_open_paren.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/invalid_parse/missing_second_op.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/invalid_parse/no_semicolon.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/add.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/associativity_2.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/associativity_3.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/associativity_and_precedence.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/div_neg.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/mod.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/mult.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/parens.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/precedence.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/sub.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_3/valid/unop_parens.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/invalid_parse/missing_const.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/invalid_parse/missing_operand.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/invalid_parse/missing_second_op.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/invalid_parse/unary_missing_semicolon.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/and_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/associativity.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/compare_arithmetic_results.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/eq_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/eq_precedence.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/ge_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/ge_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/gt_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/gt_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/le_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/le_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/multi_short_circuit.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/ne_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/ne_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/not_sum.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/not_sum_2.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/not_zero.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/operate_on_booleans.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/or_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/or_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_4/valid/precedence.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/compound_invalid_operator.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/invalid_specifier.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/invalid_variable_name.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/malformed_compound_assignment.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/malformed_decrement.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/malformed_less_equal.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/malformed_not_equal.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_parse/missing_semicolon.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_semantics/invalid_lvalue_2.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_semantics/mixed_precedence_assignment.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_semantics/undeclared_var.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_semantics/undeclared_var_and.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_semantics/undeclared_var_compare.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_semantics/undeclared_var_unary.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/invalid_semantics/use_then_redefine.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/allocate_temps_and_vars.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/assign.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/assign_val_in_initializer.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/empty_function_body.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/kw_var_names.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/local_var_missing_return.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/mixed_precedence_assignment.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/null_statement.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/null_then_return.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/return_var.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/short_circuit_and_fail.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/short_circuit_or.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/use_assignment_result.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_5/valid/use_val_in_own_initializer.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_parse/empty_if_body.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_parse/if_assignment.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_parse/if_no_parens.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_parse/malformed_ternary_2.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_parse/mismatched_nesting.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_parse/wrong_ternary_delimiter.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_semantics/invalid_var_in_if.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/invalid_semantics/undeclared_var_in_ternary.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/assign_ternary.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/binary_condition.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/binary_false_condition.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/if_nested.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/if_not_taken.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/lh_assignment.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/nested_ternary.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/nested_ternary_2.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/rh_assignment.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/ternary.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/ternary_middle_assignment.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/ternary_middle_binop.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/ternary_rh_binop.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/ternary_short_circuit.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_6/valid/ternary_short_circuit_2.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/invalid_parse/missing_brace.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/invalid_parse/missing_semicolon.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/invalid_parse/ternary_blocks.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/invalid_semantics/double_define.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/invalid_semantics/out_of_scope.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/invalid_semantics/use_before_declare.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/assign_to_self.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/assign_to_self_2.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/empty_blocks.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/hidden_then_visible.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/hidden_variable.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/multiple_vars_same_name.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/similar_var_names.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_7/valid/use_in_inner_scope.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/decl_as_loop_body.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/do_extra_semicolon.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/do_missing_semicolon.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/extra_for_header_clause.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/invalid_for_declaration.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/missing_for_header_clause.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/paren_mismatch.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_parse/while_missing_paren.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_semantics/continue_not_in_loop.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_semantics/out_of_scope_do_loop.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/invalid_semantics/out_of_scope_loop_variable.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/break.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/continue.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/continue_empty_post.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/empty_expression.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/empty_loop_body.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/for.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/for_absent_post.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/for_decl.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/for_decl_no_init.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/for_nested_shadow.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/multi_break.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/nested_continue.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/nested_loop.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/null_for_header.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_8/valid/while.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_declarations/decl_params_with_same_name.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_declarations/redefine_fun_as_var.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_declarations/redefine_parameter.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_declarations/redefine_var_as_fun.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_declarations/wrong_parameter_names.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/call_non_identifier.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/fun_decl_for_loop.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/funcall_wrong_closing_delim.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/function_returning_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/trailing_comma.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/trailing_comma_decl.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/unclosed_paren_decl.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_parse/var_init_in_param_list.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/assign_fun_to_variable.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/assign_value_to_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/conflicting_function_declarations.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/conflicting_local_function_declaration.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/divide_by_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/multiple_function_definitions.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/multiple_function_definitions_2.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/invalid_types/too_many_args.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/arguments_in_registers/expression_args.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/arguments_in_registers/fibonacci.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/arguments_in_registers/forward_decl_multi_arg.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/arguments_in_registers/hello_world.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/arguments_in_registers/parameter_shadows_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/arguments_in_registers/parameters_are_preserved.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/no_arguments/forward_decl.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/no_arguments/function_shadows_variable.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/no_arguments/multiple_declarations.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/no_arguments/no_return_value.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/no_arguments/precedence.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/no_arguments/use_function_in_expression.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/no_arguments/variable_shadows_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_9/valid/stack_arguments/call_putchar.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_declarations/conflicting_local_declarations.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_declarations/extern_follows_local_var.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_declarations/extern_follows_static_local_var.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_declarations/out_of_scope_extern_var.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_declarations/redefine_param_as_identifier_with_linkage.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_declarations/undeclared_global_variable.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_parse/extern_param.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_parse/missing_type_specifier.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_parse/multi_storage_class_fun.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_parse/static_and_extern.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_parse/static_param.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/conflicting_function_linkage.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/conflicting_global_definitions.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/conflicting_variable_linkage.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/extern_for_loop_counter.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/redeclare_file_scope_var_as_fun.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/redeclare_fun_as_file_scope_var.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/static_block_scope_function_declaration.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/static_for_loop_counter.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/invalid_types/use_file_scope_variable_as_fun.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/distinct_local_and_extern.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/extern_block_scope_variable.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/multiple_static_file_scope_vars.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/multiple_static_local.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/shadow_static_local_var.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/static_recursive_call.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/static_then_extern.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"dependency\", \"path\": \"devtools/Cargo.toml\", \"reason\": \"dependency is outside the frozen candidate policy\", \"table\": \"dependencies\", \"value\": \"picc\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "id": "chapter_10/valid/type_before_storage_class.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    }
+  ],
+  "timestamp": "2026-09-13T20:21:41Z",
+  "workspace": "/workspace"
+}

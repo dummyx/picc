@@ -1,0 +1,940 @@
+{
+  "v9": [
+    {
+      "active_minutes": 88.4,
+      "amended": false,
+      "assistant_turns": 292,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 7,
+      "condition": "baseline",
+      "final_build_seconds": 0.57,
+      "frozen_fuzz": 1.0,
+      "frozen_hidden_traj": [
+        0.9361,
+        0.9736
+      ],
+      "functions": 61,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_lb": 1.0,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9736,
+      "hidden_failures": {
+        "unexpected_accept": 2,
+        "unexpected_reject": 1
+      },
+      "hidden_invalid": "45/47",
+      "hidden_lb": 0.9736,
+      "hidden_passed": "101/104",
+      "hidden_valid": "56/57",
+      "hours": 1.5,
+      "idle_minutes": 1.7,
+      "in_tokens": 334410,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.33,
+      "out_tokens": 281673,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 1,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          1.0
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.9361,
+        0.9736
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-baseline-r1",
+      "self_test_loc": 930,
+      "self_test_programs": 72,
+      "source_loc": 2012,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 18,
+      "tool_calls": 303,
+      "traj": [
+        0.9361,
+        0.9736
+      ],
+      "visible": 0.9518
+    },
+    {
+      "active_minutes": 90.5,
+      "amended": true,
+      "assistant_turns": 334,
+      "audit_ok": false,
+      "bash_timeouts": 0,
+      "build_ok": false,
+      "compactions": 8,
+      "condition": "spec-minimal",
+      "final_build_seconds": 0.15,
+      "frozen_fuzz": 0.0,
+      "frozen_hidden_traj": [
+        0.7835,
+        0.0
+      ],
+      "functions": 90,
+      "fuzz": 0.0,
+      "fuzz_kinds": {},
+      "fuzz_lb": 0.727,
+      "fuzz_stages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hangs": [],
+      "hidden": 0.0,
+      "hidden_failures": {
+        "build_failure": 104
+      },
+      "hidden_invalid": "0/47",
+      "hidden_lb": 0.7835,
+      "hidden_passed": "0/104",
+      "hidden_valid": "0/57",
+      "hours": 1.51,
+      "idle_minutes": 0.2,
+      "in_tokens": 262237,
+      "last_buildable_round": 0,
+      "median_test_compile_ms": null,
+      "out_tokens": 291491,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 1,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          0.0
+        ],
+        [
+          "last_buildable",
+          0.727
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.7835,
+        0.0
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-spec-minimal-r1",
+      "self_test_loc": 0,
+      "self_test_programs": 0,
+      "source_loc": 2964,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 5,
+      "tool_calls": 341,
+      "traj": [
+        0.7835,
+        0.0
+      ],
+      "visible": 0.0
+    },
+    {
+      "active_minutes": 89.9,
+      "amended": true,
+      "assistant_turns": 258,
+      "audit_ok": true,
+      "bash_timeouts": 1,
+      "build_ok": true,
+      "compactions": 7,
+      "condition": "tests-none",
+      "final_build_seconds": null,
+      "frozen_fuzz": 0.0,
+      "frozen_hidden_traj": [
+        0.0,
+        0.0
+      ],
+      "functions": 54,
+      "fuzz": 0.8,
+      "fuzz_kinds": {
+        "assembly_or_link_failure": 200
+      },
+      "fuzz_lb": 0.8,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "hangs": [],
+      "hidden": 0.8692,
+      "hidden_failures": {
+        "assembly_or_link_failure": 5,
+        "execution_timeout": 1,
+        "unexpected_accept": 4,
+        "unexpected_reject": 4
+      },
+      "hidden_invalid": "43/47",
+      "hidden_lb": 0.8692,
+      "hidden_passed": "90/104",
+      "hidden_valid": "47/57",
+      "hours": 1.5,
+      "idle_minutes": 0.1,
+      "in_tokens": 264121,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": null,
+      "out_tokens": 302220,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 1,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          0.8
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.8637,
+        0.8692
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-tests-none-r1",
+      "self_test_loc": 0,
+      "self_test_programs": 0,
+      "source_loc": 2016,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 1,
+      "tool_calls": 283,
+      "traj": [
+        0.8637,
+        0.8692
+      ],
+      "visible": 0.0
+    },
+    {
+      "active_minutes": 84.4,
+      "amended": false,
+      "assistant_turns": 241,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 7,
+      "condition": "spec-minimal-tests-none",
+      "final_build_seconds": 0.61,
+      "frozen_fuzz": 1.0,
+      "frozen_hidden_traj": [
+        0.8579,
+        0.9149
+      ],
+      "functions": 125,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_lb": 1.0,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9149,
+      "hidden_failures": {
+        "unexpected_accept": 6,
+        "unexpected_reject": 4
+      },
+      "hidden_invalid": "41/47",
+      "hidden_lb": 0.9149,
+      "hidden_passed": "94/104",
+      "hidden_valid": "53/57",
+      "hours": 1.5,
+      "idle_minutes": 5.7,
+      "in_tokens": 272748,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.41,
+      "out_tokens": 272731,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 1,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          1.0
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.8579,
+        0.9149
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-spec-minimal-tests-none-r1",
+      "self_test_loc": 1729,
+      "self_test_programs": 34,
+      "source_loc": 3545,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 277,
+      "traj": [
+        0.8579,
+        0.9149
+      ],
+      "visible": 0.9118
+    },
+    {
+      "active_minutes": 89.2,
+      "amended": false,
+      "assistant_turns": 291,
+      "audit_ok": true,
+      "bash_timeouts": 1,
+      "build_ok": true,
+      "compactions": 8,
+      "condition": "baseline",
+      "final_build_seconds": 0.92,
+      "frozen_fuzz": 0.996,
+      "frozen_hidden_traj": [
+        0.904,
+        0.9554
+      ],
+      "functions": 63,
+      "fuzz": 0.996,
+      "fuzz_kinds": {
+        "wrong_behavior": 4
+      },
+      "fuzz_lb": 0.996,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.98,
+        1.0,
+        0.99,
+        0.99,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9554,
+      "hidden_failures": {
+        "execution_timeout": 1,
+        "unexpected_accept": 4,
+        "unexpected_reject": 1
+      },
+      "hidden_invalid": "43/47",
+      "hidden_lb": 0.9554,
+      "hidden_passed": "98/104",
+      "hidden_valid": "55/57",
+      "hours": 1.5,
+      "idle_minutes": 0.9,
+      "in_tokens": 245017,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.38,
+      "out_tokens": 290427,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 2,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          0.996
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.904,
+        0.9554
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-baseline-r2",
+      "self_test_loc": 3,
+      "self_test_programs": 1,
+      "source_loc": 2159,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 14,
+      "tool_calls": 293,
+      "traj": [
+        0.904,
+        0.9554
+      ],
+      "visible": 0.9657
+    },
+    {
+      "active_minutes": 90.3,
+      "amended": false,
+      "assistant_turns": 302,
+      "audit_ok": true,
+      "bash_timeouts": 1,
+      "build_ok": true,
+      "compactions": 8,
+      "condition": "spec-minimal",
+      "final_build_seconds": 0.71,
+      "frozen_fuzz": 1.0,
+      "frozen_hidden_traj": [
+        0.7393,
+        0.9458
+      ],
+      "functions": 108,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_lb": 1.0,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9458,
+      "hidden_failures": {
+        "unexpected_accept": 6,
+        "unexpected_reject": 2
+      },
+      "hidden_invalid": "41/47",
+      "hidden_lb": 0.9458,
+      "hidden_passed": "96/104",
+      "hidden_valid": "55/57",
+      "hours": 1.51,
+      "idle_minutes": 0.2,
+      "in_tokens": 259485,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.35,
+      "out_tokens": 287647,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 2,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          1.0
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.7393,
+        0.9458
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-spec-minimal-r2",
+      "self_test_loc": 0,
+      "self_test_programs": 0,
+      "source_loc": 4351,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 19,
+      "tool_calls": 312,
+      "traj": [
+        0.7393,
+        0.9458
+      ],
+      "visible": 0.9271
+    },
+    {
+      "active_minutes": 88.3,
+      "amended": false,
+      "assistant_turns": 336,
+      "audit_ok": true,
+      "bash_timeouts": 1,
+      "build_ok": true,
+      "compactions": 7,
+      "condition": "tests-none",
+      "final_build_seconds": 0.47,
+      "frozen_fuzz": 1.0,
+      "frozen_hidden_traj": [
+        0.9236,
+        0.9236
+      ],
+      "functions": 67,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_lb": 1.0,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9236,
+      "hidden_failures": {
+        "unexpected_accept": 3,
+        "unexpected_reject": 4
+      },
+      "hidden_invalid": "44/47",
+      "hidden_lb": 0.9236,
+      "hidden_passed": "97/104",
+      "hidden_valid": "53/57",
+      "hours": 1.5,
+      "idle_minutes": 1.8,
+      "in_tokens": 248455,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.36,
+      "out_tokens": 278866,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 2,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          1.0
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.9236,
+        0.9236
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-tests-none-r2",
+      "self_test_loc": 1303,
+      "self_test_programs": 137,
+      "source_loc": 2346,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 344,
+      "traj": [
+        0.9236,
+        0.9236
+      ],
+      "visible": 0.9181
+    },
+    {
+      "active_minutes": 89.2,
+      "amended": false,
+      "assistant_turns": 210,
+      "audit_ok": true,
+      "bash_timeouts": 1,
+      "build_ok": true,
+      "compactions": 9,
+      "condition": "spec-minimal-tests-none",
+      "final_build_seconds": 1.0,
+      "frozen_fuzz": 0.996,
+      "frozen_hidden_traj": [
+        0.0,
+        0.879
+      ],
+      "functions": 124,
+      "fuzz": 0.996,
+      "fuzz_kinds": {
+        "wrong_behavior": 4
+      },
+      "fuzz_lb": 0.996,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.98,
+        0.98
+      ],
+      "hangs": [],
+      "hidden": 0.879,
+      "hidden_failures": {
+        "compiler_crash": 3,
+        "execution_timeout": 1,
+        "unexpected_accept": 7,
+        "unexpected_reject": 2,
+        "wrong_behavior": 2
+      },
+      "hidden_invalid": "40/47",
+      "hidden_lb": 0.879,
+      "hidden_passed": "89/104",
+      "hidden_valid": "49/57",
+      "hours": 1.5,
+      "idle_minutes": 0.9,
+      "in_tokens": 334020,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.5,
+      "out_tokens": 281594,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 2,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          0.997
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.0,
+        0.879
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-spec-minimal-tests-none-r2",
+      "self_test_loc": 306,
+      "self_test_programs": 12,
+      "source_loc": 4268,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 222,
+      "traj": [
+        0.0,
+        0.879
+      ],
+      "visible": 0.8924
+    },
+    {
+      "active_minutes": 89.0,
+      "amended": false,
+      "assistant_turns": 199,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 6,
+      "condition": "baseline",
+      "final_build_seconds": 0.62,
+      "frozen_fuzz": 1.0,
+      "frozen_hidden_traj": [
+        0.9653,
+        0.9708
+      ],
+      "functions": 56,
+      "fuzz": 1.0,
+      "fuzz_kinds": {},
+      "fuzz_lb": 1.0,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "hangs": [],
+      "hidden": 0.9708,
+      "hidden_failures": {
+        "unexpected_accept": 4
+      },
+      "hidden_invalid": "43/47",
+      "hidden_lb": 0.9708,
+      "hidden_passed": "100/104",
+      "hidden_valid": "57/57",
+      "hours": 1.5,
+      "idle_minutes": 1.1,
+      "in_tokens": 205088,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.29,
+      "out_tokens": 304222,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 3,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          1.0
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.9653,
+        0.9708
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-baseline-r3",
+      "self_test_loc": 55,
+      "self_test_programs": 10,
+      "source_loc": 2159,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 25,
+      "tool_calls": 217,
+      "traj": [
+        0.9653,
+        0.9708
+      ],
+      "visible": 0.9976
+    },
+    {
+      "active_minutes": 88.9,
+      "amended": false,
+      "assistant_turns": 338,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 8,
+      "condition": "spec-minimal",
+      "final_build_seconds": 0.81,
+      "frozen_fuzz": 0.98,
+      "frozen_hidden_traj": [
+        0.7532,
+        0.9012
+      ],
+      "functions": 139,
+      "fuzz": 0.98,
+      "fuzz_kinds": {
+        "rejected_valid_program": 15,
+        "wrong_behavior": 5
+      },
+      "fuzz_lb": 0.98,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        0.98,
+        0.99,
+        0.98,
+        1.0,
+        0.98,
+        0.93,
+        0.94
+      ],
+      "hangs": [],
+      "hidden": 0.9012,
+      "hidden_failures": {
+        "unexpected_accept": 8,
+        "unexpected_reject": 4
+      },
+      "hidden_invalid": "39/47",
+      "hidden_lb": 0.9012,
+      "hidden_passed": "92/104",
+      "hidden_valid": "53/57",
+      "hours": 1.5,
+      "idle_minutes": 1.3,
+      "in_tokens": 275069,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.37,
+      "out_tokens": 290202,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 3,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          0.98
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.7532,
+        0.9012
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-spec-minimal-r3",
+      "self_test_loc": 0,
+      "self_test_programs": 0,
+      "source_loc": 3529,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 19,
+      "tool_calls": 376,
+      "traj": [
+        0.7532,
+        0.9012
+      ],
+      "visible": 0.9257
+    },
+    {
+      "active_minutes": 88.8,
+      "amended": false,
+      "assistant_turns": 276,
+      "audit_ok": true,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 8,
+      "condition": "tests-none",
+      "final_build_seconds": 0.48,
+      "frozen_fuzz": 0.2,
+      "frozen_hidden_traj": [
+        0.4639,
+        0.6823
+      ],
+      "functions": 78,
+      "fuzz": 0.2,
+      "fuzz_kinds": {
+        "assembly_or_link_failure": 800
+      },
+      "fuzz_lb": 0.2,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hangs": [],
+      "hidden": 0.6823,
+      "hidden_failures": {
+        "assembly_or_link_failure": 31,
+        "unexpected_accept": 4,
+        "unexpected_reject": 4
+      },
+      "hidden_invalid": "43/47",
+      "hidden_lb": 0.6823,
+      "hidden_passed": "65/104",
+      "hidden_valid": "22/57",
+      "hours": 1.5,
+      "idle_minutes": 1.3,
+      "in_tokens": 381392,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.45,
+      "out_tokens": 280442,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 3,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          0.2
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.4639,
+        0.6823
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-tests-none-r3",
+      "self_test_loc": 1455,
+      "self_test_programs": 0,
+      "source_loc": 2100,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 280,
+      "traj": [
+        0.4639,
+        0.6823
+      ],
+      "visible": 0.6982
+    },
+    {
+      "active_minutes": 89.6,
+      "amended": false,
+      "assistant_turns": 190,
+      "audit_ok": false,
+      "bash_timeouts": 0,
+      "build_ok": true,
+      "compactions": 6,
+      "condition": "spec-minimal-tests-none",
+      "final_build_seconds": 0.78,
+      "frozen_fuzz": 0.996,
+      "frozen_hidden_traj": [
+        0.0,
+        0.8246
+      ],
+      "functions": 108,
+      "fuzz": 0.996,
+      "fuzz_kinds": {
+        "wrong_behavior": 4
+      },
+      "fuzz_lb": 0.996,
+      "fuzz_stages": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.97,
+        0.99
+      ],
+      "hangs": [],
+      "hidden": 0.8246,
+      "hidden_failures": {
+        "assembly_or_link_failure": 1,
+        "unexpected_accept": 11,
+        "unexpected_reject": 1,
+        "wrong_behavior": 5
+      },
+      "hidden_invalid": "36/47",
+      "hidden_lb": 0.8246,
+      "hidden_passed": "86/104",
+      "hidden_valid": "50/57",
+      "hours": 1.5,
+      "idle_minutes": 0.5,
+      "in_tokens": 222447,
+      "last_buildable_round": 1,
+      "median_test_compile_ms": 7.41,
+      "out_tokens": 301021,
+      "pushed_reports": 0,
+      "pushed_scores": [],
+      "replicate": 3,
+      "rescore_fuzz_rows": [
+        [
+          "final",
+          0.996
+        ]
+      ],
+      "rescore_hidden_traj": [
+        0.0,
+        0.8246
+      ],
+      "rescored": true,
+      "rounds": 2,
+      "run_id": "v9-spec-minimal-tests-none-r3",
+      "self_test_loc": 162,
+      "self_test_programs": 13,
+      "source_loc": 3918,
+      "stalls": 2,
+      "termination": "round_timeout",
+      "test_visible_calls": 0,
+      "tool_calls": 195,
+      "traj": [
+        0.0,
+        0.8246
+      ],
+      "visible": 0.8814
+    }
+  ]
+}

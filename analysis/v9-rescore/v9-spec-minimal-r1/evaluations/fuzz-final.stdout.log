@@ -1,0 +1,1 @@
+{"audit_blocking": false, "audit_ok": false, "build_ok": false, "deadline_hit": false, "evaluated_total": 0, "fuzz_macro": 0.0, "max_stage": 10, "mismatch_kinds": {}, "mismatches_total": 0, "passed_total": 0, "programs_per_stage": 100, "skipped_total": 0, "stage_pass_rates": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "stages_complete": 0}

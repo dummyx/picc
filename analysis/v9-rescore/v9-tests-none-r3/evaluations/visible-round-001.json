@@ -1,0 +1,2796 @@
+{
+  "build": {
+    "args": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "elapsed_seconds": 0.4830311299301684,
+    "returncode": 0,
+    "stderr": "   Compiling picc v0.1.0 (/workspace)\n    Finished `release` profile [optimized] target(s) in 0.47s\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "elapsed_seconds": 1.4021399021148682,
+  "input_policy": {
+    "fallback_to_raw_on_failure": true,
+    "preprocess": "-E -P -C -nostdinc -x c",
+    "raw_fallbacks": []
+  },
+  "partition": "visible",
+  "schema_version": 1,
+  "selection": {
+    "count": 227,
+    "latest_only": false,
+    "max_stage": 10,
+    "test_id": null
+  },
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 8
+  },
+  "source_revision": "ae12014d2dec14488f3f80d14df4b6d8e4634d7d",
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": true,
+    "failed": 80,
+    "failures": [
+      {
+        "detail": "/tmp/picc-test-3g9hic9q/output.s: Assembler messages:\n/tmp/picc-test-3g9hic9q/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3g9hic9q/output.s:14: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/add.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-vr0xb8ke/output.s: Assembler messages:\n/tmp/picc-test-vr0xb8ke/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-vr0xb8ke/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-vr0xb8ke/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-vr0xb8ke/output.s:20: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/associativity_2.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-5fflomu7/output.s: Assembler messages:\n/tmp/picc-test-5fflomu7/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:20: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:27: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:29: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:32: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:35: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/associativity_3.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-e2wmkxty/output.s: Assembler messages:\n/tmp/picc-test-e2wmkxty/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:26: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:29: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:32: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:37: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/associativity_and_precedence.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-m9wk5qx4/output.s: Assembler messages:\n/tmp/picc-test-m9wk5qx4/output.s:12: Error: invalid instruction suffix for `push'\n/tmp/picc-test-m9wk5qx4/output.s:15: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/div_neg.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-60rihb80/output.s: Assembler messages:\n/tmp/picc-test-60rihb80/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-60rihb80/output.s:14: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/mod.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-nblrzw19/output.s: Assembler messages:\n/tmp/picc-test-nblrzw19/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-nblrzw19/output.s:14: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/mult.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-8vvfzovo/output.s: Assembler messages:\n/tmp/picc-test-8vvfzovo/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-8vvfzovo/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-8vvfzovo/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-8vvfzovo/output.s:19: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/parens.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-qmdtuasu/output.s: Assembler messages:\n/tmp/picc-test-qmdtuasu/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-qmdtuasu/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-qmdtuasu/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-qmdtuasu/output.s:19: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/precedence.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-c6nf6jwy/output.s: Assembler messages:\n/tmp/picc-test-c6nf6jwy/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-c6nf6jwy/output.s:14: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/sub.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-gqhrnl88/output.s: Assembler messages:\n/tmp/picc-test-gqhrnl88/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-gqhrnl88/output.s:14: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_3/valid/unop_parens.c",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-862dyqvg/output.s: Assembler messages:\n/tmp/picc-test-862dyqvg/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-862dyqvg/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-862dyqvg/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-862dyqvg/output.s:25: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-862dyqvg/output.s:33: Error: invalid instruction suffix for `push'\n/tmp/picc-test-862dyqvg/output.s:36: Error: invalid instruction suffix for `pop'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_4/valid/associativity.c",
+        "stage": 4,
+        "validity": "valid"
+      }
+    ],
+    "micro_score": 0.6475770925110133,
+    "passed": 147,
+    "score": 0.6981926406926406,
+    "stages": {
+      "1": {
+        "invalid": {
+          "passed": 12,
+          "score": 1.0,
+          "total": 12
+        },
+        "passed": 16,
+        "score": 1.0,
+        "total": 16,
+        "valid": {
+          "passed": 4,
+          "score": 1.0,
+          "total": 4
+        }
+      },
+      "10": {
+        "invalid": {
+          "passed": 19,
+          "score": 0.95,
+          "total": 20
+        },
+        "passed": 19,
+        "score": 0.475,
+        "total": 28,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 8
+        }
+      },
+      "2": {
+        "invalid": {
+          "passed": 5,
+          "score": 1.0,
+          "total": 5
+        },
+        "passed": 14,
+        "score": 1.0,
+        "total": 14,
+        "valid": {
+          "passed": 9,
+          "score": 1.0,
+          "total": 9
+        }
+      },
+      "3": {
+        "invalid": {
+          "passed": 6,
+          "score": 1.0,
+          "total": 6
+        },
+        "passed": 6,
+        "score": 0.5,
+        "total": 17,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 11
+        }
+      },
+      "4": {
+        "invalid": {
+          "passed": 4,
+          "score": 1.0,
+          "total": 4
+        },
+        "passed": 8,
+        "score": 0.5952380952380952,
+        "total": 25,
+        "valid": {
+          "passed": 4,
+          "score": 0.19047619047619047,
+          "total": 21
+        }
+      },
+      "5": {
+        "invalid": {
+          "passed": 15,
+          "score": 1.0,
+          "total": 15
+        },
+        "passed": 25,
+        "score": 0.8571428571428572,
+        "total": 29,
+        "valid": {
+          "passed": 10,
+          "score": 0.7142857142857143,
+          "total": 14
+        }
+      },
+      "6": {
+        "invalid": {
+          "passed": 8,
+          "score": 1.0,
+          "total": 8
+        },
+        "passed": 15,
+        "score": 0.7333333333333334,
+        "total": 23,
+        "valid": {
+          "passed": 7,
+          "score": 0.4666666666666667,
+          "total": 15
+        }
+      },
+      "7": {
+        "invalid": {
+          "passed": 6,
+          "score": 1.0,
+          "total": 6
+        },
+        "passed": 10,
+        "score": 0.75,
+        "total": 14,
+        "valid": {
+          "passed": 4,
+          "score": 0.5,
+          "total": 8
+        }
+      },
+      "8": {
+        "invalid": {
+          "passed": 10,
+          "score": 0.9090909090909091,
+          "total": 11
+        },
+        "passed": 11,
+        "score": 0.48787878787878786,
+        "total": 26,
+        "valid": {
+          "passed": 1,
+          "score": 0.06666666666666667,
+          "total": 15
+        }
+      },
+      "9": {
+        "invalid": {
+          "passed": 20,
+          "score": 0.9523809523809523,
+          "total": 21
+        },
+        "passed": 23,
+        "score": 0.5833333333333333,
+        "total": 35,
+        "valid": {
+          "passed": 3,
+          "score": 0.21428571428571427,
+          "total": 14
+        }
+      }
+    },
+    "total": 227
+  },
+  "tests": [
+    {
+      "compile_seconds": 0.0005625328049063683,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_lex/backslash.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0004993840120732784,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_lex/backtick.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00029517803341150284,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_lex/invalid_identifier.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002797790803015232,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/end_before_expr.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002997857518494129,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/extra_junk.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025574397295713425,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/invalid_function_name.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002790680155158043,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/missing_type.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003063189797103405,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/no_semicolon.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002917810343205929,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/not_expression.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.000254280399531126,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/space_in_keyword.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002679671160876751,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/unclosed_brace.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.000246305949985981,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/unclosed_paren.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0076791695319116116,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00021028798073530197,
+      "failure_type": null,
+      "id": "chapter_1/valid/multi_digit.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007419618312269449,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020573893561959267,
+      "failure_type": null,
+      "id": "chapter_1/valid/newlines.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007301635108888149,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002077319659292698,
+      "failure_type": null,
+      "id": "chapter_1/valid/no_newlines.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007321752607822418,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017572194337844849,
+      "failure_type": null,
+      "id": "chapter_1/valid/tabs.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00028122076764702797,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_2/invalid_parse/extra_paren.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00031345197930932045,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_2/invalid_parse/missing_const.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00030388403683900833,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_2/invalid_parse/nested_missing_const.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025553302839398384,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_2/invalid_parse/parenthesize_operand.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002792081795632839,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_2/invalid_parse/wrong_order.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007183031644672155,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019075116142630577,
+      "failure_type": null,
+      "id": "chapter_2/valid/bitwise_int_min.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007433063816279173,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.000186162069439888,
+      "failure_type": null,
+      "id": "chapter_2/valid/neg.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007114050909876823,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00016364874318242073,
+      "failure_type": null,
+      "id": "chapter_2/valid/negate_int_max.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0073203411884605885,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001850002445280552,
+      "failure_type": null,
+      "id": "chapter_2/valid/nested_ops.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007217717356979847,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001900787465274334,
+      "failure_type": null,
+      "id": "chapter_2/valid/nested_ops_2.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007143416907638311,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020597968250513077,
+      "failure_type": null,
+      "id": "chapter_2/valid/parens.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007387066259980202,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001758732832968235,
+      "failure_type": null,
+      "id": "chapter_2/valid/parens_2.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007112777791917324,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00016012275591492653,
+      "failure_type": null,
+      "id": "chapter_2/valid/parens_3.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007251640781760216,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019338587298989296,
+      "failure_type": null,
+      "id": "chapter_2/valid/redundant_parens.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00026088301092386246,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/double_operation.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026199501007795334,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/imbalanced_paren.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028049107640981674,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/misplaced_semicolon.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024347985163331032,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/missing_open_paren.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002754111774265766,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/missing_second_op.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00029475800693035126,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/no_semicolon.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0013001780025660992,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-3g9hic9q/output.s: Assembler messages:\n/tmp/picc-test-3g9hic9q/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3g9hic9q/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/add.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001305989921092987,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-vr0xb8ke/output.s: Assembler messages:\n/tmp/picc-test-vr0xb8ke/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-vr0xb8ke/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-vr0xb8ke/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-vr0xb8ke/output.s:20: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/associativity_2.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012681973166763783,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-5fflomu7/output.s: Assembler messages:\n/tmp/picc-test-5fflomu7/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:20: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:27: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:29: Error: invalid instruction suffix for `push'\n/tmp/picc-test-5fflomu7/output.s:32: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-5fflomu7/output.s:35: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/associativity_3.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012641497887670994,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-e2wmkxty/output.s: Assembler messages:\n/tmp/picc-test-e2wmkxty/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:26: Error: invalid instruction suffix for `push'\n/tmp/picc-test-e2wmkxty/output.s:29: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:32: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-e2wmkxty/output.s:37: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/associativity_and_precedence.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012307879514992237,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-m9wk5qx4/output.s: Assembler messages:\n/tmp/picc-test-m9wk5qx4/output.s:12: Error: invalid instruction suffix for `push'\n/tmp/picc-test-m9wk5qx4/output.s:15: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/div_neg.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013114698231220245,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-60rihb80/output.s: Assembler messages:\n/tmp/picc-test-60rihb80/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-60rihb80/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/mod.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012214593589305878,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-nblrzw19/output.s: Assembler messages:\n/tmp/picc-test-nblrzw19/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-nblrzw19/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/mult.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012580491602420807,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-8vvfzovo/output.s: Assembler messages:\n/tmp/picc-test-8vvfzovo/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-8vvfzovo/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-8vvfzovo/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-8vvfzovo/output.s:19: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/parens.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012356960214674473,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-qmdtuasu/output.s: Assembler messages:\n/tmp/picc-test-qmdtuasu/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-qmdtuasu/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-qmdtuasu/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-qmdtuasu/output.s:19: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/precedence.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012404960580170155,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-c6nf6jwy/output.s: Assembler messages:\n/tmp/picc-test-c6nf6jwy/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-c6nf6jwy/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/sub.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012229103595018387,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-gqhrnl88/output.s: Assembler messages:\n/tmp/picc-test-gqhrnl88/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-gqhrnl88/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_3/valid/unop_parens.c",
+      "passed": false,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00030420487746596336,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_4/invalid_parse/missing_const.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00030466634780168533,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_4/invalid_parse/missing_operand.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002921121194958687,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_4/invalid_parse/missing_second_op.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027004117146134377,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_4/invalid_parse/unary_missing_semicolon.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00754974503070116,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00018830643966794014,
+      "failure_type": null,
+      "id": "chapter_4/valid/and_true.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013307658955454826,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-862dyqvg/output.s: Assembler messages:\n/tmp/picc-test-862dyqvg/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-862dyqvg/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-862dyqvg/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-862dyqvg/output.s:25: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-862dyqvg/output.s:33: Error: invalid instruction suffix for `push'\n/tmp/picc-test-862dyqvg/output.s:36: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/associativity.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013683666475117207,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-b1hnbn61/output.s: Assembler messages:\n/tmp/picc-test-b1hnbn61/output.s:12: Error: invalid instruction suffix for `push'\n/tmp/picc-test-b1hnbn61/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-b1hnbn61/output.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc-test-b1hnbn61/output.s:20: Error: invalid instruction suffix for `push'\n/tmp/picc-test-b1hnbn61/output.s:23: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-b1hnbn61/output.s:26: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/compare_arithmetic_results.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012676166370511055,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-yw2uxcom/output.s: Assembler messages:\n/tmp/picc-test-yw2uxcom/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-yw2uxcom/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/eq_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001289356965571642,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-kwbmhnf_/output.s: Assembler messages:\n/tmp/picc-test-kwbmhnf_/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-kwbmhnf_/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-kwbmhnf_/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-kwbmhnf_/output.s:25: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/eq_precedence.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012767142616212368,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-ucft55gd/output.s: Assembler messages:\n/tmp/picc-test-ucft55gd/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ucft55gd/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/ge_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012350264005362988,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-2ubtj2o_/output.s: Assembler messages:\n/tmp/picc-test-2ubtj2o_/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ubtj2o_/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ubtj2o_/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ubtj2o_/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ubtj2o_/output.s:28: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ubtj2o_/output.s:37: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/ge_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012720543891191483,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-rctawxmi/output.s: Assembler messages:\n/tmp/picc-test-rctawxmi/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-rctawxmi/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-rctawxmi/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-rctawxmi/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-rctawxmi/output.s:27: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-rctawxmi/output.s:36: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/gt_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001201392151415348,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-qmvtzwf4/output.s: Assembler messages:\n/tmp/picc-test-qmvtzwf4/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-qmvtzwf4/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/gt_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0011898493394255638,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-v077xcvm/output.s: Assembler messages:\n/tmp/picc-test-v077xcvm/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-v077xcvm/output.s:15: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/le_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012337425723671913,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-v_1_9p7_/output.s: Assembler messages:\n/tmp/picc-test-v_1_9p7_/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-v_1_9p7_/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-v_1_9p7_/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-v_1_9p7_/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-v_1_9p7_/output.s:27: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-v_1_9p7_/output.s:36: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/le_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001199907623231411,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-inxa6i3x/output.s: Assembler messages:\n/tmp/picc-test-inxa6i3x/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-inxa6i3x/output.s:20: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/multi_short_circuit.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012238440103828907,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-x268rydg/output.s: Assembler messages:\n/tmp/picc-test-x268rydg/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-x268rydg/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/ne_false.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012614540755748749,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-in_vloct/output.s: Assembler messages:\n/tmp/picc-test-in_vloct/output.s:12: Error: invalid instruction suffix for `push'\n/tmp/picc-test-in_vloct/output.s:16: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/ne_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012570768594741821,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-hata2fwf/output.s: Assembler messages:\n/tmp/picc-test-hata2fwf/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-hata2fwf/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/not_sum.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0023026131093502045,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-xcii5enk/output.s: Assembler messages:\n/tmp/picc-test-xcii5enk/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-xcii5enk/output.s:14: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/not_sum_2.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007317103911191225,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00016818800941109657,
+      "failure_type": null,
+      "id": "chapter_4/valid/not_zero.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012355661019682884,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-ijqrojjk/output.s: Assembler messages:\n/tmp/picc-test-ijqrojjk/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ijqrojjk/output.s:36: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/operate_on_booleans.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007319428957998753,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002073422074317932,
+      "failure_type": null,
+      "id": "chapter_4/valid/or_false.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012778169475495815,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-z1o9ipx4/output.s: Assembler messages:\n/tmp/picc-test-z1o9ipx4/output.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc-test-z1o9ipx4/output.s:34: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-z1o9ipx4/output.s:36: Error: invalid instruction suffix for `push'\n/tmp/picc-test-z1o9ipx4/output.s:49: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_4/valid/or_true.c",
+      "passed": false,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007560323923826218,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020984560251235962,
+      "failure_type": null,
+      "id": "chapter_4/valid/precedence.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002719140611588955,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/compound_invalid_operator.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002832859754562378,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/invalid_specifier.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027057109400629997,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/invalid_variable_name.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00030130892992019653,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/malformed_compound_assignment.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002780561335384846,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/malformed_decrement.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.000262486282736063,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/malformed_less_equal.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025503290817141533,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/malformed_not_equal.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002708123065531254,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/missing_semicolon.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002925931476056576,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/invalid_lvalue_2.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024939095601439476,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/mixed_precedence_assignment.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027321605011820793,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/undeclared_var.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002791271544992924,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/undeclared_var_and.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.000244723167270422,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/undeclared_var_compare.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027014128863811493,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/undeclared_var_unary.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027417857199907303,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/use_then_redefine.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0013493211008608341,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-uhi7igon/output.s: Assembler messages:\n/tmp/picc-test-uhi7igon/output.s:15: Error: invalid instruction suffix for `push'\n/tmp/picc-test-uhi7igon/output.s:18: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-uhi7igon/output.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc-test-uhi7igon/output.s:31: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-uhi7igon/output.s:35: Error: invalid instruction suffix for `push'\n/tmp/picc-test-uhi7igon/output.s:38: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-uhi7igon/output.s:40: Error: invalid instruction suffix for `push'\n/tmp/picc-test-uhi7igon/output.s:42: Error: invalid instruction suffix for `push'\n/tmp/picc-test-uhi7igon/output.s:45: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-uhi7igon/output.s:48: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_5/valid/allocate_temps_and_vars.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007557748816907406,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00021794205531477928,
+      "failure_type": null,
+      "id": "chapter_5/valid/assign.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007403066847473383,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00016726693138480186,
+      "failure_type": null,
+      "id": "chapter_5/valid/assign_val_in_initializer.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007304851897060871,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020343530923128128,
+      "failure_type": null,
+      "id": "chapter_5/valid/empty_function_body.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012937858700752258,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-1son5udn/output.s: Assembler messages:\n/tmp/picc-test-1son5udn/output.s:15: Error: invalid instruction suffix for `push'\n/tmp/picc-test-1son5udn/output.s:18: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_5/valid/kw_var_names.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013155569322407246,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-u4ygkeip/output.s: Assembler messages:\n/tmp/picc-test-u4ygkeip/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-u4ygkeip/output.s:16: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_5/valid/local_var_missing_return.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001309025101363659,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-usb541ng/output.s: Assembler messages:\n/tmp/picc-test-usb541ng/output.s:15: Error: invalid instruction suffix for `push'\n/tmp/picc-test-usb541ng/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-usb541ng/output.s:23: Error: invalid instruction suffix for `push'\n/tmp/picc-test-usb541ng/output.s:26: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_5/valid/mixed_precedence_assignment.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007218027021735907,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020065996795892715,
+      "failure_type": null,
+      "id": "chapter_5/valid/null_statement.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0074089388363063335,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00021567801013588905,
+      "failure_type": null,
+      "id": "chapter_5/valid/null_then_return.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007319658529013395,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00016690604388713837,
+      "failure_type": null,
+      "id": "chapter_5/valid/return_var.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007325971033424139,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017279572784900665,
+      "failure_type": null,
+      "id": "chapter_5/valid/short_circuit_and_fail.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007360666524618864,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020998716354370117,
+      "failure_type": null,
+      "id": "chapter_5/valid/short_circuit_or.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007269193883985281,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00018057087436318398,
+      "failure_type": null,
+      "id": "chapter_5/valid/use_assignment_result.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007192539516836405,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019940687343478203,
+      "failure_type": null,
+      "id": "chapter_5/valid/use_val_in_own_initializer.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00025286804884672165,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/empty_if_body.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028901686891913414,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/if_assignment.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00033233780413866043,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/if_no_parens.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002878541126847267,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/malformed_ternary_2.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002706516534090042,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/mismatched_nesting.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002518659457564354,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/wrong_ternary_delimiter.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002651321701705456,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_semantics/invalid_var_in_if.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00029008882120251656,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_semantics/undeclared_var_in_ternary.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007430488243699074,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020395638421177864,
+      "failure_type": null,
+      "id": "chapter_6/valid/assign_ternary.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001307652797549963,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-hlo89kog/output.s: Assembler messages:\n/tmp/picc-test-hlo89kog/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-hlo89kog/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-hlo89kog/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-hlo89kog/output.s:19: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/binary_condition.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001303182914853096,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-kjpf0vpw/output.s: Assembler messages:\n/tmp/picc-test-kjpf0vpw/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-kjpf0vpw/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-kjpf0vpw/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-kjpf0vpw/output.s:19: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/binary_false_condition.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007192299235612154,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019458774477243423,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_nested.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007403277792036533,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00016484176740050316,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_not_taken.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013251262716948986,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-v1s61t62/output.s: Assembler messages:\n/tmp/picc-test-v1s61t62/output.s:25: Error: invalid instruction suffix for `push'\n/tmp/picc-test-v1s61t62/output.s:28: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-v1s61t62/output.s:39: Error: invalid instruction suffix for `push'\n/tmp/picc-test-v1s61t62/output.s:42: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/lh_assignment.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013003777712583542,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-85m97k51/output.s: Assembler messages:\n/tmp/picc-test-85m97k51/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-85m97k51/output.s:20: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/nested_ternary.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012723561376333237,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-f7kerzwg/output.s: Assembler messages:\n/tmp/picc-test-f7kerzwg/output.s:43: Error: invalid instruction suffix for `push'\n/tmp/picc-test-f7kerzwg/output.s:46: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/nested_ternary_2.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007570975460112095,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019969791173934937,
+      "failure_type": null,
+      "id": "chapter_6/valid/rh_assignment.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001256716437637806,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-umhv_qeu/output.s: Assembler messages:\n/tmp/picc-test-umhv_qeu/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-umhv_qeu/output.s:17: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/ternary.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012566763907670975,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-unzt3ib0/output.s: Assembler messages:\n/tmp/picc-test-unzt3ib0/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-unzt3ib0/output.s:16: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/ternary_middle_assignment.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001279368530958891,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-yd1vzh6i/output.s: Assembler messages:\n/tmp/picc-test-yd1vzh6i/output.s:14: Error: invalid instruction suffix for `push'\n/tmp/picc-test-yd1vzh6i/output.s:17: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_6/valid/ternary_middle_binop.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0073542846366763115,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017244601622223854,
+      "failure_type": null,
+      "id": "chapter_6/valid/ternary_rh_binop.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007267401088029146,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017828680574893951,
+      "failure_type": null,
+      "id": "chapter_6/valid/ternary_short_circuit.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0073362309485673904,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00021412502974271774,
+      "failure_type": null,
+      "id": "chapter_6/valid/ternary_short_circuit_2.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00027525098994374275,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_parse/missing_brace.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002794889733195305,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_parse/missing_semicolon.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024787895381450653,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_parse/ternary_blocks.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026513077318668365,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_semantics/double_define.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024979235604405403,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_semantics/out_of_scope.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.000256155151873827,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_semantics/use_before_declare.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007252132054418325,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00015855906531214714,
+      "failure_type": null,
+      "id": "chapter_7/valid/assign_to_self.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00744085805490613,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002244538627564907,
+      "failure_type": null,
+      "id": "chapter_7/valid/assign_to_self_2.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013134940527379513,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-cuu6jif9/output.s: Assembler messages:\n/tmp/picc-test-cuu6jif9/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-cuu6jif9/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-cuu6jif9/output.s:20: Error: invalid instruction suffix for `push'\n/tmp/picc-test-cuu6jif9/output.s:23: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_7/valid/empty_blocks.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001307833008468151,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-w12xx_sc/output.s: Assembler messages:\n/tmp/picc-test-w12xx_sc/output.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc-test-w12xx_sc/output.s:21: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-w12xx_sc/output.s:25: Error: invalid instruction suffix for `push'\n/tmp/picc-test-w12xx_sc/output.s:28: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-w12xx_sc/output.s:39: Error: invalid instruction suffix for `push'\n/tmp/picc-test-w12xx_sc/output.s:43: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_7/valid/hidden_then_visible.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00741075212135911,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019430788233876228,
+      "failure_type": null,
+      "id": "chapter_7/valid/hidden_variable.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001239192672073841,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-zf72zst4/output.s: Assembler messages:\n/tmp/picc-test-zf72zst4/output.s:19: Error: invalid instruction suffix for `push'\n/tmp/picc-test-zf72zst4/output.s:22: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_7/valid/multiple_vars_same_name.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012956899590790272,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-1k9zqd5p/output.s: Assembler messages:\n/tmp/picc-test-1k9zqd5p/output.s:23: Error: invalid instruction suffix for `push'\n/tmp/picc-test-1k9zqd5p/output.s:26: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-1k9zqd5p/output.s:30: Error: invalid instruction suffix for `push'\n/tmp/picc-test-1k9zqd5p/output.s:33: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-1k9zqd5p/output.s:37: Error: invalid instruction suffix for `push'\n/tmp/picc-test-1k9zqd5p/output.s:40: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_7/valid/similar_var_names.c",
+      "passed": false,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007376826833933592,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017901882529258728,
+      "failure_type": null,
+      "id": "chapter_7/valid/use_in_inner_scope.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00027135293930768967,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_8/invalid_parse/decl_as_loop_body.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025884900242090225,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/do_extra_semicolon.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025576259940862656,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/do_missing_semicolon.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024628592655062675,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/extra_for_header_clause.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024011405184864998,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/invalid_for_declaration.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00023384159430861473,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/missing_for_header_clause.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003008488565683365,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/paren_mismatch.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002508140169084072,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/while_missing_paren.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003128307871520519,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_semantics/continue_not_in_loop.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002815118059515953,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_semantics/out_of_scope_do_loop.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003055981360375881,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_semantics/out_of_scope_loop_variable.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0013960790820419788,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-i8d8zcoy/output.s: Assembler messages:\n/tmp/picc-test-i8d8zcoy/output.s:19: Error: invalid instruction suffix for `push'\n/tmp/picc-test-i8d8zcoy/output.s:22: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-i8d8zcoy/output.s:33: Error: invalid instruction suffix for `push'\n/tmp/picc-test-i8d8zcoy/output.s:36: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-i8d8zcoy/output.s:40: Error: invalid instruction suffix for `push'\n/tmp/picc-test-i8d8zcoy/output.s:43: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-i8d8zcoy/output.s:57: Error: invalid instruction suffix for `push'\n/tmp/picc-test-i8d8zcoy/output.s:60: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-i8d8zcoy/output.s:66: Error: invalid instruction suffix for `push'\n/tmp/picc-test-i8d8zcoy/output.s:69: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-i8d8zcoy/output.s:80: Error: invalid instruction suffix for `push'\n/tmp/picc-test-i8d8zcoy/output.s:84: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/break.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013452242128551006,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-2ujhyq0z/output.s: Assembler messages:\n/tmp/picc-test-2ujhyq0z/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ujhyq0z/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ujhyq0z/output.s:32: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ujhyq0z/output.s:35: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ujhyq0z/output.s:39: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ujhyq0z/output.s:42: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ujhyq0z/output.s:55: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ujhyq0z/output.s:58: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ujhyq0z/output.s:63: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ujhyq0z/output.s:66: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ujhyq0z/output.s:72: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ujhyq0z/output.s:75: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2ujhyq0z/output.s:86: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2ujhyq0z/output.s:89: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/continue.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012909998185932636,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-q_c6ia4a/output.s: Assembler messages:\n/tmp/picc-test-q_c6ia4a/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-q_c6ia4a/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-q_c6ia4a/output.s:30: Error: invalid instruction suffix for `push'\n/tmp/picc-test-q_c6ia4a/output.s:33: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-q_c6ia4a/output.s:37: Error: invalid instruction suffix for `push'\n/tmp/picc-test-q_c6ia4a/output.s:40: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-q_c6ia4a/output.s:49: Error: invalid instruction suffix for `push'\n/tmp/picc-test-q_c6ia4a/output.s:52: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/continue_empty_post.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007375424727797508,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019718287512660027,
+      "failure_type": null,
+      "id": "chapter_8/valid/empty_expression.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012757829390466213,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-xj5qgu_4/output.s: Assembler messages:\n/tmp/picc-test-xj5qgu_4/output.s:15: Error: invalid instruction suffix for `push'\n/tmp/picc-test-xj5qgu_4/output.s:18: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-xj5qgu_4/output.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc-test-xj5qgu_4/output.s:24: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/empty_loop_body.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001288116443902254,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-2e2rsw20/output.s: Assembler messages:\n/tmp/picc-test-2e2rsw20/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2e2rsw20/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2e2rsw20/output.s:30: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2e2rsw20/output.s:33: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2e2rsw20/output.s:39: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2e2rsw20/output.s:42: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/for.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013358755968511105,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-z7q6gilu/output.s: Assembler messages:\n/tmp/picc-test-z7q6gilu/output.s:15: Error: invalid instruction suffix for `push'\n/tmp/picc-test-z7q6gilu/output.s:18: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-z7q6gilu/output.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-test-z7q6gilu/output.s:25: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-z7q6gilu/output.s:36: Error: invalid instruction suffix for `push'\n/tmp/picc-test-z7q6gilu/output.s:39: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-z7q6gilu/output.s:46: Error: invalid instruction suffix for `push'\n/tmp/picc-test-z7q6gilu/output.s:49: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-z7q6gilu/output.s:56: Error: invalid instruction suffix for `push'\n/tmp/picc-test-z7q6gilu/output.s:59: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/for_absent_post.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013290829956531525,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-01hia8i_/output.s: Assembler messages:\n/tmp/picc-test-01hia8i_/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-01hia8i_/output.s:20: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-01hia8i_/output.s:31: Error: invalid instruction suffix for `push'\n/tmp/picc-test-01hia8i_/output.s:34: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-01hia8i_/output.s:39: Error: invalid instruction suffix for `push'\n/tmp/picc-test-01hia8i_/output.s:42: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/for_decl.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012625670060515404,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-b2a0gq08/output.s: Assembler messages:\n/tmp/picc-test-b2a0gq08/output.s:14: Error: invalid instruction suffix for `push'\n/tmp/picc-test-b2a0gq08/output.s:17: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-b2a0gq08/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-b2a0gq08/output.s:27: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/for_decl_no_init.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012971232645213604,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-pn0a23kk/output.s: Assembler messages:\n/tmp/picc-test-pn0a23kk/output.s:20: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pn0a23kk/output.s:23: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pn0a23kk/output.s:36: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pn0a23kk/output.s:39: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pn0a23kk/output.s:46: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pn0a23kk/output.s:49: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pn0a23kk/output.s:55: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pn0a23kk/output.s:58: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pn0a23kk/output.s:69: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pn0a23kk/output.s:72: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pn0a23kk/output.s:90: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pn0a23kk/output.s:93: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/for_nested_shadow.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001308945007622242,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-ruycgjrf/output.s: Assembler messages:\n/tmp/picc-test-ruycgjrf/output.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ruycgjrf/output.s:20: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-ruycgjrf/output.s:24: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ruycgjrf/output.s:27: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-ruycgjrf/output.s:48: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ruycgjrf/output.s:51: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-ruycgjrf/output.s:55: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ruycgjrf/output.s:58: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-ruycgjrf/output.s:73: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ruycgjrf/output.s:77: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-ruycgjrf/output.s:88: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ruycgjrf/output.s:91: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/multi_break.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012912014499306679,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-3f14ybth/output.s: Assembler messages:\n/tmp/picc-test-3f14ybth/output.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3f14ybth/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-3f14ybth/output.s:33: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3f14ybth/output.s:36: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-3f14ybth/output.s:47: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3f14ybth/output.s:50: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-3f14ybth/output.s:54: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3f14ybth/output.s:57: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-3f14ybth/output.s:66: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3f14ybth/output.s:69: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-3f14ybth/output.s:75: Error: invalid instruction suffix for `push'\n/tmp/picc-test-3f14ybth/output.s:78: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/nested_continue.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001315177883952856,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-n9mtbged/output.s: Assembler messages:\n/tmp/picc-test-n9mtbged/output.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc-test-n9mtbged/output.s:24: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-n9mtbged/output.s:32: Error: invalid instruction suffix for `push'\n/tmp/picc-test-n9mtbged/output.s:35: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-n9mtbged/output.s:39: Error: invalid instruction suffix for `push'\n/tmp/picc-test-n9mtbged/output.s:42: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-n9mtbged/output.s:50: Error: invalid instruction suffix for `push'\n/tmp/picc-test-n9mtbged/output.s:53: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-n9mtbged/output.s:64: Error: invalid instruction suffix for `push'\n/tmp/picc-test-n9mtbged/output.s:67: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/nested_loop.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0023440727964043617,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-ppg9rmv1/output.s: Assembler messages:\n/tmp/picc-test-ppg9rmv1/output.s:14: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ppg9rmv1/output.s:17: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-ppg9rmv1/output.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc-test-ppg9rmv1/output.s:24: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/null_for_header.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012325001880526543,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-2rfc24kj/output.s: Assembler messages:\n/tmp/picc-test-2rfc24kj/output.s:14: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2rfc24kj/output.s:17: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-2rfc24kj/output.s:28: Error: invalid instruction suffix for `push'\n/tmp/picc-test-2rfc24kj/output.s:31: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_8/valid/while.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00028978800401091576,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_9/invalid_declarations/decl_params_with_same_name.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027279602363705635,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_declarations/redefine_fun_as_var.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002718237228691578,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_declarations/redefine_parameter.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025256676599383354,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_declarations/redefine_var_as_fun.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026839785277843475,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_declarations/wrong_parameter_names.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002874438650906086,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/call_non_identifier.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024087587371468544,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/fun_decl_for_loop.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00023682788014411926,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/funcall_wrong_closing_delim.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027845706790685654,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/function_returning_function.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002560252323746681,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/trailing_comma.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026502180844545364,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/trailing_comma_decl.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00023943185806274414,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/unclosed_paren_decl.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024924101307988167,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/var_init_in_param_list.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026253610849380493,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/assign_fun_to_variable.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026364903897047043,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/assign_value_to_function.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002544405870139599,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/conflicting_function_declarations.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002702907659113407,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/conflicting_local_function_declaration.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002559940330684185,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/divide_by_function.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002444423735141754,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/multiple_function_definitions.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002805711701512337,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/multiple_function_definitions_2.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026055192574858665,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/too_many_args.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.001363406889140606,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-hih1yltp/output.s: Assembler messages:\n/tmp/picc-test-hih1yltp/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-hih1yltp/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-hih1yltp/output.s:35: Error: invalid instruction suffix for `push'\n/tmp/picc-test-hih1yltp/output.s:38: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-hih1yltp/output.s:40: Error: invalid instruction suffix for `push'\n/tmp/picc-test-hih1yltp/output.s:42: Error: invalid instruction suffix for `push'\n/tmp/picc-test-hih1yltp/output.s:43: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-hih1yltp/output.s:45: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/arguments_in_registers/expression_args.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013242526911199093,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-p0d70rnr/output.s: Assembler messages:\n/tmp/picc-test-p0d70rnr/output.s:12: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:15: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-p0d70rnr/output.s:26: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:29: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-p0d70rnr/output.s:51: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:54: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-p0d70rnr/output.s:56: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:57: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-p0d70rnr/output.s:62: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:64: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:67: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-p0d70rnr/output.s:69: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:70: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-p0d70rnr/output.s:76: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-p0d70rnr/output.s:98: Error: invalid instruction suffix for `push'\n/tmp/picc-test-p0d70rnr/output.s:99: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/arguments_in_registers/fibonacci.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012415875680744648,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-0r7jsnfk/output.s: Assembler messages:\n/tmp/picc-test-0r7jsnfk/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-0r7jsnfk/output.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-test-0r7jsnfk/output.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-0r7jsnfk/output.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-0r7jsnfk/output.s:42: Error: invalid instruction suffix for `push'\n/tmp/picc-test-0r7jsnfk/output.s:45: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/arguments_in_registers/forward_decl_multi_arg.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001290230080485344,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-r6o0pa6u/output.s: Assembler messages:\n/tmp/picc-test-r6o0pa6u/output.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:12: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:25: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:26: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:32: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:33: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:39: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:40: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:46: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:47: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:53: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:54: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:60: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:61: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-r6o0pa6u/output.s:67: Error: invalid instruction suffix for `push'\n/tmp/picc-test-r6o0pa6u/output.s:68: Error: invalid instruct\n... [truncated 838 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/arguments_in_registers/hello_world.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013286210596561432,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-6flkm59h/output.s: Assembler messages:\n/tmp/picc-test-6flkm59h/output.s:46: Error: invalid instruction suffix for `push'\n/tmp/picc-test-6flkm59h/output.s:48: Error: invalid instruction suffix for `push'\n/tmp/picc-test-6flkm59h/output.s:49: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-6flkm59h/output.s:55: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/arguments_in_registers/parameter_shadows_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.002501829992979765,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-pkls49dp/output.s: Assembler messages:\n/tmp/picc-test-pkls49dp/output.s:15: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:18: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pkls49dp/output.s:29: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:32: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pkls49dp/output.s:50: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:53: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pkls49dp/output.s:71: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:74: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pkls49dp/output.s:116: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:119: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pkls49dp/output.s:121: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:123: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:126: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pkls49dp/output.s:128: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:130: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:133: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-pkls49dp/output.s:135: Error: invalid instruction suffix for `push'\n/tmp/picc-test-pkls49dp/output.s:137: Error: inval\n... [truncated 2011 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/arguments_in_registers/parameters_are_preserved.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007726276759058237,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002016318030655384,
+      "failure_type": null,
+      "id": "chapter_9/valid/no_arguments/forward_decl.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002918317914009094,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-r8vz9hs_/input.c: expected ';' (line 6)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_9/valid/no_arguments/function_shadows_variable.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002537500113248825,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-847vdm5y/input.c: expected ';' (line 2)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_9/valid/no_arguments/multiple_declarations.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007321112789213657,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017202505841851234,
+      "failure_type": null,
+      "id": "chapter_9/valid/no_arguments/no_return_value.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007614867761731148,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019876472651958466,
+      "failure_type": null,
+      "id": "chapter_9/valid/no_arguments/precedence.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0012977640144526958,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-_80rz7hu/output.s: Assembler messages:\n/tmp/picc-test-_80rz7hu/output.s:28: Error: invalid instruction suffix for `push'\n/tmp/picc-test-_80rz7hu/output.s:31: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-_80rz7hu/output.s:50: Error: invalid instruction suffix for `push'\n/tmp/picc-test-_80rz7hu/output.s:52: Error: invalid instruction suffix for `push'\n/tmp/picc-test-_80rz7hu/output.s:55: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-_80rz7hu/output.s:59: Error: invalid instruction suffix for `pop'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/no_arguments/use_function_in_expression.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00028534000739455223,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-2g27diev/input.c: expected ';' (line 2)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_9/valid/no_arguments/variable_shadows_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.001324433833360672,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-jigulhx6/output.s: Assembler messages:\n/tmp/picc-test-jigulhx6/output.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:22: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-jigulhx6/output.s:28: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:31: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-jigulhx6/output.s:50: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:52: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:54: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:56: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:58: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:60: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:62: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:64: Error: invalid instruction suffix for `push'\n/tmp/picc-test-jigulhx6/output.s:65: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-jigulhx6/output.s:67: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-jigulhx6/output.s:69: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-jigulhx6/output.s:71: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-jigulhx6/output.s:73: Error: invalid instruction suffix for `pop'\n/tmp/picc-test-jigulhx6/output.s:75: Error: invalid instruc\n... [truncated 348 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/stack_arguments/call_putchar.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002793078310787678,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_declarations/conflicting_local_declarations.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027103303000330925,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_declarations/extern_follows_local_var.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024700677022337914,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_declarations/extern_follows_static_local_var.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002837362699210644,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_declarations/out_of_scope_extern_var.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026250584051012993,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_declarations/redefine_param_as_identifier_with_linkage.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00029766326770186424,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_10/invalid_declarations/undeclared_global_variable.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026639271527528763,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_parse/extern_param.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028041983023285866,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_parse/missing_type_specifier.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002498016692698002,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_parse/multi_storage_class_fun.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025753676891326904,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_parse/static_and_extern.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002629267983138561,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_parse/static_param.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028933677822351456,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/conflicting_function_linkage.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00024918094277381897,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/conflicting_global_definitions.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002770340070128441,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/conflicting_variable_linkage.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003076121211051941,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/extern_for_loop_counter.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002692188136279583,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/redeclare_file_scope_var_as_fun.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002708318643271923,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/redeclare_fun_as_file_scope_var.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.000301870983093977,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/static_block_scope_function_declaration.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00030499696731567383,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/static_for_loop_counter.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003028521314263344,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/use_file_scope_variable_as_fun.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028957705944776535,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-qnwab8vi/input.c: unexpected token KwExtern (line 18)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/distinct_local_and_extern.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00028921570628881454,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-74dhbjje/input.c: unexpected token KwExtern (line 9)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/extern_block_scope_variable.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002915412187576294,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-_52ov4c4/input.c: conflicting linkage for 'foo' (line 0)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/multiple_static_file_scope_vars.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00026767607778310776,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-h_lbokxr/input.c: unexpected token KwStatic (line 9)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/multiple_static_local.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.000295048113912344,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-4irst_o5/input.c: unexpected token KwStatic (line 16)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/shadow_static_local_var.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00028391601517796516,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-k2kmsenv/input.c: unexpected token KwStatic (line 8)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/static_recursive_call.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0003111977130174637,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-9zt99fvd/input.c: conflicting linkage for 'foo' (line 0)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/static_then_extern.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00025588367134332657,
+      "compiler_returncode": 1,
+      "detail": "picc: /tmp/picc-test-41j269tv/input.c: expected identifier (line 4)\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/type_before_storage_class.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    }
+  ],
+  "timestamp": "2026-09-14T09:11:27Z",
+  "workspace": "/workspace"
+}

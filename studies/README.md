@@ -141,7 +141,8 @@ the starter `tests-none`, and `spec-minimal-tests-none`, whose `factor` is
 the factors exactly once and requires a combined cell to carry, block for
 block, the overlays of the single-factor cells it combines. Every cell is
 paired with the baseline of its replicate in the summary; the interaction is
-computed by the cohort's analysis script (`docs/PRE_REGISTRATION_v9.md`).
+computed by the cohort's analysis script (`docs/PRE_REGISTRATION_v9.md`; results in
+`analysis/report.md` §15).
 
 ```bash
 make study-validate STUDY=studies/spectests/study.json

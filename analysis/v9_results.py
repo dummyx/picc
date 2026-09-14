@@ -6,6 +6,11 @@ factor and the per-replicate interaction; the harness check; and the paired
 resource and code secondary endpoints (docs/PRE_REGISTRATION_v9.md).
 Read-only.
 
+Re-score awareness (v9 Amendments 1 and 2): when analysis/v9-rescore/<run>/
+holds ledgers produced by the corrected evaluator, those are the primary
+ledgers; the frozen ones are read alongside and every run whose frozen
+corpus or fuzz value differs from the re-scored one is listed.
+
 Writes analysis/v9-results.md and analysis/v9-results.json.
 
 Usage:
@@ -23,6 +28,10 @@ from pathlib import Path
 
 REPO = Path("/home/xie/picc")
 OUT = REPO / "analysis"
+RESCORE = OUT / "v9-rescore"
+# Runs whose frozen ledgers the amendments correct; every other run keeps its
+# frozen ledgers as primary, and the re-score check below compares all twelve.
+AMENDED = {"v9-spec-minimal-r1", "v9-tests-none-r1"}
 sys.path.insert(0, str(OUT))
 import dimensions  # noqa: E402
 
@@ -55,14 +64,18 @@ def run_row(rid: str) -> dict | None:
     if not (run / "artifacts" / "hidden-scores.jsonl").is_file():
         return None
     meta = json.load(open(run / "metadata.json"))
-    hidden_rows = [json.loads(l) for l in open(run / "artifacts" / "hidden-scores.jsonl")]
+    frozen_hidden = [json.loads(l) for l in open(run / "artifacts" / "hidden-scores.jsonl")]
+    frozen_fuzz = dimensions.load_jsonl(run / "artifacts" / "fuzz-scores.jsonl")
+    ledgers = RESCORE / rid if rid in AMENDED and (RESCORE / rid / "fuzz-scores.jsonl").is_file() else run / "artifacts"
+    rescore = RESCORE / rid if (RESCORE / rid / "fuzz-scores.jsonl").is_file() else None
+    hidden_rows = [json.loads(l) for l in open(ledgers / "hidden-scores.jsonl")]
     last = hidden_rows[-1]["summary"]
-    full = json.load(open(run / hidden_rows[-1]["output"]))
+    full = json.load(open(ledgers / "evaluations" / Path(hidden_rows[-1]["output"]).name))
     valid = [t for t in full["tests"] if t["validity"] == "valid"]
     invalid = [t for t in full["tests"] if t["validity"] == "invalid"]
     fails = Counter(t["failure_type"] for t in full["tests"] if not t["passed"])
     snaps = [json.loads(l) for l in open(run / "artifacts" / "snapshots.jsonl")]
-    fuzz_rows = dimensions.load_jsonl(run / "artifacts" / "fuzz-scores.jsonl")
+    fuzz_rows = dimensions.load_jsonl(ledgers / "fuzz-scores.jsonl")
     fuzz_final = next((r for r in fuzz_rows if r.get("role", "final") == "final"), None)
     fuzz_lb_row = next((r for r in fuzz_rows if r.get("role") == "last_buildable"), None)
     lb = last_buildable(hidden_rows)
@@ -86,6 +99,12 @@ def run_row(rid: str) -> dict | None:
     return {
         "run_id": rid,
         "condition": next(cond for cond in (BOTH, SPEC, TESTS, BASELINE) if f"-{cond}-" in rid),
+        "rescored": rescore is not None,
+        "amended": ledgers != run / "artifacts",
+        "frozen_hidden_traj": [round(r["summary"].get("score", 0.0), 4) for r in frozen_hidden],
+        "frozen_fuzz": next((round(float(r["summary"]["fuzz_macro"]), 4) for r in frozen_fuzz if r.get("role", "final") == "final"), None),
+        "rescore_hidden_traj": None if rescore is None else [round(json.loads(l)["summary"].get("score", 0.0), 4) for l in open(rescore / "hidden-scores.jsonl")],
+        "rescore_fuzz_rows": None if rescore is None else [(r.get("role", "final"), round(float(r["summary"]["fuzz_macro"]), 4)) for r in dimensions.load_jsonl(rescore / "fuzz-scores.jsonl")],
         "replicate": meta.get("replicate"),
         "hours": round(meta["elapsed_seconds"] / 3600, 2),
         "termination": meta["termination_reason"],
@@ -184,6 +203,19 @@ def report_rows(ids: list[str], label: str) -> list[dict]:
             print_deltas(f"{variant} - {base}", paired(by, endpoint, variant, base))
         print("  [interaction: (both - tests-none) - (spec-minimal - baseline)]")
         print_deltas("interaction", interaction(by, endpoint), threshold=None)
+        print()
+    if rows and any(r["rescored"] for r in rows):
+        print("--- re-score check (v9 Amendments 1 and 2): frozen vs corrected ledgers")
+        changed = 0
+        for r in rows:
+            if not r["rescored"]:
+                continue
+            rf = dict(r["rescore_fuzz_rows"] or [])
+            same = r["frozen_hidden_traj"] == r["rescore_hidden_traj"] and r["frozen_fuzz"] == rf.get("final") and "last_buildable" not in rf
+            changed += 0 if same else 1
+            print(f"  {r['run_id']:32s} corpus frozen={r['frozen_hidden_traj']} re-scored={r['rescore_hidden_traj']} | fuzz frozen={r['frozen_fuzz']} re-scored={r['rescore_fuzz_rows']} | "
+                  f"{'identical' if same else 'CHANGED'}{' (amended: corrected ledgers are primary)' if r['amended'] else ''}")
+        print(f"  runs whose values changed under the corrected evaluator: {changed}/{sum(1 for r in rows if r['rescored'])}")
         print()
     if rows:
         print("--- harness check (idle minutes, unanswered bash calls, cut-offs, cap-cut finals)")

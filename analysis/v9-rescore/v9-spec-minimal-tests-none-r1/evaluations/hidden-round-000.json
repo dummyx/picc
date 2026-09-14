@@ -1,0 +1,1451 @@
+{
+  "build": {
+    "args": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "elapsed_seconds": 0.557388536632061,
+    "returncode": 0,
+    "stderr": "   Compiling picc v0.1.0 (/workspace)\nwarning: unreachable pattern\n  --> src/ast.rs:65:13\n   |\n64 |             Ty::I(_, _) => \"int\".into(),\n   |             ----------- matches all the relevant values\n65 |             Ty::I(8, true) => \"long\".into(),\n   |             ^^^^^^^^^^^^^^ no value can reach this\n   |\n   = note: `#[warn(unreachable_patterns)]` on by default\n\nwarning: unreachable pattern\n  --> src/ast.rs:66:13\n   |\n64 |             Ty::I(_, _) => \"int\".into(),\n   |             ----------- matches all the relevant values\n65 |             Ty::I(8, true) => \"long\".into(),\n66 |             Ty::I(8, false) => \"unsigned long\".into(),\n   |             ^^^^^^^^^^^^^^^ no value can reach this\n\nwarning: unused variable: `target`\n   --> src/checker.rs:553:24\n    |\n553 |         Expr::Assign { target, value, op } => {\n    |                        ^^^^^^ help: try ignoring the field: `target: _`\n    |\n    = note: `#[warn(unused_variables)]` on by default\n\nwarning: variable does not need to be mutable\n   --> src/lexer.rs:432:9\n    |\n432 |     let mut val: u32;\n    |         ----^^^\n    |         |\n    |         help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` on by default\n\nwarning: variable `has_int` is assigned to, but never used\n   --> src/parser.rs:173:17\n    |\n173 |         let mut has_int = false;\n    |                 ^^^^^^^\n    |\n    = note: consider using `_has_int` instead\n\nwarning: value assigned to `has_int` is never read\n   --> src/parser.rs:182:34\n    |\n182 |                 Some(\"int\") => { has_int = true; self.next(); any = true; }\n    |                                  ^^^^^^^\n    |\n    = help: maybe it is overwritten before being read?\n    = note: `#[warn(unused_assignments)]` on by default\n\nwarning: variable `ok` is assigned to, but never used\n   --> src/parser.rs:566:29\n    |\n566 |                     let mut ok = false;\n    |                             ^^\n    |\n    = note: consider using `_ok` instead\n\nwarning: value assigned to `ok` is never read\n   --> src/parser.rs:572:29\n    |\n572 | ...                   ok = true;\n    |                       ^^\n    |\n    = help: maybe it is overwritten before being read?\n\nwarning: type `Macro` is more private than the item `expand`\n   --> src/preproc.rs:224:1\n    |\n224 | pub fn expand(s: &str, macros: &HashMap<String, Macro>, guard: &[String]) -> String {\n    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function `expand` is reachable at visibility `pub(crate)`\n    |\nnote: but type `Macro` is only usable at visibility `pub(self)`\n   --> src/preproc.rs:14:1\n    |\n14  | enum Macro {\n    | ^^^^^^^^^^\n    = note: `#[warn(private_interfaces)]` on by default\n\nwarning: associated functions `void`, `char_t`, `uchar_t`, `short_t`, and `ushort_t` are never used\n  --> src/ast.rs:14:12\n   |\n13 | impl Ty {\n   | ------- associated functions in this implementation\n14 |     pub fn void() -> Ty { Ty::Void }\n   |            ^^^^\n15 |     pub fn char_t() -> Ty { Ty::I(1, true) }\n   |            ^^^^^^\n16 |     pub fn uchar_t() -> Ty { Ty::I(1, false) }\n   |            ^^^^^^^\n17 |     pub fn short_t() -> Ty { Ty::I(2, true) }\n   |            ^^^^^^^\n18 |     pub fn ushort_t() -> Ty { Ty::I(2, false) }\n   |            ^^^^^^^^\n   |\n   = note: `#[warn(dead_code)]` on by default\n\nwarning: field `max_depth` is never read\n  --> src/codegen.rs:40:5\n   |\n37 | struct FnFrame {\n   |        ------- field in this struct\n...\n40 |     max_depth: u32,\n   |     ^^^^^^^^^\n\nwarning: method `peek2` is never used\n  --> src/parser.rs:55:8\n   |\n51 | impl Parser {\n   | ----------- method in this implementation\n...\n55 |     fn peek2(&self) -> &T {\n   |        ^^^^^\n\nwarning: `picc` (bin \"picc\") generated 12 warnings (run `cargo fix --bin \"picc\"` to apply 1 suggestion)\n    Finished `release` profile [optimized] target(s) in 0.55s\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "docker_image": {
+    "id": "sha256:2e4e4dc58548e6566eed393082b9be049cc41422dd36c35f00f576d818d9a555",
+    "name": "picc-experiment:0.4"
+  },
+  "elapsed_seconds": 1.185847520828247,
+  "input_policy": {
+    "fallback_to_raw_on_failure": true,
+    "preprocess": "-E -P -C -nostdinc -x c",
+    "raw_fallbacks": []
+  },
+  "partition": "hidden",
+  "schema_version": 1,
+  "selection": {
+    "count": 104,
+    "latest_only": false,
+    "max_stage": 10,
+    "test_id": null
+  },
+  "snapshot": {
+    "git_commit": "0d2e16a28d9053d426d4f999413942201ecc0a9a",
+    "git_tree": "4d861f33875c7e0acb04c39f287cb647d069d5bd"
+  },
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 7
+  },
+  "source_revision": "ae12014d2dec14488f3f80d14df4b6d8e4634d7d",
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": true,
+    "failed": 15,
+    "failures": [
+      {
+        "detail": "",
+        "failure_type": "unexpected_accept",
+        "id": "chapter_5/invalid_parse/declare_keyword_as_var.c",
+        "stage": 5,
+        "validity": "invalid"
+      },
+      {
+        "detail": "",
+        "failure_type": "unexpected_accept",
+        "id": "chapter_6/invalid_parse/declaration_as_statement.c",
+        "stage": 6,
+        "validity": "invalid"
+      },
+      {
+        "detail": "",
+        "failure_type": "unexpected_accept",
+        "id": "chapter_6/invalid_semantics/ternary_assign.c",
+        "stage": 6,
+        "validity": "invalid"
+      },
+      {
+        "detail": "picc: line 2: parser: expected ';' in for, found 'i'\n",
+        "failure_type": "unexpected_reject",
+        "id": "chapter_8/valid/for_absent_condition.c",
+        "stage": 8,
+        "validity": "valid"
+      },
+      {
+        "detail": "",
+        "failure_type": "unexpected_accept",
+        "id": "chapter_9/invalid_declarations/undeclared_fun.c",
+        "stage": 9,
+        "validity": "invalid"
+      },
+      {
+        "detail": "",
+        "failure_type": "unexpected_accept",
+        "id": "chapter_9/invalid_types/call_variable_as_function.c",
+        "stage": 9,
+        "validity": "invalid"
+      },
+      {
+        "detail": "return code expected 1 got 0",
+        "failure_type": "wrong_behavior",
+        "id": "chapter_9/valid/arguments_in_registers/dont_clobber_edx.c",
+        "stage": 9,
+        "validity": "valid"
+      },
+      {
+        "detail": "picc: line 5: parser: expected ';' after declaration, found LParen\n",
+        "failure_type": "unexpected_reject",
+        "id": "chapter_9/valid/arguments_in_registers/param_shadows_local_var.c",
+        "stage": 9,
+        "validity": "valid"
+      },
+      {
+        "detail": "picc: semantic: 'a' is a function name, not a value\n",
+        "failure_type": "unexpected_reject",
+        "id": "chapter_9/valid/arguments_in_registers/parameter_shadows_own_function.c",
+        "stage": 9,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-eh56tcr8/output.s: Assembler messages:\n/tmp/picc-test-eh56tcr8/output.s:15: Error: operand size mismatch for `movq'\n/tmp/picc-test-eh56tcr8/output.s:16: Error: operand size mismatch for `movq'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_9/valid/stack_arguments/lots_of_arguments.c",
+        "stage": 9,
+        "validity": "valid"
+      },
+      {
+        "detail": "/tmp/picc-test-8fatolt0/output.s: Assembler messages:\n/tmp/picc-test-8fatolt0/output.s:15: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:16: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:17: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:18: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:19: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:20: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:21: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:22: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:23: Error: operand size mismatch for `movq'\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_9/valid/stack_arguments/test_for_memory_leaks.c",
+        "stage": 9,
+        "validity": "valid"
+      },
+      {
+        "detail": "/usr/bin/ld: /tmp/ccKKptQN.o: in function `print_letters':\n(.text+0xc): undefined reference to `__picc_static_1_i'\n/usr/bin/ld: (.text+0x1c): undefined reference to `__picc_static_1_i'\n/usr/bin/ld: (.text+0x30): undefined reference to `__picc_static_1_i'\n/usr/bin/ld: (.text+0x38): undefined reference to `__picc_static_2_i'\n/usr/bin/ld: (.text+0x48): undefined reference to `__picc_static_2_i'\n/usr/bin/ld: (.text+0x5c): undefined reference to `__picc_static_2_i'\ncollect2: error: ld returned 1 exit status\n",
+        "failure_type": "assembly_or_link_failure",
+        "id": "chapter_10/valid/static_local_multiple_scopes.c",
+        "stage": 10,
+        "validity": "valid"
+      }
+    ],
+    "micro_score": 0.8557692307692307,
+    "passed": 89,
+    "score": 0.8579365079365079,
+    "stages": {
+      "1": {
+        "invalid": {
+          "passed": 5,
+          "score": 1.0,
+          "total": 5
+        },
+        "passed": 8,
+        "score": 1.0,
+        "total": 8,
+        "valid": {
+          "passed": 3,
+          "score": 1.0,
+          "total": 3
+        }
+      },
+      "10": {
+        "invalid": {
+          "passed": 9,
+          "score": 1.0,
+          "total": 9
+        },
+        "passed": 9,
+        "score": 0.5,
+        "total": 13,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "2": {
+        "invalid": {
+          "passed": 2,
+          "score": 1.0,
+          "total": 2
+        },
+        "passed": 5,
+        "score": 1.0,
+        "total": 5,
+        "valid": {
+          "passed": 3,
+          "score": 1.0,
+          "total": 3
+        }
+      },
+      "3": {
+        "invalid": {
+          "passed": 2,
+          "score": 1.0,
+          "total": 2
+        },
+        "passed": 6,
+        "score": 1.0,
+        "total": 6,
+        "valid": {
+          "passed": 4,
+          "score": 1.0,
+          "total": 4
+        }
+      },
+      "4": {
+        "invalid": {
+          "passed": 2,
+          "score": 1.0,
+          "total": 2
+        },
+        "passed": 14,
+        "score": 1.0,
+        "total": 14,
+        "valid": {
+          "passed": 12,
+          "score": 1.0,
+          "total": 12
+        }
+      },
+      "5": {
+        "invalid": {
+          "passed": 6,
+          "score": 0.8571428571428571,
+          "total": 7
+        },
+        "passed": 12,
+        "score": 0.9285714285714286,
+        "total": 13,
+        "valid": {
+          "passed": 6,
+          "score": 1.0,
+          "total": 6
+        }
+      },
+      "6": {
+        "invalid": {
+          "passed": 2,
+          "score": 0.5,
+          "total": 4
+        },
+        "passed": 11,
+        "score": 0.75,
+        "total": 13,
+        "valid": {
+          "passed": 9,
+          "score": 1.0,
+          "total": 9
+        }
+      },
+      "7": {
+        "invalid": {
+          "passed": 2,
+          "score": 1.0,
+          "total": 2
+        },
+        "passed": 5,
+        "score": 1.0,
+        "total": 5,
+        "valid": {
+          "passed": 3,
+          "score": 1.0,
+          "total": 3
+        }
+      },
+      "8": {
+        "invalid": {
+          "passed": 5,
+          "score": 1.0,
+          "total": 5
+        },
+        "passed": 11,
+        "score": 0.9285714285714286,
+        "total": 12,
+        "valid": {
+          "passed": 6,
+          "score": 0.8571428571428571,
+          "total": 7
+        }
+      },
+      "9": {
+        "invalid": {
+          "passed": 7,
+          "score": 0.7777777777777778,
+          "total": 9
+        },
+        "passed": 8,
+        "score": 0.4722222222222222,
+        "total": 15,
+        "valid": {
+          "passed": 1,
+          "score": 0.16666666666666666,
+          "total": 6
+        }
+      }
+    },
+    "total": 104
+  },
+  "tests": [
+    {
+      "compile_seconds": 0.0003457050770521164,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_lex/at_sign.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0016089482232928276,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_lex/invalid_identifier_2.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0004943767562508583,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/keyword_wrong_case.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002900799736380577,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/misspelled_keyword.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002893684431910515,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_1/invalid_parse/switched_parens.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007776384241878986,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017167534679174423,
+      "failure_type": null,
+      "id": "chapter_1/valid/return_0.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007335609290748835,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017807818949222565,
+      "failure_type": null,
+      "id": "chapter_1/valid/return_2.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007135499268770218,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002234731800854206,
+      "failure_type": null,
+      "id": "chapter_1/valid/spaces.c",
+      "passed": true,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00028356676921248436,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_2/invalid_parse/missing_semicolon.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002890280447900295,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_2/invalid_parse/unclosed_paren.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007100373972207308,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001825760118663311,
+      "failure_type": null,
+      "id": "chapter_2/valid/bitwise.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007204050198197365,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00021841330453753471,
+      "failure_type": null,
+      "id": "chapter_2/valid/bitwise_zero.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.006954016163945198,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017130514606833458,
+      "failure_type": null,
+      "id": "chapter_2/valid/neg_zero.c",
+      "passed": true,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002984246239066124,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/malformed_paren.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00029894569888710976,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_3/invalid_parse/missing_first_op.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007280453573912382,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019973795861005783,
+      "failure_type": null,
+      "id": "chapter_3/valid/associativity.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007328355219215155,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017430121079087257,
+      "failure_type": null,
+      "id": "chapter_3/valid/div.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007109890691936016,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017931032925844193,
+      "failure_type": null,
+      "id": "chapter_3/valid/sub_neg.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0072699240408837795,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019467901438474655,
+      "failure_type": null,
+      "id": "chapter_3/valid/unop_add.c",
+      "passed": true,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002533597871661186,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_4/invalid_parse/missing_first_op.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002471175976097584,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_4/invalid_parse/missing_semicolon.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007322273217141628,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001884368248283863,
+      "failure_type": null,
+      "id": "chapter_4/valid/and_false.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0073738107457757,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00018719490617513657,
+      "failure_type": null,
+      "id": "chapter_4/valid/and_short_circuit.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00697782076895237,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017343787476420403,
+      "failure_type": null,
+      "id": "chapter_4/valid/eq_true.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007303537335246801,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019430788233876228,
+      "failure_type": null,
+      "id": "chapter_4/valid/lt_false.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007228244096040726,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020454684272408485,
+      "failure_type": null,
+      "id": "chapter_4/valid/lt_true.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0070300898514688015,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001944778487086296,
+      "failure_type": null,
+      "id": "chapter_4/valid/nested_ops.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0073362188413739204,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020228419452905655,
+      "failure_type": null,
+      "id": "chapter_4/valid/not.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007433212827891111,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.000215848907828331,
+      "failure_type": null,
+      "id": "chapter_4/valid/or_short_circuit.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007156028877943754,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002238638699054718,
+      "failure_type": null,
+      "id": "chapter_4/valid/precedence_2.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007140408735722303,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019915681332349777,
+      "failure_type": null,
+      "id": "chapter_4/valid/precedence_3.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0073556858114898205,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017391005530953407,
+      "failure_type": null,
+      "id": "chapter_4/valid/precedence_4.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007328635081648827,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001998692750930786,
+      "failure_type": null,
+      "id": "chapter_4/valid/precedence_5.c",
+      "passed": true,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0003251759335398674,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_5/invalid_parse/declare_keyword_as_var.c",
+      "passed": false,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003149658441543579,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/invalid_type.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00030972622334957123,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/malformed_increment.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026565324515104294,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_parse/return_in_assignment.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028327619656920433,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/declared_after_use.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028002122417092323,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/invalid_lvalue.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002731974236667156,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_5/invalid_semantics/redefine.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007224238943308592,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00018833717331290245,
+      "failure_type": null,
+      "id": "chapter_5/valid/add_variables.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007646788842976093,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002140146680176258,
+      "failure_type": null,
+      "id": "chapter_5/valid/assignment_in_initializer.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007430909667164087,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001831771805882454,
+      "failure_type": null,
+      "id": "chapter_5/valid/assignment_lowest_precedence.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007207796443253756,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001917029730975628,
+      "failure_type": null,
+      "id": "chapter_5/valid/exp_then_declaration.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007302034646272659,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00018195481970906258,
+      "failure_type": null,
+      "id": "chapter_5/valid/non_short_circuit_or.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0071754250675439835,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00022096792235970497,
+      "failure_type": null,
+      "id": "chapter_5/valid/unused_exp.c",
+      "passed": true,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0003242851234972477,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_6/invalid_parse/declaration_as_statement.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00031199073418974876,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/incomplete_ternary.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00025747809559106827,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_6/invalid_parse/malformed_ternary.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026720622554421425,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_6/invalid_semantics/ternary_assign.c",
+      "passed": false,
+      "stage": 6,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007212123833596706,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00021496834233403206,
+      "failure_type": null,
+      "id": "chapter_6/valid/else.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007377999369055033,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001733577810227871,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_nested_2.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007089902646839619,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001964815892279148,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_nested_3.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007008349057286978,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017608283087611198,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_nested_4.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007083401083946228,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017984025180339813,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_nested_5.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0073168836534023285,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019946834072470665,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_null_body.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007314187008887529,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017858808860182762,
+      "failure_type": null,
+      "id": "chapter_6/valid/if_taken.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007112326566129923,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001895190216600895,
+      "failure_type": null,
+      "id": "chapter_6/valid/multiple_if.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007468129973858595,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00020841509103775024,
+      "failure_type": null,
+      "id": "chapter_6/valid/ternary_precedence.c",
+      "passed": true,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00029865605756640434,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_parse/extra_brace.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.000295520294457674,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_7/invalid_semantics/double_define_after_scope.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007091265171766281,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00016925018280744553,
+      "failure_type": null,
+      "id": "chapter_7/valid/declaration_only.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007319790311157703,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00022008689120411873,
+      "failure_type": null,
+      "id": "chapter_7/valid/inner_uninitialized.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007287809159606695,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00018204515799880028,
+      "failure_type": null,
+      "id": "chapter_7/valid/nested_if.c",
+      "passed": true,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00027716485783457756,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/do_while_empty_parens.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002931356430053711,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/missing_for_header_clauses.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002797800116240978,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/missing_for_header_semicolon.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00031516700983047485,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_parse/statement_in_condition.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002960311248898506,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_8/invalid_semantics/break_not_in_loop.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0074010128155350685,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00018407870084047318,
+      "failure_type": null,
+      "id": "chapter_8/valid/break_immediate.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007185955066233873,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0002170708030462265,
+      "failure_type": null,
+      "id": "chapter_8/valid/do_while.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007275844924151897,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00022221077233552933,
+      "failure_type": null,
+      "id": "chapter_8/valid/do_while_break_immediate.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00028395792469382286,
+      "compiler_returncode": 1,
+      "detail": "picc: line 2: parser: expected ';' in for, found 'i'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_8/valid/for_absent_condition.c",
+      "passed": false,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007361397612839937,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00021347403526306152,
+      "failure_type": null,
+      "id": "chapter_8/valid/for_shadow.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007054867222905159,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00017160596325993538,
+      "failure_type": null,
+      "id": "chapter_8/valid/multi_continue_same_loop.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007354463450610638,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.0001995679922401905,
+      "failure_type": null,
+      "id": "chapter_8/valid/nested_break.c",
+      "passed": true,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002948879264295101,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_declarations/assign_to_fun_call.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00029514869675040245,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_declarations/nested_function_definition.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003115297295153141,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_declarations/params_with_same_name.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027770595625042915,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_9/invalid_declarations/undeclared_fun.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003109988756477833,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/decl_wrong_closing_delim.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026039406657218933,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/function_call_declaration.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002821749076247215,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_parse/initialize_function_as_variable.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002981051802635193,
+      "compiler_returncode": 0,
+      "detail": "",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_accept",
+      "id": "chapter_9/invalid_types/call_variable_as_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028034113347530365,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_9/invalid_types/too_few_args.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00721592316403985,
+      "compiler_returncode": 0,
+      "detail": "return code expected 1 got 0",
+      "execute_seconds": 0.0002098381519317627,
+      "failure_type": "wrong_behavior",
+      "id": "chapter_9/valid/arguments_in_registers/dont_clobber_edx.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00026786793023347855,
+      "compiler_returncode": 1,
+      "detail": "picc: line 5: parser: expected ';' after declaration, found LParen\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_9/valid/arguments_in_registers/param_shadows_local_var.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00031842291355133057,
+      "compiler_returncode": 1,
+      "detail": "picc: semantic: 'a' is a function name, not a value\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_9/valid/arguments_in_registers/parameter_shadows_own_function.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007225971203297377,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.00019288528710603714,
+      "failure_type": null,
+      "id": "chapter_9/valid/arguments_in_registers/single_arg.c",
+      "passed": true,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013472330756485462,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-eh56tcr8/output.s: Assembler messages:\n/tmp/picc-test-eh56tcr8/output.s:15: Error: operand size mismatch for `movq'\n/tmp/picc-test-eh56tcr8/output.s:16: Error: operand size mismatch for `movq'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/stack_arguments/lots_of_arguments.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0013603772968053818,
+      "compiler_returncode": 0,
+      "detail": "/tmp/picc-test-8fatolt0/output.s: Assembler messages:\n/tmp/picc-test-8fatolt0/output.s:15: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:16: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:17: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:18: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:19: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:20: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:21: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:22: Error: operand size mismatch for `movq'\n/tmp/picc-test-8fatolt0/output.s:23: Error: operand size mismatch for `movq'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_9/valid/stack_arguments/test_for_memory_leaks.c",
+      "passed": false,
+      "stage": 9,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0002845092676579952,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_declarations/local_var_follows_extern.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00028162263333797455,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_parse/missing_parameter_list.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00031223101541399956,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_parse/multi_storage_class_var.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00026980089023709297,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/conflicting_function_linkage_2.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.00027258601039648056,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/conflicting_variable_linkage_2.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002510249614715576,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/extern_variable_initializer.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002918429672718048,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/non_constant_static_initializer.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0003031347878277302,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/non_constant_static_local_initializer.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.0002544121816754341,
+      "compiler_returncode": 1,
+      "detail": null,
+      "execute_seconds": 0.0,
+      "failure_type": null,
+      "id": "chapter_10/invalid_types/redeclare_fun_as_var.c",
+      "passed": true,
+      "stage": 10,
+      "validity": "invalid"
+    },
+    {
+      "compile_seconds": 0.007395302411168814,
+      "compiler_returncode": 0,
+      "detail": "/usr/bin/ld: /tmp/ccKKptQN.o: in function `print_letters':\n(.text+0xc): undefined reference to `__picc_static_1_i'\n/usr/bin/ld: (.text+0x1c): undefined reference to `__picc_static_1_i'\n/usr/bin/ld: (.text+0x30): undefined reference to `__picc_static_1_i'\n/usr/bin/ld: (.text+0x38): undefined reference to `__picc_static_2_i'\n/usr/bin/ld: (.text+0x48): undefined reference to `__picc_static_2_i'\n/usr/bin/ld: (.text+0x5c): undefined reference to `__picc_static_2_i'\ncollect2: error: ld returned 1 exit status\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_10/valid/static_local_multiple_scopes.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007276666816323996,
+      "compiler_returncode": 0,
+      "detail": "/usr/bin/ld: /tmp/ccTt5e9L.o: in function `foo':\n(.text+0xc): undefined reference to `__picc_static_1_x'\n/usr/bin/ld: (.text+0x20): undefined reference to `__picc_static_1_x'\n/usr/bin/ld: (.text+0x28): undefined reference to `__picc_static_1_x'\ncollect2: error: ld returned 1 exit status\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_10/valid/static_local_uninitialized.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.007433644030243158,
+      "compiler_returncode": 0,
+      "detail": "/usr/bin/ld: /tmp/ccG9Jkyz.o: in function `main':\n(.text+0xc): undefined reference to `__picc_static_1_i'\n/usr/bin/ld: (.text+0x18): undefined reference to `__picc_static_2_j'\ncollect2: error: ld returned 1 exit status\n",
+      "execute_seconds": 0.0,
+      "failure_type": "assembly_or_link_failure",
+      "id": "chapter_10/valid/static_variables_in_expressions.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.00029379595071077347,
+      "compiler_returncode": 1,
+      "detail": "picc: semantic: redefinition of variable 'foo'\n",
+      "execute_seconds": 0.0,
+      "failure_type": "unexpected_reject",
+      "id": "chapter_10/valid/tentative_definition.c",
+      "passed": false,
+      "stage": 10,
+      "validity": "valid"
+    }
+  ],
+  "timestamp": "2026-09-14T10:50:51Z",
+  "workspace": "/workspace"
+}
