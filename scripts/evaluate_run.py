@@ -40,7 +40,7 @@ FUZZ_LAST_BUILDABLE_OUTPUT_NAME = "fuzz-last-buildable.json"
 
 
 def last_buildable_snapshot(hidden_rows: list[dict[str, Any]], snapshots: list[dict[str, Any]]) -> dict[str, Any] | None:
-    """The last snapshot whose hidden evaluation built and passed the audit.
+    """The last snapshot whose hidden evaluation built with no blocking audit finding.
 
     The final snapshot is whatever the workspace held when the round cap
     fell; two of eight v7 finals were half-finished rewrites. The last
@@ -53,7 +53,9 @@ def last_buildable_snapshot(hidden_rows: list[dict[str, Any]], snapshots: list[d
         if row is None:
             continue
         summary = row.get("summary") if isinstance(row.get("summary"), dict) else {}
-        if summary.get("build_ok") is True and not summary.get("audit_blocking") and summary.get("audit_ok") is not False:
+        # Built and no *blocking* finding: an advisory finding neither zeroes a
+        # final snapshot nor disqualifies the last buildable one (v9 Amendment 1).
+        if summary.get("build_ok") is True and not summary.get("audit_blocking"):
             return snapshot
     return None
 

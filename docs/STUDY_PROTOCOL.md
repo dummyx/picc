@@ -211,7 +211,8 @@ own manifest version.
 
 Each oracle is scored on two snapshots: the **final snapshot** (whatever the
 workspace held when the last round ended) and the **last buildable snapshot**
-(the last frozen snapshot whose hidden evaluation built and passed the audit;
+(the last frozen snapshot whose hidden evaluation built with no blocking
+audit finding; an advisory finding does not disqualify it, v9 Amendment 1;
 the final one when it built, 0 when none did). The round cap is blind to what
 the agent is doing, and in v7 it fell inside a rewrite in two of eight runs,
 turning a 0.92 compiler into a final snapshot that does not build. The
@@ -359,7 +360,12 @@ Rust the Cargo package's `src/` tree plus any file it pulls in by path
 (`#[path]`, `include!`), for JavaScript/TypeScript the adapter's declared
 roots plus the entry module's import closure; symlinks and vendored binaries
 are policy failures everywhere. Test drivers and fuzzers the agent keeps
-outside those roots are its own tooling and are not audited. Until v6 this
+outside those roots are its own tooling and are not audited. The dependency
+audit is scoped the same way: the root Cargo or package manifest plus any
+workspace members it declares, which is what the frozen build compiles; a
+crate or package elsewhere in the workspace (for example a self-written
+simulator that depends on the candidate by path) is developer tooling (v9
+Amendment 2; until v9 every manifest in the workspace was scanned). Until v6 this
 paragraph said the opposite for Rust ("treat that result as an outcome") while
 the Node audit had already been scoped after the v4 incident; v6 Amendment 2
 records the conflict and its resolution. Python candidates are still scanned

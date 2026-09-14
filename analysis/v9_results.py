@@ -45,7 +45,7 @@ SECONDARY = [
 def last_buildable(hidden_rows: list[dict]) -> int | None:
     for index in range(len(hidden_rows) - 1, -1, -1):
         summary = hidden_rows[index].get("summary") or {}
-        if summary.get("build_ok") is True and not summary.get("audit_blocking") and summary.get("audit_ok") is not False:
+        if summary.get("build_ok") is True and not summary.get("audit_blocking"):  # v9 Amendment 1
             return index
     return None
 

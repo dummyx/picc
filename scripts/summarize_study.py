@@ -937,15 +937,17 @@ FUZZ_EMPTY = {
 
 
 def last_buildable_index(hidden_rows: list[dict[str, Any]]) -> int | None:
-    """Index of the last hidden-evaluated snapshot that built and passed the
-    audit; None when no snapshot did. The final snapshot is whatever the
+    """Index of the last hidden-evaluated snapshot that built with no blocking
+    audit finding; None when no snapshot did. The final snapshot is whatever the
     workspace held when the round cap fell, so the last buildable snapshot is
     the co-primary that ignores a rewrite cut in half (v8 pre-registration)."""
     for index in range(len(hidden_rows) - 1, -1, -1):
         summary = hidden_rows[index].get("summary")
         if not isinstance(summary, dict):
             continue
-        if summary.get("build_ok") is True and not summary.get("audit_blocking") and summary.get("audit_ok") is not False:
+        # Built and no *blocking* finding; advisory findings do not disqualify
+        # (v9 Amendment 1).
+        if summary.get("build_ok") is True and not summary.get("audit_blocking"):
             return index
     return None
 
