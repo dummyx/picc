@@ -9,7 +9,7 @@ CONDITION ?= baseline
 PROFILE ?= pilot
 REPLICATES ?= 3
 
-.PHONY: doctor validate image tests smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
+.PHONY: doctor validate image tests tests-c18 tests-sql tasks-smoke smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
 	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs
 
 doctor:
@@ -23,6 +23,18 @@ image:
 
 tests:
 	./scripts/fetch_tests.sh
+
+# Task corpora: chapters 1-18 partitions and the pinned sqllogictest scripts.
+tests-c18:
+	./scripts/fetch_tests_c18.sh
+
+tests-sql:
+	./scripts/fetch_sqllogictest.sh
+
+# Task evaluators in the pinned image with reference-backed and wrong
+# candidates (needs Docker and the fetched task corpora).
+tasks-smoke:
+	./scripts/smoke_tasks.sh
 
 smoke-tests:
 	./scripts/validate.sh

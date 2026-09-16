@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "language": "rust",
+  "framework": "standard-library",
+  "dependency_policy": "Rust standard library only; no Cargo dependencies",
+  "build": {
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "artifact": "target/release/pisql",
+    "timeout_seconds": 900
+  },
+  "run": {
+    "command": [
+      "{artifact}",
+      "{input}"
+    ]
+  },
+  "source_extensions": [
+    ".rs"
+  ],
+  "audit": {
+    "allowed_dependencies": [],
+    "prohibited_patterns": [
+      {
+        "pattern": "\\brusqlite\\b|\\blibsqlite3\\b|\\bsqlite3_(?:open|exec|prepare)\\w*\\b|better-sqlite3|\\bDatabaseSync\\b|\\bduckdb\\b|\\blibsql\\b",
+        "reason": "database engine library reference"
+      }
+    ]
+  },
+  "spec_variables": {
+    "LANGUAGE": "Rust",
+    "FRAMEWORK": "Rust standard library only",
+    "DEPENDENCY_POLICY": "Rust standard library only; Cargo dependency tables must remain empty",
+    "BUILD_COMMAND": "cargo build --release --offline",
+    "ENTRY_COMMAND": "target/release/pisql INPUT.sql",
+    "PRODUCT": "PiSQL"
+  },
+  "agent_policy": {
+    "blocked_bash_patterns": [
+      {
+        "pattern": "(^|[;&|]\\s*)(?:\\S*/)?sqlite3?(?=\\s|$)",
+        "reason": "running an existing database engine is prohibited"
+      },
+      {
+        "pattern": "\\bimport\\s+sqlite3\\b|\\bfrom\\s+sqlite3\\b|\\bnode:sqlite\\b|require\\(\\s*['\\\"]sqlite|\\bDatabaseSync\\b|\\brusqlite\\b|better-sqlite3",
+        "reason": "delegating to an existing database engine is prohibited"
+      }
+    ]
+  },
+  "agent_notes": "The Cargo package builds the binary `target/release/pisql` (package name `pisql`)."
+}

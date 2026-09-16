@@ -1,0 +1,267 @@
+{
+  "excluded_counts": {},
+  "partitions": {
+    "hidden": {
+      "count": 8,
+      "tests": [
+        {
+          "family": "test/evidence/in1",
+          "fixtures": [],
+          "id": "test/evidence/in1.test",
+          "link_flags": [],
+          "stage": 1,
+          "validity": "valid"
+        },
+        {
+          "family": "test/index/orderby_nosort/10/slt_good_1",
+          "fixtures": [],
+          "id": "test/index/orderby_nosort/10/slt_good_1.test",
+          "link_flags": [],
+          "stage": 8,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/aggregates/slt_good_2",
+          "fixtures": [],
+          "id": "test/random/aggregates/slt_good_2.test",
+          "link_flags": [],
+          "stage": 6,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/expr/slt_good_4",
+          "fixtures": [],
+          "id": "test/random/expr/slt_good_4.test",
+          "link_flags": [],
+          "stage": 4,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/groupby/slt_good_2",
+          "fixtures": [],
+          "id": "test/random/groupby/slt_good_2.test",
+          "link_flags": [],
+          "stage": 7,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/select/slt_good_1",
+          "fixtures": [],
+          "id": "test/random/select/slt_good_1.test",
+          "link_flags": [],
+          "stage": 5,
+          "validity": "valid"
+        },
+        {
+          "family": "test/select2",
+          "fixtures": [],
+          "id": "test/select2.test",
+          "link_flags": [],
+          "stage": 2,
+          "validity": "valid"
+        },
+        {
+          "family": "test/select5",
+          "fixtures": [],
+          "id": "test/select5.test",
+          "link_flags": [],
+          "stage": 3,
+          "validity": "valid"
+        }
+      ]
+    },
+    "visible": {
+      "count": 22,
+      "tests": [
+        {
+          "family": "test/evidence/in2",
+          "fixtures": [],
+          "id": "test/evidence/in2.test",
+          "link_flags": [],
+          "stage": 1,
+          "validity": "valid"
+        },
+        {
+          "family": "test/index/orderby_nosort/10/slt_good_0",
+          "fixtures": [],
+          "id": "test/index/orderby_nosort/10/slt_good_0.test",
+          "link_flags": [],
+          "stage": 8,
+          "validity": "valid"
+        },
+        {
+          "family": "test/index/orderby_nosort/10/slt_good_2",
+          "fixtures": [],
+          "id": "test/index/orderby_nosort/10/slt_good_2.test",
+          "link_flags": [],
+          "stage": 8,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/aggregates/slt_good_0",
+          "fixtures": [],
+          "id": "test/random/aggregates/slt_good_0.test",
+          "link_flags": [],
+          "stage": 6,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/aggregates/slt_good_1",
+          "fixtures": [],
+          "id": "test/random/aggregates/slt_good_1.test",
+          "link_flags": [],
+          "stage": 6,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/aggregates/slt_good_3",
+          "fixtures": [],
+          "id": "test/random/aggregates/slt_good_3.test",
+          "link_flags": [],
+          "stage": 6,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/aggregates/slt_good_4",
+          "fixtures": [],
+          "id": "test/random/aggregates/slt_good_4.test",
+          "link_flags": [],
+          "stage": 6,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/expr/slt_good_0",
+          "fixtures": [],
+          "id": "test/random/expr/slt_good_0.test",
+          "link_flags": [],
+          "stage": 4,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/expr/slt_good_1",
+          "fixtures": [],
+          "id": "test/random/expr/slt_good_1.test",
+          "link_flags": [],
+          "stage": 4,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/expr/slt_good_2",
+          "fixtures": [],
+          "id": "test/random/expr/slt_good_2.test",
+          "link_flags": [],
+          "stage": 4,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/expr/slt_good_3",
+          "fixtures": [],
+          "id": "test/random/expr/slt_good_3.test",
+          "link_flags": [],
+          "stage": 4,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/groupby/slt_good_0",
+          "fixtures": [],
+          "id": "test/random/groupby/slt_good_0.test",
+          "link_flags": [],
+          "stage": 7,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/groupby/slt_good_1",
+          "fixtures": [],
+          "id": "test/random/groupby/slt_good_1.test",
+          "link_flags": [],
+          "stage": 7,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/groupby/slt_good_3",
+          "fixtures": [],
+          "id": "test/random/groupby/slt_good_3.test",
+          "link_flags": [],
+          "stage": 7,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/groupby/slt_good_4",
+          "fixtures": [],
+          "id": "test/random/groupby/slt_good_4.test",
+          "link_flags": [],
+          "stage": 7,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/select/slt_good_0",
+          "fixtures": [],
+          "id": "test/random/select/slt_good_0.test",
+          "link_flags": [],
+          "stage": 5,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/select/slt_good_2",
+          "fixtures": [],
+          "id": "test/random/select/slt_good_2.test",
+          "link_flags": [],
+          "stage": 5,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/select/slt_good_3",
+          "fixtures": [],
+          "id": "test/random/select/slt_good_3.test",
+          "link_flags": [],
+          "stage": 5,
+          "validity": "valid"
+        },
+        {
+          "family": "test/random/select/slt_good_4",
+          "fixtures": [],
+          "id": "test/random/select/slt_good_4.test",
+          "link_flags": [],
+          "stage": 5,
+          "validity": "valid"
+        },
+        {
+          "family": "test/select1",
+          "fixtures": [],
+          "id": "test/select1.test",
+          "link_flags": [],
+          "stage": 2,
+          "validity": "valid"
+        },
+        {
+          "family": "test/select3",
+          "fixtures": [],
+          "id": "test/select3.test",
+          "link_flags": [],
+          "stage": 2,
+          "validity": "valid"
+        },
+        {
+          "family": "test/select4",
+          "fixtures": [],
+          "id": "test/select4.test",
+          "link_flags": [],
+          "stage": 3,
+          "validity": "valid"
+        }
+      ]
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "repository": "https://github.com/gregrahn/sqllogictest.git",
+    "revision": "c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0",
+    "tests_root": "test"
+  },
+  "split": {
+    "policy": "family-grouped, stage-and-validity-stratified",
+    "scope": "whole sqllogictest scripts covering table creation, insertion, SELECT, joins, NULL, grouping/aggregation, subqueries, ordering, and set operations; complete with setup statements; records conditioned on other engines (skipif/onlyif) are skipped as the reference runner does",
+    "seed": 20260916,
+    "visible_fraction": 0.7
+  }
+}

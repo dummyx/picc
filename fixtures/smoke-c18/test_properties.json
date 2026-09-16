@@ -1,0 +1,8 @@
+{
+  "extra_credit_tests": {},
+  "requires_mathlib": ["chapter_13/valid/calls/mathlib.c"],
+  "libs": {},
+  "assembly_libs": {
+    "chapter_18/valid/structs/use_asm_helper.c": ["chapter_18/valid/structs/big_data_on_page_boundary"]
+  }
+}

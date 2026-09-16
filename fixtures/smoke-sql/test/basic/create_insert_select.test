@@ -1,0 +1,86 @@
+# Smoke script: setup statements, queries with every sort mode, a hashed
+# result, a labeled pair, engine conditions, and an expected error.
+hash-threshold 8
+
+statement ok
+CREATE TABLE t1(a INTEGER, b INTEGER, c TEXT)
+
+statement ok
+INSERT INTO t1 VALUES(1, 10, 'one')
+
+statement ok
+INSERT INTO t1 VALUES(2, NULL, 'two')
+
+statement ok
+INSERT INTO t1 VALUES(3, 30, '')
+
+query I nosort
+SELECT a FROM t1 ORDER BY a DESC
+----
+3
+2
+1
+
+query IT rowsort
+SELECT a, c FROM t1
+----
+1
+one
+2
+two
+3
+(empty)
+
+query I valuesort label-sum
+SELECT b FROM t1
+----
+10
+30
+NULL
+
+query I valuesort label-sum
+SELECT b FROM t1 WHERE 1
+----
+10
+30
+NULL
+
+query I rowsort
+SELECT a * b FROM t1 UNION ALL SELECT a FROM t1 UNION ALL SELECT b FROM t1
+----
+9 values hashing to 56741b2bed434d8a6a078978cf419dce
+
+onlyif mysql
+query I nosort
+SELECT 1 DIV 1
+----
+1
+
+skipif sqlite
+query I nosort
+SELECT nonsense
+----
+0
+
+statement error
+SELECT * FROM missing_table
+
+query R nosort
+SELECT avg(b) FROM t1
+----
+20.000
+
+query I nosort
+SELECT avg(b) FROM t1
+----
+20
+
+query T nosort
+SELECT avg(b) FROM t1
+----
+20.0
+
+query I nosort
+SELECT 5000000000
+----
+705032704

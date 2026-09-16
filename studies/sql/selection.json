@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "source": {
+    "repository": "https://github.com/gregrahn/sqllogictest.git",
+    "revision": "c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0",
+    "canonical": "https://www.sqlite.org/sqllogictest/ (Fossil); the git mirror is pinned by commit"
+  },
+  "scope": "whole sqllogictest scripts covering table creation, insertion, SELECT, joins, NULL, grouping/aggregation, subqueries, ordering, and set operations; complete with setup statements; records conditioned on other engines (skipif/onlyif) are skipped as the reference runner does",
+  "exclusions": [
+    "test/evidence/slt_lang_*.test: views, triggers, indexes, REINDEX, REPLACE, UPDATE, DROP, and SQLite-specific aggregate functions (total, group_concat) are outside the subset",
+    "test/index/{between,commute,delete,in,random,view}: DELETE-heavy or index-plan tests whose results are valuesorted (order not observable) or empty",
+    "test/random/*/slt_good_N.test for N >= 5 and test/index/orderby_nosort/*/slt_good_N.test beyond the listed ones: same generators, more of the same records; capped to bound per-round evaluation time"
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "family": "evidence-in",
+      "description": "IN / NOT IN with literal lists, empty lists, subqueries, and NULL operands (SQLite documentation evidence tests)",
+      "scripts": ["test/evidence/in1.test", "test/evidence/in2.test"]
+    },
+    {
+      "stage": 2,
+      "family": "select-single-table",
+      "description": "single-table SELECT with arithmetic, CASE, correlated scalar subqueries, aggregates in subqueries, WHERE, and ORDER BY over every column",
+      "scripts": ["test/select1.test", "test/select2.test", "test/select3.test"]
+    },
+    {
+      "stage": 3,
+      "family": "select-multi-table",
+      "description": "multi-table joins in the FROM list with equality predicates; UNION, UNION ALL, INTERSECT, EXCEPT; IN subqueries over text columns",
+      "scripts": ["test/select4.test", "test/select5.test"]
+    },
+    {
+      "stage": 4,
+      "family": "random-expr",
+      "description": "generated scalar and per-row expressions: unary/binary arithmetic, integer division, CAST, COALESCE, NULLIF, CASE, IN, BETWEEN, NOT NULL tests",
+      "scripts": [
+        "test/random/expr/slt_good_0.test",
+        "test/random/expr/slt_good_1.test",
+        "test/random/expr/slt_good_2.test",
+        "test/random/expr/slt_good_3.test",
+        "test/random/expr/slt_good_4.test"
+      ]
+    },
+    {
+      "stage": 5,
+      "family": "random-select",
+      "description": "generated SELECTs over three tables: comma and CROSS JOINs, DISTINCT, IS NULL / IS NOT NULL, COALESCE, aliases",
+      "scripts": [
+        "test/random/select/slt_good_0.test",
+        "test/random/select/slt_good_1.test",
+        "test/random/select/slt_good_2.test",
+        "test/random/select/slt_good_3.test",
+        "test/random/select/slt_good_4.test"
+      ]
+    },
+    {
+      "stage": 6,
+      "family": "random-aggregates",
+      "description": "generated aggregate queries: COUNT, SUM, MIN, MAX, AVG with DISTINCT, expressions over aggregates, CASE and COALESCE, over joins",
+      "scripts": [
+        "test/random/aggregates/slt_good_0.test",
+        "test/random/aggregates/slt_good_1.test",
+        "test/random/aggregates/slt_good_2.test",
+        "test/random/aggregates/slt_good_3.test",
+        "test/random/aggregates/slt_good_4.test"
+      ]
+    },
+    {
+      "stage": 7,
+      "family": "random-groupby",
+      "description": "generated GROUP BY and HAVING queries with aggregates and expressions over grouped columns",
+      "scripts": [
+        "test/random/groupby/slt_good_0.test",
+        "test/random/groupby/slt_good_1.test",
+        "test/random/groupby/slt_good_2.test",
+        "test/random/groupby/slt_good_3.test",
+        "test/random/groupby/slt_good_4.test"
+      ]
+    },
+    {
+      "stage": 8,
+      "family": "index-orderby-nosort",
+      "description": "ORDER BY ASC/DESC with order-sensitive comparison over integer, real, and text columns; CREATE INDEX statements must be accepted (no observable effect); INSERT ... SELECT",
+      "scripts": [
+        "test/index/orderby_nosort/10/slt_good_0.test",
+        "test/index/orderby_nosort/10/slt_good_1.test",
+        "test/index/orderby_nosort/10/slt_good_2.test"
+      ]
+    }
+  ]
+}

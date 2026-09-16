@@ -467,8 +467,22 @@ def hidden_manifest_selection(
     return sorted(selected, key=lambda row: (row[1], row[2], row[0])), effective_max_stage
 
 
+def row_score(row: dict[str, Any], index: int) -> float:
+    """A test row's contribution to its stage: the boolean pass for the
+    compiler corpus, or the fractional per-script record score the SQL
+    evaluator records under ``score`` (a script passes only when it is 1.0)."""
+    score = row.get("score")
+    if score is None:
+        return float(row["passed"])
+    if isinstance(score, bool) or not isinstance(score, (int, float)) or not 0.0 <= float(score) <= 1.0:
+        raise SummaryError(f"hidden test result {index} has an invalid score")
+    if bool(row["passed"]) != (float(score) == 1.0):
+        raise SummaryError(f"hidden test result {index} passed flag disagrees with its score")
+    return float(score)
+
+
 def recomputed_hidden_scores(result_rows: list[dict[str, Any]]) -> dict[str, Any]:
-    by_stage: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    by_stage: dict[int, list[tuple[dict[str, Any], float]]] = defaultdict(list)
     for index, row in enumerate(result_rows):
         stage = row.get("stage")
         passed = row.get("passed")
@@ -476,15 +490,15 @@ def recomputed_hidden_scores(result_rows: list[dict[str, Any]]) -> dict[str, Any
             raise SummaryError(f"hidden test result {index} has an invalid stage")
         if not isinstance(passed, bool):
             raise SummaryError(f"hidden test result {index} has a non-boolean passed value")
-        by_stage[stage].append(row)
+        by_stage[stage].append((row, row_score(row, index)))
 
     stage_scores: list[float] = []
     for stage_rows in by_stage.values():
         validity_scores: list[float] = []
         for validity in ("valid", "invalid"):
-            subset = [row for row in stage_rows if row.get("validity") == validity]
+            subset = [score for row, score in stage_rows if row.get("validity") == validity]
             if subset:
-                validity_scores.append(sum(row["passed"] for row in subset) / len(subset))
+                validity_scores.append(sum(subset) / len(subset))
         if not validity_scores:
             raise SummaryError("hidden test results contain a stage with no valid/invalid rows")
         stage_scores.append(sum(validity_scores) / len(validity_scores))

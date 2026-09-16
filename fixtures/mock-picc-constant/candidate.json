@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "language": "shell",
+  "framework": "evaluator-test-fixture",
+  "dependency_policy": "evaluator-only test fixture",
+  "build": {"command": ["bash", "-n", "picc.sh"], "artifact": "picc.sh", "timeout_seconds": 60},
+  "run": {"command": ["bash", "{artifact}", "{input}", "-o", "{output}"]},
+  "source_extensions": [".sh"],
+  "audit": {}
+}

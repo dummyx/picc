@@ -1,0 +1,47 @@
+statement ok
+CREATE TABLE x(n INTEGER)
+
+statement ok
+CREATE TABLE y(m INTEGER)
+
+statement ok
+INSERT INTO x VALUES(1)
+
+statement ok
+INSERT INTO x VALUES(NULL)
+
+statement ok
+INSERT INTO y VALUES(1)
+
+statement ok
+INSERT INTO y VALUES(2)
+
+query II rowsort
+SELECT n, m FROM x, y WHERE n = m OR n IS NULL
+----
+1
+1
+NULL
+1
+NULL
+2
+
+query I nosort
+SELECT count(*) FROM x WHERE n IN (SELECT m FROM y)
+----
+1
+
+query I nosort
+SELECT 1 NOT IN (NULL, 2)
+----
+NULL
+
+statement error
+INSERT INTO x VALUES(1, 2)
+
+halt
+
+query I nosort
+SELECT this_is_never_run
+----
+0

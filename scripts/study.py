@@ -42,6 +42,25 @@ VALID_TEST_ACCESS = {"none", "tool", "files"}
 VALID_FEEDBACK = {"none", "aggregate", "failures", "detailed"}
 VALID_REFERENCE_MODES = {"none", "oracle", "source"}
 RUNTIME_COPY_DIRS = ("config", "docker", "scripts", "pi", "prompts", "evaluator")
+# Task runtimes: which studies/runtime files become the materialized
+# evaluator/. Every task shares candidate_runtime.py (build, audit, process
+# control); the C task adds the fuzz oracle, the SQL task its script reader.
+TASK_RUNTIMES: dict[str, dict[str, str]] = {
+    "c-compiler": {
+        "evaluate.py": "evaluate.py",
+        "candidate_runtime.py": "candidate_runtime.py",
+        "fuzz_generator.py": "fuzz_generator.py",
+        "fuzz_evaluate.py": "fuzz_evaluate.py",
+    },
+    "sql-engine": {
+        "evaluate.py": "sql/evaluate.py",
+        "sqllogictest.py": "sql/sqllogictest.py",
+        "candidate_runtime.py": "candidate_runtime.py",
+    },
+}
+# Conditions without a task block are the original chapters 1-10 compiler task.
+DEFAULT_TASK: dict[str, Any] = {"id": "c-compiler-ch1-10", "runtime": "c-compiler", "max_stage": 10, "parameters": {}}
+FIXTURE_KINDS = {"c", "assembly", "header"}
 RUNTIME_COPY_FILES = ("VERSION",)
 SECRET_MARKERS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL")
 RUN_ID_MAX_LENGTH = 96
@@ -190,6 +209,17 @@ def validate_adapter(path: Path, condition_id: str) -> dict[str, Any]:
         for item in excluded
     ):
         raise StudyError(f"{condition_id}: adapter audit.exclude_paths must be relative paths without '..'")
+    for key in ("prohibited_node_modules", "prohibited_python_modules"):
+        values = audit.get(key, [])
+        if not isinstance(values, list) or not all(isinstance(item, str) and item for item in values):
+            raise StudyError(f"{condition_id}: adapter audit.{key} must be an array of module names")
+    for row in audit.get("prohibited_patterns", []):
+        if not isinstance(row, dict) or not isinstance(row.get("pattern"), str) or not row["pattern"]:
+            raise StudyError(f"{condition_id}: each adapter audit.prohibited_patterns entry needs a pattern")
+        try:
+            re.compile(row["pattern"])
+        except re.error as error:
+            raise StudyError(f"{condition_id}: invalid prohibited source pattern {row['pattern']!r}: {error}") from error
     agent_policy = adapter.get("agent_policy", {})
     if not isinstance(agent_policy, dict):
         raise StudyError(f"{condition_id}: adapter agent_policy must be an object")
@@ -212,11 +242,50 @@ def validate_adapter(path: Path, condition_id: str) -> dict[str, Any]:
     return adapter
 
 
+def condition_task(condition: Mapping[str, Any]) -> dict[str, Any]:
+    """The condition's task block with defaults applied (never mutates the condition)."""
+    task = condition.get("task")
+    if task is None:
+        return copy.deepcopy(DEFAULT_TASK)
+    return deep_merge(DEFAULT_TASK, task)
+
+
+def validate_task(condition: dict[str, Any], condition_id: str) -> dict[str, Any]:
+    raw = condition.get("task")
+    if raw is not None and not isinstance(raw, dict):
+        raise StudyError(f"{condition_id}.task must be an object")
+    task = condition_task(condition)
+    unknown = set(task) - {"id", "runtime", "max_stage", "parameters"}
+    if unknown:
+        raise StudyError(f"{condition_id}.task has unknown keys: {sorted(unknown)}")
+    require_string(task.get("id"), f"{condition_id}.task.id")
+    if task.get("runtime") not in TASK_RUNTIMES:
+        raise StudyError(f"{condition_id}.task.runtime must be one of {sorted(TASK_RUNTIMES)}")
+    require_int(task.get("max_stage"), f"{condition_id}.task.max_stage", minimum=1)
+    parameters = task.get("parameters")
+    if not isinstance(parameters, dict):
+        raise StudyError(f"{condition_id}.task.parameters must be an object")
+    for key, value in parameters.items():
+        if not isinstance(key, str) or not re.fullmatch(r"[a-z][a-z0-9_]*", key):
+            raise StudyError(f"{condition_id}.task.parameters has an invalid key {key!r}")
+        if isinstance(value, bool) or not isinstance(value, (str, int, float)):
+            raise StudyError(f"{condition_id}.task.parameters.{key} must be a string or number")
+    if task["runtime"] == "sql-engine":
+        version = parameters.get("sqlite_version")
+        if not isinstance(version, str) or not re.fullmatch(r"\d+\.\d+\.\d+", version):
+            raise StudyError(f"{condition_id}.task.parameters.sqlite_version must pin the SQLite version (x.y.z)")
+        timeout = parameters.get("script_timeout_seconds", 120)
+        if isinstance(timeout, bool) or not isinstance(timeout, int) or timeout <= 0:
+            raise StudyError(f"{condition_id}.task.parameters.script_timeout_seconds must be a positive integer")
+    return task
+
+
 def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None:
     condition_id = require_string(condition.get("id"), "condition.id")
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", condition_id):
         raise StudyError(f"Invalid condition id: {condition_id!r}")
     require_string(condition.get("factor"), f"{condition_id}.factor")
+    task = validate_task(condition, condition_id)
 
     prompt = condition.get("prompt")
     if not isinstance(prompt, dict):
@@ -309,6 +378,8 @@ def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None
         raise StudyError(
             f"{condition_id}: disabling experiment_tools requires tests.access='none' and reference.mode='none'"
         )
+    if task["runtime"] != "c-compiler" and mode != "none":
+        raise StudyError(f"{condition_id}: the reference oracle exists only for the c-compiler task runtime")
 
     environment = condition.get("environment", {})
     if not isinstance(environment, dict) or not isinstance(environment.get("overrides", {}), dict):
@@ -349,8 +420,8 @@ def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None
                 raise StudyError(f"{field} must be greater than zero")
         elif key.endswith("_max_stage"):
             stage = require_int(value, field, minimum=1)
-            if stage > 10:
-                raise StudyError(f"{field} must be at most 10")
+            if stage > int(task["max_stage"]):
+                raise StudyError(f"{field} must be at most the task's max_stage ({task['max_stage']})")
         else:
             require_int(value, field, minimum=1)
 
@@ -412,7 +483,7 @@ def validate_design(study: dict[str, Any], conditions: list[dict[str, Any]]) -> 
     baseline = next((row for row in conditions if row["id"] == baseline_id), None)
     if baseline is None:
         raise StudyError(f"Baseline condition not found: {baseline_id}")
-    blocks = {"prompt", "specification", "tests", "candidate", "reference", "environment", "budget"}
+    blocks = {"prompt", "specification", "tests", "candidate", "reference", "environment", "budget", "task"}
     factors: list[str] = []
     if design == "factorial":
         declared_factors = study.get("factors")
@@ -658,26 +729,29 @@ def copy_partition(source: Path, destination: Path, *, fraction: float = 1.0, se
         shutil.rmtree(destination)
     destination.mkdir(parents=True)
     destination_root = destination.resolve()
+
+    def copy_contained(relative: Path, field: str) -> None:
+        source_file = resolve_contained_path(source_root, source_root / relative, field)
+        if not source_file.is_file():
+            raise StudyError(f"Partition file missing: {source_file}")
+        target = resolve_contained_path(destination_root, destination_root / relative, f"copy target for {field}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target = resolve_contained_path(destination_root, target, f"copy target for {field}")
+        shutil.copy2(source_file, target)
+
     for index, row in enumerate(selected):
         if not isinstance(row, dict):
             raise StudyError(f"Partition manifest test {index} must be an object")
         field = f"partition manifest test {index}.relative_path"
-        relative = require_partition_relative_path(row.get("relative_path"), field)
-        source_file = resolve_contained_path(
-            source_root,
-            source_root / relative,
-            field,
-        )
-        if not source_file.is_file():
-            raise StudyError(f"Partition file missing: {source_file}")
-        target = resolve_contained_path(
-            destination_root,
-            destination_root / relative,
-            f"copy target for {field}",
-        )
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target = resolve_contained_path(destination_root, target, f"copy target for {field}")
-        shutil.copy2(source_file, target)
+        copy_contained(require_partition_relative_path(row.get("relative_path"), field), field)
+        fixtures = row.get("fixtures", [])
+        if not isinstance(fixtures, list):
+            raise StudyError(f"partition manifest test {index}.fixtures must be an array")
+        for fixture_index, fixture in enumerate(fixtures):
+            fixture_field = f"partition manifest test {index}.fixtures[{fixture_index}]"
+            if not isinstance(fixture, dict) or fixture.get("kind") not in FIXTURE_KINDS:
+                raise StudyError(f"{fixture_field} must declare kind in {sorted(FIXTURE_KINDS)}")
+            copy_contained(require_partition_relative_path(fixture.get("relative_path"), fixture_field), fixture_field)
 
     copied_manifest = copy.deepcopy(manifest)
     copied_manifest["tests"] = selected
@@ -868,8 +942,13 @@ def _materialize_direct(
     (prompt_dir / "TASK.md").write_text(task.rstrip() + "\n", encoding="utf-8")
 
     evaluator_dir = materialization_root / "evaluator"
-    for name in ("evaluate.py", "fuzz_generator.py", "fuzz_evaluate.py"):
-        shutil.copy2(REPO_ROOT / "studies" / "runtime" / name, evaluator_dir / name)
+    task = condition_task(condition)
+    for name in ("evaluate.py", "fuzz_generator.py", "fuzz_evaluate.py", "candidate_runtime.py", "sqllogictest.py", "task.json"):
+        # The plain-harness evaluator is replaced wholesale by the task runtime.
+        (evaluator_dir / name).unlink(missing_ok=True)
+    for target_name, source_name in TASK_RUNTIMES[task["runtime"]].items():
+        shutil.copy2(REPO_ROOT / "studies" / "runtime" / source_name, evaluator_dir / target_name)
+    atomic_write_json(evaluator_dir / "task.json", task)
     shutil.copy2(adapter_source, evaluator_dir / "candidate.json")
 
     visible_source, hidden_source = source_partitions(condition)
@@ -962,6 +1041,7 @@ def _materialize_direct(
             else str(study_path.resolve())
         ),
         "condition": condition,
+        "task": task,
         "run_id": run_id,
         "effective_config": effective_config,
         "completion_threshold": study.get("completion_threshold", 1.0),
@@ -1104,6 +1184,7 @@ def freeze_run_study_metadata(run_id: str, materialization_root: Path) -> None:
     shutil.copy2(materialization_root / "study-materialization.json", control / "materialization.json")
     shutil.copytree(materialization_root / "prompts", control / "prompts")
     shutil.copy2(materialization_root / "evaluator" / "candidate.json", control / "candidate.json")
+    shutil.copy2(materialization_root / "evaluator" / "task.json", control / "task.json")
     shutil.copy2(materialization_root / "data" / "partitions" / "visible" / "manifest.json", control / "visible-manifest.json")
     shutil.copy2(materialization_root / "data" / "partitions" / "hidden" / "manifest.json", control / "hidden-manifest.json")
 
@@ -1202,7 +1283,8 @@ def study_for_run(run_id: str) -> tuple[Path, dict[str, Any]]:
 
 def command_validate(args: argparse.Namespace) -> int:
     study, conditions = load_study(args.study)
-    print(f"Study `{study['id']}` is valid: {len(conditions)} conditions")
+    tasks = sorted({condition_task(condition)["id"] for condition in conditions})
+    print(f"Study `{study['id']}` is valid: {len(conditions)} conditions, task {', '.join(tasks)}")
     for condition in conditions:
         print(
             f"  {condition['id']:<24} factor={condition['factor']:<18} "

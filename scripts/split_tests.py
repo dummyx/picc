@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Create deterministic visible/hidden partitions of the C compiler test corpus."""
+"""Create deterministic visible/hidden partitions of the C compiler test corpus.
+
+Two scopes exist.  ``core`` (the default, unchanged since the first cohort) keeps
+standalone tests only: multi-file library tests, assembly helpers, math-library
+cases, and extra credit are excluded.  ``core-with-fixtures`` (the chapters 1-18
+task) keeps the multi-file and helper-dependent tests and records, per test, the
+evaluator-side fixtures upstream's driver would supply: the partner translation
+unit compiled by GCC, the Linux assembly helper, quoted-include headers, and the
+``-lm`` link flag.  Extra credit stays excluded in both scopes.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +16,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
 import shutil
 from collections import defaultdict
@@ -18,6 +28,24 @@ from common import ExperimentError, atomic_write_json
 
 STAGE_PATTERN = re.compile(r"(?:chapter|stage)_(\d+)$")
 EXCLUDED_COMPONENTS = {"extra_credit", "libraries", "helper_libs"}
+# In the fixtures scope, library tests are kept and helper_libs sources become
+# fixtures rather than tests; extra credit is excluded in every scope.
+EXCLUDED_COMPONENTS_WITH_FIXTURES = {"extra_credit", "helper_libs"}
+SCOPES = ("core", "core-with-fixtures")
+SCOPE_DESCRIPTIONS = {
+    "core": "standalone core tests; excludes extra credit, multi-file libraries, assembly helpers, and math-library cases",
+    "core-with-fixtures": (
+        "core tests including multi-file library tests, assembly helpers, quoted-include headers, and "
+        "math-library cases as evaluator-side fixtures; excludes extra credit"
+    ),
+}
+QUOTED_INCLUDE = re.compile(r'^\s*#\s*include\s+"([^"]+)"', re.M)
+
+
+@dataclass(frozen=True)
+class Fixture:
+    relative: Path
+    kind: str  # "c" (compiled by GCC), "assembly" (assembled by GCC), or "header"
 
 
 @dataclass(frozen=True)
@@ -27,6 +55,8 @@ class TestCase:
     stage: int
     validity: str
     family: str
+    fixtures: tuple[Fixture, ...] = ()
+    link_flags: tuple[str, ...] = ()
 
     @property
     def test_id(self) -> str:
@@ -41,14 +71,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--visible-fraction", type=float, default=0.70)
     parser.add_argument("--max-stage", type=int, default=10)
     parser.add_argument("--source-revision", required=True)
+    parser.add_argument("--scope", choices=SCOPES, default="core")
     return parser.parse_args()
 
 
-def load_properties(source_root: Path) -> tuple[set[str], dict[str, list[str]]]:
+def load_raw_properties(source_root: Path) -> dict[str, object]:
     property_file = source_root / "test_properties.json"
     if not property_file.exists():
+        return {}
+    return json.loads(property_file.read_text(encoding="utf-8"))
+
+
+def load_properties(source_root: Path) -> tuple[set[str], dict[str, list[str]]]:
+    data = load_raw_properties(source_root)
+    if not data:
         return set(), {}
-    data = json.loads(property_file.read_text(encoding="utf-8"))
     excluded: set[str] = set()
     reasons: dict[str, list[str]] = defaultdict(list)
 
@@ -90,16 +127,97 @@ def validity_from_path(relative: Path) -> str | None:
 
 def family_key(relative: Path) -> str:
     """Keep obvious generated/numeric variants in the same partition."""
-    stem = re.sub(r"(?:[_-]?\d+)+$", "_N", relative.stem)
+    stem = relative.stem
+    if stem.endswith("_client"):
+        # A library test's lib and client halves are one program: same family.
+        stem = stem[: -len("_client")]
+    stem = re.sub(r"(?:[_-]?\d+)+$", "_N", stem)
     stem = re.sub(r"\d+", "N", stem)
     return (relative.parent / stem).as_posix()
 
 
-def collect_tests(source: Path, max_stage: int) -> tuple[Path, list[TestCase], dict[str, int]]:
+def props_key(relative: Path) -> str:
+    """Upstream keys test_properties by the library half of a lib/client pair."""
+    if relative.stem.endswith("_client"):
+        return (relative.parent / (relative.stem[: -len("_client")] + ".c")).as_posix()
+    return relative.as_posix()
+
+
+def library_partner(relative: Path) -> Path:
+    if relative.stem.endswith("_client"):
+        return relative.parent / (relative.stem[: -len("_client")] + ".c")
+    return relative.parent / (relative.stem + "_client.c")
+
+
+def quoted_headers(tests_root: Path, relative: Path) -> list[Path]:
+    text = (tests_root / relative).read_text(encoding="utf-8", errors="replace")
+    headers = []
+    for name in QUOTED_INCLUDE.findall(text):
+        # Normalize `..` segments so the fixture path stays a plain relative
+        # path inside the partition (the evaluator refuses `..` components).
+        normalized = Path(os.path.normpath(relative.parent / name))
+        if normalized.is_absolute() or ".." in normalized.parts:
+            raise ExperimentError(f"{relative}: quoted include escapes the corpus: {name}")
+        headers.append(normalized)
+    return headers
+
+
+def fixtures_for(
+    tests_root: Path,
+    relative: Path,
+    properties: dict[str, object],
+) -> tuple[tuple[Fixture, ...], tuple[str, ...], str | None]:
+    """Evaluator-side fixtures of one test in the fixtures scope, or a reason to
+    exclude it.  Mirrors upstream test_framework/basic.py: the partner half of a
+    library test and helper libs are compiled by the system compiler, assembly
+    helpers use the Linux variant, and math-library tests link ``-lm``."""
+    fixtures: list[Fixture] = []
+    key = props_key(relative)
+    if "libraries" in relative.parts:
+        partner = library_partner(relative)
+        if not (tests_root / partner).is_file():
+            return (), (), "unpaired_library"
+        fixtures.append(Fixture(partner, "c"))
+    for helper in (properties.get("libs") or {}).get(key, []):  # type: ignore[union-attr]
+        helper_path = Path(helper)
+        if not (tests_root / helper_path).is_file():
+            return (), (), "missing_helper_lib"
+        fixtures.append(Fixture(helper_path, "c"))
+    for helper in (properties.get("assembly_libs") or {}).get(key, []):  # type: ignore[union-attr]
+        asm = Path(helper + "_linux.s")
+        if not (tests_root / asm).is_file():
+            return (), (), "missing_assembly_lib"
+        fixtures.append(Fixture(asm, "assembly"))
+    seen_headers: set[Path] = set()
+    for owner in [relative] + [f.relative for f in fixtures if f.kind == "c"]:
+        for header in quoted_headers(tests_root, owner):
+            if header in seen_headers:
+                continue
+            if not (tests_root / header).is_file():
+                return (), (), "missing_header"
+            seen_headers.add(header)
+            fixtures.append(Fixture(header, "header"))
+    mathlib = {Path(p).as_posix() for p in properties.get("requires_mathlib") or []}  # type: ignore[union-attr]
+    link_flags = ("-lm",) if any(p.as_posix() in mathlib for p in [relative] + [f.relative for f in fixtures]) else ()
+    return tuple(fixtures), link_flags, None
+
+
+def collect_tests(source: Path, max_stage: int, scope: str = "core") -> tuple[Path, list[TestCase], dict[str, int]]:
+    if scope not in SCOPES:
+        raise ExperimentError(f"Unknown scope: {scope!r}")
     source = source.resolve()
     tests_root = source / "tests" if (source / "tests").is_dir() else source
     source_root = tests_root.parent if tests_root.name == "tests" else source
     excluded_property_paths, _ = load_properties(source_root)
+    properties = load_raw_properties(source_root)
+    with_fixtures = scope == "core-with-fixtures"
+    excluded_components = EXCLUDED_COMPONENTS_WITH_FIXTURES if with_fixtures else EXCLUDED_COMPONENTS
+    if with_fixtures:
+        # Only extra credit stays excluded by property; libs, assembly libs,
+        # and mathlib cases are handled as fixtures instead.
+        excluded_property_paths = {
+            Path(p).as_posix() for p in (properties.get("extra_credit_tests") or {})  # type: ignore[union-attr]
+        }
 
     tests: list[TestCase] = []
     exclusions: dict[str, int] = defaultdict(int)
@@ -113,15 +231,22 @@ def collect_tests(source: Path, max_stage: int) -> tuple[Path, list[TestCase], d
         if stage > max_stage:
             exclusions["above_max_stage"] += 1
             continue
-        if any(component in EXCLUDED_COMPONENTS for component in relative.parts):
+        if any(component in excluded_components for component in relative.parts):
             exclusions["excluded_directory"] += 1
             continue
         if relative.as_posix() in excluded_property_paths:
             exclusions["test_properties"] += 1
             continue
-        if relative.stem.endswith(("_client", "_lib")):
+        if not with_fixtures and relative.stem.endswith(("_client", "_lib")):
             exclusions["multi_file_name"] += 1
             continue
+        fixtures: tuple[Fixture, ...] = ()
+        link_flags: tuple[str, ...] = ()
+        if with_fixtures:
+            fixtures, link_flags, reason = fixtures_for(tests_root, relative, properties)
+            if reason is not None:
+                exclusions[reason] += 1
+                continue
         tests.append(
             TestCase(
                 source=path,
@@ -129,6 +254,8 @@ def collect_tests(source: Path, max_stage: int) -> tuple[Path, list[TestCase], d
                 stage=stage,
                 validity=validity,
                 family=family_key(relative),
+                fixtures=fixtures,
+                link_flags=link_flags,
             )
         )
     if not tests:
@@ -183,6 +310,7 @@ def write_partition(
     visible_fraction: float,
     source_root: Path,
     exclusions: dict[str, int],
+    scope: str = "core",
 ) -> dict[str, object]:
     destination = output_root / partition
     if destination.exists():
@@ -194,15 +322,26 @@ def write_partition(
         target = destination / case.relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(case.source, target)
-        manifest_tests.append(
-            {
-                "id": case.test_id,
-                "relative_path": case.relative.as_posix(),
-                "stage": case.stage,
-                "validity": case.validity,
-                "family": case.family,
-            }
-        )
+        row: dict[str, object] = {
+            "id": case.test_id,
+            "relative_path": case.relative.as_posix(),
+            "stage": case.stage,
+            "validity": case.validity,
+            "family": case.family,
+        }
+        if case.fixtures:
+            # Fixtures are copied next to the test so quoted includes resolve;
+            # a fixture shared by both halves of a pair may already be present.
+            for fixture in case.fixtures:
+                fixture_target = destination / fixture.relative
+                fixture_target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source_root / fixture.relative, fixture_target)
+            row["fixtures"] = [
+                {"relative_path": fixture.relative.as_posix(), "kind": fixture.kind} for fixture in case.fixtures
+            ]
+        if case.link_flags:
+            row["link_flags"] = list(case.link_flags)
+        manifest_tests.append(row)
 
     counts: dict[str, int] = defaultdict(int)
     for test in manifest_tests:
@@ -219,7 +358,7 @@ def write_partition(
             "seed": seed,
             "visible_fraction": visible_fraction,
             "policy": "family-grouped, stage-and-validity-stratified",
-            "scope": "standalone core tests; excludes extra credit, multi-file libraries, assembly helpers, and math-library cases",
+            "scope": SCOPE_DESCRIPTIONS[scope],
         },
         "counts": {"total": len(manifest_tests), **dict(sorted(counts.items()))},
         "excluded_counts": exclusions,
@@ -231,7 +370,7 @@ def write_partition(
 
 def main() -> int:
     args = parse_args()
-    tests_root, tests, exclusions = collect_tests(args.source, args.max_stage)
+    tests_root, tests, exclusions = collect_tests(args.source, args.max_stage, args.scope)
     assignments = split_cases(tests, args.seed, args.visible_fraction)
     visible = [test for test in tests if assignments[test.test_id] == "visible"]
     hidden = [test for test in tests if assignments[test.test_id] == "hidden"]
@@ -247,6 +386,7 @@ def main() -> int:
         args.visible_fraction,
         tests_root,
         exclusions,
+        args.scope,
     )
     hidden_manifest = write_partition(
         output,
@@ -257,6 +397,7 @@ def main() -> int:
         args.visible_fraction,
         tests_root,
         exclusions,
+        args.scope,
     )
     summary = {
         "visible": visible_manifest["counts"],

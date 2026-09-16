@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "id": "picc-sql-minimal-v1",
+  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol: one short inline contract, blank AGENTS/TASK, built-in tools only, no benchmark tests or scores exposed; implementation language is the only factor.",
+  "baseline_condition": "rust",
+  "seed": 20260916,
+  "completion_threshold": 0.95,
+  "defaults": {
+    "prompt": {
+      "agents": "studies/minimal/agents.md",
+      "initial": "studies/minimal/initial.txt",
+      "continuation": "studies/minimal/continue.txt",
+      "experiment_tools": false
+    },
+    "specification": {
+      "path": "studies/sql/task.md",
+      "delivery": "initial_prompt_only",
+      "provenance": {
+        "method": "llm-generated-human-reviewed",
+        "creator": "Claude Fable 5.1 (Claude Code) with the harness maintainer",
+        "source": "short behavioral contract condensed from the task's pinned test selection; same text for every language condition",
+        "artifact_family": "picc-sql-minimal-v1",
+        "reviewed_by": null
+      }
+    },
+    "tests": {
+      "access": "none",
+      "feedback": "none",
+      "visible_subset_fraction": 1.0,
+      "subset_seed": 20260916,
+      "visible_partition": "data/partitions-sql/visible",
+      "hidden_partition": "data/partitions-sql/hidden",
+      "provenance": {
+        "method": "upstream-generated-and-human-authored",
+        "creator": "SQLite sqllogictest authors",
+        "source": "https://github.com/gregrahn/sqllogictest@c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0 (mirror of https://www.sqlite.org/sqllogictest/)",
+        "artifact_family": "sqllogictest-evidence-select-random-orderby",
+        "reviewed_by": null
+      }
+    },
+    "candidate": {
+      "adapter": "studies/assets/candidates/sql/rust-std.json",
+      "language": "rust",
+      "framework": "standard-library",
+      "scaffold": null
+    },
+    "reference": {
+      "mode": "none",
+      "oracle_limit": 0,
+      "source": null
+    },
+    "environment": {
+      "overrides": {
+        "FUZZ_STAGE_PROGRAMS": 0
+      }
+    },
+    "budget": {
+      "pilot_max_stage": 8,
+      "main_max_stage": 8
+    },
+    "task": {
+      "id": "sql-engine-sqllogictest",
+      "runtime": "sql-engine",
+      "max_stage": 8,
+      "parameters": {
+        "sqlite_version": "3.40.1",
+        "script_timeout_seconds": 120
+      }
+    }
+  },
+  "conditions": [
+    {
+      "id": "rust",
+      "factor": "baseline",
+      "description": "Rust, standard library only. Same inputs as studies/minimal except the product is a SQL engine scored on sqllogictest scripts."
+    },
+    {
+      "id": "python",
+      "factor": "candidate",
+      "description": "Python 3, standard library only; same contract.",
+      "candidate": {
+        "adapter": "studies/assets/candidates/sql/python-stdlib.json",
+        "language": "python",
+        "framework": "standard-library",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "js-untyped",
+      "factor": "candidate",
+      "description": "Plain JavaScript on Node.js 24, tsc withheld by the guard; same contract.",
+      "candidate": {
+        "adapter": "studies/assets/candidates/sql/javascript-node.json",
+        "language": "javascript",
+        "framework": "dynamic-typing",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "ts-strict",
+      "factor": "candidate",
+      "description": "TypeScript under tsc --strict on Node.js 24; same contract.",
+      "candidate": {
+        "adapter": "studies/assets/candidates/sql/typescript-strict.json",
+        "language": "typescript",
+        "framework": "strict-static-typing",
+        "scaffold": null
+      }
+    }
+  ],
+  "design": "one-factor-at-a-time"
+}

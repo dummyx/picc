@@ -215,3 +215,15 @@ the origin-anchored AUC `score / 2`.
 `summary.json.selection` records the primary inclusion and integrity policy.
 Warnings enumerate excluded runs, every missing condition/replicate cell over the included replicate union, and variants without an eligible same-replicate baseline; paired
 deltas never disappear silently.
+
+## Task studies (chapters 1-18 compiler, SQL engine)
+
+Added 2026-09-16; absent from earlier runs.
+
+- `study-materialization.json.task` / `evaluator/task.json` / `study-control/task.json`: `{id, runtime, max_stage, parameters}`. `runtime` is `c-compiler` or `sql-engine`; `parameters.sqlite_version` and `parameters.script_timeout_seconds` for the SQL task. Conditions without a `task` block are the chapters 1-10 compiler task.
+- Partition manifest rows (`data/partitions-c18`): optional `fixtures` (`[{relative_path, kind}]`, kind `c` | `assembly` | `header`) and `link_flags` (`["-lm"]`); evaluator-side only.
+- Partition manifest rows (`data/partitions-sql`): `validity` is always `valid`; `script` holds record counts and, when built with `--verify-sqlite`, `host_sqlite_version` and `host_reference_disagreements`.
+- SQL evaluator output (`evaluations/*.json`): `task` (`sqlite_version`, `script_timeout_seconds`); per test row `score` (share of scored records passed), `records` (`total`, `passed`, `failed`, `executed`, `setup_failures`, `blocks`, `reference_disagreements`), `failures` (first eight failing records with line numbers), `failure_type` in `script_timeout`, `candidate_crash`, `malformed_output`, `wrong_results`, `no_scored_records`, `build_failure`, `source_audit_failure`; `summary.records_total` / `records_passed`; `summary.stages.<n>.valid.score` is the mean script score.
+- `summarize_study.py` uses a row's `score` when present (fractional) and `passed` otherwise.
+- Selection records: `studies/c18/selection.json`, `studies/sql/selection-record.json` (`scripts/pin_selection.py`).
+

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "framework": "evaluator-test-fixture",
+  "dependency_policy": "evaluator-only test fixture; may use sqlite3",
+  "build": {"command": ["python3", "-m", "py_compile", "pisql.py"], "artifact": "pisql.py", "timeout_seconds": 60},
+  "run": {"command": ["python3", "{artifact}", "{input}"]},
+  "source_extensions": [".py"],
+  "audit": {"python_stdlib_only": true, "allowed_python_modules": ["pisql"]}
+}

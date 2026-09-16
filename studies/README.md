@@ -60,6 +60,25 @@ workflow, prompts, and tools and reduces only the specification document. The st
 condition retains its full specification and feedback tools; historical runs
 and analysis keep its former `prompt-minimal` label.
 
+## Task studies: chapters 1-18 compiler and SQL engine
+
+Two further greenfield tasks reuse the minimal protocol and the runner,
+adapters, snapshots, budgets, and reporting unchanged; a condition's optional
+`task` block selects the evaluator runtime and stage count (absent means the
+chapters 1-10 compiler task). Each is a separate study with its own pinned
+selection and is reported separately by `make study-summary`.
+
+| Study | Task | Docs |
+|---|---|---|
+| `studies/c18/study.json` (`picc-c18-minimal-v1`) | chapters 1-18 C compiler, upstream corpus with evaluator-side fixtures, GCC oracle | [c18/README.md](c18/README.md) |
+| `studies/sql/study.json` (`picc-sql-minimal-v1`) | in-memory SQLite-compatible SQL engine, pinned sqllogictest scripts, pinned SQLite | [sql/README.md](sql/README.md) |
+
+```bash
+make tests-c18 tests-sql          # fetch corpora, build partitions, check the committed selections
+make study-validate STUDY=studies/sql/study.json
+make tasks-smoke                  # evaluator smoke in the pinned image
+```
+
 ## Static-typing study
 
 `types/study.json` reuses the starter defaults and contrasts

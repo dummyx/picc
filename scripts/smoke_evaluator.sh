@@ -60,7 +60,7 @@ run_study_evaluator() {
   rm -rf "$work"
   mkdir -p "$work/eval" "$work/artifacts/evaluations"
   cp -R "$ROOT/$fixture/." "$work/workspace"
-  cp "$ROOT/studies/runtime/evaluate.py" "$work/eval/evaluate.py"
+  cp "$ROOT/studies/runtime/evaluate.py" "$ROOT/studies/runtime/candidate_runtime.py" "$work/eval/"
   cp "$ROOT/$adapter" "$work/eval/candidate.json"
   if [[ "$expect" == "type-error" ]]; then
     printf 'const smokeTypeError: number = "not a number";\n' >> "$work/workspace/src/picc.ts"
@@ -120,7 +120,7 @@ work="$tmp/fuzz"
 rm -rf "$work"
 mkdir -p "$work/eval" "$work/artifacts"
 cp -R "$ROOT/fixtures/mock-picc-js/." "$work/workspace"
-cp "$ROOT/studies/runtime/evaluate.py" "$ROOT/studies/runtime/fuzz_generator.py" "$ROOT/studies/runtime/fuzz_evaluate.py" "$work/eval/"
+cp "$ROOT/studies/runtime/evaluate.py" "$ROOT/studies/runtime/candidate_runtime.py" "$ROOT/studies/runtime/fuzz_generator.py" "$ROOT/studies/runtime/fuzz_evaluate.py" "$work/eval/"
 cp "$ROOT/studies/assets/candidates/javascript-node.json" "$work/eval/candidate.json"
 docker run --rm --init \
   --platform "$DOCKER_PLATFORM" \
