@@ -308,6 +308,28 @@ aggregation. Hidden-test count, model, image, and starter version must be
 constant across the cohort. Each run's configuration and budget must agree
 with its recorded effective configuration. Drift stops aggregation.
 
+### Re-scoring after an amendment
+
+`study.py evaluate` runs the evaluator copy inside the run's frozen
+materialization, so a corrected evaluator cannot be applied through it
+without editing the frozen copy. Re-score from a scratch copy instead:
+
+1. Copy `runs/.study-materializations/<run>` to a scratch directory.
+2. Replace the copy's `runs` entry. The materialization holds a symlink to
+   the real `runs/` directory, so an evaluator run inside an unmodified copy
+   overwrites the frozen ledgers (this happened once, in v9; the ledgers were
+   restored from a backup). Point the copy at a copy of the run directory.
+3. Drop the corrected `scripts/evaluate_run.py` and
+   `evaluator/evaluate.py` into the copy and run the evaluator from there
+   with the run's recorded effective configuration in the environment.
+4. Keep the outputs under `analysis/vN-rescore/<run>/`. The frozen ledgers
+   in `runs/` are never modified; the corrected ledgers are primary only for
+   the runs the amendment names, and the report says which.
+
+Since 2026-09-16 nothing refuses a modified materialization (the file-hash
+provenance check was removed), so this discipline is procedural, not
+enforced.
+
 The reporter lists every missing condition-by-replicate cell over the included
 replicate union and calls out variants lacking their same-replicate baseline.
 These are coverage warnings, not silently omitted pairs. The starter is

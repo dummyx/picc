@@ -1411,7 +1411,9 @@ The frozen ledgers are untouched; the corrected ones are in
 `analysis/v9-rescore/` and are primary only for the two amended runs. The
 study summarizer (`runs/study-results/picc-spectests-v1/`) still reads the
 frozen ledgers and therefore shows the pre-amendment zeros for those two
-runs.
+runs. The re-score procedure (scratch copy with the `runs` symlink replaced,
+outputs under `analysis/vN-rescore/`) is recorded in `docs/STUDY_PROTOCOL.md`
+under "Re-scoring after an amendment".
 
 ### 15.5 Secondary endpoints
 
