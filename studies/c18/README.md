@@ -18,14 +18,13 @@ architecture, and prohibits delegation to an existing compiler.
 
 Conditions (`study.json`, one-factor-at-a-time on `candidate`):
 
-| Condition | Candidate adapter |
-|---|---|
-| `rust` (baseline) | `studies/assets/candidates/rust-std.json` |
-| `python` | `studies/assets/candidates/python-stdlib.json` |
-| `js-untyped` | `studies/assets/candidates/javascript-node.json` |
-| `ts-strict` | `studies/assets/candidates/typescript-strict.json` |
+| Condition | Candidate adapter | Build gate |
+|---|---|---|
+| `rust` (baseline) | `studies/assets/candidates/rust-std.json` | `cargo build --release --offline` |
+| `python` | `studies/assets/candidates/python-untyped.json` | `python3 -m py_compile`; type checkers withheld by the guard |
+| `python-typed` | `studies/assets/candidates/python-typed.json` | `mypy --strict` (pinned in image 0.5) must pass; `# type: ignore` is an advisory audit finding |
 
-These are the existing PiCC adapters: `<entry> INPUT.c -o OUTPUT.s`.
+The entry contract is the existing PiCC one: `<entry> INPUT.c -o OUTPUT.s`. The two Python arms differ only in the build gate and the guard; the contract text is identical apart from the language line and build command.
 
 ## Tests: selection and exclusions
 

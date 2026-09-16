@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "framework": "strict-static-typing",
+  "dependency_policy": "Python standard library only; no package installation",
+  "build": {
+    "command": [
+      "mypy",
+      "--strict",
+      "--no-error-summary",
+      "--cache-dir",
+      "/tmp/mypy-cache",
+      "picc.py"
+    ],
+    "artifact": "picc.py",
+    "timeout_seconds": 300
+  },
+  "run": {
+    "command": [
+      "python3",
+      "{artifact}",
+      "{input}",
+      "-o",
+      "{output}"
+    ]
+  },
+  "source_extensions": [
+    ".py"
+  ],
+  "audit": {
+    "python_stdlib_only": true,
+    "allowed_python_modules": [],
+    "prohibited_patterns": [
+      {
+        "pattern": "#\\s*type:\\s*ignore\\b|#\\s*mypy:\\s*ignore-errors",
+        "reason": "type-check suppression"
+      }
+    ]
+  },
+  "spec_variables": {
+    "LANGUAGE": "Python 3 with type annotations",
+    "FRAMEWORK": "strict static typing (Python 3, `mypy --strict` must pass)",
+    "DEPENDENCY_POLICY": "Python standard library only; do not install packages",
+    "BUILD_COMMAND": "mypy --strict --no-error-summary --cache-dir /tmp/mypy-cache picc.py",
+    "ENTRY_COMMAND": "python3 picc.py INPUT.c -o OUTPUT.s"
+  },
+  "agent_policy": {
+    "blocked_bash_patterns": []
+  },
+  "agent_notes": "The entry module is `picc.py` in the workspace root; the fixed build command runs `mypy --strict` on it (following its imports) and fails on any type error, so a snapshot that does not type-check has no product. Write explicit type annotations for function signatures and data structures, prefer precise types over `Any`, and never suppress the checker with `# type: ignore` or `# mypy: ignore-errors`."
+}

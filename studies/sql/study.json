@@ -56,7 +56,10 @@
     },
     "budget": {
       "pilot_max_stage": 8,
-      "main_max_stage": 8
+      "main_max_stage": 8,
+      "pilot_hours": 0.4,
+      "pilot_rounds": 2,
+      "pilot_round_timeout_minutes": 12
     },
     "task": {
       "id": "sql-engine-sqllogictest",
@@ -77,32 +80,21 @@
     {
       "id": "python",
       "factor": "candidate",
-      "description": "Python 3, standard library only; same contract.",
+      "description": "Plain Python 3, standard library only; type checkers withheld by the guard; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/sql/python-stdlib.json",
+        "adapter": "studies/assets/candidates/sql/python-untyped.json",
         "language": "python",
-        "framework": "standard-library",
-        "scaffold": null
-      }
-    },
-    {
-      "id": "js-untyped",
-      "factor": "candidate",
-      "description": "Plain JavaScript on Node.js 24, tsc withheld by the guard; same contract.",
-      "candidate": {
-        "adapter": "studies/assets/candidates/sql/javascript-node.json",
-        "language": "javascript",
         "framework": "dynamic-typing",
         "scaffold": null
       }
     },
     {
-      "id": "ts-strict",
+      "id": "python-typed",
       "factor": "candidate",
-      "description": "TypeScript under tsc --strict on Node.js 24; same contract.",
+      "description": "Python 3 under `mypy --strict` as the build gate; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/sql/typescript-strict.json",
-        "language": "typescript",
+        "adapter": "studies/assets/candidates/sql/python-typed.json",
+        "language": "python",
         "framework": "strict-static-typing",
         "scaffold": null
       }

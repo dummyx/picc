@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "framework": "dynamic-typing",
+  "dependency_policy": "Python standard library only; no package installation",
+  "build": {
+    "command": [
+      "python3",
+      "-m",
+      "py_compile",
+      "picc.py"
+    ],
+    "artifact": "picc.py",
+    "timeout_seconds": 300
+  },
+  "run": {
+    "command": [
+      "python3",
+      "{artifact}",
+      "{input}",
+      "-o",
+      "{output}"
+    ]
+  },
+  "source_extensions": [
+    ".py"
+  ],
+  "audit": {
+    "python_stdlib_only": true,
+    "allowed_python_modules": []
+  },
+  "spec_variables": {
+    "LANGUAGE": "Python 3",
+    "FRAMEWORK": "dynamic typing (Python 3, no static type checker)",
+    "DEPENDENCY_POLICY": "Python standard library only; do not install packages",
+    "BUILD_COMMAND": "python3 -m py_compile picc.py",
+    "ENTRY_COMMAND": "python3 picc.py INPUT.c -o OUTPUT.s"
+  },
+  "agent_policy": {
+    "blocked_bash_patterns": [
+      {
+        "pattern": "(^|[;&|]\\s*)(?:\\S*/)?(?:mypy|pyright|pyre|pytype)(?=\\s|$)|python3?\\s+-m\\s+(?:mypy|pyright)\\b",
+        "reason": "static type checking is unavailable in this condition"
+      }
+    ]
+  },
+  "agent_notes": "The entry module is `picc.py` in the workspace root. This condition has no static type checker: do not run one, and do not write type annotations or `typing` imports; plain dynamically typed Python only."
+}

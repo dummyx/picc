@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "language": "python",
+  "framework": "dynamic-typing",
+  "dependency_policy": "Python standard library only; no package installation",
+  "build": {
+    "command": [
+      "python3",
+      "-m",
+      "py_compile",
+      "pisql.py"
+    ],
+    "artifact": "pisql.py",
+    "timeout_seconds": 300
+  },
+  "run": {
+    "command": [
+      "python3",
+      "{artifact}",
+      "{input}"
+    ]
+  },
+  "source_extensions": [
+    ".py"
+  ],
+  "audit": {
+    "python_stdlib_only": true,
+    "allowed_python_modules": [],
+    "prohibited_patterns": [
+      {
+        "pattern": "\\brusqlite\\b|\\blibsqlite3\\b|\\bsqlite3_(?:open|exec|prepare)\\w*\\b|better-sqlite3|\\bDatabaseSync\\b|\\bduckdb\\b|\\blibsql\\b",
+        "reason": "database engine library reference"
+      }
+    ],
+    "prohibited_python_modules": [
+      "sqlite3",
+      "dbm",
+      "shelve"
+    ]
+  },
+  "spec_variables": {
+    "LANGUAGE": "Python 3",
+    "FRAMEWORK": "dynamic typing (Python 3, no static type checker)",
+    "DEPENDENCY_POLICY": "Python standard library only; do not install packages",
+    "BUILD_COMMAND": "python3 -m py_compile pisql.py",
+    "ENTRY_COMMAND": "python3 pisql.py INPUT.sql",
+    "PRODUCT": "PiSQL"
+  },
+  "agent_policy": {
+    "blocked_bash_patterns": [
+      {
+        "pattern": "(^|[;&|]\\s*)(?:\\S*/)?sqlite3?(?=\\s|$)",
+        "reason": "running an existing database engine is prohibited"
+      },
+      {
+        "pattern": "\\bimport\\s+sqlite3\\b|\\bfrom\\s+sqlite3\\b|\\bnode:sqlite\\b|require\\(\\s*['\\\"]sqlite|\\bDatabaseSync\\b|\\brusqlite\\b|better-sqlite3",
+        "reason": "delegating to an existing database engine is prohibited"
+      },
+      {
+        "pattern": "(^|[;&|]\\s*)(?:\\S*/)?(?:mypy|pyright|pyre|pytype)(?=\\s|$)|python3?\\s+-m\\s+(?:mypy|pyright)\\b",
+        "reason": "static type checking is unavailable in this condition"
+      }
+    ]
+  },
+  "agent_notes": "The entry module is `pisql.py` in the workspace root. This condition has no static type checker: do not run one, and do not write type annotations or `typing` imports; plain dynamically typed Python only."
+}

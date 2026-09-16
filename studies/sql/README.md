@@ -20,12 +20,11 @@ language condition.
 Conditions (`study.json`, one-factor-at-a-time on `candidate`), adapters
 under `studies/assets/candidates/sql/`:
 
-| Condition | Adapter | Entry |
+| Condition | Candidate adapter | Build gate |
 |---|---|---|
-| `rust` (baseline) | `rust-std.json` | `target/release/pisql INPUT.sql` |
-| `python` | `python-stdlib.json` | `python3 pisql.py INPUT.sql` |
-| `js-untyped` | `javascript-node.json` | `node src/pisql.js INPUT.sql` |
-| `ts-strict` | `typescript-strict.json` | `node dist/pisql.js INPUT.sql` |
+| `rust` (baseline) | `studies/assets/candidates/sql/rust-std.json` | `cargo build --release --offline` |
+| `python` | `studies/assets/candidates/sql/python-untyped.json` | `python3 -m py_compile`; type checkers withheld by the guard |
+| `python-typed` | `studies/assets/candidates/sql/python-typed.json` | `mypy --strict` (pinned in image 0.5) must pass; `# type: ignore` is an advisory audit finding |
 
 The adapters add task prohibitions: the guard blocks `sqlite3` invocations
 and imports of SQLite modules in agent shell commands; the source audit

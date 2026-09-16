@@ -20,6 +20,7 @@ docker build \
   --build-arg "NODE_TYPES_VERSION=$NODE_TYPES_VERSION" \
   --build-arg "BASH_TIMEOUT_PACKAGE=$BASH_TIMEOUT_PACKAGE" \
   --build-arg "BASH_TIMEOUT_PACKAGE_VERSION=$BASH_TIMEOUT_PACKAGE_VERSION" \
+  --build-arg "MYPY_VERSION=$MYPY_VERSION" \
   --tag "$EXPERIMENT_IMAGE" \
   --file "$ROOT/docker/Dockerfile" \
   "$ROOT"

@@ -9,6 +9,7 @@ ARG TYPESCRIPT_VERSION=5.9.3
 ARG NODE_TYPES_VERSION=24.13.3
 ARG BASH_TIMEOUT_PACKAGE=@cad0p/pi-bash-timeout
 ARG BASH_TIMEOUT_PACKAGE_VERSION=0.1.0
+ARG MYPY_VERSION=2.3.1
 
 LABEL org.opencontainers.image.title="PiCC Pi experiment"
 LABEL org.opencontainers.image.version="${STARTER_VERSION}"
@@ -18,11 +19,12 @@ LABEL io.picc.rust.toolchain="${RUST_TOOLCHAIN}"
 LABEL io.picc.typescript.version="${TYPESCRIPT_VERSION}"
 LABEL io.picc.node-types.version="${NODE_TYPES_VERSION}"
 LABEL io.picc.bash-timeout.package="${BASH_TIMEOUT_PACKAGE}@${BASH_TIMEOUT_PACKAGE_VERSION}"
+LABEL io.picc.mypy.version="${MYPY_VERSION}"
 
 ENV DEBIAN_FRONTEND=noninteractive \
     RUSTUP_HOME=/opt/rustup \
     CARGO_HOME=/opt/cargo \
-    PATH=/opt/cargo/bin:${PATH} \
+    PATH=/opt/cargo/bin:/opt/mypy/bin:${PATH} \
     PI_SKIP_VERSION_CHECK=1 \
     PI_TELEMETRY=0 \
     CARGO_NET_OFFLINE=true
@@ -48,6 +50,9 @@ RUN apt-get update \
     && npm install -g --ignore-scripts "typescript@${TYPESCRIPT_VERSION}" "@types/node@${NODE_TYPES_VERSION}" \
     && npm install -g --ignore-scripts --legacy-peer-deps "${BASH_TIMEOUT_PACKAGE}@${BASH_TIMEOUT_PACKAGE_VERSION}" \
     && npm cache clean --force \
+    && python3 -m venv /opt/mypy \
+    && /opt/mypy/bin/pip install --no-cache-dir "mypy==${MYPY_VERSION}" \
+    && rm -rf /opt/mypy/lib/python3*/site-packages/pip* /opt/mypy/lib/python3*/site-packages/setuptools* \
     && apt-get purge -y --auto-remove curl \
     && rm -rf /var/lib/apt/lists/* /root/.npm /tmp/*
 

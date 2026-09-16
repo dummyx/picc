@@ -59,7 +59,7 @@ class TaskStudyManifestTests(unittest.TestCase):
             with self.subTest(study=name):
                 payload, conditions = study.load_study(ROOT / "studies" / name / "study.json")
                 self.assertEqual(payload["design"], "one-factor-at-a-time")
-                self.assertEqual([row["factor"] for row in conditions], ["baseline", "candidate", "candidate", "candidate"])
+                self.assertEqual([row["id"] for row in conditions], ["rust", "python", "python-typed"])
                 spec = (ROOT / conditions[0]["specification"]["path"]).read_text()
                 for row in conditions:
                     self.assertFalse(row["prompt"]["experiment_tools"])
@@ -103,6 +103,25 @@ class TaskStudyManifestTests(unittest.TestCase):
                 initial = (root / "prompts" / "INITIAL.txt").read_text()
                 self.assertNotIn("{{", initial)
                 self.assertEqual((root / "prompts" / "AGENTS.md").read_text().strip(), "")
+
+    def test_python_arms_differ_only_in_the_type_gate(self) -> None:
+        for name in ("c18", "sql"):
+            _, conditions = study.load_study(ROOT / "studies" / name / "study.json")
+            untyped = study.load_json_object(ROOT / conditions[1]["candidate"]["adapter"])
+            typed = study.load_json_object(ROOT / conditions[2]["candidate"]["adapter"])
+            self.assertEqual(untyped["run"], typed["run"])
+            self.assertEqual(untyped["build"]["artifact"], typed["build"]["artifact"])
+            self.assertEqual(typed["build"]["command"][:2], ["mypy", "--strict"])
+            self.assertEqual(untyped["build"]["command"][:3], ["python3", "-m", "py_compile"])
+            blocked = [re.compile(row["pattern"], re.I) for row in untyped["agent_policy"]["blocked_bash_patterns"]]
+            for command in ("mypy --strict pisql.py", "python3 -m mypy .", "pyright src"):
+                self.assertTrue(any(p.search(command) for p in blocked), command)
+            self.assertFalse(any(p.search("python3 -m py_compile pisql.py") for p in blocked))
+            # The typed arm withholds nothing beyond the task's own prohibitions.
+            typed_blocks = [row["pattern"] for row in typed["agent_policy"]["blocked_bash_patterns"]]
+            self.assertFalse(any("mypy" in pattern for pattern in typed_blocks))
+            self.assertEqual(len(typed_blocks), len(blocked) - 1)
+            self.assertTrue(any(row["reason"] == "type-check suppression" for row in typed["audit"]["prohibited_patterns"]))
 
     def test_sql_guard_blocks_database_engines(self) -> None:
         if not (ROOT / "data/partitions-sql/hidden/manifest.json").is_file():

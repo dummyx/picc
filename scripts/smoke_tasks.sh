@@ -152,3 +152,23 @@ PY
 c_case reference mock-picc-gcc perfect
 c_case reject-all mock-picc-reject reject
 c_case constant mock-picc-constant constant
+
+# ---- Typed-Python build gate (mypy pinned in the image) --------------------------
+typed="$tmp/typed"
+mkdir -p "$typed/ok" "$typed/bad"
+printf 'def add(a: int, b: int) -> int:\n    return a + b\n\nprint(add(1, 2))\n' > "$typed/ok/pisql.py"
+printf 'def add(a, b):\n    return a + b\n\nprint(add(1, 2))\n' > "$typed/bad/pisql.py"
+for case in ok bad; do
+  set +e
+  docker run --rm --init --platform "$DOCKER_PLATFORM" --read-only \
+    --tmpfs /tmp:rw,exec,nosuid,nodev,size=256m --cap-drop ALL --security-opt no-new-privileges \
+    --user "$uid:$gid" --mount "type=bind,src=$typed/$case,dst=/workspace" --workdir /workspace \
+    "$EXPERIMENT_IMAGE" mypy --strict --no-error-summary --cache-dir /tmp/mypy-cache pisql.py > "$typed/$case.log" 2>&1
+  status=$?
+  set -e
+  if [[ "$case" == ok && "$status" -ne 0 ]]; then echo "mypy gate rejected annotated code:"; cat "$typed/$case.log"; exit 1; fi
+  if [[ "$case" == bad && "$status" -eq 0 ]]; then echo "mypy gate accepted unannotated code"; exit 1; fi
+done
+version="$(docker run --rm "$EXPERIMENT_IMAGE" mypy --version)"
+[[ "$version" == "mypy $MYPY_VERSION"* ]] || { echo "unexpected mypy: $version"; exit 1; }
+echo "Task smoke passed (typed Python gate: $version; unannotated code is a build failure)."
