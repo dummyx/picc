@@ -52,9 +52,26 @@ tests. Hidden scores are never returned to the model.
 
 ### Prompt
 
-`prompt-minimal` removes workflow, progress-memory, sequencing, and regression
-instructions while retaining the task objective and safety constraints. It is a
-prompt-policy treatment, not a shorter-specification treatment.
+`workflow-reduced` (formerly `prompt-minimal`) reduces the workflow instructions
+in the context, initial, and continuation templates. It retains the full
+behavioral specification, including cumulative stages and preservation of prior
+behavior, and the test tool's advice about testing after changes. It measures
+reduced workflow prompting. Historical runs retain their original labels.
+
+### Minimal task-specific input
+
+`studies/minimal/study.json` defines the separate `picc-minimal-v1` study with one
+`minimal` condition. The initial request contains only a short compiler scope,
+interface, and experiment constraints. `AGENTS.md` and `TASK.md` are blank;
+continuation is `Continue.`. Only Pi's built-in tools are enabled, with no
+experiment tools extension, benchmark feedback, oracle, status tool, or scaffold.
+The standard Pi system prompt, session behavior, access guard, outer budgets,
+and evaluator remain. See `studies/minimal/README.md` for the full input inventory
+and logging limitations.
+
+This setup changes specification detail, prompting, and feedback together. Its
+comparison with the starter baseline is descriptive and does not identify the
+effect of any one of those factors.
 
 ### Specification content and delivery
 

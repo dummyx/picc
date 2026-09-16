@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "picc-minimal-v1",
+  "description": "Minimal harness guidance: one short inline compiler request, standard Pi tools, no scaffold, benchmark feedback, oracle, or workflow instructions.",
+  "baseline_condition": "minimal",
+  "seed": 20260915,
+  "completion_threshold": 0.95,
+  "defaults": {
+    "prompt": {
+      "agents": "studies/minimal/agents.md",
+      "initial": "studies/minimal/initial.txt",
+      "continuation": "studies/minimal/continue.txt",
+      "experiment_tools": false
+    },
+    "specification": {
+      "path": "studies/minimal/task.md",
+      "delivery": "initial_prompt_only",
+      "provenance": {
+        "method": "llm-generated",
+        "creator": "Codex",
+        "source": "PiCC behavioral specification condensed to scope, interface, and experiment constraints",
+        "artifact_family": "picc-minimal-v1",
+        "reviewed_by": null
+      }
+    },
+    "tests": {
+      "access": "none",
+      "feedback": "none",
+      "visible_subset_fraction": 1.0,
+      "subset_seed": 20260915,
+      "visible_partition": null,
+      "hidden_partition": null,
+      "provenance": {
+        "method": "upstream-human-and-template-generated",
+        "creator": "nlsandler/writing-a-c-compiler-tests contributors",
+        "source": "https://github.com/nlsandler/writing-a-c-compiler-tests@ae12014d2dec14488f3f80d14df4b6d8e4634d7d",
+        "artifact_family": "writing-a-c-compiler-core-ch1-10",
+        "reviewed_by": null
+      }
+    },
+    "candidate": {
+      "adapter": "studies/assets/candidates/rust-std.json",
+      "language": "rust",
+      "framework": "standard-library",
+      "scaffold": null
+    },
+    "reference": {
+      "mode": "none",
+      "oracle_limit": 0,
+      "source": null
+    },
+    "environment": {
+      "overrides": {}
+    },
+    "budget": {}
+  },
+  "conditions": [
+    {
+      "id": "minimal",
+      "factor": "baseline",
+      "description": "Short inline request in an empty repository; blank AGENTS.md/TASK.md; built-in tools only; continuation is Continue."
+    }
+  ]
+}

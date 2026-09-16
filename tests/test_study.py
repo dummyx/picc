@@ -131,7 +131,7 @@ class ScheduleTests(unittest.TestCase):
                 "language-python",
                 "tests-aggregate",
                 "spec-inline",
-                "prompt-minimal",
+                "workflow-reduced",
                 "baseline",
             ],
         )
