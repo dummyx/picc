@@ -128,3 +128,34 @@ Infrastructure evidence only: the pipeline (materialization with
 ledgers, reports) works end to end for both tasks and the typed gate. The
 whole-round thinking at a 12-minute cap is the known long-think behaviour;
 main rounds are capped at 45 minutes.
+
+## Amendments
+
+### Amendment 1 (2026-09-16 20:35 UTC, during run 3 of 18): context-overflow recovery failure; no configuration change
+
+Observation, recorded before any result of the affected run was analyzed.
+Runs 1 and 2 (`v10-sql-python-r1`, `v10-sql-rust-r1`) worked in ordinary
+short assistant turns (112 and 169 tool calls in their second rounds) and
+were ended by the frozen stall rule (`MAX_CONSECUTIVE_ROUND_TIMEOUTS=2`)
+after two consecutive 45-minute rounds, at 91 minutes of the 2-hour budget.
+Run 3 (`v10-sql-python-typed-r1`) instead produced thinking blocks that hit
+the 65,536-token output cap (`stopReason=length`) in each of its first three
+rounds with 0, 5, and 0 tool calls, then Pi's context-overflow compaction
+failed in every later round ("Summarization failed: 400: request (176392
+tokens) exceeds the context"), after which each round yields a ~14k-token
+truncated thinking block, no tool call, and no file. The run keeps
+consuming its wall budget in such rounds.
+
+Both behaviours are consequences of the frozen configuration (thinking
+`high`, 131,072 context, `LOCAL_MAX_OUTPUT=65536`, the stall rule, Pi
+0.85.1 compaction) applied identically to every condition. Nothing is
+changed for this cohort. Consequences for analysis: (1) effective budgets
+are heterogeneous, 91 minutes for runs ended by the stall rule versus up to
+2 hours for runs that yield short turns; elapsed time and round counts are
+reported per run; (2) a run that enters the overflow mode is included as a
+completed run and scored on its last buildable snapshot (0 when none
+exists); the report lists per run whether compaction failed
+(`compaction_end` events with `errorMessage`) and how many rounds ended
+with `stopReason=length`. A fix for the next manifest version is left to
+the report (candidates: treat a failed overflow recovery as terminal, or a
+lower thinking level).
