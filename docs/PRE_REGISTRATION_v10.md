@@ -1,7 +1,7 @@
 # Pre-registration: v10 cohort (new tasks; Python untyped vs typed)
 
 Status: frozen by the commit that adds this section (harness at `bd3f686`),
-2026-09-16 15:15 UTC, before the first main run. Pilot evidence below.
+2026-09-16 15:11 UTC, immediately before the first main run (chain started 15:11:27 UTC). Pilot evidence below.
 
 ## Study identity
 
