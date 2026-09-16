@@ -648,15 +648,17 @@ FUZZ_EMPTY = {
 
 
 def last_buildable_index(hidden_rows: list[dict[str, Any]]) -> int | None:
-    """Index of the last hidden-evaluated snapshot that built and passed the
-    audit; None when no snapshot did. The final snapshot is whatever the
+    """Index of the last hidden-evaluated snapshot that built with no blocking
+    audit finding; None when no snapshot did. The final snapshot is whatever the
     workspace held when the round cap fell, so the last buildable snapshot is
     the co-primary that ignores a rewrite cut in half (v8 pre-registration)."""
     for index in range(len(hidden_rows) - 1, -1, -1):
         summary = hidden_rows[index].get("summary")
         if not isinstance(summary, dict):
             continue
-        if summary.get("build_ok") is True and not summary.get("audit_blocking") and summary.get("audit_ok") is not False:
+        # Built and no *blocking* finding; advisory findings do not disqualify
+        # (v9 Amendment 1).
+        if summary.get("build_ok") is True and not summary.get("audit_blocking"):
             return index
     return None
 
@@ -1142,7 +1144,11 @@ def markdown(study: dict[str, Any], rows: list[dict[str, Any]], groups: list[dic
         "",
         "## Interpretation boundary",
         "",
-        "- Conditions are one-factor variants against a shared baseline; this is not a full factorial design.",
+        (
+            "- Conditions are a full crossing of the declared factors; every cell is paired with the baseline of its replicate, and interactions are for the per-cohort analysis script."
+            if study.get("design") == "factorial"
+            else "- Conditions are one-factor variants against a shared baseline; this is not a full factorial design."
+        ),
         "- Language, framework, and scaffold conditions are external-validity blocks. Their effects include the implementation substrate and should not be interpreted as pure prompt effects.",
         "- Provenance records how a specification or test suite was created. Creation method is causal only when multiple independently created, coverage-matched artifacts are replicated.",
         "- Artifact quality here is objective behavioral correctness, build/audit status, authored tests, regressions, and size/churn. No LLM-as-judge score is used.",

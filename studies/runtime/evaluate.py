@@ -441,16 +441,43 @@ def iter_source_files(
             yield path
 
 
+def built_cargo_manifests(workspace: Path) -> list[Path]:
+    """The Cargo manifests the frozen build command compiles: the root
+    manifest and, when it declares a workspace, the member manifests.
+
+    A crate elsewhere in the workspace (developer tooling such as a
+    self-written simulator that depends on the candidate by path) is not
+    built by ``cargo build`` at the root and is not part of the product; v9
+    Amendment 2 scopes the dependency audit accordingly.
+    """
+    root = workspace / "Cargo.toml"
+    if not root.is_file() or root.is_symlink():
+        return []
+    manifests = [root]
+    try:
+        import tomllib
+
+        cargo = tomllib.loads(root.read_text(encoding="utf-8"))
+    except Exception:
+        return manifests
+    members = (cargo.get("workspace") or {}).get("members") or []
+    excluded = set((cargo.get("workspace") or {}).get("exclude") or [])
+    for pattern in members:
+        if not isinstance(pattern, str):
+            continue
+        for member_dir in sorted(workspace.glob(pattern)):
+            relative = member_dir.relative_to(workspace).as_posix()
+            if relative in excluded or any(part in SKIP_PARTS for part in member_dir.relative_to(workspace).parts):
+                continue
+            manifest = member_dir / "Cargo.toml"
+            if manifest.is_file() and not manifest.is_symlink() and manifest not in manifests:
+                manifests.append(manifest)
+    return manifests
+
+
 def audit_cargo(workspace: Path, policy: dict[str, Any], findings: list[dict[str, Any]]) -> None:
     allowed = {str(item).lower().replace("_", "-") for item in policy.get("allowed_dependencies", [])}
-    manifests: list[Path] = []
-    for cargo_toml in sorted(workspace.rglob("Cargo.toml")):
-        if not cargo_toml.is_file() or cargo_toml.is_symlink():
-            continue
-        relative = cargo_toml.relative_to(workspace)
-        if any(part in SKIP_PARTS for part in relative.parts):
-            continue
-        manifests.append(cargo_toml)
+    manifests = built_cargo_manifests(workspace)
 
     for cargo_toml in manifests:
         relative = cargo_toml.relative_to(workspace).as_posix()
@@ -586,6 +613,33 @@ def node_import_closure(workspace: Path, entry: Path, prefixes: Sequence[tuple[s
     return closure
 
 
+def built_package_manifests(workspace: Path) -> list[Path]:
+    """The package manifests the frozen build uses: the root ``package.json``
+    and, when it declares ``workspaces``, the member manifests (v9 Amendment
+    2: manifests outside the build are developer tooling, not the product)."""
+    root = workspace / "package.json"
+    if not root.is_file() or root.is_symlink():
+        return []
+    manifests = [root]
+    try:
+        package = json.loads(root.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return manifests
+    workspaces = package.get("workspaces") if isinstance(package, dict) else None
+    if isinstance(workspaces, dict):
+        workspaces = workspaces.get("packages")
+    for pattern in workspaces or []:
+        if not isinstance(pattern, str):
+            continue
+        for member_dir in sorted(workspace.glob(pattern)):
+            if any(part in SKIP_PARTS for part in member_dir.relative_to(workspace).parts):
+                continue
+            manifest = member_dir / "package.json"
+            if manifest.is_file() and not manifest.is_symlink() and manifest not in manifests:
+                manifests.append(manifest)
+    return manifests
+
+
 def audit_node(workspace: Path, files: list[Path], policy: dict[str, Any], findings: list[dict[str, Any]]) -> None:
     builtins_only = bool(policy.get("node_builtins_only", False))
     allowed = {str(item) for item in policy.get("allowed_node_modules", [])}
@@ -632,12 +686,8 @@ def audit_node(workspace: Path, files: list[Path], policy: dict[str, Any], findi
                             }
                         )
 
-    for manifest in sorted(workspace.rglob("package.json")):
-        if not manifest.is_file() or manifest.is_symlink():
-            continue
+    for manifest in built_package_manifests(workspace):
         relative_path = manifest.relative_to(workspace)
-        if is_excluded(relative_path, prefixes):
-            continue
         relative = relative_path.as_posix()
         try:
             package = json.loads(manifest.read_text(encoding="utf-8"))

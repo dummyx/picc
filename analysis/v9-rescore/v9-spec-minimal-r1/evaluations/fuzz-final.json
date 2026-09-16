@@ -1,0 +1,245 @@
+{
+  "build": {
+    "args": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "elapsed_seconds": 0.14639103785157204,
+    "returncode": 101,
+    "stderr": "   Compiling picc v0.1.0 (/workspace)\nerror[E0425]: cannot find function `check_params_unique` in this scope\n   --> src/codegen.rs:291:21\n    |\n291 |                     check_params_unique(&p.params, &p.name)?;\n    |                     ^^^^^^^^^^^^^^^^^^^ not found in this scope\n\nerror[E0425]: cannot find function `check_params_unique` in this scope\n   --> src/codegen.rs:305:21\n    |\n305 |                     check_params_unique(&f.params, &f.name)?;\n    |                     ^^^^^^^^^^^^^^^^^^^ not found in this scope\n\nerror[E0425]: cannot find function `check_params_unique` in this scope\n   --> src/codegen.rs:636:21\n    |\n636 |                     check_params_unique(&p.params, &p.name)?;\n    |                     ^^^^^^^^^^^^^^^^^^^ not found in this scope\n\nwarning: unreachable pattern\n    --> src/codegen.rs:1236:13\n     |\n1109 |             And | Or => {\n     |             -------- matches all the relevant values\n...\n1236 |             And | Or => unreachable!(),\n     |             ^^^^^^^^ no value can reach this\n     |\n     = note: `#[warn(unreachable_patterns)]` on by default\n\nwarning: unreachable pattern\n    --> src/codegen.rs:1298:29\n     |\n1298 | ...                   _ => unreachable!(),\n     |                       ^ no value can reach this\n     |\nnote: multiple earlier patterns match some of the same values\n    --> src/codegen.rs:1298:29\n     |\n1290 | ...                   BinOp::Shl => \"shlq\",\n     |                       ---------- matches some of the same values\n1291 | ...                   _ => {\n     |                       - matches some of the same values\n...\n1298 | ...                   _ => unreachable!(),\n     |                       ^ collectively making this unreachable\n\nwarning: value assigned to `v` is never read\n   --> src/lexer.rs:139:21\n    |\n139 |             let mut v: i32 = 0;\n    |                     ^\n    |\n    = help: maybe it is overwritten before being read?\n    = note: `#[warn(unused_assignments)]` on by default\n\nFor more information about this error, try `rustc --explain E0425`.\nwarning: `picc` (bin \"picc\") generated 3 warnings\nerror: could not compile `picc` (bin \"picc\") due to 3 previous errors; 3 warnings emitted\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "docker_image": {
+    "id": "sha256:2e4e4dc58548e6566eed393082b9be049cc41422dd36c35f00f576d818d9a555",
+    "name": "picc-experiment:0.4"
+  },
+  "elapsed_seconds": 0.15653228759765625,
+  "policy": {
+    "build_timeout_seconds": 900,
+    "compile_timeout_seconds": 10,
+    "deadline_seconds": 5400,
+    "max_stage": 10,
+    "min_evaluated_for_stage": 20,
+    "programs_per_stage": 100,
+    "reference_build": [
+      "/usr/bin/gcc",
+      "-std=c17",
+      "-O0",
+      "-w"
+    ],
+    "run_timeout_seconds": 3,
+    "seed_base": 20260830
+  },
+  "schema_version": 1,
+  "snapshot": {
+    "git_commit": "d7049aa96327cd2bab255198466a44c9037b59d7",
+    "git_tree": "843794d620c10cb639442e983b4f11fbf886c9ad"
+  },
+  "source_audit": {
+    "advisory_findings": [
+      {
+        "excerpt": "if let Ok(d) = std::env::var(\"PICC_DEBUG\") {",
+        "kind": "source_pattern",
+        "line": 77,
+        "path": "src/main.rs",
+        "reason": "credential or environment inspection"
+      }
+    ],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [
+      {
+        "excerpt": "if let Ok(d) = std::env::var(\"PICC_DEBUG\") {",
+        "kind": "source_pattern",
+        "line": 77,
+        "path": "src/main.rs",
+        "reason": "credential or environment inspection"
+      }
+    ],
+    "passed": false,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 5
+  },
+  "stages": {
+    "1": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 1,
+      "status": "not_run"
+    },
+    "10": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 10,
+      "status": "not_run"
+    },
+    "2": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 2,
+      "status": "not_run"
+    },
+    "3": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 3,
+      "status": "not_run"
+    },
+    "4": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 4,
+      "status": "not_run"
+    },
+    "5": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 5,
+      "status": "not_run"
+    },
+    "6": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 6,
+      "status": "not_run"
+    },
+    "7": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 7,
+      "status": "not_run"
+    },
+    "8": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 8,
+      "status": "not_run"
+    },
+    "9": {
+      "deadline_hit": false,
+      "evaluated": 0,
+      "generated": 0,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "reason": "build_failure",
+      "samples": [],
+      "skipped": 0,
+      "stage": 9,
+      "status": "not_run"
+    }
+  },
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": false,
+    "build_ok": false,
+    "deadline_hit": false,
+    "evaluated_total": 0,
+    "fuzz_macro": 0.0,
+    "max_stage": 10,
+    "mismatch_kinds": {},
+    "mismatches_total": 0,
+    "passed_total": 0,
+    "programs_per_stage": 100,
+    "skipped_total": 0,
+    "stage_pass_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "stages_complete": 0
+  },
+  "timestamp": "2026-09-14T10:49:31Z",
+  "workspace": "/workspace"
+}

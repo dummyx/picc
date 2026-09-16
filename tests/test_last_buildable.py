@@ -27,6 +27,15 @@ def hidden_row(round_number: int, build_ok: bool, audit_ok: bool = True, blockin
 
 
 class LastBuildableSelectionTests(unittest.TestCase):
+    def test_advisory_finding_does_not_disqualify_a_buildable_snapshot(self) -> None:
+        """v9 Amendment 1 (v9-spec-minimal-r1): round 0 built with an advisory
+        (non-blocking) finding, the final did not build; round 0 is the last
+        buildable snapshot, as it would have scored normally as a final."""
+        snaps = [snapshot(0), snapshot(1)]
+        rows = [hidden_row(0, True, audit_ok=False, blocking=False), hidden_row(1, False)]
+        self.assertIs(evaluate_run.last_buildable_snapshot(rows, snaps), snaps[0])
+        self.assertEqual(summarize_study.last_buildable_index(rows), 0)
+
     def test_final_snapshot_wins_when_it_builds(self) -> None:
         snaps = [snapshot(0), snapshot(1)]
         rows = [hidden_row(0, True), hidden_row(1, True)]

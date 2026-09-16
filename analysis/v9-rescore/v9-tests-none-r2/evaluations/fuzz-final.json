@@ -1,0 +1,229 @@
+{
+  "build": {
+    "args": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "elapsed_seconds": 0.46902329102158546,
+    "returncode": 0,
+    "stderr": "   Compiling picc v0.1.0 (/workspace)\n    Finished `release` profile [optimized] target(s) in 0.46s\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "docker_image": {
+    "id": "sha256:2e4e4dc58548e6566eed393082b9be049cc41422dd36c35f00f576d818d9a555",
+    "name": "picc-experiment:0.4"
+  },
+  "elapsed_seconds": 20.07392907142639,
+  "policy": {
+    "build_timeout_seconds": 900,
+    "compile_timeout_seconds": 10,
+    "deadline_seconds": 5400,
+    "max_stage": 10,
+    "min_evaluated_for_stage": 20,
+    "programs_per_stage": 100,
+    "reference_build": [
+      "/usr/bin/gcc",
+      "-std=c17",
+      "-O0",
+      "-w"
+    ],
+    "run_timeout_seconds": 3,
+    "seed_base": 20260830
+  },
+  "schema_version": 1,
+  "snapshot": {
+    "git_commit": "694001462e1b75b16b85ec49e9e697ecec1e6b16",
+    "git_tree": "c1f379f6685311398ac55a26cfc2b95ffc012685"
+  },
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 6
+  },
+  "stages": {
+    "1": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260831,
+      "skipped": 0,
+      "stage": 1,
+      "status": "complete"
+    },
+    "10": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260840,
+      "skipped": 0,
+      "stage": 10,
+      "status": "complete"
+    },
+    "2": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260832,
+      "skipped": 0,
+      "stage": 2,
+      "status": "complete"
+    },
+    "3": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260833,
+      "skipped": 0,
+      "stage": 3,
+      "status": "complete"
+    },
+    "4": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260834,
+      "skipped": 0,
+      "stage": 4,
+      "status": "complete"
+    },
+    "5": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260835,
+      "skipped": 0,
+      "stage": 5,
+      "status": "complete"
+    },
+    "6": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260836,
+      "skipped": 0,
+      "stage": 6,
+      "status": "complete"
+    },
+    "7": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260837,
+      "skipped": 0,
+      "stage": 7,
+      "status": "complete"
+    },
+    "8": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260838,
+      "skipped": 0,
+      "stage": 8,
+      "status": "complete"
+    },
+    "9": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260839,
+      "skipped": 0,
+      "stage": 9,
+      "status": "complete"
+    }
+  },
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": true,
+    "deadline_hit": false,
+    "evaluated_total": 1000,
+    "fuzz_macro": 1.0,
+    "max_stage": 10,
+    "mismatch_kinds": {},
+    "mismatches_total": 0,
+    "passed_total": 1000,
+    "programs_per_stage": 100,
+    "skipped_total": 0,
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "stages_complete": 10
+  },
+  "timestamp": "2026-09-14T10:53:14Z",
+  "workspace": "/workspace"
+}

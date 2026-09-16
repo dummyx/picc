@@ -227,7 +227,8 @@ own manifest version.
 
 Each oracle is scored on two snapshots: the **final snapshot** (whatever the
 workspace held when the last round ended) and the **last buildable snapshot**
-(the last frozen snapshot whose hidden evaluation built and passed the audit;
+(the last frozen snapshot whose hidden evaluation built with no blocking
+audit finding; an advisory finding does not disqualify it, v9 Amendment 1;
 the final one when it built, 0 when none did). The round cap is blind to what
 the agent is doing, and in v7 it fell inside a rewrite in two of eight runs,
 turning a 0.92 compiler into a final snapshot that does not build. The
@@ -307,6 +308,28 @@ aggregation. Hidden-test count, model, image, and starter version must be
 constant across the cohort. Each run's configuration and budget must agree
 with its recorded effective configuration. Drift stops aggregation.
 
+### Re-scoring after an amendment
+
+`study.py evaluate` runs the evaluator copy inside the run's frozen
+materialization, so a corrected evaluator cannot be applied through it
+without editing the frozen copy. Re-score from a scratch copy instead:
+
+1. Copy `runs/.study-materializations/<run>` to a scratch directory.
+2. Replace the copy's `runs` entry. The materialization holds a symlink to
+   the real `runs/` directory, so an evaluator run inside an unmodified copy
+   overwrites the frozen ledgers (this happened once, in v9; the ledgers were
+   restored from a backup). Point the copy at a copy of the run directory.
+3. Drop the corrected `scripts/evaluate_run.py` and
+   `evaluator/evaluate.py` into the copy and run the evaluator from there
+   with the run's recorded effective configuration in the environment.
+4. Keep the outputs under `analysis/vN-rescore/<run>/`. The frozen ledgers
+   in `runs/` are never modified; the corrected ledgers are primary only for
+   the runs the amendment names, and the report says which.
+
+Since 2026-09-16 nothing refuses a modified materialization (the file-hash
+provenance check was removed), so this discipline is procedural, not
+enforced.
+
 The reporter lists every missing condition-by-replicate cell over the included
 replicate union and calls out variants lacking their same-replicate baseline.
 These are coverage warnings, not silently omitted pairs. The starter is
@@ -315,9 +338,14 @@ baseline sharing its replicate identifier. Use paired bootstrap/permutation
 intervals when the repetition count supports it, and do not pool
 language/scaffold variants into a prompt/spec treatment estimate.
 
-A later factorial experiment should be limited to interactions justified by the
-first study, such as specification detail x test feedback. Running all factors
-as a full factorial initially would be expensive and difficult to interpret.
+A factorial manifest (`design: "factorial"`, `factors: [...]`) is limited to
+interactions justified by the one-factor cohorts; the first is specification
+detail x test access (`studies/spectests/study.json`). The validator requires a
+full crossing, and each combined cell must reuse the single-factor overlays it
+combines. Each cell is still paired with its replicate's baseline; main effects
+and the interaction are pre-registered per cohort and computed by the cohort's
+analysis script. Running all factors as a full factorial would be expensive and
+difficult to interpret.
 
 ## Creation-method studies
 
@@ -366,7 +394,12 @@ Rust the Cargo package's `src/` tree plus any file it pulls in by path
 (`#[path]`, `include!`), for JavaScript/TypeScript the adapter's declared
 roots plus the entry module's import closure; symlinks and vendored binaries
 are policy failures everywhere. Test drivers and fuzzers the agent keeps
-outside those roots are its own tooling and are not audited. Until v6 this
+outside those roots are its own tooling and are not audited. The dependency
+audit is scoped the same way: the root Cargo or package manifest plus any
+workspace members it declares, which is what the frozen build compiles; a
+crate or package elsewhere in the workspace (for example a self-written
+simulator that depends on the candidate by path) is developer tooling (v9
+Amendment 2; until v9 every manifest in the workspace was scanned). Until v6 this
 paragraph said the opposite for Rust ("treat that result as an outcome") while
 the Node audit had already been scoped after the v4 incident; v6 Amendment 2
 records the conflict and its resolution. Python candidates are still scanned

@@ -1,0 +1,399 @@
+{
+  "build": {
+    "args": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "elapsed_seconds": 0.488072597887367,
+    "returncode": 0,
+    "stderr": "   Compiling picc v0.1.0 (/workspace)\n    Finished `release` profile [optimized] target(s) in 0.48s\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "docker_image": {
+    "id": "sha256:2e4e4dc58548e6566eed393082b9be049cc41422dd36c35f00f576d818d9a555",
+    "name": "picc-experiment:0.4"
+  },
+  "elapsed_seconds": 15.048175573348999,
+  "policy": {
+    "build_timeout_seconds": 900,
+    "compile_timeout_seconds": 10,
+    "deadline_seconds": 5400,
+    "max_stage": 10,
+    "min_evaluated_for_stage": 20,
+    "programs_per_stage": 100,
+    "reference_build": [
+      "/usr/bin/gcc",
+      "-std=c17",
+      "-O0",
+      "-w"
+    ],
+    "run_timeout_seconds": 3,
+    "seed_base": 20260830
+  },
+  "schema_version": 1,
+  "snapshot": {
+    "git_commit": "272cb1c18b9b1e1988a0736793f73464e8c63664",
+    "git_tree": "ff5126d2f7c6003a0b722174397c7e6f45e02ca6"
+  },
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 8
+  },
+  "stages": {
+    "1": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260831,
+      "skipped": 0,
+      "stage": 1,
+      "status": "complete"
+    },
+    "10": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-6to9vwjc/case.s: Assembler messages:\n/tmp/picc-fuzz-6to9vwjc/case.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-6to9vwjc/case.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-6to9vwjc/case.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 3118 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int g0 = 8;\nint g1 = 4;\n\nint f0(int p0, int p1) {\n    return 3 * p0 + 5 * p1;\n}\n\nint f1(int p0) {\n    return 2 * p0;\n}\n\nint f2(int p0, int p1) {\n    return 4 * p0 + 3 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((g1 ? 22 : g1), 5);\n    int cf1 = f1((cf0 == g0));\n    int cf2 = f2(13, (1 || 0));\n    int v0 = ((13 ? g1 : g1) * (40 ? 41 : 41));\n    int v1 = cf1;\n    int acc = 33;\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = ((!(60 || cf0)) == (v0 || (-i)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-6to9vwjc/case.s: Assembler messages:\n/tmp/picc-fuzz-6to9vwjc/case.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-6to9vwjc/case.s:20: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-6to9vwjc/case.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 5683 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int g0 = 54;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 4 * p1 + 3 * p2 + 4 * p3 + 3 * p4 + 1 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 1 * p0 + 2 * p1 + 5 * p2 + 2 * p3;\n}\n\nint main(void) {\n    int cf0 = f0(0, 27, 28, (52 || g0), (!g0), (!g0));\n    int cf1 = f1(8, (22 && 18), (g0 % 2), (cf0 / 11));\n    int v0 = ((cf1 % 15) / 15);\n    int v1 = ((-19) || (7 ? 57 : cf0));\n    int result = ((g0 ? (4 ? 3 : 13) : (52 < cf1)) + 29);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-6to9vwjc/case.s: Assembler messages:\n/tmp/picc-fuzz-6to9vwjc/case.s:17: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-6to9vwjc/case.s:20: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-6to9vwjc/case.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 8582 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int g0 = 29;\nint g1 = 39;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 3 * p1 + 5 * p2 + 4 * p3 + 1 * p4 + 5 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 1 * p0 + 4 * p1 + 3 * p2 + 1 * p3 + 5 * p4 + 3 * p5;\n}\n\nint f2(int p0, int p1, int p2) {\n    return 3 * p0 + 2 * p1 + 3 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((59 <= 10), 2, (g0 >= g0), (24 || g0), 27, 40);\n    int cf1 = f1(18, (g0 != g1), (!g0), (cf0 ? 18 : g1), (g0 % 15), 31);\n    int cf2 = f2((g0 < cf1), (-0), (g0 || 58));\n    int v0 = (-(g1 && cf1));\n    int acc = (-20);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = ((~g1) >= ((59 ? acc : 51) * (v0 && cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260840,
+      "skipped": 0,
+      "stage": 10,
+      "status": "complete"
+    },
+    "2": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260832,
+      "skipped": 0,
+      "stage": 2,
+      "status": "complete"
+    },
+    "3": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-qjvbxn9s/case.s: Assembler messages:\n/tmp/picc-fuzz-qjvbxn9s/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-qjvbxn9s/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-qjvbxn9s/case.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 705 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    return ((((!((43 % 4) - (30 * 29)))) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-qjvbxn9s/case.s: Assembler messages:\n/tmp/picc-fuzz-qjvbxn9s/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-qjvbxn9s/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-qjvbxn9s/case.s:25: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 546 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    return (((((!(24 % 20)) % 16)) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-qjvbxn9s/case.s: Assembler messages:\n/tmp/picc-fuzz-qjvbxn9s/case.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-qjvbxn9s/case.s:28: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-qjvbxn9s/case.s:31: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 387 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    return ((((~((!57) * (!46)))) % 251) + 251) % 251;\n}\n"
+        }
+      ],
+      "seed": 20260833,
+      "skipped": 0,
+      "stage": 3,
+      "status": "complete"
+    },
+    "4": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-axuu6fej/case.s: Assembler messages:\n/tmp/picc-fuzz-axuu6fej/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-axuu6fej/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-axuu6fej/case.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 228 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    return (((34) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-axuu6fej/case.s: Assembler messages:\n/tmp/picc-fuzz-axuu6fej/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-axuu6fej/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-axuu6fej/case.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 546 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    return ((((~((43 % 14) - 57))) % 251) + 251) % 251;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-axuu6fej/case.s: Assembler messages:\n/tmp/picc-fuzz-axuu6fej/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-axuu6fej/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-axuu6fej/case.s:20: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 864 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    return (((((~(23 * 36)) || ((16 != 26) <= (6 % 20)))) % 251) + 251) % 251;\n}\n"
+        }
+      ],
+      "seed": 20260834,
+      "skipped": 0,
+      "stage": 4,
+      "status": "complete"
+    },
+    "5": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-5lm1defa/case.s: Assembler messages:\n/tmp/picc-fuzz-5lm1defa/case.s:23: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-5lm1defa/case.s:25: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-5lm1defa/case.s:28: Error: invalid instruction suffix for `pop'\n/tmp/picc\n... [truncated 1028 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = 60;\n    int v1 = ((43 || v0) - (23 * 33));\n    int v2 = ((44 * 54) <= (v1 && v1));\n    int result = (-((26 > 53) && (v0 && 31)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-5lm1defa/case.s: Assembler messages:\n/tmp/picc-fuzz-5lm1defa/case.s:27: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-5lm1defa/case.s:30: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-5lm1defa/case.s:44: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 1023 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = (-31);\n    int v1 = ((23 || 44) || (43 % 15));\n    int result = (((~25) != (-v1)) - ((2 - v1) || (v0 * v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-5lm1defa/case.s: Assembler messages:\n/tmp/picc-fuzz-5lm1defa/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-5lm1defa/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-5lm1defa/case.s:32: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 387 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = (5 / 9);\n    int v1 = (~(-v0));\n    int result = (!v0);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260835,
+      "skipped": 0,
+      "stage": 5,
+      "status": "complete"
+    },
+    "6": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-oyvjitmg/case.s: Assembler messages:\n/tmp/picc-fuzz-oyvjitmg/case.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-oyvjitmg/case.s:23: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-oyvjitmg/case.s:26: Error: invalid instruction suffix for `pop'\n/tmp/picc\n... [truncated 1827 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = ((23 || 24) * (28 % 6));\n    int v1 = (40 - (v0 ? v0 : v0));\n    int v2 = ((40 - 46) < 11);\n    int result = (((!v0) * (~60)) ? ((v2 >= v1) != (v0 - 21)) : ((v2 ? v2 : v2) ? 26 : (12 % 15)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-oyvjitmg/case.s: Assembler messages:\n/tmp/picc-fuzz-oyvjitmg/case.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-oyvjitmg/case.s:22: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-oyvjitmg/case.s:33: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 711 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = ((36 ? 14 : 5) < (-52));\n    int v1 = ((-v0) % 19);\n    int result = (((7 && 57) ? 29 : v0) ? ((v0 * v1) && (2 || v1)) : (~(!29)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-oyvjitmg/case.s: Assembler messages:\n/tmp/picc-fuzz-oyvjitmg/case.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-oyvjitmg/case.s:32: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-oyvjitmg/case.s:43: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 864 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = (~(29 ? 54 : 21));\n    int v1 = ((~v0) + (v0 ? 1 : v0));\n    int result = (((22 ? v1 : 57) + (-5)) + ((v1 ? v0 : 41) ? (~v0) : (v0 / 18)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260836,
+      "skipped": 0,
+      "stage": 6,
+      "status": "complete"
+    },
+    "7": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-99e4tgc6/case.s: Assembler messages:\n/tmp/picc-fuzz-99e4tgc6/case.s:27: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-99e4tgc6/case.s:29: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-99e4tgc6/case.s:32: Error: invalid instruction suffix for `pop'\n/tmp/picc\n... [truncated 864 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = (!31);\n    int result = (((v0 ? 49 : 28) - (v0 + 20)) + ((26 ? v0 : v0) && (44 / 18)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-99e4tgc6/case.s: Assembler messages:\n/tmp/picc-fuzz-99e4tgc6/case.s:43: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-99e4tgc6/case.s:46: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-99e4tgc6/case.s:54: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 1351 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = ((59 || 44) && (59 || 18));\n    int v1 = ((v0 == 57) != v0);\n    int v2 = ((39 + 10) && (v0 * 57));\n    int v3 = ((v1 <= 45) + (-v2));\n    int result = ((!(50 < 32)) || ((52 ? 51 : 21) || v1));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-99e4tgc6/case.s: Assembler messages:\n/tmp/picc-fuzz-99e4tgc6/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-99e4tgc6/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-99e4tgc6/case.s:31: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 1023 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = ((20 % 16) || (~49));\n    int v1 = (-(30 + v0));\n    int result = (-((47 + v0) ? (43 - 50) : (v1 + v1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260837,
+      "skipped": 0,
+      "stage": 7,
+      "status": "complete"
+    },
+    "8": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-plupvru8/case.s: Assembler messages:\n/tmp/picc-fuzz-plupvru8/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-plupvru8/case.s:14: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-plupvru8/case.s:22: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 1182 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = ((56 == 9) != (49 * 27));\n    int v1 = 18;\n    int v2 = v0;\n    int result = (v0 * ((40 + 40) > 35));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-plupvru8/case.s: Assembler messages:\n/tmp/picc-fuzz-plupvru8/case.s:11: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-plupvru8/case.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-plupvru8/case.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc\n... [truncated 1671 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = (53 - (49 > 36));\n    int v1 = (40 - (33 % 9));\n    int v2 = (v1 || (15 ? 33 : 3));\n    int v3 = ((v2 % 19) ? (13 <= v1) : (20 || v0));\n    int acc = (~v3);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (~v0);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-plupvru8/case.s: Assembler messages:\n/tmp/picc-fuzz-plupvru8/case.s:20: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-plupvru8/case.s:30: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-plupvru8/case.s:40: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 706 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int main(void) {\n    int v0 = 36;\n    int v1 = ((v0 ? v0 : v0) < (v0 ? 4 : 44));\n    int v2 = ((25 * v1) && 39);\n    int result = (((11 && v1) || (-53)) / 11);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260838,
+      "skipped": 0,
+      "stage": 8,
+      "status": "complete"
+    },
+    "9": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {
+        "assembly_or_link_failure": 100
+      },
+      "mismatches": 100,
+      "pass_rate": 0.0,
+      "passed": 0,
+      "samples": [
+        {
+          "detail": "/tmp/picc-fuzz-2bxz3ihs/case.s: Assembler messages:\n/tmp/picc-fuzz-2bxz3ihs/case.s:16: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-2bxz3ihs/case.s:19: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-2bxz3ihs/case.s:21: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 3272 characters]",
+          "index": 0,
+          "kind": "assembly_or_link_failure",
+          "source": "int f0(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 4 * p1 + 2 * p2 + 5 * p3 + 3 * p4;\n}\n\nint main(void) {\n    int cf0 = f0(1, (55 ? 2 : 18), (20 ? 6 : 38), (!39), 37);\n    int v0 = ((cf0 || cf0) ? (!cf0) : (cf0 - 5));\n    int v1 = ((46 + 40) - (~cf0));\n    int result = (~((v0 / 13) ? (21 / 20) : cf0));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-2bxz3ihs/case.s: Assembler messages:\n/tmp/picc-fuzz-2bxz3ihs/case.s:13: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-2bxz3ihs/case.s:16: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-2bxz3ihs/case.s:18: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 9226 characters]",
+          "index": 1,
+          "kind": "assembly_or_link_failure",
+          "source": "int f0(int p0, int p1) {\n    return 4 * p0 + 4 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 3 * p0 + 1 * p1 + 3 * p2 + 1 * p3 + 4 * p4 + 2 * p5 + 3 * p6;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 2 * p1 + 3 * p2 + 3 * p3 + 1 * p4 + 5 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((38 || 33), (31 / 9));\n    int cf1 = f1((cf0 || cf0), (cf0 && 11), (53 / 17), (cf0 - 15), (cf0 % 1), (!36), (cf0 % 11));\n    int cf2 = f2((20 / 19), (cf1 > 26), 21, (cf1 / 12), cf1, (cf0 / 5));\n    int v0 = 45;\n    int v1 = ((35 ? 1 : 9) - (!cf1));\n    int acc = (~cf0);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (32 || (~(v1 ? 45 : v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        },
+        {
+          "detail": "/tmp/picc-fuzz-2bxz3ihs/case.s: Assembler messages:\n/tmp/picc-fuzz-2bxz3ihs/case.s:12: Error: invalid instruction suffix for `push'\n/tmp/picc-fuzz-2bxz3ihs/case.s:15: Error: invalid instruction suffix for `pop'\n/tmp/picc-fuzz-2bxz3ihs/case.s:34: Error: invalid instruction suffix for `push'\n/tmp/picc\n... [truncated 2315 characters]",
+          "index": 2,
+          "kind": "assembly_or_link_failure",
+          "source": "int f0(int p0) {\n    return 2 * p0;\n}\n\nint main(void) {\n    int cf0 = f0(32);\n    int v0 = ((23 ? 16 : cf0) || (12 <= 52));\n    int v1 = ((13 ? 16 : 33) + (1 * 0));\n    int v2 = ((v1 < cf0) ? (56 - v1) : (v1 || cf0));\n    int acc = (-7);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((50 ? v2 : i) - (i ? 9 : 36)) ? v2 : ((54 <= 42) || (35 * acc)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+        }
+      ],
+      "seed": 20260839,
+      "skipped": 0,
+      "stage": 9,
+      "status": "complete"
+    }
+  },
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": true,
+    "deadline_hit": false,
+    "evaluated_total": 1000,
+    "fuzz_macro": 0.2,
+    "max_stage": 10,
+    "mismatch_kinds": {
+      "assembly_or_link_failure": 800
+    },
+    "mismatches_total": 800,
+    "passed_total": 200,
+    "programs_per_stage": 100,
+    "skipped_total": 0,
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "stages_complete": 10
+  },
+  "timestamp": "2026-09-14T10:53:32Z",
+  "workspace": "/workspace"
+}

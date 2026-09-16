@@ -56,10 +56,20 @@ class CandidateIsolationTests(unittest.TestCase):
                 '[dependencies]\nserde = "1"\n',
                 encoding="utf-8",
             )
-            rust_audit = evaluator.source_audit(
-                workspace,
-                {"source_extensions": [".rs"], "audit": {"allowed_dependencies": []}},
+            rust_policy = {"source_extensions": [".rs"], "audit": {"allowed_dependencies": []}}
+            # A nested manifest the root build does not compile is developer
+            # tooling, not the product (v9 Amendment 2): no finding.
+            (workspace / "Cargo.toml").write_text(
+                '[package]\nname = "picc"\nversion = "0.1.0"\n[dependencies]\n', encoding="utf-8"
             )
+            self.assertTrue(evaluator.source_audit(workspace, rust_policy)["passed"])
+            # Declared as a workspace member, it is built, so it is audited.
+            (workspace / "Cargo.toml").write_text(
+                '[package]\nname = "picc"\nversion = "0.1.0"\n[dependencies]\n'
+                '[workspace]\nmembers = ["member"]\n',
+                encoding="utf-8",
+            )
+            rust_audit = evaluator.source_audit(workspace, rust_policy)
             self.assertFalse(rust_audit["passed"])
             self.assertTrue(
                 any(row.get("path") == "member/Cargo.toml" for row in rust_audit["findings"])
@@ -111,6 +121,22 @@ class RustCandidateAuditTests(unittest.TestCase):
         self.assertTrue(audit["passed"], audit["findings"])
         self.assertFalse(audit["blocking"])
         self.assertEqual(audit["source_files_scanned"], 2)
+
+    def test_out_of_build_devtools_crate_depending_on_the_candidate_is_not_a_dependency(self) -> None:
+        """v9-tests-none-r1: a self-written simulator crate under devtools/ with
+        `picc = { path = ".." }` and its own [workspace]; the root build never
+        compiles it (v9 Amendment 2)."""
+        root = self.workspace(
+            {
+                "Cargo.toml": '[package]\nname = "picc"\nversion = "0.1.0"\n[dependencies]\n',
+                "src/main.rs": "fn main() {}\n",
+                "devtools/Cargo.toml": '[package]\nname = "picc-devtools"\nversion = "0.1.0"\n'
+                '[dependencies]\npicc = { path = ".." }\n[workspace]\n',
+                "devtools/src/main.rs": "fn main() { let _ = std::process::Command::new(\"as\"); }\n",
+            }
+        )
+        audit = evaluator.source_audit(root, self.ADAPTER)
+        self.assertTrue(audit["passed"], audit["findings"])
 
     def test_subprocess_use_inside_src_is_still_blocking(self) -> None:
         root = self.workspace({"src/main.rs": 'use std::process::Command;\nfn main() { Command::new("gcc"); }\n'})
@@ -247,6 +273,22 @@ class NodeCandidateAuditTests(unittest.TestCase):
             "non-built-in module import is outside the frozen candidate policy",
             self.reasons(audit),
         )
+
+    def test_package_manifests_outside_the_build_are_not_audited(self) -> None:
+        """v9 Amendment 2 for Node: only the root package.json and declared
+        workspaces are the product's manifests."""
+        root = self.workspace(
+            {
+                "src/picc.js": "process.exit(0);\n",
+                "package.json": '{"name": "picc", "dependencies": {}}\n',
+                "tools/package.json": '{"name": "tools", "dependencies": {"lodash": "^4"}}\n',
+            }
+        )
+        self.assertFalse(evaluator.source_audit(root, self.JS_ADAPTER)["blocking"])
+        (root / "package.json").write_text('{"name": "picc", "dependencies": {}, "workspaces": ["tools"]}\n', encoding="utf-8")
+        audit = evaluator.source_audit(root, self.JS_ADAPTER)
+        self.assertTrue(audit["blocking"])
+        self.assertIn(("dependency", "lodash"), {(row.get("kind"), row.get("value")) for row in audit["blocking_findings"]})
 
     def test_vendored_node_modules_and_binary_artifacts_are_blocking(self) -> None:
         root = self.workspace(
