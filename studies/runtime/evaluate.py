@@ -245,14 +245,6 @@ def load_object(path: Path) -> dict[str, Any]:
     return value
 
 
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
 def resolve_test_source(tests_root: Path, test: Mapping[str, Any]) -> Path:
     raw_relative = test.get("relative_path")
     if not isinstance(raw_relative, str) or not raw_relative.strip():
@@ -272,12 +264,6 @@ def resolve_test_source(tests_root: Path, test: Mapping[str, Any]) -> Path:
     if not source.is_file():
         raise ValueError(f"Test source is not a regular file: {raw_relative}")
 
-    expected = test.get("sha256")
-    if not isinstance(expected, str) or re.fullmatch(r"[0-9a-fA-F]{64}", expected) is None:
-        raise ValueError(f"Test has an invalid SHA-256 digest: {raw_relative}")
-    actual = sha256_file(source)
-    if actual != expected.lower():
-        raise ValueError(f"Test source SHA-256 mismatch: {raw_relative}")
     return source
 
 
@@ -945,19 +931,18 @@ def candidate_compile(
     return run_command(command, cwd=workspace, timeout=timeout, env=env)
 
 
-def cache_key(test: dict[str, Any]) -> str:
-    payload = f"v2\0{test['sha256']}\0gcc-c17-pedantic-O0-no-pie"
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+def cache_key(source: Path) -> str:
+    payload = b"v2\0gcc-c17-pedantic-O0-no-pie\0" + source.read_bytes()
+    return hashlib.sha256(payload).hexdigest()
 
 
 def reference_result(
     source: Path,
-    test: dict[str, Any],
     cache_dir: Path,
     compile_timeout: int,
     run_timeout: int,
 ) -> dict[str, Any]:
-    key = cache_key(test)
+    key = cache_key(source)
     cache_path = cache_dir / f"{key}.json"
     if cache_path.exists():
         with contextlib.suppress(OSError, json.JSONDecodeError):
@@ -1062,7 +1047,7 @@ def evaluate_valid(
     compile_timeout: int,
     run_timeout: int,
 ) -> TestResult:
-    expected = reference_result(source, test, cache_dir, compile_timeout, run_timeout)
+    expected = reference_result(source, cache_dir, compile_timeout, run_timeout)
     if not expected.get("ok"):
         return TestResult(
             str(test["id"]),
@@ -1336,7 +1321,6 @@ def main() -> int:
         "candidate": {
             "language": adapter.get("language"),
             "framework": adapter.get("framework"),
-            "adapter_sha256": hashlib.sha256(args.candidate_config.read_bytes()).hexdigest(),
             "artifact": str(artifact),
         },
         "selection": {

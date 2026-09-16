@@ -4,8 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import contextlib
-import fcntl
 import json
 import os
 import subprocess
@@ -19,8 +17,10 @@ from common import (
     REPO_ROOT,
     append_jsonl,
     atomic_write_json,
+    base_container_args,
     docker_image_id,
     docker_mount,
+    harness_lock,
     load_config,
     read_jsonl,
     sanitize_run_id,
@@ -86,47 +86,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-@contextlib.contextmanager
-def harness_lock(run_dir: Path):
-    lock_path = run_dir / ".harness.lock"
-    with lock_path.open("a+", encoding="utf-8") as handle:
-        try:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as error:
-            raise ExperimentError(f"Run is already locked by another harness process: {run_dir.name}") from error
-        try:
-            yield
-        finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
-
-
-def container_base(config: dict[str, str]) -> list[str]:
-    args = [
-        "docker",
-        "run",
-        "--rm",
-        "--init",
-        "--platform",
-        config.get("DOCKER_PLATFORM", "linux/amd64"),
-        "--read-only",
-        "--tmpfs",
-        "/tmp:rw,exec,nosuid,nodev,size=2g",
-        "--cap-drop",
-        "ALL",
-        "--security-opt",
-        "no-new-privileges",
-        "--cpus",
-        config.get("AGENT_CPUS", "8"),
-        "--memory",
-        config.get("AGENT_MEMORY", "16g"),
-        "--pids-limit",
-        config.get("AGENT_PIDS", "512"),
-    ]
-    if hasattr(os, "getuid") and hasattr(os, "getgid"):
-        args += ["--user", f"{os.getuid()}:{os.getgid()}"]
-    return args
-
-
 def evaluate_snapshot(
     config: dict[str, str],
     workspace: Path,
@@ -138,8 +97,7 @@ def evaluate_snapshot(
 ) -> tuple[int, str, str, Path]:
     output_path = artifacts / "evaluations" / output_name
     container_name = f"picc-peval-{os.getpid()}-{output_name.removesuffix('.json')}"
-    command = container_base(config)
-    command += ["--name", container_name]
+    command = base_container_args(config, name=container_name)
     command += docker_mount(workspace, "/workspace")
     command += docker_mount(tests, "/tests", readonly=True)
     command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
@@ -192,8 +150,7 @@ def fuzz_snapshot(
     """Run the stage-averaged fuzz oracle on one checked-out snapshot."""
     output_path = artifacts / "evaluations" / output_name
     container_name = f"picc-pfuzz-{os.getpid()}"
-    command = container_base(config)
-    command += ["--name", container_name]
+    command = base_container_args(config, name=container_name)
     command += docker_mount(workspace, "/workspace")
     command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
     command += docker_mount(artifacts, "/run-artifacts")

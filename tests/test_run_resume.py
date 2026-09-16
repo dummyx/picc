@@ -109,7 +109,6 @@ class ResumeFixture:
         write_json(self.visible_manifest, {"partition": "visible", "tests": []})
         write_json(self.hidden_manifest, {"partition": "hidden", "tests": []})
         (self.root / "evaluator").mkdir()
-        (self.root / "MANIFEST.sha256").write_text("test manifest\n", encoding="utf-8")
 
     def _build_artifacts(self) -> None:
         for path in (
@@ -209,9 +208,6 @@ class ResumeFixture:
                 "thinking": "max",
             },
             "docker_image": {"name": IMAGE_NAME, "id": self.image_id},
-            "prompt_and_extension_hashes": runner.prompt_hashes(self.control),
-            "visible_manifest_sha256": runner.sha256_file(self.visible_manifest),
-            "hidden_manifest_sha256": runner.sha256_file(self.hidden_manifest),
             "budget": {
                 "wall_hours": 2.0,
                 "max_rounds": 6,
@@ -245,8 +241,6 @@ class ResumeFixture:
                 run_id=RUN_ID,
                 run_dir=self.run_dir,
                 current_config=self.current_config,
-                visible_manifest=self.visible_manifest,
-                hidden_manifest=self.hidden_manifest,
                 current_image_id=self.image_id if image_id is None else image_id,
             )
 
@@ -472,23 +466,6 @@ class ResumePlanningTests(unittest.TestCase):
                     fixture.plan()
 
     def test_rejects_frozen_state_drift(self) -> None:
-        with self.subTest("control"), ResumeFixture() as fixture:
-            (fixture.control / "CONTINUE.txt").write_text("changed\n", encoding="utf-8")
-            with self.assertRaisesRegex(runner.ExperimentError, "Frozen prompt"):
-                fixture.plan()
-
-        with self.subTest("injected extension"), ResumeFixture() as fixture:
-            (fixture.control / "pi" / "extensions" / "injected.js").write_text(
-                "export {};\n", encoding="utf-8"
-            )
-            with self.assertRaisesRegex(runner.ExperimentError, "Frozen prompt"):
-                fixture.plan()
-
-        with self.subTest("manifest"), ResumeFixture() as fixture:
-            fixture.visible_manifest.write_text("changed\n", encoding="utf-8")
-            with self.assertRaisesRegex(runner.ExperimentError, "Visible manifest"):
-                fixture.plan()
-
         with self.subTest("image"), ResumeFixture() as fixture:
             with self.assertRaisesRegex(runner.ExperimentError, "Docker image"):
                 fixture.plan(image_id="sha256:different")
@@ -541,15 +518,18 @@ class ResumePlanningTests(unittest.TestCase):
     def test_resume_lock_rejects_a_concurrent_holder(self) -> None:
         with tempfile.TemporaryDirectory(prefix="picc-lock-test-") as temporary:
             run_dir = Path(temporary)
-            with runner.resume_lock(run_dir):
+            with runner.harness_lock(run_dir):
                 with self.assertRaisesRegex(runner.ExperimentError, "already locked"):
-                    with runner.resume_lock(run_dir):
+                    with runner.harness_lock(run_dir):
                         self.fail("the second lock acquisition unexpectedly succeeded")
 
 
 class ResumeLifecycleTests(unittest.TestCase):
     def test_resume_execution_appends_audit_and_preserves_old_artifacts(self) -> None:
         with ResumeFixture() as fixture:
+            fixture.frozen_config["AGENT_VISIBLE_TESTS"] = "data/agent-visible"
+            fixture.write_metadata()
+            write_json(fixture.root / "data" / "agent-visible" / "manifest.json", {"tests": []})
             preserved_paths = [
                 *sorted((fixture.artifacts / "events").glob("round-000*")),
                 *sorted((fixture.artifacts / "evaluations").glob("visible-round-000*")),
@@ -654,6 +634,7 @@ class ResumeLifecycleTests(unittest.TestCase):
             self.assertEqual(visible_call["config"]["EXPERIMENT_IMAGE"], IMAGE_NAME)
             self.assertEqual(visible_call["workspace"], fixture.workspace)
             self.assertEqual(visible_call["visible_tests"], fixture.visible_manifest.parent)
+            self.assertEqual(captured["visible_tests"], fixture.root / "data" / "agent-visible")
             self.assertEqual(visible_call["evaluator"], fixture.root / "evaluator")
             self.assertEqual(visible_call["artifacts"], fixture.artifacts)
             self.assertEqual(visible_call["round_number"], 2)
@@ -691,6 +672,7 @@ class ResumeLifecycleTests(unittest.TestCase):
 
     def test_pi_continuation_command_uses_existing_session(self) -> None:
         with ResumeFixture() as fixture:
+            fixture.frozen_config["PI_TOOLS"] = "read,bash,test_visible,reference_oracle"
             captured: dict[str, object] = {}
 
             class FakeProcess:
@@ -726,6 +708,7 @@ class ResumeLifecycleTests(unittest.TestCase):
             command = captured["command"]
             pi_index = command.index("pi")
             pi_args = command[pi_index + 1 :]
+            self.assertEqual(pi_args[pi_args.index("--tools") + 1], fixture.frozen_config["PI_TOOLS"])
             self.assertIn("--continue", pi_args)
             self.assertNotIn("--name", pi_args)
             self.assertEqual(pi_args[-1], "continue prompt\n")
@@ -796,7 +779,7 @@ class PostprocessingGuardTests(unittest.TestCase):
         with ResumeFixture() as fixture:
             argv = ["evaluate_run.py", "--run-id", RUN_ID, "--partition", "hidden"]
             with (
-                runner.resume_lock(fixture.run_dir),
+                runner.harness_lock(fixture.run_dir),
                 mock.patch.object(evaluator_runner, "REPO_ROOT", fixture.root),
                 mock.patch.object(sys, "argv", argv),
                 mock.patch.object(evaluator_runner, "evaluate_locked") as evaluate_locked,
@@ -809,7 +792,7 @@ class PostprocessingGuardTests(unittest.TestCase):
         with ResumeFixture() as fixture:
             argv = ["summarize_run.py", "--run-id", RUN_ID]
             with (
-                runner.resume_lock(fixture.run_dir),
+                runner.harness_lock(fixture.run_dir),
                 mock.patch.object(summarizer, "REPO_ROOT", fixture.root),
                 mock.patch.object(sys, "argv", argv),
                 mock.patch.object(summarizer, "summarize_locked") as summarize_locked,

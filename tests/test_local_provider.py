@@ -157,7 +157,6 @@ class ControlFileTests(unittest.TestCase):
             control = runner.copy_control_files(Path(temporary) / "run", local_config())
             payload = json.loads((control / "pi" / "models.json").read_text(encoding="utf-8"))
             self.assertEqual(payload["providers"]["local"]["models"][0]["id"], LOCAL_MODEL_ID)
-            self.assertIn("pi/models.json", runner.prompt_hashes(control))
 
     def test_hosted_run_control_has_no_models_json(self) -> None:
         with tempfile.TemporaryDirectory(prefix="picc-hosted-control-") as temporary:

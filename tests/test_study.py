@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import importlib.util
 import json
 import re
@@ -17,10 +16,6 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import study  # noqa: E402
-
-
-def sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def write_partition(root: Path, partition: str) -> Path:
@@ -44,7 +39,6 @@ def write_partition(root: Path, partition: str) -> Path:
                 "stage": 1,
                 "validity": validity,
                 "family": str(Path(relative).with_suffix("")),
-                "sha256": sha(path),
             }
         )
     manifest = {
@@ -80,7 +74,6 @@ class StudyManifestTests(unittest.TestCase):
                             "stage": stage,
                             "validity": validity,
                             "family": f"s{stage}/{validity}/family-{index}",
-                            "sha256": "0" * 64,
                         }
                     )
         manifest = {"tests": rows}
@@ -139,7 +132,7 @@ class ScheduleTests(unittest.TestCase):
                 "language-python",
                 "tests-aggregate",
                 "spec-inline",
-                "prompt-minimal",
+                "workflow-reduced",
                 "baseline",
             ],
         )
@@ -197,10 +190,13 @@ class MaterializationTests(unittest.TestCase):
         runner = (root / "scripts" / "run_experiment.py").read_text(encoding="utf-8")
         self.assertIn('const REFERENCE_MODE = "oracle"', tools)
         self.assertIn("const ORACLE_LIMIT = 50", tools)
-        self.assertIn("reference_oracle", runner)
+        self.assertEqual(runner, (ROOT / "scripts" / "run_experiment.py").read_text(encoding="utf-8"))
         self.assertIn("__pycache__/", runner)
         self.assertNotIn("__REFERENCE_MODE__", tools)
-        self.assertTrue((root / "study-materialization.json").is_file())
+        record = json.loads((root / "study-materialization.json").read_text(encoding="utf-8"))
+        self.assertEqual(record["condition"], condition)
+        self.assertIn("reference_oracle", record["effective_config"]["PI_TOOLS"].split(","))
+        self.assertEqual(record["source_harness"]["version"], (ROOT / "VERSION").read_text().strip())
         self.assertTrue((root / "data" / "partitions" / "hidden" / "manifest.json").is_file())
 
         node = shutil.which("node")
@@ -248,8 +244,8 @@ process.exit(failed ? 1 : 0);
         harness_manifest = json.loads((root / "data" / "partitions" / "visible" / "manifest.json").read_text())
         self.assertEqual(agent_manifest["tests"], [])
         self.assertGreater(len(harness_manifest["tests"]), 0)
-        runner = (root / "scripts" / "run_experiment.py").read_text(encoding="utf-8")
-        self.assertIn("visible_tests=agent_visible_tests,", runner)
+        record = json.loads((root / "study-materialization.json").read_text())
+        self.assertEqual(record["effective_config"]["AGENT_VISIBLE_TESTS"], "data/agent-visible")
 
 
 
@@ -296,7 +292,6 @@ pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\
                         "stage": 1,
                         "validity": "valid",
                         "family": "valid",
-                        "sha256": sha(valid),
                     },
                     {
                         "id": "invalid.c",
@@ -304,7 +299,6 @@ pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\
                         "stage": 1,
                         "validity": "invalid",
                         "family": "invalid",
-                        "sha256": sha(invalid),
                     },
                 ],
             }
@@ -356,7 +350,7 @@ class PushedFeedbackTests(unittest.TestCase):
         self.assertEqual(pushed["tests"]["access"], "tool")
         self.assertEqual(pushed["tests"]["feedback"], "failures")
         self.assertEqual(pushed["tests"]["push_interval_minutes"], 10)
-        # The key is absent from conditions that do not push, so their resolved hashes are unchanged.
+        # The key is absent from conditions that do not push.
         self.assertNotIn("push_interval_minutes", by_id["baseline"]["tests"])
 
     def test_invalid_intervals_are_rejected(self) -> None:
@@ -502,8 +496,6 @@ class TypesStudyTests(unittest.TestCase):
                 (ROOT / "studies" / "runtime" / name).read_bytes(),
                 name,
             )
-        hashes = json.loads((ts_root / "study-materialization.json").read_text(encoding="utf-8"))["materialized_harness"]["file_hashes"]
-        self.assertIn("evaluator/fuzz_evaluate.py", hashes)
         runner = (ts_root / "scripts" / "run_experiment.py").read_text(encoding="utf-8")
         self.assertIn("dist/", runner)
         self.assertIn("node_modules/", runner)
@@ -527,8 +519,8 @@ class TypesStudyTests(unittest.TestCase):
                 "partition": "unit",
                 "source": {"revision": "unit"},
                 "tests": [
-                    {"id": "valid/return_7.c", "relative_path": "valid/return_7.c", "stage": 1, "validity": "valid", "family": "valid", "sha256": sha(valid)},
-                    {"id": "invalid/missing_semicolon.c", "relative_path": "invalid/missing_semicolon.c", "stage": 1, "validity": "invalid", "family": "invalid", "sha256": sha(invalid)},
+                    {"id": "valid/return_7.c", "relative_path": "valid/return_7.c", "stage": 1, "validity": "valid", "family": "valid"},
+                    {"id": "invalid/missing_semicolon.c", "relative_path": "invalid/missing_semicolon.c", "stage": 1, "validity": "invalid", "family": "invalid"},
                 ],
             }
             manifest_path = tests / "manifest.json"

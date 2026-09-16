@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 import tempfile
@@ -31,10 +30,6 @@ def write_jsonl(path: Path, rows: list[dict[str, object]]) -> None:
 def write_text(path: Path, value: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(value, encoding="utf-8")
-
-
-def text_sha256(value: str) -> str:
-    return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
 def study_payload() -> dict[str, object]:
@@ -99,7 +94,6 @@ def make_run(
     runs_root: Path,
     run_id: str,
     study: dict[str, object],
-    study_sha256: str,
     *,
     profile: object = "main",
     status: object = "completed",
@@ -127,26 +121,7 @@ def make_run(
         "INITIAL.txt": "Build the fixture\n",
         "CONTINUE.txt": "Continue the fixture\n",
     }
-    extension_contents = {"experiment-tools.ts": "export const fixture = true;\n"}
-    for name, content in prompt_contents.items():
-        write_text(materialization / "prompts" / name, content)
-        write_text(run_dir / "study-control" / "prompts" / name, content)
-        write_text(run_dir / "control" / name, content)
-    for name, content in extension_contents.items():
-        write_text(materialization / "pi" / "extensions" / name, content)
-        write_text(run_dir / "control" / "pi" / "extensions" / name, content)
-    settings = {"schema_version": 1, "fixture": True}
-    write_json(materialization / "pi" / "settings.json", settings)
-    write_json(run_dir / "control" / "pi" / "settings.json", settings)
-
-    candidate = {"schema_version": 1, "source_extensions": [".rs"]}
-    candidate_paths = [
-        materialization / "evaluator" / "candidate.json",
-        run_dir / "study-control" / "candidate.json",
-    ]
-    for path in candidate_paths:
-        write_json(path, candidate)
-    candidate_sha256 = summarize_study.sha256_file(candidate_paths[0])
+    write_json(run_dir / "study-control" / "candidate.json", {"schema_version": 1, "source_extensions": [".rs"]})
 
     visible_tests = [
         {"id": "visible-valid", "stage": 1, "validity": "valid"},
@@ -166,7 +141,6 @@ def make_run(
         write_json(materialization / "data" / "partitions" / label / "manifest.json", manifest)
         write_json(run_dir / "study-control" / f"{label}-manifest.json", manifest)
 
-    write_text(materialization / "MANIFEST.sha256", "fixture release manifest\n")
     configuration = {
         "AGENT_CPUS": "8",
         "EXPERIMENT_IMAGE": "picc-study@sha256:fixture",
@@ -179,65 +153,27 @@ def make_run(
         "MODEL_PROVIDER": "zai",
         "MODEL_THINKING": "max",
     }
-    write_text(materialization / "VERSION", "summary-fixture-v1\n")
-    write_text(
-        materialization / "config" / "defaults.env",
-        "".join(f"{key}={value}\n" for key, value in sorted(configuration.items())),
-    )
-    write_text(materialization / "docker" / "Dockerfile", "FROM scratch\n")
-    write_text(materialization / "scripts" / "evaluate_run.py", "# frozen evaluate runner\n")
-    write_text(materialization / "scripts" / "run_experiment.py", "# frozen experiment runner\n")
-    write_text(materialization / "scripts" / "summarize_run.py", "# frozen report runner\n")
-    write_text(materialization / "evaluator" / "evaluate.py", "# frozen study evaluator\n")
-    write_json(
-        materialization / "data" / "agent-visible" / "manifest.json",
-        {"schema_version": 1, "partition": "agent-visible", "tests": visible_tests},
-    )
-    source_file_hashes = {
-        "scripts/run_experiment.py": text_sha256("runner"),
-        "scripts/summarize_run.py": text_sha256("reporter"),
-        "pi/extensions/base.ts": text_sha256("extension"),
-        "evaluator/evaluate.py": text_sha256("evaluator"),
-    }
     rendered = {
-        "specification_sha256": text_sha256("Fixture specification\n"),
         "specification_bytes": len("Fixture specification\n".encode()),
         "specification_words": 2,
-        "prompt_hashes": summarize_study.file_hash_tree(materialization / "prompts", "fixture prompts"),
         "prompt_bytes": {name: len(content.encode()) for name, content in prompt_contents.items()},
-        "extension_hashes": summarize_study.file_hash_tree(
-            materialization / "pi" / "extensions", "fixture extensions"
-        ),
-        "candidate_adapter_sha256": candidate_sha256,
-        "visible_manifest_sha256": summarize_study.sha256_file(
-            materialization / "data" / "partitions" / "visible" / "manifest.json"
-        ),
-        "hidden_manifest_sha256": summarize_study.sha256_file(
-            materialization / "data" / "partitions" / "hidden" / "manifest.json"
-        ),
         "visible_test_count": 2,
         "agent_visible_test_count": 2,
         "hidden_test_count": 2,
-        "scaffold_hashes": {},
     }
     materialization_record = {
         "schema_version": 1,
         "created_at": "2026-01-01T00:00:00Z",
         "study_id": study["id"],
         "study_path": "study.json",
-        "study_sha256": study_sha256,
         "condition": condition,
-        "condition_sha256": summarize_study.sha256_json(condition),
+        "condition_id": condition["id"],
         "run_id": run_id,
         "effective_config": configuration,
         "completion_threshold": study["completion_threshold"],
         "source_harness": {
             "repo_root": str(summarize_study.REPO_ROOT),
-            "manifest_sha256": summarize_study.sha256_file(materialization / "MANIFEST.sha256"),
-            "file_hashes": source_file_hashes,
-        },
-        "materialized_harness": {
-            "file_hashes": summarize_study.materialized_harness_file_hashes(materialization),
+            "version": "summary-fixture-v1",
         },
         "rendered": rendered,
     }
@@ -276,9 +212,6 @@ def make_run(
             "serving_revision": "provider-managed",
         },
         "docker_image": {"name": "picc-study@sha256:fixture", "id": "sha256:fixture"},
-        "prompt_and_extension_hashes": summarize_study.file_hash_tree(run_dir / "control", "fixture control"),
-        "visible_manifest_sha256": rendered["visible_manifest_sha256"],
-        "hidden_manifest_sha256": rendered["hidden_manifest_sha256"],
     }
     write_json(run_dir / "metadata.json", metadata)
 
@@ -360,7 +293,6 @@ def make_run(
             "partition": "hidden",
             "docker_image": dict(metadata["docker_image"]),
             "snapshot": {"git_commit": commit, "git_tree": tree},
-            "candidate": {"adapter_sha256": candidate_sha256},
             "selection": {"max_stage": 1, "latest_only": False, "test_id": None, "count": 2},
             "summary": hidden_summary,
             "tests": hidden_results,
@@ -401,7 +333,6 @@ def make_run(
             "schema_version": 1,
             "snapshot": {"git_commit": fuzz.get("commit", final["git_commit"]), "git_tree": final["git_tree"]},
             "docker_image": dict(metadata["docker_image"]),
-            "candidate": {"adapter_sha256": candidate_sha256},
             "policy": {"max_stage": fuzz.get("policy_max_stage", len(rates)), "programs_per_stage": 5},
             "summary": fuzz_summary,
             "stages": {},
@@ -487,8 +418,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.study = study_payload()
         self.study_path = self.root / "study.json"
         write_json(self.study_path, self.study)
-        self.study_sha256 = summarize_study.sha256_file(self.study_path)
-        self.condition_hashes = summarize_study.current_condition_hashes(self.study)
+        self.conditions = summarize_study.current_conditions(self.study)
 
     def tearDown(self) -> None:
         self.repo_patch.stop()
@@ -498,22 +428,19 @@ class PrimarySummaryTests(unittest.TestCase):
         return summarize_study.collect_run(
             run_dir,
             str(self.study["id"]),
-            self.study_sha256,
-            self.condition_hashes,
+            self.conditions,
         )
 
-    def test_eligible_main_run_exposes_profile_and_fingerprints(self) -> None:
-        run_dir = make_run(self.runs, "main-r1", self.study, self.study_sha256)
+    def test_eligible_main_run_exposes_profile_and_model(self) -> None:
+        run_dir = make_run(self.runs, "main-r1", self.study)
         row, warning = self.collect(run_dir)
         self.assertIsNone(warning)
         self.assertIsNotNone(row)
         assert row is not None
         self.assertEqual(row["profile"], "main")
         self.assertEqual(row["replicate"], 1)
-        self.assertEqual(row["study_sha256"], self.study_sha256)
         self.assertEqual(row["model_provider"], "zai")
         self.assertEqual(row["hidden_evaluation_rounds"], 2)
-        self.assertRegex(row["source_harness_sha256"], r"^[0-9a-f]{64}$")
         groups = summarize_study.grouped([row])
         self.assertEqual(groups[0]["profile"], "main")
         self.assertIn("| `baseline` | `main` |", summarize_study.markdown(self.study, [row], groups, []))
@@ -535,35 +462,19 @@ class PrimarySummaryTests(unittest.TestCase):
                     self.runs,
                     f"excluded-{index}",
                     self.study,
-                    self.study_sha256,
                     **overrides,
                 )
                 row, warning = self.collect(run_dir)
                 self.assertIsNone(row)
                 self.assertIn(expected, warning or "")
 
-    def test_study_and_condition_hash_drift_are_excluded(self) -> None:
-        stale_study = make_run(self.runs, "stale-study", self.study, "0" * 64)
-        row, warning = self.collect(stale_study)
-        self.assertIsNone(row)
-        self.assertIn("study SHA-256", warning or "")
-
-        corrupt_condition = make_run(self.runs, "corrupt-condition", self.study, self.study_sha256)
-        sidecar_path = corrupt_condition / "study-metadata.json"
-        sidecar = summarize_study.load_object(sidecar_path)
-        sidecar["condition"]["description"] = "tampered"
-        write_json(sidecar_path, sidecar)
-        row, warning = self.collect(corrupt_condition)
-        self.assertIsNone(row)
-        self.assertIn("frozen condition payload", warning or "")
-
-        stale_condition = make_run(self.runs, "stale-condition", self.study, self.study_sha256)
-        sidecar_path = stale_condition / "study-metadata.json"
+    def test_condition_drift_is_excluded(self) -> None:
+        run_dir = make_run(self.runs, "stale-condition", self.study)
+        sidecar_path = run_dir / "study-metadata.json"
         sidecar = summarize_study.load_object(sidecar_path)
         sidecar["condition"]["description"] = "old condition"
-        sidecar["condition_sha256"] = summarize_study.sha256_json(sidecar["condition"])
         write_json(sidecar_path, sidecar)
-        row, warning = self.collect(stale_condition)
+        row, warning = self.collect(run_dir)
         self.assertIsNone(row)
         self.assertIn("current resolved condition", warning or "")
 
@@ -576,7 +487,7 @@ class PrimarySummaryTests(unittest.TestCase):
             summarize_study.reject_duplicate_included_runs(rows)
 
     def test_partial_hidden_trajectory_and_tampered_scores_are_excluded(self) -> None:
-        partial = make_run(self.runs, "partial-hidden", self.study, self.study_sha256)
+        partial = make_run(self.runs, "partial-hidden", self.study)
         report_path = partial / "report.json"
         report = summarize_study.load_object(report_path)
         report["hidden_trajectory"] = report["hidden_trajectory"][-1:]
@@ -585,7 +496,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIsNone(row)
         self.assertIn("does not cover every frozen snapshot", warning or "")
 
-        tampered = make_run(self.runs, "tampered-score", self.study, self.study_sha256)
+        tampered = make_run(self.runs, "tampered-score", self.study)
         full_path = tampered / "artifacts" / "evaluations" / "hidden-round-000.json"
         full = summarize_study.load_object(full_path)
         full["summary"]["score"] = 1.0
@@ -603,7 +514,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIn("inconsistent score", warning or "")
 
     def test_missing_usage_stays_missing(self) -> None:
-        run_dir = make_run(self.runs, "missing-usage", self.study, self.study_sha256, usage={})
+        run_dir = make_run(self.runs, "missing-usage", self.study, usage={})
         row, warning = self.collect(run_dir)
         self.assertIsNone(warning)
         assert row is not None
@@ -612,15 +523,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIsNone(row["hidden_score_per_million_generation_tokens"])
 
     def test_runtime_and_report_provenance_mismatches_are_excluded(self) -> None:
-        materialized = make_run(self.runs, "changed-evaluator", self.study, self.study_sha256)
-        sidecar = summarize_study.load_object(materialized / "study-metadata.json")
-        root = summarize_study.REPO_ROOT / sidecar["materialization_root"]
-        write_text(root / "evaluator" / "evaluate.py", "# changed evaluator\n")
-        row, warning = self.collect(materialized)
-        self.assertIsNone(row)
-        self.assertIn("materialized harness files changed", warning or "")
-
-        config = make_run(self.runs, "changed-config", self.study, self.study_sha256)
+        config = make_run(self.runs, "changed-config", self.study)
         metadata_path = config / "metadata.json"
         metadata = summarize_study.load_object(metadata_path)
         metadata["configuration"]["AGENT_CPUS"] = "4"
@@ -629,7 +532,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIsNone(row)
         self.assertIn("frozen effective configuration", warning or "")
 
-        image = make_run(self.runs, "changed-image", self.study, self.study_sha256)
+        image = make_run(self.runs, "changed-image", self.study)
         full_path = image / "artifacts" / "evaluations" / "hidden-round-000.json"
         full = summarize_study.load_object(full_path)
         full["docker_image"]["id"] = "sha256:different"
@@ -638,7 +541,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIsNone(row)
         self.assertIn("different Docker image", warning or "")
 
-        usage = make_run(self.runs, "changed-usage", self.study, self.study_sha256)
+        usage = make_run(self.runs, "changed-usage", self.study)
         report_path = usage / "report.json"
         report = summarize_study.load_object(report_path)
         report["pi_events"]["usage"]["input"] = 999
@@ -647,7 +550,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIsNone(row)
         self.assertIn("raw event ledgers", warning or "")
 
-        guard = make_run(self.runs, "changed-guard", self.study, self.study_sha256)
+        guard = make_run(self.runs, "changed-guard", self.study)
         report_path = guard / "report.json"
         report = summarize_study.load_object(report_path)
         report["guard"]["blocked_calls"] = 1
@@ -658,7 +561,7 @@ class PrimarySummaryTests(unittest.TestCase):
 
     def test_last_buildable_snapshot_scores_when_the_final_does_not_build(self) -> None:
         # The v7 case: the final snapshot is a rewrite cut by the round cap.
-        run_dir = make_run(self.runs, "cut-r1", self.study, self.study_sha256, round_count=3,
+        run_dir = make_run(self.runs, "cut-r1", self.study, round_count=3,
                            fuzz={"rates": [0.0]}, final_unbuildable=True, last_buildable_fuzz={"rates": [1.0]})
         row, warning = self.collect(run_dir)
         self.assertIsNone(warning)
@@ -671,7 +574,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertFalse(row["final_build_ok"])
 
     def test_final_snapshot_that_builds_is_its_own_last_buildable(self) -> None:
-        run_dir = make_run(self.runs, "built-r1", self.study, self.study_sha256)
+        run_dir = make_run(self.runs, "built-r1", self.study)
         row, warning = self.collect(run_dir)
         self.assertIsNone(warning)
         assert row is not None
@@ -680,7 +583,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertEqual(row["last_buildable_round"], 1)
 
     def test_pre_v8_ledger_without_the_second_row_warns_instead_of_excluding(self) -> None:
-        run_dir = make_run(self.runs, "legacy-cut-r1", self.study, self.study_sha256, round_count=3,
+        run_dir = make_run(self.runs, "legacy-cut-r1", self.study, round_count=3,
                            fuzz={"rates": [0.0]}, final_unbuildable=True, last_buildable_fuzz=None)
         row, warning = self.collect(run_dir)
         assert row is not None
@@ -689,7 +592,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIsNone(row["fuzz_macro_last_buildable"])
 
     def test_last_buildable_row_for_a_building_final_is_a_provenance_failure(self) -> None:
-        run_dir = make_run(self.runs, "stray-r1", self.study, self.study_sha256, round_count=3,
+        run_dir = make_run(self.runs, "stray-r1", self.study, round_count=3,
                            fuzz={"rates": [1.0]}, final_unbuildable=True, last_buildable_fuzz={"rates": [1.0]})
         # Flip the final hidden row back to buildable without touching the ledger: the second row is now stray.
         ledger_path = run_dir / "artifacts" / "hidden-scores.jsonl"
@@ -709,7 +612,7 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertIn("last-buildable row although the final snapshot built", warning or "")
 
     def test_bash_timeouts_are_counted_apart_from_guard_blocks(self) -> None:
-        run_dir = make_run(self.runs, "timeouts-r1", self.study, self.study_sha256)
+        run_dir = make_run(self.runs, "timeouts-r1", self.study)
         write_jsonl(
             run_dir / "artifacts" / "guard.jsonl",
             [
@@ -733,7 +636,6 @@ class PrimarySummaryTests(unittest.TestCase):
             self.runs,
             "early-stop",
             self.study,
-            self.study_sha256,
             round_count=1,
         )
         row, warning = self.collect(run_dir)
@@ -742,29 +644,17 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertEqual(row["hidden_evaluation_rounds"], 1)
         self.assertAlmostEqual(row["hidden_auc"], 0.25)
 
-    def test_cohort_drift_is_hard_error_but_declared_condition_config_may_vary(self) -> None:
-        first_dir = make_run(self.runs, "cohort-r1", self.study, self.study_sha256, replicate=1)
-        second_dir = make_run(self.runs, "cohort-r2", self.study, self.study_sha256, replicate=2)
+    def test_model_cohort_drift_is_a_hard_error(self) -> None:
+        first_dir = make_run(self.runs, "cohort-r1", self.study, replicate=1)
+        second_dir = make_run(self.runs, "cohort-r2", self.study, replicate=2)
         first, _ = self.collect(first_dir)
         second, _ = self.collect(second_dir)
         assert first is not None and second is not None
+        summarize_study.reject_cohort_drift([first, second])
 
-        drifted = dict(second)
-        drifted["hidden_manifest_sha256"] = "f" * 64
-        with self.assertRaisesRegex(summarize_study.SummaryError, "hidden_manifest_sha256"):
-            summarize_study.reject_cohort_drift([first, drifted])
-
-        drifted = dict(second)
-        drifted["rendered_assets_sha256"] = "e" * 64
-        with self.assertRaisesRegex(summarize_study.SummaryError, "rendered_assets_sha256"):
-            summarize_study.reject_cohort_drift([first, drifted])
-
-        variant = dict(second)
-        variant["condition_id"] = "budget-variant"
-        variant["condition_sha256"] = "d" * 64
-        variant["configuration_sha256"] = "c" * 64
-        variant["budget_sha256"] = "b" * 64
-        summarize_study.reject_cohort_drift([first, variant])
+        second["model_id"] = "different-model"
+        with self.assertRaisesRegex(summarize_study.SummaryError, "model_id"):
+            summarize_study.reject_cohort_drift([first, second])
 
     def test_paired_deltas_use_the_declared_baseline_condition(self) -> None:
         rows = [
@@ -780,13 +670,13 @@ class PrimarySummaryTests(unittest.TestCase):
 
     def test_fuzz_oracle_columns_are_verified_against_the_final_snapshot(self) -> None:
         # Without a fuzz ledger the run is included, with None columns and a coverage warning.
-        run_dir = make_run(self.runs, "nofuzz-r1", self.study, self.study_sha256, fuzz=None)
+        run_dir = make_run(self.runs, "nofuzz-r1", self.study, fuzz=None)
         row, warning = self.collect(run_dir)
         self.assertIsNotNone(row)
         self.assertIsNone(row["fuzz_macro"])
         self.assertIn("no fuzz-oracle score", warning)
 
-        run_dir = make_run(self.runs, "fuzz-r2", self.study, self.study_sha256, replicate=2, fuzz={"rates": [1.0]})
+        run_dir = make_run(self.runs, "fuzz-r2", self.study, replicate=2, fuzz={"rates": [1.0]})
         row, warning = self.collect(run_dir)
         self.assertIsNone(warning)
         self.assertEqual(row["fuzz_macro"], 1.0)
@@ -802,7 +692,7 @@ class PrimarySummaryTests(unittest.TestCase):
             ("stage budget", {"rates": [1.0], "policy_max_stage": 3}),
         ):
             with self.subTest(label=label):
-                run_dir = make_run(self.runs, f"tampered-{label.replace(' ', '-')}", self.study, self.study_sha256, replicate=3, fuzz=tampering)
+                run_dir = make_run(self.runs, f"tampered-{label.replace(' ', '-')}", self.study, replicate=3, fuzz=tampering)
                 row, warning = self.collect(run_dir)
                 self.assertIsNone(row)
                 self.assertIn("fuzz", str(warning))
@@ -839,8 +729,8 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertTrue(any("unpaired primary variant" in warning for warning in warnings))
 
     def test_cli_output_contains_only_eligible_primary_rows_and_warnings(self) -> None:
-        make_run(self.runs, "main-r1", self.study, self.study_sha256)
-        make_run(self.runs, "pilot-r1", self.study, self.study_sha256, profile="pilot")
+        make_run(self.runs, "main-r1", self.study)
+        make_run(self.runs, "pilot-r1", self.study, profile="pilot")
         output = self.root / "output"
         args = argparse.Namespace(study=self.study_path, runs_root=self.runs, output=output)
         with mock.patch.object(summarize_study, "parse_args", return_value=args):

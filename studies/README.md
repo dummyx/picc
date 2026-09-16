@@ -28,7 +28,7 @@ implementation substrate.
 | Condition | Changed factor |
 |---|---|
 | `baseline` | None |
-| `prompt-minimal` | Workflow/context prompt |
+| `workflow-reduced` | Reduced workflow/context prompt; formerly `prompt-minimal` |
 | `spec-brief` | Specification detail |
 | `spec-architecture` | Architectural guidance |
 | `spec-inline` | Specification delivery |
@@ -39,6 +39,24 @@ implementation substrate.
 | `language-python` | Implementation language |
 | `scaffold-rust` | Starting framework/scaffold |
 | `reference-oracle` | Black-box reference access |
+
+## Minimal experiment
+
+[`minimal/study.json`](minimal/study.json) defines a separate `minimal` condition:
+one short inline compiler request, blank `AGENTS.md`/`TASK.md`, an empty product
+repository, Pi's built-in tools, and a fixed `Continue.` message. No benchmark
+feedback, oracle, status tool, or experiment tool prompt guidelines are supplied.
+Pi's built-in system prompt and the access guard remain.
+
+```bash
+make study-materialize STUDY=studies/minimal/study.json CONDITION=minimal RUN_ID=inspect-minimal
+make study-run STUDY=studies/minimal/study.json CONDITION=minimal PROFILE=main RUN_ID=minimal-main-r1 REPLICATE=1
+```
+
+See [the complete input contract](minimal/README.md). This setup changes several
+factors together and has its own study ID. The starter's `workflow-reduced`
+condition retains its full specification and feedback tools; historical runs
+and analysis keep its former `prompt-minimal` label.
 
 ## Static-typing study
 

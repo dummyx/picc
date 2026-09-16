@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import fcntl
 import hashlib
 import json
 import math
@@ -26,24 +25,24 @@ from common import (
     api_key_for,
     append_jsonl,
     atomic_write_json,
+    base_container_args,
     config_float,
     config_int,
     docker_image_id,
     docker_mount,
     docker_pi_config_mounts,
     docker_secret_env,
+    harness_lock,
     host_metadata,
     is_local_provider,
     load_config,
     local_model_metadata,
-    local_network_mode,
     read_jsonl,
     require_model_id,
     require_model_provider,
     resolve_local_provider,
     run,
     sanitize_run_id,
-    sha256_file,
     write_local_models_json,
 )
 
@@ -146,47 +145,6 @@ def snapshot_workspace(workspace: Path, round_number: int) -> dict[str, Any]:
     }
 
 
-def base_container_args(
-    config: dict[str, str], *, name: str | None = None, model_endpoint: bool = False
-) -> list[str]:
-    args = [
-        "docker",
-        "run",
-        "--rm",
-        "--init",
-        "--platform",
-        config.get("DOCKER_PLATFORM", "linux/amd64"),
-        "--read-only",
-        "--tmpfs",
-        "/tmp:rw,exec,nosuid,nodev,size=2g",
-        "--cap-drop",
-        "ALL",
-        "--security-opt",
-        "no-new-privileges",
-        "--cpus",
-        config.get("AGENT_CPUS", "8"),
-        "--memory",
-        config.get("AGENT_MEMORY", "16g"),
-        "--pids-limit",
-        config.get("AGENT_PIDS", "512"),
-    ]
-    if model_endpoint and is_local_provider(config):
-        if local_network_mode(config) == "host":
-            # Share the host network namespace so the frozen LOCAL_BASE_URL can
-            # target a loopback endpoint that host firewalling hides from the
-            # docker bridge. Only containers that talk to the model get this.
-            args += ["--network", "host"]
-        else:
-            # Reach the operator's endpoint from inside the container on Linux
-            # engines; Docker Desktop resolves host.docker.internal either way.
-            args += ["--add-host", "host.docker.internal:host-gateway"]
-    if name:
-        args += ["--name", name]
-    if hasattr(os, "getuid") and hasattr(os, "getgid"):
-        args += ["--user", f"{os.getuid()}:{os.getgid()}"]
-    return args
-
-
 def run_pi_round(
     *,
     config: dict[str, str],
@@ -259,7 +217,7 @@ def run_pi_round(
             "--session-dir",
             "/run-artifacts/sessions",
             "--tools",
-            "read,bash,edit,write,grep,find,ls,test_visible,experiment_status",
+            config.get("PI_TOOLS", "read,bash,edit,write,grep,find,ls,test_visible,experiment_status"),
             "--no-skills",
             "--no-prompt-templates",
             "--no-themes",
@@ -416,19 +374,6 @@ def run_visible_evaluation(
                 text=True,
             )
 
-
-def prompt_hashes(control: Path) -> dict[str, str]:
-    entries = sorted(control.rglob("*"))
-    unsupported = [
-        path for path in entries if path.is_symlink() or not (path.is_dir() or path.is_file())
-    ]
-    if unsupported:
-        relative = ", ".join(str(path.relative_to(control)) for path in unsupported)
-        raise ExperimentError(f"Frozen control tree contains unsupported entries: {relative}")
-    paths = [path for path in entries if path.is_file()]
-    if not paths:
-        raise ExperimentError("Frozen control tree contains no files")
-    return {str(path.relative_to(control)): sha256_file(path) for path in paths}
 
 def pi_container_name(run_id: str, round_number: int) -> str:
     suffix = f"-{round_number:03d}"
@@ -587,27 +532,11 @@ def _assert_round_slots_free(artifacts: Path, round_number: int) -> None:
         raise ExperimentError("Next round would overwrite existing artifacts: " + ", ".join(existing))
 
 
-@contextlib.contextmanager
-def resume_lock(run_dir: Path):
-    lock_path = run_dir / ".harness.lock"
-    with lock_path.open("a+", encoding="utf-8") as handle:
-        try:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as error:
-            raise ExperimentError(f"Run is already locked by another harness process: {run_dir.name}") from error
-        try:
-            yield
-        finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
-
-
 def plan_resume(
     *,
     run_id: str,
     run_dir: Path,
     current_config: dict[str, str],
-    visible_manifest: Path,
-    hidden_manifest: Path,
     current_image_id: str | None = None,
 ) -> dict[str, Any]:
     metadata_path = run_dir / "metadata.json"
@@ -726,12 +655,6 @@ def plan_resume(
         raise ExperimentError(
             f"Docker image {image_name!r} changed: expected {recorded_image_id}, got {actual_image_id}"
         )
-    if prompt_hashes(control) != metadata.get("prompt_and_extension_hashes"):
-        raise ExperimentError("Frozen prompt, settings, or extension hashes changed")
-    if sha256_file(visible_manifest) != metadata.get("visible_manifest_sha256"):
-        raise ExperimentError("Visible manifest hash changed")
-    if sha256_file(hidden_manifest) != metadata.get("hidden_manifest_sha256"):
-        raise ExperimentError("Hidden manifest hash changed")
 
     sessions = sorted((artifacts / "sessions").glob("*.jsonl"))
     if len(sessions) != 1:
@@ -946,16 +869,12 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
     artifacts = run_dir / "artifacts"
     control = run_dir / "control"
     attempt_started_at = utc_now()
-    manifest_path = REPO_ROOT / "MANIFEST.sha256"
-    harness_manifest_sha256 = sha256_file(manifest_path) if manifest_path.is_file() else None
 
     if args.resume:
         plan = plan_resume(
             run_id=run_id,
             run_dir=run_dir,
             current_config=current_config,
-            visible_manifest=visible_manifest,
-            hidden_manifest=hidden_manifest,
         )
         metadata = plan["metadata"]
         config = plan["config"]
@@ -998,10 +917,6 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "workspace_git_commit": plan["workspace_commit"],
             "session": str(plan["session"].relative_to(run_dir)),
             "docker_image_id": image_id,
-            "prompt_and_extension_hashes": metadata["prompt_and_extension_hashes"],
-            "visible_manifest_sha256": metadata["visible_manifest_sha256"],
-            "hidden_manifest_sha256": metadata["hidden_manifest_sha256"],
-            "harness_manifest_sha256": harness_manifest_sha256,
         }
         interventions.append({key: value for key, value in audit.items() if key != "event"})
         current_attempt = {
@@ -1017,7 +932,6 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "elapsed_seconds": None,
             "termination_reason": None,
             "host": host_metadata(),
-            "harness_manifest_sha256": harness_manifest_sha256,
         }
         attempts.append(current_attempt)
         metadata["schema_version"] = METADATA_SCHEMA_VERSION
@@ -1080,7 +994,6 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "elapsed_seconds": None,
             "termination_reason": None,
             "host": host_metadata(),
-            "harness_manifest_sha256": harness_manifest_sha256,
         }
         model_record = {
             "provider": require_model_provider(config),
@@ -1089,15 +1002,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
         }
         if is_local_provider(config):
             model_record.update(local_model_metadata(config))
-            model_digest = (config.get("LOCAL_MODEL_SHA256", "") or "").strip().lower()
-            model_record["serving_revision"] = (
-                f"gguf-sha256:{model_digest}"
-                if model_digest
-                else (
-                    "self-hosted endpoint; the harness freezes client configuration only. "
-                    "Record the server build and model file digest alongside the run."
-                )
-            )
+            model_record["serving_revision"] = "self-hosted endpoint; operator-managed"
             replicate_note = (
                 "The local endpoint is operator-managed; unless the server pins a "
                 "sampling seed (e.g. via LOCAL_SAMPLING_PARAMS), repetitions are "
@@ -1123,9 +1028,6 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "configuration": nonsecret_config,
             "model": model_record,
             "docker_image": {"name": config["EXPERIMENT_IMAGE"], "id": image_id},
-            "prompt_and_extension_hashes": prompt_hashes(control),
-            "visible_manifest_sha256": sha256_file(visible_manifest),
-            "hidden_manifest_sha256": sha256_file(hidden_manifest),
             "budget": {
                 "wall_hours": hours,
                 "max_rounds": max_rounds,
@@ -1140,6 +1042,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
         }
         atomic_write_json(run_dir / "metadata.json", metadata)
 
+    agent_visible_tests = REPO_ROOT / config.get("AGENT_VISIBLE_TESTS", "data/partitions/visible")
     started_monotonic = time.monotonic()
     total_budget_seconds = hours * 3600.0
     deadline = started_monotonic + (total_budget_seconds - elapsed_before)
@@ -1192,7 +1095,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 workspace=workspace,
                 control=control,
                 artifacts=artifacts,
-                visible_tests=visible_tests,
+                visible_tests=agent_visible_tests,
                 evaluator=REPO_ROOT / "evaluator",
                 prompt=prompt,
                 continuation=round_number > 0,
@@ -1322,7 +1225,7 @@ def main() -> int:
     if args.resume:
         if not run_dir.is_dir():
             raise ExperimentError(f"Unknown run: {run_id}")
-        with resume_lock(run_dir):
+        with harness_lock(run_dir):
             return execute_run(args, run_id, run_dir, current_config)
     return execute_run(args, run_id, run_dir, current_config)
 

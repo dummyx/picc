@@ -61,13 +61,13 @@
       "description": "Behavioral specification in TASK.md, detailed workflow prompt, failure-level test tool, empty Rust repository, and no reference implementation."
     },
     {
-      "id": "prompt-minimal",
+      "id": "workflow-reduced",
       "factor": "prompt",
-      "description": "Remove workflow, progress-memory, sequencing, and regression-management instructions from every prompt surface while retaining safety and task rules. The initial and continuation requests are also stripped; leaving the shared ones in place re-supplied the removed instructions each round.",
+      "description": "Reduce explicit workflow instructions in the context and request prompts while retaining the full behavioral specification, continuation testing advice, and experiment-tool guidance.",
       "prompt": {
-        "agents": "studies/assets/prompts/agents-minimal.md",
-        "initial": "studies/assets/prompts/initial-minimal.txt",
-        "continuation": "studies/assets/prompts/continue-minimal.txt"
+        "agents": "studies/assets/prompts/agents-workflow-reduced.md",
+        "initial": "studies/assets/prompts/initial-workflow-reduced.txt",
+        "continuation": "studies/assets/prompts/continue-workflow-reduced.txt"
       }
     },
     {

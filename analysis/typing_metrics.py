@@ -6,9 +6,8 @@ with it?" from artifacts every run already produces. Read-only, regex-based,
 and deliberately approximate: the counts describe the final snapshot and the
 event streams, they are not a type-checker.
 
-Like process_metrics.py this lives outside scripts/ on purpose: scripts/ is
-fingerprinted by the study layer, so adding a file there would change the
-harness hash of every later materialization.
+Like process_metrics.py this lives outside scripts/ so study materializations
+only copy the runtime harness.
 
 Usage:
     python3 analysis/typing_metrics.py                       # all picc-types-v1 runs

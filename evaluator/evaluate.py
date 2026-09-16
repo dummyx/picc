@@ -294,9 +294,9 @@ def build_compiler(workspace: Path, timeout: int) -> tuple[CommandResult, Path]:
     return result, workspace / "target" / "release" / "picc"
 
 
-def cache_key(test: dict[str, Any]) -> str:
-    payload = f"v1\0{test['sha256']}\0gcc-c17-pedantic-O0-no-pie"
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+def cache_key(source: Path) -> str:
+    payload = b"v1\0gcc-c17-pedantic-O0-no-pie\0" + source.read_bytes()
+    return hashlib.sha256(payload).hexdigest()
 
 
 def encode_text(value: str) -> dict[str, str]:
@@ -308,12 +308,11 @@ def encode_text(value: str) -> dict[str, str]:
 
 def reference_result(
     source: Path,
-    test: dict[str, Any],
     cache_dir: Path,
     compile_timeout: int,
     run_timeout: int,
 ) -> dict[str, Any]:
-    key = cache_key(test)
+    key = cache_key(source)
     cache_path = cache_dir / f"{key}.json"
     if cache_path.exists():
         try:
@@ -373,7 +372,7 @@ def evaluate_valid(
     compile_timeout: int,
     run_timeout: int,
 ) -> TestResult:
-    expected = reference_result(source, test, cache_dir, compile_timeout, run_timeout)
+    expected = reference_result(source, cache_dir, compile_timeout, run_timeout)
     if not expected.get("ok"):
         return TestResult(
             id=test["id"],
