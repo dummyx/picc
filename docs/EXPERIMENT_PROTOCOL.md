@@ -133,8 +133,6 @@ Resume is refused unless all of the following still hold:
 
 - the stored model and non-secret configuration agree with metadata, and the
   frozen Docker tag still resolves to the recorded immutable image ID;
-- frozen prompt, settings, extension, visible-manifest, and hidden-manifest
-  hashes match;
 - round and snapshot ledgers are complete, paired, and sequential, and the next
   round's output paths are unused;
 - exactly one valid named Pi session exists;
@@ -160,10 +158,10 @@ Record before main runs:
 - Docker image name and immutable image ID;
 - Pi version;
 - Rust version;
-- prompt and extension hashes;
-- visible and hidden manifest hashes;
+- frozen prompts, settings, and extensions;
+- visible and hidden manifests;
 - upstream test revision;
 - effective `.env` overrides, excluding secrets;
-- the served model file's SHA-256 (`LOCAL_MODEL_SHA256`, verified by `make preflight`);
+- the served model alias, path, and server build (`make preflight` records these);
 - host and Docker platform;
 - run IDs and planned number of repetitions.

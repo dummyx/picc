@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-from common import ExperimentError, atomic_write_json, sha256_file
+from common import ExperimentError, atomic_write_json
 
 STAGE_PATTERN = re.compile(r"(?:chapter|stage)_(\d+)$")
 EXCLUDED_COMPONENTS = {"extra_credit", "libraries", "helper_libs"}
@@ -201,7 +201,6 @@ def write_partition(
                 "stage": case.stage,
                 "validity": case.validity,
                 "family": case.family,
-                "sha256": sha256_file(target),
             }
         )
 

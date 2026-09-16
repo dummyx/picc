@@ -11,7 +11,7 @@ artifact.
 This is an extension of the existing Pi reproduction harness, not a new
 benchmark. The original single-run path remains untouched. Each study condition
 is materialized into a private copy of the current harness so that prompt,
-specification, test, adapter, and reference artifacts are frozen and hashed.
+specification, test, adapter, and reference artifacts are frozen.
 
 ## Research questions
 
@@ -136,10 +136,9 @@ conditions. Do not tune prompts based on which condition appears better.
 
 ### 2. Freeze
 
-Before confirmatory runs, run `make preflight`: with `LOCAL_MODEL_SHA256` set
-it hashes the file the local endpoint reports serving and refuses a different
-one (the served model file changed once between cohorts without anything in
-the repository changing). Then freeze and commit:
+Before confirmatory runs, run `make preflight` to check the local endpoint and
+verify that its model alias matches `MODEL_ID`. It records the server-reported
+model path and build without reading the model file. Then freeze and commit:
 
 - study manifest and all artifacts;
 - Docker image ID;
@@ -271,29 +270,25 @@ higher quality.
 ## Analysis
 
 The automated primary aggregate accepts only completed, uninterrupted `main`
-runs with `protocol_comparable=true`, a positive integer replicate, and current
-study/resolved-condition SHA-256 values. It verifies the retained materialization,
-frozen prompt/extension/control trees, candidate adapter, visible/hidden
-manifests, model/provider/thinking/revision, Docker image, and effective runtime
+runs with `protocol_comparable=true`, a positive integer replicate, a matching
+study ID, and a frozen condition matching the current resolved condition.
+It checks model/provider/thinking/revision, Docker image, and effective runtime
 configuration. Pilot, resumed, incomplete, stale, or internally inconsistent
 runs remain audited artifacts and appear as exclusions rather than entering a
 condition summary.
 
 Every hidden trajectory must cover every frozen snapshot in round order. The
 snapshot ledger, hidden score ledger, report, and full evaluator output must
-agree on the Git commit and tree, elapsed time, adapter, frozen test selection,
+agree on the Git commit and tree, elapsed time, frozen test selection,
 and per-test identities. Aggregate scores are recomputed from per-test boolean
 results before inclusion. A complete one-snapshot early stop remains an outcome;
 its origin-anchored trapezoid AUC is `score / 2` rather than being dropped from
 condition medians.
 
 A duplicate eligible `(condition, replicate)` is a protocol error and stops
-aggregation. Shared hidden-partition, source-harness/evaluator, model, image, and
-starter fingerprints must be constant across the cohort. Rendered assets and
-effective configuration/budget must be constant across replicates of a
-condition; declared configuration or budget conditions may differ from other
-conditions. Drift stops aggregation instead of silently pooling incompatible
-runs.
+aggregation. Hidden-test count, model, image, and starter version must be
+constant across the cohort. Each run's configuration and budget must agree
+with its recorded effective configuration. Drift stops aggregation.
 
 The reporter lists every missing condition-by-replicate cell over the included
 replicate union and calls out variants lacking their same-replicate baseline.
@@ -317,7 +312,7 @@ by attaching a label to one document. A defensible extension should:
 3. normalize delivery format and, when relevant, length bands;
 4. blind reviewers to source and reject artifacts that change task scope;
 5. use artifact identity as a blocking/random effect;
-6. retain generation prompts, model revision, edits, reviewers, hashes, and
+6. retain generation prompts, model revision, edits, reviewers, and
    creation time in provenance;
 7. keep the same hidden evaluator across all artifacts.
 

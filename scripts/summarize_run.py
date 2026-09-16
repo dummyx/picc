@@ -4,8 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import contextlib
-import fcntl
 import json
 import math
 import sys
@@ -14,27 +12,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from common import ExperimentError, REPO_ROOT, atomic_write_json, read_jsonl, sanitize_run_id
+from common import ExperimentError, REPO_ROOT, atomic_write_json, harness_lock, read_jsonl, sanitize_run_id
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-id", required=True)
     return parser.parse_args()
-
-
-@contextlib.contextmanager
-def harness_lock(run_dir: Path):
-    lock_path = run_dir / ".harness.lock"
-    with lock_path.open("a+", encoding="utf-8") as handle:
-        try:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as error:
-            raise ExperimentError(f"Run is already locked by another harness process: {run_dir.name}") from error
-        try:
-            yield
-        finally:
-            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 def numeric(value: Any) -> float:

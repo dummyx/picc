@@ -242,8 +242,7 @@ Notes:
   `{"temperature": 1.0, "top_p": 0.95, "top_k": 20, "min_p": 0}`) to pin
   sampling server-side. Everything lands in the frozen `models.json`.
 - Provenance: the harness freezes the client configuration but cannot archive
-  the server. Record the server build and the GGUF file digest alongside the
-  run, mirroring the hosted-checkpoint limitation.
+  the server. Record the server build and served model path alongside the run.
 - Runs against a local model are a different experimental condition. Do not
   pool them with hosted-provider repetitions.
 
@@ -287,8 +286,8 @@ is cumulative active harness time across execution attempts; time between the
 original attempt and resume is not charged, and consumed time is never restored.
 
 Before resuming, the harness verifies the frozen model and non-secret
-configuration, immutable Docker image ID, control-file and split-manifest
-hashes, sequential round and snapshot ledgers, unused next-round artifact paths,
+configuration, immutable Docker image ID, sequential round and snapshot ledgers,
+unused next-round artifact paths,
 one valid Pi session, and a clean workspace whose Git HEAD matches the latest
 snapshot. It also refuses exhausted budgets, active or locked runs, and runs
 that have already been postprocessed by `make visible`, `make hidden`,
@@ -457,7 +456,7 @@ During main runs:
 make doctor                 # local prerequisites
 make validate               # syntax and deterministic-split checks
 make image                  # build pinned experiment image (base pinned by digest)
-make preflight              # verify the local endpoint serves the pinned model file
+make preflight              # check the local endpoint and its model alias
 make tests                  # fetch pinned corpus and partition it
 make evaluator-smoke        # verify Stage-1 evaluator path
 make auth-check             # minimal request via the configured provider

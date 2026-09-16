@@ -32,7 +32,6 @@ python3 scripts/split_tests.py \
   --source-revision local-smoke >/dev/null
 
 python3 - <<'PY'
-import hashlib
 import json
 from pathlib import Path
 
@@ -58,7 +57,7 @@ assert visible_families.isdisjoint(hidden_families), "family-group leakage"
 combined = manifests["visible"]["tests"] + manifests["hidden"]["tests"]
 for row in combined:
     test_path = root / ("visible" if row["id"] in visible_ids else "hidden") / row["relative_path"]
-    assert hashlib.sha256(test_path.read_bytes()).hexdigest() == row["sha256"]
+    assert test_path.read_bytes() == (Path("fixtures/smoke/tests") / row["relative_path"]).read_bytes()
 
 print("Python, shell, JSON, TypeScript syntax, deterministic split, and leakage checks passed.")
 PY

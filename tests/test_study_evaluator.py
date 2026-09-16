@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import importlib.util
 import sys
 import tempfile
@@ -19,37 +18,31 @@ sys.modules[SPEC.name] = evaluator
 SPEC.loader.exec_module(evaluator)
 
 
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-class TestSourceIntegrityTests(unittest.TestCase):
-    def test_accepts_only_contained_regular_file_with_matching_digest(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="picc-evaluator-integrity-") as temporary:
+class TestSourcePathTests(unittest.TestCase):
+    def test_accepts_contained_regular_file(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="picc-evaluator-path-") as temporary:
             root = Path(temporary).resolve()
             source = root / "valid" / "return.c"
             source.parent.mkdir()
             source.write_text("int main(void) { return 0; }\n", encoding="utf-8")
-            row = {"relative_path": "valid/return.c", "sha256": digest(source)}
+            row = {"relative_path": "valid/return.c"}
 
             self.assertEqual(evaluator.resolve_test_source(root, row), source)
 
-            source.write_text("int main(void) { return 1; }\n", encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
-                evaluator.resolve_test_source(root, row)
-
-    def test_rejects_traversal_invalid_digest_and_symlink(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="picc-evaluator-integrity-") as temporary:
+    def test_rejects_traversal_nonfiles_and_symlink(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="picc-evaluator-path-") as temporary:
             root = Path(temporary).resolve()
             source = root / "test.c"
             source.write_text("int main(void) { return 0; }\n", encoding="utf-8")
+            (root / "directory").mkdir()
 
             invalid_rows = [
-                {"relative_path": "", "sha256": digest(source)},
-                {"relative_path": ".", "sha256": digest(source)},
-                {"relative_path": "../test.c", "sha256": digest(source)},
-                {"relative_path": str(source), "sha256": digest(source)},
-                {"relative_path": "test.c", "sha256": "not-a-digest"},
+                {"relative_path": ""},
+                {"relative_path": "."},
+                {"relative_path": "../test.c"},
+                {"relative_path": str(source)},
+                {"relative_path": "missing.c"},
+                {"relative_path": "directory"},
             ]
             for row in invalid_rows:
                 with self.subTest(row=row):
@@ -64,7 +57,7 @@ class TestSourceIntegrityTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "must not be a symlink"):
                 evaluator.resolve_test_source(
                     root,
-                    {"relative_path": "link.c", "sha256": digest(source)},
+                    {"relative_path": "link.c"},
                 )
 
 

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import json
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -21,26 +19,11 @@ LOCAL = {
 
 
 class PreflightTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.temporary = tempfile.TemporaryDirectory(prefix="picc-preflight-")
-        self.root = Path(self.temporary.name)
-        self.model = self.root / "model.gguf"
-        self.model.write_bytes(b"weights")
-        self.digest = preflight_endpoint.hashlib.sha256(b"weights").hexdigest()
-        self.cache_patch = mock.patch.object(preflight_endpoint, "DIGEST_CACHE", self.root / "cache.json")
-        self.cache_patch.start()
-
-    def tearDown(self) -> None:
-        self.cache_patch.stop()
-        self.temporary.cleanup()
-
-    def fake_fetch(self, alias: str = "vendor/model", path: str | None = None):
-        served = self.model if path is None else path
-
+    def fake_fetch(self, alias: str = "vendor/model", path: str = "/models/model.gguf"):
         def fetch(url: str, key: str, timeout: float) -> dict:
             if url.endswith("/health"):
                 return {"status": "ok"}
-            return {"model_alias": alias, "model_path": str(served), "total_slots": 4, "build_info": "b1-test"}
+            return {"model_alias": alias, "model_path": path, "total_slots": 4, "build_info": "b1-test"}
 
         return fetch
 
@@ -49,43 +32,42 @@ class PreflightTests(unittest.TestCase):
         self.assertEqual(preflight_endpoint.endpoint_root("http://h:1/"), "http://h:1")
 
     def test_hosted_provider_has_nothing_to_verify(self) -> None:
-        status, record = preflight_endpoint.preflight({"MODEL_PROVIDER": "zai", "MODEL_ID": "m"}, expect_sha256=None, skip_hash=False, timeout=1)
+        status, record = preflight_endpoint.preflight({"MODEL_PROVIDER": "zai", "MODEL_ID": "m"}, timeout=1)
         self.assertEqual((status, record["status"]), (0, "not_applicable"))
 
-    def test_matching_digest_verifies_and_caches(self) -> None:
-        config = {**LOCAL, "LOCAL_MODEL_SHA256": self.digest}
+    def test_matching_alias_verifies_and_records_metadata(self) -> None:
         with mock.patch.object(preflight_endpoint, "fetch_json", self.fake_fetch()):
-            status, record = preflight_endpoint.preflight(config, expect_sha256=None, skip_hash=False, timeout=1)
+            status, record = preflight_endpoint.preflight(LOCAL, timeout=1)
         self.assertEqual((status, record["status"]), (0, "verified"))
-        self.assertEqual(record["served_sha256"], self.digest)
+        self.assertEqual(record["health"], "ok")
+        self.assertEqual(record["served_model_alias"], "vendor/model")
+        self.assertEqual(record["served_model_path"], "/models/model.gguf")
+        self.assertEqual(record["server_total_slots"], 4)
         self.assertEqual(record["server_build"], "b1-test")
-        cache = json.loads((self.root / "cache.json").read_text(encoding="utf-8"))
-        self.assertIn(self.digest, cache.values())
-        with mock.patch.object(preflight_endpoint.hashlib, "sha256", side_effect=AssertionError("must hit the cache")):
-            self.assertEqual(preflight_endpoint.cached_digest(self.model), self.digest)
 
-    def test_wrong_digest_or_alias_is_a_mismatch(self) -> None:
-        config = {**LOCAL, "LOCAL_MODEL_SHA256": "0" * 64}
-        with mock.patch.object(preflight_endpoint, "fetch_json", self.fake_fetch()):
-            status, record = preflight_endpoint.preflight(config, expect_sha256=None, skip_hash=False, timeout=1)
-        self.assertEqual((status, record["status"]), (2, "mismatch"))
-        self.assertTrue(any("SHA-256" in problem for problem in record["problems"]))
+    def test_wrong_alias_is_a_mismatch(self) -> None:
         with mock.patch.object(preflight_endpoint, "fetch_json", self.fake_fetch(alias="other/model")):
-            status, record = preflight_endpoint.preflight({**LOCAL, "LOCAL_MODEL_SHA256": self.digest}, expect_sha256=None, skip_hash=False, timeout=1)
-        self.assertEqual(status, 2)
+            status, record = preflight_endpoint.preflight(LOCAL, timeout=1)
+        self.assertEqual((status, record["status"]), (2, "mismatch"))
         self.assertTrue(any("alias" in problem for problem in record["problems"]))
 
-    def test_unpinned_digest_is_recorded_not_verified(self) -> None:
-        with mock.patch.object(preflight_endpoint, "fetch_json", self.fake_fetch()):
-            status, record = preflight_endpoint.preflight(dict(LOCAL), expect_sha256=None, skip_hash=False, timeout=1)
-        self.assertEqual((status, record["status"]), (0, "recorded"))
+    def test_missing_alias_is_unverifiable(self) -> None:
+        with mock.patch.object(preflight_endpoint, "fetch_json", self.fake_fetch(alias="")):
+            status, record = preflight_endpoint.preflight(LOCAL, timeout=1)
+        self.assertEqual((status, record["status"]), (3, "unverifiable"))
+
+    def test_model_path_is_optional(self) -> None:
+        with mock.patch.object(preflight_endpoint, "fetch_json", self.fake_fetch(path="")):
+            status, record = preflight_endpoint.preflight(LOCAL, timeout=1)
+        self.assertEqual((status, record["status"]), (0, "verified"))
+        self.assertEqual(record["served_model_path"], "")
 
     def test_unreachable_endpoint(self) -> None:
         def fetch(url: str, key: str, timeout: float) -> dict:
             raise OSError("connection refused")
 
         with mock.patch.object(preflight_endpoint, "fetch_json", fetch):
-            status, record = preflight_endpoint.preflight(dict(LOCAL), expect_sha256=None, skip_hash=False, timeout=1)
+            status, record = preflight_endpoint.preflight(LOCAL, timeout=1)
         self.assertEqual((status, record["status"]), (3, "unreachable"))
 
 

@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import contextlib
-import hashlib
+import fcntl
 import json
 import os
 import platform
@@ -19,6 +19,20 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 
 class ExperimentError(RuntimeError):
     """A user-actionable experiment setup or execution error."""
+
+
+@contextlib.contextmanager
+def harness_lock(run_dir: Path) -> Iterator[None]:
+    lock_path = run_dir / ".harness.lock"
+    with lock_path.open("a+", encoding="utf-8") as handle:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise ExperimentError(f"Run is already locked by another harness process: {run_dir.name}") from error
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 def _parse_env_file(path: Path) -> dict[str, str]:
@@ -105,22 +119,6 @@ def config_bool(config: Mapping[str, str], key: str) -> bool:
     if raw in {"", "0", "false", "no", "off"}:
         return False
     raise ExperimentError(f"Configuration {key} must be a boolean (0/1/true/false)")
-
-
-def sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def sha256_text(text: str) -> str:
-    return sha256_bytes(text.encode("utf-8"))
 
 
 def atomic_write_json(path: Path, value: Any) -> None:
@@ -274,6 +272,47 @@ def local_network_mode(config: Mapping[str, str]) -> str:
             "LOCAL_BASE_URL may target a loopback endpoint)"
         )
     return mode
+
+
+def base_container_args(
+    config: dict[str, str], *, name: str | None = None, model_endpoint: bool = False
+) -> list[str]:
+    args = [
+        "docker",
+        "run",
+        "--rm",
+        "--init",
+        "--platform",
+        config.get("DOCKER_PLATFORM", "linux/amd64"),
+        "--read-only",
+        "--tmpfs",
+        "/tmp:rw,exec,nosuid,nodev,size=2g",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges",
+        "--cpus",
+        config.get("AGENT_CPUS", "8"),
+        "--memory",
+        config.get("AGENT_MEMORY", "16g"),
+        "--pids-limit",
+        config.get("AGENT_PIDS", "512"),
+    ]
+    if model_endpoint and is_local_provider(config):
+        if local_network_mode(config) == "host":
+            # Share the host network namespace so the frozen LOCAL_BASE_URL can
+            # target a loopback endpoint that host firewalling hides from the
+            # docker bridge. Only containers that talk to the model get this.
+            args += ["--network", "host"]
+        else:
+            # Reach the operator's endpoint from inside the container on Linux
+            # engines; Docker Desktop resolves host.docker.internal either way.
+            args += ["--add-host", "host.docker.internal:host-gateway"]
+    if name:
+        args += ["--name", name]
+    if hasattr(os, "getuid") and hasattr(os, "getgid"):
+        args += ["--user", f"{os.getuid()}:{os.getgid()}"]
+    return args
 
 
 def api_key_for(config: Mapping[str, str]) -> tuple[str, str]:

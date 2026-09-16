@@ -13,8 +13,6 @@ One object per run. Important fields:
   configuration;
 - immutable Docker image ID;
 - non-secret effective configuration;
-- prompt, settings, and extension SHA-256 hashes;
-- visible and hidden manifest hashes;
 - frozen budget;
 - final visible summary;
 - `resumed`, `resume_count`, and `protocol_comparable`;
@@ -81,8 +79,7 @@ execution attempts when a trajectory has been resumed.
 
 Append-only audit records written around each resume. `resume_started` records
 the prior lifecycle state, next round, remaining frozen time and round budgets,
-workspace commit, Pi session path, immutable image ID, and control/manifest
-hashes. `resume_finished` records the resulting lifecycle status, termination
+workspace commit, Pi session path, and immutable image ID. `resume_finished` records the resulting lifecycle status, termination
 reason, cumulative elapsed time, final round, and Git commit.
 
 The start event is written before the new Pi invocation. Its corresponding

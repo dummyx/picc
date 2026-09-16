@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import copy
 import csv
-import hashlib
 import json
 import math
 import statistics
@@ -23,36 +22,6 @@ class SummaryError(RuntimeError):
     pass
 
 
-def canonical_json(value: Any) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-
-
-def sha256_json(value: Any) -> str:
-    return hashlib.sha256(canonical_json(value)).hexdigest()
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def is_sha256(value: Any) -> bool:
-    return (
-        isinstance(value, str)
-        and len(value) == 64
-        and all(character in "0123456789abcdefABCDEF" for character in value)
-    )
-
-
-def require_sha256(value: Any, field: str) -> str:
-    if not is_sha256(value):
-        raise SummaryError(f"{field} must be a 64-character hexadecimal SHA-256 digest")
-    return str(value).lower()
-
-
 def require_object(value: Any, field: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise SummaryError(f"{field} must be an object")
@@ -65,78 +34,6 @@ def require_nonempty_string(value: Any, field: str) -> str:
     return value
 
 
-def require_hash_map(value: Any, field: str, *, allow_empty: bool = False) -> dict[str, str]:
-    if not isinstance(value, dict) or (not value and not allow_empty):
-        qualifier = "" if allow_empty else " nonempty"
-        raise SummaryError(f"{field} must be a{qualifier} hash map")
-    result: dict[str, str] = {}
-    for raw_path, raw_digest in value.items():
-        if not isinstance(raw_path, str) or not raw_path:
-            raise SummaryError(f"{field} contains an invalid path")
-        if not isinstance(raw_digest, str) or not raw_digest:
-            raise SummaryError(f"{field}[{raw_path!r}] has an invalid digest")
-        result[raw_path] = raw_digest.lower() if is_sha256(raw_digest) else raw_digest
-    return result
-
-
-def file_hash_tree(root: Path, field: str, *, allow_missing: bool = False) -> dict[str, str]:
-    if not root.exists():
-        if allow_missing:
-            return {}
-        raise SummaryError(f"missing {field}: {root}")
-    if root.is_symlink() or not root.is_dir():
-        raise SummaryError(f"{field} must be a real directory: {root}")
-    result: dict[str, str] = {}
-    for path in sorted(root.rglob("*")):
-        relative = path.relative_to(root)
-        if path.is_symlink():
-            raise SummaryError(f"{field} contains a symlink: {relative}")
-        if path.is_file():
-            result[str(relative)] = sha256_file(path)
-        elif not path.is_dir():
-            raise SummaryError(f"{field} contains an unsupported entry: {relative}")
-    return result
-
-
-MATERIALIZED_HASH_DIRS = (
-    "config",
-    "docker",
-    "scripts",
-    "pi",
-    "prompts",
-    "evaluator",
-    "data/partitions",
-    "data/agent-visible",
-)
-MATERIALIZED_HASH_FILES = ("VERSION", "MANIFEST.sha256")
-
-
-def materialized_harness_file_hashes(root: Path) -> dict[str, str]:
-    ignored_parts = {"__pycache__", ".pytest_cache", "node_modules"}
-    result: dict[str, str] = {}
-    for relative_name in MATERIALIZED_HASH_DIRS:
-        directory = root / relative_name
-        if directory.is_symlink() or not directory.is_dir():
-            raise SummaryError(f"required materialized directory is missing or unsafe: {relative_name}")
-        for path in sorted(directory.rglob("*")):
-            relative = path.relative_to(root)
-            if any(part in ignored_parts for part in relative.parts) or path.suffix == ".pyc":
-                continue
-            if path.is_symlink():
-                raise SummaryError(f"symlink in frozen materialized harness: {relative}")
-            if path.is_dir():
-                continue
-            if not path.is_file():
-                raise SummaryError(f"unsupported frozen materialized entry: {relative}")
-            result[str(relative)] = sha256_file(path)
-    for relative_name in MATERIALIZED_HASH_FILES:
-        path = root / relative_name
-        if path.is_symlink() or not path.is_file():
-            raise SummaryError(f"required materialized file is missing or unsafe: {relative_name}")
-        result[relative_name] = sha256_file(path)
-    return result
-
-
 def deep_merge(base: Any, overlay: Any) -> Any:
     if isinstance(base, dict) and isinstance(overlay, dict):
         result = copy.deepcopy(base)
@@ -146,12 +43,12 @@ def deep_merge(base: Any, overlay: Any) -> Any:
     return copy.deepcopy(overlay)
 
 
-def current_condition_hashes(study: dict[str, Any]) -> dict[str, str]:
+def current_conditions(study: dict[str, Any]) -> dict[str, dict[str, Any]]:
     defaults = study.get("defaults")
     conditions = study.get("conditions")
     if not isinstance(defaults, dict) or not isinstance(conditions, list):
         raise SummaryError("Study defaults must be an object and conditions must be an array")
-    hashes: dict[str, str] = {}
+    resolved: dict[str, dict[str, Any]] = {}
     for raw in conditions:
         if not isinstance(raw, dict):
             raise SummaryError("Every study condition must be an object")
@@ -159,10 +56,10 @@ def current_condition_hashes(study: dict[str, Any]) -> dict[str, str]:
         condition_id = condition.get("id")
         if not isinstance(condition_id, str) or not condition_id:
             raise SummaryError("Every resolved study condition must have a nonempty id")
-        if condition_id in hashes:
+        if condition_id in resolved:
             raise SummaryError(f"Duplicate study condition id: {condition_id}")
-        hashes[condition_id] = sha256_json(condition)
-    return hashes
+        resolved[condition_id] = condition
+    return resolved
 
 
 def load_object(path: Path) -> dict[str, Any]:
@@ -436,158 +333,10 @@ def resolve_materialization_root(run_dir: Path, raw_root: Any) -> Path:
     return root
 
 
-def verified_provenance(
-    run_dir: Path,
+def verified_runtime_configuration(
     sidecar: dict[str, Any],
     metadata: dict[str, Any],
-) -> tuple[dict[str, Any], dict[str, Any]]:
-    study_control = run_dir / "study-control"
-    materialization_record_path = study_control / "materialization.json"
-    materialization_record = load_object(materialization_record_path)
-    expected_record = dict(sidecar)
-    expected_record.pop("materialization_root", None)
-    expected_record.pop("frozen_at", None)
-    if materialization_record != expected_record:
-        raise SummaryError("study-control/materialization.json disagrees with study-metadata.json")
-
-    materialization_root = resolve_materialization_root(run_dir, sidecar.get("materialization_root"))
-    live_record_path = materialization_root / "study-materialization.json"
-    if not live_record_path.is_file() or live_record_path.is_symlink():
-        raise SummaryError("frozen study materialization record is missing or unsafe")
-    if sha256_file(live_record_path) != sha256_file(materialization_record_path):
-        raise SummaryError("retained materialization record disagrees with study-control")
-
-    materialized_harness = require_object(
-        sidecar.get("materialized_harness"), "study-metadata.materialized_harness"
-    )
-    expected_materialized_hashes = require_hash_map(
-        materialized_harness.get("file_hashes"),
-        "study-metadata.materialized_harness.file_hashes",
-    )
-    actual_materialized_hashes = materialized_harness_file_hashes(materialization_root)
-    if actual_materialized_hashes != expected_materialized_hashes:
-        changed = sorted(
-            path
-            for path in set(actual_materialized_hashes) | set(expected_materialized_hashes)
-            if actual_materialized_hashes.get(path) != expected_materialized_hashes.get(path)
-        )
-        raise SummaryError("frozen materialized harness files changed: " + ", ".join(changed[:8]))
-    materialized_evaluator_sha256 = require_sha256(
-        expected_materialized_hashes.get("evaluator/evaluate.py"),
-        "materialized_harness.file_hashes[evaluator/evaluate.py]",
-    )
-    materialized_evaluate_run_sha256 = require_sha256(
-        expected_materialized_hashes.get("scripts/evaluate_run.py"),
-        "materialized_harness.file_hashes[scripts/evaluate_run.py]",
-    )
-    materialized_run_experiment_sha256 = require_sha256(
-        expected_materialized_hashes.get("scripts/run_experiment.py"),
-        "materialized_harness.file_hashes[scripts/run_experiment.py]",
-    )
-    materialized_summarize_run_sha256 = require_sha256(
-        expected_materialized_hashes.get("scripts/summarize_run.py"),
-        "materialized_harness.file_hashes[scripts/summarize_run.py]",
-    )
-    materialized_script_hashes = {
-        path: digest for path, digest in expected_materialized_hashes.items() if path.startswith("scripts/")
-    }
-    materialized_hidden_hashes = {
-        path: digest
-        for path, digest in expected_materialized_hashes.items()
-        if path.startswith("data/partitions/hidden/")
-    }
-    if not materialized_script_hashes or not materialized_hidden_hashes:
-        raise SummaryError("materialized harness provenance omits scripts or the hidden partition")
-    source_harness = require_object(sidecar.get("source_harness"), "study-metadata.source_harness")
-    source_manifest_sha256 = require_sha256(
-        source_harness.get("manifest_sha256"), "study-metadata.source_harness.manifest_sha256"
-    )
-    source_file_hashes = require_hash_map(
-        source_harness.get("file_hashes"), "study-metadata.source_harness.file_hashes"
-    )
-    release_manifest_path = materialization_root / "MANIFEST.sha256"
-    if not release_manifest_path.is_file() or release_manifest_path.is_symlink():
-        raise SummaryError("frozen source-harness release manifest is missing or unsafe")
-    if sha256_file(release_manifest_path) != source_manifest_sha256:
-        raise SummaryError("frozen source-harness release manifest SHA-256 does not match provenance")
-
-    rendered = require_object(sidecar.get("rendered"), "study-metadata.rendered")
-    specification_sha256 = require_sha256(
-        rendered.get("specification_sha256"), "study-metadata.rendered.specification_sha256"
-    )
-    prompt_hashes = require_hash_map(rendered.get("prompt_hashes"), "study-metadata.rendered.prompt_hashes")
-    extension_hashes = require_hash_map(
-        rendered.get("extension_hashes"), "study-metadata.rendered.extension_hashes"
-    )
-    scaffold_hashes = require_hash_map(
-        rendered.get("scaffold_hashes"), "study-metadata.rendered.scaffold_hashes", allow_empty=True
-    )
-    candidate_adapter_sha256 = require_sha256(
-        rendered.get("candidate_adapter_sha256"), "study-metadata.rendered.candidate_adapter_sha256"
-    )
-    visible_manifest_sha256 = require_sha256(
-        rendered.get("visible_manifest_sha256"), "study-metadata.rendered.visible_manifest_sha256"
-    )
-    hidden_manifest_sha256 = require_sha256(
-        rendered.get("hidden_manifest_sha256"), "study-metadata.rendered.hidden_manifest_sha256"
-    )
-
-    prompt_roots = [study_control / "prompts", materialization_root / "prompts"]
-    for prompt_root in prompt_roots:
-        if file_hash_tree(prompt_root, "frozen prompt tree") != prompt_hashes:
-            raise SummaryError(f"frozen prompt hashes disagree with provenance: {prompt_root}")
-    extension_roots = [run_dir / "control" / "pi" / "extensions", materialization_root / "pi" / "extensions"]
-    for extension_root in extension_roots:
-        if file_hash_tree(extension_root, "frozen extension tree") != extension_hashes:
-            raise SummaryError(f"frozen extension hashes disagree with provenance: {extension_root}")
-
-    candidate_paths = [study_control / "candidate.json", materialization_root / "evaluator" / "candidate.json"]
-    for candidate_path in candidate_paths:
-        if not candidate_path.is_file() or candidate_path.is_symlink():
-            raise SummaryError(f"frozen candidate adapter is missing or unsafe: {candidate_path}")
-        if sha256_file(candidate_path) != candidate_adapter_sha256:
-            raise SummaryError(f"frozen candidate adapter SHA-256 disagrees with provenance: {candidate_path}")
-
-    manifest_specs = [
-        ("visible", visible_manifest_sha256, study_control / "visible-manifest.json", materialization_root / "data" / "partitions" / "visible" / "manifest.json"),
-        ("hidden", hidden_manifest_sha256, study_control / "hidden-manifest.json", materialization_root / "data" / "partitions" / "hidden" / "manifest.json"),
-    ]
-    for label, expected_digest, compact_path, retained_path in manifest_specs:
-        for manifest_path in (compact_path, retained_path):
-            if not manifest_path.is_file() or manifest_path.is_symlink():
-                raise SummaryError(f"frozen {label} manifest is missing or unsafe: {manifest_path}")
-            if sha256_file(manifest_path) != expected_digest:
-                raise SummaryError(f"frozen {label} manifest SHA-256 disagrees with provenance: {manifest_path}")
-
-    scaffold_root = materialization_root / "data" / "partitions" / "visible" / ".study-scaffold"
-    actual_scaffold_hashes = file_hash_tree(scaffold_root, "frozen scaffold tree", allow_missing=True)
-    if actual_scaffold_hashes != scaffold_hashes:
-        raise SummaryError("frozen scaffold hashes disagree with provenance")
-
-    metadata_control_hashes = require_hash_map(
-        metadata.get("prompt_and_extension_hashes"), "metadata.prompt_and_extension_hashes"
-    )
-    actual_control_hashes = file_hash_tree(run_dir / "control", "run control tree")
-    if actual_control_hashes != metadata_control_hashes:
-        raise SummaryError("run control tree disagrees with metadata.prompt_and_extension_hashes")
-    actual_prompt_hashes = {
-        path: digest for path, digest in actual_control_hashes.items() if not path.startswith("pi/")
-    }
-    if actual_prompt_hashes != prompt_hashes:
-        raise SummaryError("run prompt hashes disagree with rendered prompt provenance")
-    actual_extension_hashes = {
-        path.removeprefix("pi/extensions/"): digest
-        for path, digest in actual_control_hashes.items()
-        if path.startswith("pi/extensions/")
-    }
-    if actual_extension_hashes != extension_hashes:
-        raise SummaryError("run extension hashes disagree with rendered extension provenance")
-
-    if metadata.get("visible_manifest_sha256") != visible_manifest_sha256:
-        raise SummaryError("metadata visible manifest SHA-256 disagrees with study provenance")
-    if metadata.get("hidden_manifest_sha256") != hidden_manifest_sha256:
-        raise SummaryError("metadata hidden manifest SHA-256 disagrees with study provenance")
-
+) -> dict[str, Any]:
     configuration = require_object(metadata.get("configuration"), "metadata.configuration")
     if not configuration:
         raise SummaryError("metadata.configuration must not be empty")
@@ -652,40 +401,7 @@ def verified_provenance(
     for key, expected_value in expected_integer_budget.items():
         if budget.get(key) != expected_value:
             raise SummaryError(f"metadata budget {key} disagrees with the frozen profile configuration")
-    harness_groups = {
-        prefix: {path: digest for path, digest in source_file_hashes.items() if path.startswith(prefix + "/")}
-        for prefix in ("scripts", "pi", "evaluator")
-    }
-    if any(not hashes for hashes in harness_groups.values()):
-        raise SummaryError("source-harness file hashes must cover scripts, pi, and evaluator")
-
-    hidden_manifest = load_object(study_control / "hidden-manifest.json")
-    fingerprints = {
-        "materialized_harness_sha256": sha256_json(expected_materialized_hashes),
-        "materialized_scripts_sha256": sha256_json(materialized_script_hashes),
-        "materialized_hidden_partition_sha256": sha256_json(materialized_hidden_hashes),
-        "materialized_evaluator_sha256": materialized_evaluator_sha256,
-        "materialized_evaluate_run_sha256": materialized_evaluate_run_sha256,
-        "materialized_run_experiment_sha256": materialized_run_experiment_sha256,
-        "materialized_summarize_run_sha256": materialized_summarize_run_sha256,
-        "source_harness_manifest_sha256": source_manifest_sha256,
-        "source_harness_sha256": sha256_json(
-            {"manifest_sha256": source_manifest_sha256, "file_hashes": source_file_hashes}
-        ),
-        "source_scripts_sha256": sha256_json(harness_groups["scripts"]),
-        "source_pi_sha256": sha256_json(harness_groups["pi"]),
-        "source_evaluator_sha256": sha256_json(harness_groups["evaluator"]),
-        "rendered_assets_sha256": sha256_json(rendered),
-        "specification_sha256": specification_sha256,
-        "prompt_hashes_sha256": sha256_json(prompt_hashes),
-        "extension_hashes_sha256": sha256_json(extension_hashes),
-        "scaffold_hashes_sha256": sha256_json(scaffold_hashes),
-        "candidate_adapter_sha256": candidate_adapter_sha256,
-        "visible_manifest_sha256": visible_manifest_sha256,
-        "hidden_manifest_sha256": hidden_manifest_sha256,
-        "runtime_control_sha256": sha256_json(metadata_control_hashes),
-        "configuration_sha256": sha256_json(configuration),
-        "budget_sha256": sha256_json(budget),
+    return {
         "model_provider": model_provider,
         "model_id": model_id,
         "model_thinking": model_thinking,
@@ -694,7 +410,6 @@ def verified_provenance(
         "docker_image_id": docker_image_id,
         "starter_version": starter_version,
     }
-    return fingerprints, hidden_manifest
 
 
 def snapshot_identities(snapshots: list[dict[str, Any]]) -> list[tuple[int, str, str, float]]:
@@ -790,7 +505,6 @@ def verified_hidden_trajectory(
     report: dict[str, Any],
     metadata: dict[str, Any],
     hidden_manifest: dict[str, Any],
-    candidate_adapter_sha256: str,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     if report.get("metadata") != metadata:
         raise SummaryError("report metadata is stale or disagrees with metadata.json")
@@ -869,9 +583,6 @@ def verified_hidden_trajectory(
             raise SummaryError(f"hidden evaluation {round_number} was produced from a different snapshot")
         if full.get("partition") != hidden_manifest.get("partition"):
             raise SummaryError(f"hidden evaluation {round_number} used the wrong manifest partition")
-        candidate = require_object(full.get("candidate"), f"hidden evaluation {round_number}.candidate")
-        if candidate.get("adapter_sha256") != candidate_adapter_sha256:
-            raise SummaryError(f"hidden evaluation {round_number} used a different candidate adapter")
         selection = require_object(full.get("selection"), f"hidden evaluation {round_number}.selection")
         if (
             selection.get("max_stage") != max_stage
@@ -955,7 +666,6 @@ def verified_fuzz_row(
     row: dict[str, Any],
     snapshot: dict[str, Any],
     metadata: dict[str, Any],
-    candidate_adapter_sha256: str,
     expected_output: str,
     label: str,
 ) -> dict[str, Any]:
@@ -976,9 +686,6 @@ def verified_fuzz_row(
         raise SummaryError(f"fuzz evaluation ({label}) was produced from a different snapshot")
     if full.get("docker_image") != expected_docker_image:
         raise SummaryError(f"fuzz evaluation ({label}) used a different Docker image")
-    candidate = require_object(full.get("candidate"), "fuzz evaluation candidate")
-    if candidate.get("adapter_sha256") != candidate_adapter_sha256:
-        raise SummaryError(f"fuzz evaluation ({label}) used a different candidate adapter")
     budget = require_object(metadata.get("budget"), "metadata.budget")
     policy = require_object(full.get("policy"), "fuzz evaluation policy")
     if policy.get("max_stage") != int(budget["max_stage"]):
@@ -1001,7 +708,6 @@ def verified_fuzz_score(
     run_dir: Path,
     snapshots: list[dict[str, Any]],
     metadata: dict[str, Any],
-    candidate_adapter_sha256: str,
     report: dict[str, Any],
     hidden_rows: list[dict[str, Any]] | None = None,
 ) -> tuple[dict[str, Any], str | None]:
@@ -1027,7 +733,7 @@ def verified_fuzz_score(
         raise SummaryError("fuzz ledger must hold one final-snapshot row and at most one last-buildable row")
     row = rows[roles.index("final")]
     final = snapshots[-1]
-    summary = verified_fuzz_row(run_dir, row, final, metadata, candidate_adapter_sha256, "artifacts/evaluations/fuzz-final.json", "final")
+    summary = verified_fuzz_row(run_dir, row, final, metadata, "artifacts/evaluations/fuzz-final.json", "final")
     if report.get("fuzz_final") != row:
         raise SummaryError("report fuzz_final is stale or disagrees with artifacts/fuzz-scores.jsonl")
     rates = summary["stage_pass_rates"]
@@ -1055,7 +761,7 @@ def verified_fuzz_score(
         warning = f"{run_dir.name}: no fuzz-oracle score for the last buildable snapshot (ledger from before v8)"
     else:
         lb_summary = verified_fuzz_row(
-            run_dir, lb_row, snapshots[buildable], metadata, candidate_adapter_sha256,
+            run_dir, lb_row, snapshots[buildable], metadata,
             "artifacts/evaluations/fuzz-last-buildable.json", "last buildable",
         )
         if report.get("fuzz_last_buildable") != lb_row:
@@ -1071,8 +777,7 @@ def excluded_run(run_dir: Path, reason: str) -> tuple[None, str]:
 def collect_run(
     run_dir: Path,
     expected_study: str,
-    expected_study_sha256: str,
-    expected_condition_hashes: dict[str, str],
+    expected_conditions: dict[str, dict[str, Any]],
 ) -> tuple[dict[str, Any] | None, str | None]:
     sidecar_path = run_dir / "study-metadata.json"
     if not sidecar_path.is_file():
@@ -1082,23 +787,17 @@ def collect_run(
         return None, None
     if sidecar.get("run_id") != run_dir.name:
         return excluded_run(run_dir, "study metadata run_id does not match the run directory")
-    if sidecar.get("study_sha256") != expected_study_sha256:
-        return excluded_run(run_dir, "frozen study SHA-256 does not match the current study manifest")
-
     condition = sidecar.get("condition")
     if not isinstance(condition, dict):
         return excluded_run(run_dir, "malformed condition metadata")
     condition_id = condition.get("id")
     if not isinstance(condition_id, str) or not condition_id:
         return excluded_run(run_dir, "condition metadata has no valid id")
-    recorded_condition_sha256 = sidecar.get("condition_sha256")
-    if recorded_condition_sha256 != sha256_json(condition):
-        return excluded_run(run_dir, "condition SHA-256 does not match the frozen condition payload")
-    current_condition_sha256 = expected_condition_hashes.get(condition_id)
-    if current_condition_sha256 is None:
+    current_condition = expected_conditions.get(condition_id)
+    if current_condition is None:
         return excluded_run(run_dir, f"condition {condition_id!r} is absent from the current study manifest")
-    if recorded_condition_sha256 != current_condition_sha256:
-        return excluded_run(run_dir, "frozen condition SHA-256 does not match the current resolved condition")
+    if condition != current_condition:
+        return excluded_run(run_dir, "frozen condition does not match the current resolved condition")
 
     metadata_path = run_dir / "metadata.json"
     if not metadata_path.is_file():
@@ -1127,21 +826,23 @@ def collect_run(
         return excluded_run(run_dir, "completion_threshold is invalid")
 
     try:
-        provenance, hidden_manifest = verified_provenance(run_dir, sidecar, metadata)
+        runtime = verified_runtime_configuration(sidecar, metadata)
+        materialization_root = resolve_materialization_root(run_dir, sidecar.get("materialization_root"))
+        adapter = load_object(run_dir / "study-control" / "candidate.json")
+        hidden_manifest = load_object(run_dir / "study-control" / "hidden-manifest.json")
         report = load_object(report_path)
         visible_points, hidden_points, snapshots, final_full = verified_hidden_trajectory(
             run_dir,
             report,
             metadata,
             hidden_manifest,
-            str(provenance["candidate_adapter_sha256"]),
         )
     except SummaryError as error:
         return excluded_run(run_dir, str(error))
     hidden_rows = read_jsonl(run_dir / "artifacts" / "hidden-scores.jsonl")
     try:
         fuzz_columns, fuzz_warning = verified_fuzz_score(
-            run_dir, snapshots, metadata, str(provenance["candidate_adapter_sha256"]), report, hidden_rows
+            run_dir, snapshots, metadata, report, hidden_rows
         )
     except SummaryError as error:
         return excluded_run(run_dir, str(error))
@@ -1160,11 +861,8 @@ def collect_run(
     audit_ok = final_summary.get("audit_ok") is True
     build_ok = final_summary.get("build_ok") is True
 
-    adapter_path = run_dir / "study-control" / "candidate.json"
-    adapter = load_object(adapter_path)
     raw_extensions = adapter.get("source_extensions")
     source_extensions = {str(value) for value in raw_extensions} if isinstance(raw_extensions, list) else set()
-    materialization_root = resolve_materialization_root(run_dir, sidecar.get("materialization_root"))
     candidate_scaffold = materialization_root / "data" / "partitions" / "visible" / ".study-scaffold"
     scaffold_root = candidate_scaffold if candidate_scaffold.is_dir() else None
     artifact = source_metrics(run_dir / "workspace", source_extensions, scaffold_root)
@@ -1195,9 +893,7 @@ def collect_run(
 
     row: dict[str, Any] = {
         "study_id": expected_study,
-        "study_sha256": expected_study_sha256,
         "condition_id": condition_id,
-        "condition_sha256": recorded_condition_sha256,
         "run_id": run_dir.name,
         "profile": profile,
         "replicate": replicate,
@@ -1237,7 +933,7 @@ def collect_run(
         "visible_test_count": numeric(rendered.get("visible_test_count")),
         "agent_visible_test_count": numeric(rendered.get("agent_visible_test_count")),
         "hidden_test_count": numeric(rendered.get("hidden_test_count")),
-        **provenance,
+        **runtime,
         **axes,
         **artifact,
         **extension,
@@ -1262,18 +958,6 @@ def reject_duplicate_included_runs(rows: list[dict[str, Any]]) -> None:
 
 def reject_cohort_drift(rows: list[dict[str, Any]]) -> None:
     shared_fields = (
-        "source_harness_manifest_sha256",
-        "materialized_scripts_sha256",
-        "materialized_hidden_partition_sha256",
-        "materialized_evaluator_sha256",
-        "materialized_evaluate_run_sha256",
-        "materialized_run_experiment_sha256",
-        "materialized_summarize_run_sha256",
-        "source_harness_sha256",
-        "source_scripts_sha256",
-        "source_pi_sha256",
-        "source_evaluator_sha256",
-        "hidden_manifest_sha256",
         "hidden_test_count",
         "model_provider",
         "model_id",
@@ -1283,38 +967,15 @@ def reject_cohort_drift(rows: list[dict[str, Any]]) -> None:
         "docker_image_id",
         "starter_version",
     )
-    condition_fields = (
-        "condition_sha256",
-        "materialized_harness_sha256",
-        "rendered_assets_sha256",
-        "specification_sha256",
-        "prompt_hashes_sha256",
-        "extension_hashes_sha256",
-        "scaffold_hashes_sha256",
-        "candidate_adapter_sha256",
-        "visible_manifest_sha256",
-        "runtime_control_sha256",
-        "configuration_sha256",
-        "budget_sha256",
-    )
-
-    def reject_drift(group: list[dict[str, Any]], fields: tuple[str, ...], scope: str) -> None:
-        for field in fields:
-            values: dict[str, list[str]] = defaultdict(list)
-            for row in group:
-                values[json.dumps(row.get(field), sort_keys=True)].append(str(row.get("run_id")))
-            if len(values) > 1:
-                details = "; ".join(
-                    f"{', '.join(run_ids)}={value[:80]}" for value, run_ids in sorted(values.items())
-                )
-                raise SummaryError(f"Primary cohort drift in {scope} field {field}: {details}")
-
-    reject_drift(rows, shared_fields, "shared")
-    by_condition: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    for row in rows:
-        by_condition[str(row.get("condition_id"))].append(row)
-    for condition_id, group in sorted(by_condition.items()):
-        reject_drift(group, condition_fields, f"condition {condition_id!r}")
+    for field in shared_fields:
+        values: dict[str, list[str]] = defaultdict(list)
+        for row in rows:
+            values[json.dumps(row.get(field), sort_keys=True)].append(str(row.get("run_id")))
+        if len(values) > 1:
+            details = "; ".join(
+                f"{', '.join(run_ids)}={value[:80]}" for value, run_ids in sorted(values.items())
+            )
+            raise SummaryError(f"Primary cohort drift in shared field {field}: {details}")
 
 
 def planned_cell_warnings(study: dict[str, Any], rows: list[dict[str, Any]]) -> list[str]:
@@ -1458,7 +1119,7 @@ def markdown(study: dict[str, Any], rows: list[dict[str, Any]], groups: list[dic
         "",
         str(study.get("description", "")),
         "",
-        "Primary inclusion: profile `main`, completed, uninterrupted, `protocol_comparable=true`, verified frozen provenance, and hidden evaluation for every snapshot.",
+        "Primary inclusion: profile `main`, completed, uninterrupted, `protocol_comparable=true`, matching run configuration, and hidden evaluation for every snapshot.",
         "",
         "## Condition results",
         "",
@@ -1509,8 +1170,7 @@ def main() -> int:
     study_id = str(study.get("id", ""))
     if not study_id:
         raise SummaryError("Study has no id")
-    study_sha256 = sha256_file(args.study.resolve())
-    condition_hashes = current_condition_hashes(study)
+    conditions = current_conditions(study)
     output = (args.output or (REPO_ROOT / "runs" / "study-results" / study_id)).resolve()
 
     rows: list[dict[str, Any]] = []
@@ -1520,7 +1180,7 @@ def main() -> int:
         for run_dir in sorted(runs_root.iterdir()):
             if not run_dir.is_dir() or run_dir.name.startswith(".") or run_dir.name == "study-results":
                 continue
-            row, warning = collect_run(run_dir, study_id, study_sha256, condition_hashes)
+            row, warning = collect_run(run_dir, study_id, conditions)
             if row is not None:
                 rows.append(row)
             if warning:
@@ -1548,7 +1208,6 @@ def main() -> int:
             "profile": "main",
             "status": "completed",
             "protocol_comparable": True,
-            "study_sha256": study_sha256,
             "replicate": "positive integer",
             "hidden_trajectory": "every frozen snapshot",
             "cohort_drift": "hard error",

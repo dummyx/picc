@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import hashlib
 import json
 import random
 import statistics
@@ -250,7 +249,6 @@ def main() -> int:
         "candidate": {
             "language": adapter.get("language"),
             "framework": adapter.get("framework"),
-            "adapter_sha256": hashlib.sha256(args.candidate_config.read_bytes()).hexdigest(),
             "artifact": str(artifact),
         },
         "policy": {

@@ -21,12 +21,19 @@ Each resolved condition contains:
 
 - `agents`: project-context prompt template;
 - `initial`: first-request template;
-- `continuation`: fixed continuation template.
+- `continuation`: fixed continuation template;
+- `experiment_tools`: optional boolean, default `true`. When `false`, omit the
+  experiment tools extension and expose only Pi's built-in tools. Requires
+  `tests.access='none'` and `reference.mode='none'`. The access guard remains;
+  scaffold setup is included only when needed.
 
 ### `specification`
 
 - `path`: specification template;
-- `delivery`: `task_file`, `initial_prompt`, or `workspace_file`;
+- `delivery`: `task_file`, `initial_prompt`, `initial_prompt_only`, or
+  `workspace_file`. `initial_prompt` leaves a pointer in `TASK.md`;
+  `initial_prompt_only` embeds the specification in the initial request and
+  leaves `TASK.md` blank;
 - `provenance`: at minimum `method`, with optional creator, source,
   generation-model, reviewer, and artifact-family fields.
 
@@ -123,9 +130,9 @@ to candidate inputs and any tests that fell back to their raw text.
 
 Configuration keys frozen per materialization: `FUZZ_STAGE_PROGRAMS` (0
 disables the oracle), `FUZZ_SEED_BASE`, `FUZZ_RUN_TIMEOUT_SECONDS`,
-`FUZZ_COMPILE_TIMEOUT_SECONDS`, `FUZZ_DEADLINE_SECONDS`, and
-`LOCAL_MODEL_SHA256` (recorded as `model.serving_revision =
-gguf-sha256:<digest>` and enforced by `make preflight`).
+`FUZZ_COMPILE_TIMEOUT_SECONDS`, and `FUZZ_DEADLINE_SECONDS`.
+Local runs record `model.serving_revision` as operator-managed.
+`make preflight` checks the model alias and records server-reported metadata.
 
 ## `runs/.study-materializations/<run-id>/`
 
@@ -136,10 +143,10 @@ configuration.
 
 `study-materialization.json` records:
 
-- study/condition identities and SHA-256 values;
+- study/condition identities and the resolved condition;
 - completion threshold;
-- source-harness file hashes;
-- rendered prompt/extension/scaffold/manifest hashes.
+- source-harness version;
+- rendered asset settings and effective configuration.
 
 The materialization is retained so resume and post-hoc evaluation use the same
 frozen environment.
@@ -184,23 +191,20 @@ Oracle source programs and observations are retained under
 - `summary.md`: compact human-readable table and interpretation warnings.
 
 Primary rows require `profile=main`, `status=completed`,
-`protocol_comparable=true`, a positive integer `replicate`, a current
-`study_sha256`, and a `condition_sha256` matching both the frozen payload and
-current resolved condition. Pilot, resumed, incomplete, stale, or internally
+`protocol_comparable=true`, a positive integer `replicate`, a matching study ID,
+and a frozen condition matching the current resolved condition. Pilot, resumed, incomplete, stale, or internally
 inconsistent runs appear in `warnings` and the Markdown exclusion section.
 Duplicate eligible `(condition_id, replicate)` records stop aggregation.
 
-Before inclusion, the reporter verifies the retained materialization and both
-frozen control trees, candidate adapter, visible/hidden manifests, source
-harness/evaluator, runtime model/image/configuration, and every hidden snapshot's
-Git commit and tree. The hidden report, score ledger, full evaluator files, and
+Before inclusion, the reporter checks runtime model/image/configuration and
+every hidden snapshot's Git commit and tree. The hidden report, score ledger, full evaluator files, and
 frozen manifest selection must agree for every round. Passed/failed totals and
 macro/micro scores are recomputed from per-test boolean results. Raw Pi-event
-usage and guard ledgers must also reproduce the report. Shared cohort drift, or
-within-condition rendered/runtime drift across replicates, stops aggregation.
+usage and guard ledgers must also reproduce the report. Shared model, image, version, or test-count drift across the cohort stops
+aggregation.
 
-Important run columns include `profile`, `replicate`, study/condition and
-materialization/runtime fingerprints, model/provider/thinking/revision, image,
+Important run columns include `profile`, `replicate`, study/condition IDs,
+model/provider/thinking/revision, image,
 condition axes, hidden score/AUC, finish status, time-to-completion, elapsed time,
 tokens, model/tool/test/oracle calls, compactions, regressions, buildability,
 guard events (blocked calls and, from v6, bash commands cut by the default

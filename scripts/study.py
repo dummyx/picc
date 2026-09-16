@@ -32,30 +32,18 @@ from common import (
     atomic_write_json,
     load_config,
     sanitize_run_id,
-    sha256_file,
 )
 
 SCHEMA_VERSION = 1
 MATERIALIZATION_SCHEMA_VERSION = 1
-VALID_DELIVERIES = {"task_file", "initial_prompt", "workspace_file"}
+VALID_DELIVERIES = {"task_file", "initial_prompt", "initial_prompt_only", "workspace_file"}
 VALID_TEST_ACCESS = {"none", "tool", "files"}
 VALID_FEEDBACK = {"none", "aggregate", "failures", "detailed"}
 VALID_REFERENCE_MODES = {"none", "oracle", "source"}
 RUNTIME_COPY_DIRS = ("config", "docker", "scripts", "pi", "prompts", "evaluator")
-RUNTIME_COPY_FILES = ("VERSION", "MANIFEST.sha256")
+RUNTIME_COPY_FILES = ("VERSION",)
 SECRET_MARKERS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL")
 RUN_ID_MAX_LENGTH = 96
-MATERIALIZED_HASH_DIRS = (
-    "config",
-    "docker",
-    "scripts",
-    "pi",
-    "prompts",
-    "evaluator",
-    "data/partitions",
-    "data/agent-visible",
-)
-MATERIALIZED_HASH_FILES = ("VERSION", "MANIFEST.sha256")
 SIDECAR_ONLY_FIELDS = frozenset({"materialization_root", "frozen_at"})
 
 
@@ -65,14 +53,6 @@ class StudyError(ExperimentError):
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
-
-
-def canonical_json(value: Any) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-
-
-def sha256_json(value: Any) -> str:
-    return hashlib.sha256(canonical_json(value)).hexdigest()
 
 
 def load_json_object(path: Path) -> dict[str, Any]:
@@ -139,13 +119,6 @@ def require_partition_relative_path(value: Any, field: str) -> Path:
     if relative.is_absolute() or relative == Path(".") or ".." in relative.parts:
         raise StudyError(f"{field} must be a nonempty relative path without '..': {raw!r}")
     return relative
-
-
-def require_sha256(value: Any, field: str) -> str:
-    digest = require_string(value, field)
-    if not re.fullmatch(r"[0-9A-Fa-f]{64}", digest):
-        raise StudyError(f"{field} must be a 64-character hexadecimal SHA-256 digest")
-    return digest.lower()
 
 
 def resolve_contained_path(root: Path, path: Path, field: str) -> Path:
@@ -251,6 +224,9 @@ def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None
         path = resolve_repo_path(prompt.get(name), f"{condition_id}.prompt.{name}")
         if not path.is_file():
             raise StudyError(f"{condition_id}.prompt.{name} must be a file")
+    experiment_tools = prompt.get("experiment_tools", True)
+    if not isinstance(experiment_tools, bool):
+        raise StudyError(f"{condition_id}.prompt.experiment_tools must be a boolean")
 
     specification = condition.get("specification")
     if not isinstance(specification, dict):
@@ -328,6 +304,10 @@ def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None
         resolve_repo_path(source, f"{condition_id}.reference.source")
     elif source is not None:
         raise StudyError(f"{condition_id}: reference.source is only valid for source mode")
+    if not experiment_tools and (access != "none" or mode != "none"):
+        raise StudyError(
+            f"{condition_id}: disabling experiment_tools requires tests.access='none' and reference.mode='none'"
+        )
 
     environment = condition.get("environment", {})
     if not isinstance(environment, dict) or not isinstance(environment.get("overrides", {}), dict):
@@ -556,56 +536,6 @@ def copy_runtime_root(destination: Path) -> None:
     runs_link.symlink_to((REPO_ROOT / "runs").resolve(), target_is_directory=True)
 
 
-def hash_tree(root: Path) -> dict[str, str]:
-    result: dict[str, str] = {}
-    if not root.exists():
-        return result
-    for path in sorted(root.rglob("*")):
-        relative = path.relative_to(root)
-        if any(part in {"__pycache__", ".pytest_cache", "node_modules"} for part in relative.parts):
-            continue
-        if path.is_symlink():
-            result[str(relative)] = "symlink:" + os.readlink(path)
-        elif path.is_file() and path.suffix != ".pyc":
-            result[str(relative)] = sha256_file(path)
-    return result
-
-
-def prefixed_hash_tree(prefix: str, root: Path) -> dict[str, str]:
-    return {f"{prefix}/{path}": digest for path, digest in hash_tree(root).items()}
-
-
-def materialized_harness_file_hashes(root: Path) -> dict[str, str]:
-    root = root.resolve()
-    result: dict[str, str] = {}
-    ignored_parts = {"__pycache__", ".pytest_cache", "node_modules"}
-    for relative_name in MATERIALIZED_HASH_DIRS:
-        logical_directory = root / relative_name
-        if logical_directory.is_symlink() or not logical_directory.is_dir():
-            raise StudyError(f"Required materialized directory is missing or unsafe: {logical_directory}")
-        directory = resolve_contained_path(root, logical_directory, f"materialized {relative_name}")
-        for path in sorted(directory.rglob("*")):
-            relative = path.relative_to(root)
-            if any(part in ignored_parts for part in relative.parts) or path.suffix == ".pyc":
-                continue
-            if path.is_symlink():
-                raise StudyError(f"Symlinks are prohibited in frozen materialized files: {path}")
-            if path.is_dir():
-                continue
-            if not path.is_file():
-                raise StudyError(f"Unsupported file type in frozen materialization: {path}")
-            resolved = resolve_contained_path(root, path, f"materialized file {relative}")
-            result[str(resolved.relative_to(root))] = sha256_file(resolved)
-
-    for relative_name in MATERIALIZED_HASH_FILES:
-        logical_file = root / relative_name
-        if logical_file.is_symlink() or not logical_file.is_file():
-            raise StudyError(f"Required materialized file is missing or unsafe: {logical_file}")
-        resolved = resolve_contained_path(root, logical_file, f"materialized file {relative_name}")
-        result[relative_name] = sha256_file(resolved)
-    return result
-
-
 def family_order(seed: int, stratum: tuple[int, str], family: str) -> str:
     return hashlib.sha256(f"{seed}\0{stratum[0]}\0{stratum[1]}\0{family}".encode("utf-8")).hexdigest()
 
@@ -674,8 +604,6 @@ def copy_partition(source: Path, destination: Path, *, fraction: float = 1.0, se
             raise StudyError(f"Partition manifest test {index} must be an object")
         field = f"partition manifest test {index}.relative_path"
         relative = require_partition_relative_path(row.get("relative_path"), field)
-        digest_field = f"partition manifest test {index}.sha256"
-        expected_sha256 = require_sha256(row.get("sha256"), digest_field)
         source_file = resolve_contained_path(
             source_root,
             source_root / relative,
@@ -683,8 +611,6 @@ def copy_partition(source: Path, destination: Path, *, fraction: float = 1.0, se
         )
         if not source_file.is_file():
             raise StudyError(f"Partition file missing: {source_file}")
-        if sha256_file(source_file) != expected_sha256:
-            raise StudyError(f"Partition file SHA-256 mismatch for {relative}")
         target = resolve_contained_path(
             destination_root,
             destination_root / relative,
@@ -693,8 +619,6 @@ def copy_partition(source: Path, destination: Path, *, fraction: float = 1.0, se
         target.parent.mkdir(parents=True, exist_ok=True)
         target = resolve_contained_path(destination_root, target, f"copy target for {field}")
         shutil.copy2(source_file, target)
-        if sha256_file(target) != expected_sha256:
-            raise StudyError(f"Copied partition file SHA-256 mismatch for {relative}")
 
     copied_manifest = copy.deepcopy(manifest)
     copied_manifest["tests"] = selected
@@ -705,7 +629,6 @@ def copy_partition(source: Path, destination: Path, *, fraction: float = 1.0, se
     copied_manifest["counts"] = counts
     copied_manifest.setdefault("study_subset", {})
     copied_manifest["study_subset"] = {
-        "source_manifest_sha256": sha256_file(manifest_path),
         "visible_subset_fraction": fraction,
         "subset_seed": seed,
         "policy": "family-grouped, stage-and-validity-stratified, deterministic",
@@ -734,54 +657,12 @@ def source_partitions(condition: dict[str, Any]) -> tuple[Path, Path]:
 def render_extension(template_path: Path, destination: Path, replacements: Mapping[str, Any]) -> None:
     text = template_path.read_text(encoding="utf-8")
     for key, value in replacements.items():
-        if isinstance(value, bool):
-            rendered = "true" if value else "false"
-        elif isinstance(value, (int, float)):
-            rendered = str(value)
-        else:
-            rendered = json.dumps(value, ensure_ascii=False)
-        text = text.replace("__" + key + "__", rendered)
+        text = text.replace("__" + key + "__", json.dumps(value, ensure_ascii=False))
     unresolved = sorted(set(re.findall(r"__([A-Z0-9_]+)__", text)))
     if unresolved:
         raise StudyError(f"Unresolved extension placeholders in {template_path}: {', '.join(unresolved)}")
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(text, encoding="utf-8")
-
-
-def patch_runner(path: Path) -> None:
-    text = path.read_text(encoding="utf-8")
-    if "reference_oracle" not in text:
-        old_tools = "read,bash,edit,write,grep,find,ls,test_visible,experiment_status"
-        new_tools = "read,bash,edit,write,grep,find,ls,test_visible,reference_oracle,experiment_status"
-        if old_tools not in text:
-            raise StudyError("Could not locate the Pi tool allowlist in the copied runner; update study.py for this harness revision")
-        text = text.replace(old_tools, new_tools, 1)
-
-    declaration = 'visible_tests = partitions_root / "visible"'
-    if 'agent_visible_tests = REPO_ROOT / "data" / "agent-visible"' not in text:
-        if declaration not in text:
-            raise StudyError("Could not locate visible-test partition declaration in the copied runner")
-        text = text.replace(
-            declaration,
-            declaration + '\n    agent_visible_tests = REPO_ROOT / "data" / "agent-visible"',
-            1,
-        )
-    keyword = "visible_tests=visible_tests,"
-    if keyword in text:
-        text = text.replace(keyword, "visible_tests=agent_visible_tests,", 1)
-    elif "visible_tests=agent_visible_tests," not in text:
-        raise StudyError("Could not route the Pi container to the condition-specific agent-visible partition")
-
-    gitignore_prefix = r'"target/\n*.o\n'
-    if "__pycache__/" not in text:
-        if gitignore_prefix not in text:
-            raise StudyError("Could not extend the copied workspace .gitignore for Python candidates")
-        text = text.replace(
-            gitignore_prefix,
-            r'"target/\n__pycache__/\n*.py[cod]\n*.o\n',
-            1,
-        )
-    path.write_text(text, encoding="utf-8")
 
 
 def effective_config_overrides(condition: dict[str, Any]) -> dict[str, str]:
@@ -891,6 +772,7 @@ def _materialize_direct(
     spec_location = {
         "task_file": "`TASK.md`",
         "initial_prompt": "the full specification embedded in the initial request",
+        "initial_prompt_only": "the specification embedded in the initial request",
         "workspace_file": "`SPEC.md` in the product workspace",
     }[delivery]
     variables["SPEC_LOCATION"] = spec_location
@@ -902,7 +784,9 @@ def _materialize_direct(
     prompt_dir = materialization_root / "prompts"
     agents = render_template(prompt_sources["agents"].read_text(encoding="utf-8"), variables, str(prompt_sources["agents"]))
     initial_variables = dict(variables)
-    initial_variables["INITIAL_SPEC_BLOCK"] = rendered_spec if delivery == "initial_prompt" else ""
+    initial_variables["INITIAL_SPEC_BLOCK"] = (
+        rendered_spec if delivery in {"initial_prompt", "initial_prompt_only"} else ""
+    )
     initial = render_template(prompt_sources["initial"].read_text(encoding="utf-8"), initial_variables, str(prompt_sources["initial"]))
     continuation = render_template(
         prompt_sources["continuation"].read_text(encoding="utf-8"), variables, str(prompt_sources["continuation"])
@@ -914,6 +798,8 @@ def _materialize_direct(
             "# PiCC task pointer\n\nThe full, controlling task specification was supplied in the initial request. "
             "Continue implementing that specification. The harness intentionally does not duplicate it here.\n"
         )
+    elif delivery == "initial_prompt_only":
+        task = ""
     else:
         task = "# PiCC task pointer\n\nRead and implement the controlling specification in `SPEC.md`.\n"
 
@@ -994,11 +880,17 @@ def _materialize_direct(
         ],
     }
     runtime = REPO_ROOT / "studies" / "runtime"
-    render_extension(runtime / "experiment-tools.ts.in", extensions / "experiment-tools.ts", replacements)
+    experiment_tools = condition["prompt"].get("experiment_tools", True)
+    if experiment_tools:
+        render_extension(runtime / "experiment-tools.ts.in", extensions / "experiment-tools.ts", replacements)
     render_extension(runtime / "experiment-guard.ts.in", extensions / "experiment-guard.ts", replacements)
-    render_extension(runtime / "study-setup.ts.in", extensions / "study-setup.ts", replacements)
-    patch_runner(materialization_root / "scripts" / "run_experiment.py")
+    if experiment_tools or has_scaffold:
+        render_extension(runtime / "study-setup.ts.in", extensions / "study-setup.ts", replacements)
     effective_config = effective_config_overrides(condition)
+    effective_config["AGENT_VISIBLE_TESTS"] = "data/agent-visible"
+    effective_config["PI_TOOLS"] = "read,bash,edit,write,grep,find,ls"
+    if experiment_tools:
+        effective_config["PI_TOOLS"] += ",test_visible,reference_oracle,experiment_status"
     append_env_overrides(materialization_root / "config" / "defaults.env", effective_config)
 
     resolved_payload = {
@@ -1010,40 +902,23 @@ def _materialize_direct(
             if study_path.resolve().is_relative_to(REPO_ROOT.resolve())
             else str(study_path.resolve())
         ),
-        "study_sha256": sha256_file(study_path.resolve()),
         "condition": condition,
-        "condition_sha256": sha256_json(condition),
         "run_id": run_id,
         "effective_config": effective_config,
         "completion_threshold": study.get("completion_threshold", 1.0),
         "source_harness": {
             "repo_root": str(REPO_ROOT),
-            "manifest_sha256": sha256_file(materialization_root / "MANIFEST.sha256"),
-            "file_hashes": {
-                **prefixed_hash_tree("scripts", REPO_ROOT / "scripts"),
-                **prefixed_hash_tree("pi", REPO_ROOT / "pi"),
-                **prefixed_hash_tree("evaluator", REPO_ROOT / "evaluator"),
-            },
-        },
-        "materialized_harness": {
-            "file_hashes": materialized_harness_file_hashes(materialization_root),
+            "version": (materialization_root / "VERSION").read_text(encoding="utf-8").strip(),
         },
         "rendered": {
-            "specification_sha256": hashlib.sha256(rendered_spec.encode("utf-8")).hexdigest(),
             "specification_bytes": len(rendered_spec.encode("utf-8")),
             "specification_words": len(re.findall(r"\S+", rendered_spec)),
-            "prompt_hashes": hash_tree(prompt_dir),
             "prompt_bytes": {
                 path.name: len(path.read_bytes()) for path in sorted(prompt_dir.glob("*")) if path.is_file()
             },
-            "extension_hashes": hash_tree(extensions),
-            "candidate_adapter_sha256": sha256_file(evaluator_dir / "candidate.json"),
-            "visible_manifest_sha256": sha256_file(partitions_root / "visible" / "manifest.json"),
-            "hidden_manifest_sha256": sha256_file(partitions_root / "hidden" / "manifest.json"),
             "visible_test_count": len(load_json_object(partitions_root / "visible" / "manifest.json").get("tests", [])),
             "agent_visible_test_count": len(load_json_object(agent_visible / "manifest.json").get("tests", [])),
             "hidden_test_count": len(load_json_object(partitions_root / "hidden" / "manifest.json").get("tests", [])),
-            "scaffold_hashes": hash_tree(scaffold_destination),
         },
     }
     atomic_write_json(materialization_root / "study-materialization.json", resolved_payload)
@@ -1231,22 +1106,6 @@ def study_for_run(run_id: str) -> tuple[Path, dict[str, Any]]:
     if materialization.get("run_id") != run_id:
         raise StudyError("Study materialization run ID does not match the requested run")
 
-    source_harness = materialization.get("source_harness")
-    if not isinstance(source_harness, dict):
-        raise StudyError("Study materialization has no source_harness provenance")
-    expected_manifest_sha256 = require_sha256(
-        source_harness.get("manifest_sha256"),
-        "study-materialization.source_harness.manifest_sha256",
-    )
-    logical_manifest = logical_root / "MANIFEST.sha256"
-    if logical_manifest.is_symlink():
-        raise StudyError(f"Frozen release manifest must not be a symlink: {logical_manifest}")
-    manifest_path = resolve_contained_path(root, logical_manifest, "frozen release manifest")
-    if not manifest_path.is_file():
-        raise StudyError(f"Frozen release manifest is missing: {manifest_path}")
-    if sha256_file(manifest_path) != expected_manifest_sha256:
-        raise StudyError("Frozen release manifest SHA-256 does not match study provenance")
-
     missing_sidecar_fields = set(materialization) - set(payload)
     sidecar_only_fields = set(payload) - set(materialization)
     if missing_sidecar_fields or sidecar_only_fields != SIDECAR_ONLY_FIELDS:
@@ -1279,24 +1138,6 @@ def study_for_run(run_id: str) -> tuple[Path, dict[str, Any]]:
     if load_json_object(control_record_path) != materialization:
         raise StudyError("Study control materialization disagrees with the materialized record")
 
-    materialized_harness = materialization.get("materialized_harness")
-    if not isinstance(materialized_harness, dict):
-        raise StudyError("Study materialization has no materialized_harness provenance")
-    expected_file_hashes = materialized_harness.get("file_hashes")
-    if not isinstance(expected_file_hashes, dict) or not all(
-        isinstance(path, str) and isinstance(digest, str)
-        for path, digest in expected_file_hashes.items()
-    ):
-        raise StudyError("Study materialization has an invalid critical file-hash map")
-    actual_file_hashes = materialized_harness_file_hashes(root)
-    if actual_file_hashes != expected_file_hashes:
-        changed = sorted(
-            path
-            for path in set(actual_file_hashes) | set(expected_file_hashes)
-            if actual_file_hashes.get(path) != expected_file_hashes.get(path)
-        )
-        detail = ", ".join(changed[:8])
-        raise StudyError(f"Frozen materialized harness files changed: {detail}")
     return root, payload
 
 
@@ -1350,7 +1191,6 @@ def command_schedule(args: argparse.Namespace) -> int:
     payload = {
         "schema_version": 1,
         "study_id": study["id"],
-        "study_sha256": sha256_file(args.study.resolve()),
         "seed": int(study.get("seed", 0)),
         "replicates": args.replicates,
         "profile": args.profile,

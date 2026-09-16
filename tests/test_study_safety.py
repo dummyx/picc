@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -20,10 +19,6 @@ import common  # noqa: E402
 import study  # noqa: E402
 
 
-def sha256_bytes(value: bytes) -> str:
-    return hashlib.sha256(value).hexdigest()
-
-
 def write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -34,7 +29,6 @@ def write_partition_manifest(
     relative_path: object,
     *,
     content: bytes = b"int main(void) { return 0; }\n",
-    digest: object | None = None,
     create_file: bool = False,
 ) -> None:
     if create_file:
@@ -53,7 +47,6 @@ def write_partition_manifest(
                     "stage": 1,
                     "validity": "valid",
                     "family": "case",
-                    "sha256": sha256_bytes(content) if digest is None else digest,
                 }
             ],
         },
@@ -71,14 +64,12 @@ class PartitionContainmentTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary.cleanup()
 
-    def test_valid_nested_file_is_copied_and_verified(self) -> None:
+    def test_valid_nested_file_is_copied(self) -> None:
         content = b"int main(void) { return 7; }\n"
-        digest = sha256_bytes(content).upper()
         write_partition_manifest(
             self.source,
             "nested/case.c",
             content=content,
-            digest=digest,
             create_file=True,
         )
 
@@ -87,7 +78,7 @@ class PartitionContainmentTests(unittest.TestCase):
         copied = self.destination / "nested" / "case.c"
         self.assertEqual(copied.read_bytes(), content)
         copied_manifest = json.loads((self.destination / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual(copied_manifest["tests"][0]["sha256"], digest)
+        self.assertEqual(copied_manifest["tests"][0]["relative_path"], "nested/case.c")
 
     def test_rejects_empty_dot_absolute_and_parent_paths(self) -> None:
         unsafe_paths = [
@@ -113,7 +104,6 @@ class PartitionContainmentTests(unittest.TestCase):
             self.source,
             "leak.c",
             content=content,
-            digest=sha256_bytes(content),
         )
 
         with self.assertRaises(study.StudyError):
@@ -127,50 +117,6 @@ class PartitionContainmentTests(unittest.TestCase):
 
         with self.assertRaises(study.StudyError):
             study.copy_partition(self.source, self.destination)
-
-    def test_rejects_malformed_and_mismatched_digests(self) -> None:
-        content = b"content\n"
-        for digest in ("0" * 63, "x" * 64, None):
-            with self.subTest(digest=digest):
-                write_partition_manifest(
-                    self.source,
-                    "case.c",
-                    content=content,
-                    digest=digest,
-                    create_file=True,
-                )
-                if digest is None:
-                    payload = json.loads((self.source / "manifest.json").read_text(encoding="utf-8"))
-                    payload["tests"][0]["sha256"] = None
-                    write_json(self.source / "manifest.json", payload)
-                with self.assertRaises(study.StudyError):
-                    study.copy_partition(self.source, self.destination)
-
-        write_partition_manifest(
-            self.source,
-            "case.c",
-            content=content,
-            digest="0" * 64,
-            create_file=True,
-        )
-        with self.assertRaisesRegex(study.StudyError, "SHA-256 mismatch"):
-            study.copy_partition(self.source, self.destination)
-
-    def test_verifies_copied_bytes_after_copy(self) -> None:
-        content = b"content\n"
-        write_partition_manifest(
-            self.source,
-            "case.c",
-            content=content,
-            create_file=True,
-        )
-
-        def corrupt_copy(_source: Path, target: Path) -> None:
-            Path(target).write_bytes(b"corrupted\n")
-
-        with mock.patch.object(study.shutil, "copy2", side_effect=corrupt_copy):
-            with self.assertRaisesRegex(study.StudyError, "Copied partition file SHA-256 mismatch"):
-                study.copy_partition(self.source, self.destination)
 
 
 class FrozenEnvironmentTests(unittest.TestCase):
@@ -473,38 +419,12 @@ class MaterializationLookupTests(unittest.TestCase):
         self.materialization = self.repo / "runs" / ".study-materializations" / self.run_id
         self.run_dir.mkdir(parents=True)
         self.materialization.mkdir(parents=True)
-        for name in study.MATERIALIZED_HASH_DIRS:
-            (self.materialization / name).mkdir(parents=True)
-
-        files = {
-            "VERSION": b"test-version\n",
-            "config/defaults.env": b"MODEL_PROVIDER=zai\n",
-            "docker/Dockerfile": b"FROM scratch\n",
-            "scripts/run_experiment.py": b"print('run')\n",
-            "pi/settings.json": b"{}\n",
-            "prompts/INITIAL.txt": b"initial\n",
-            "evaluator/evaluate.py": b"print('evaluate')\n",
-            "data/partitions/visible/case.c": b"visible\n",
-            "data/partitions/hidden/case.c": b"hidden\n",
-            "data/agent-visible/case.c": b"agent visible\n",
-        }
-        for relative, content in files.items():
-            path = self.materialization / relative
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(content)
-        self.script = self.materialization / "scripts" / "run_experiment.py"
-        self.visible_test = self.materialization / "data" / "partitions" / "visible" / "case.c"
-
-        self.manifest_content = b"release manifest\n"
-        self.manifest_digest = sha256_bytes(self.manifest_content)
-        (self.materialization / "MANIFEST.sha256").write_bytes(self.manifest_content)
-        file_hashes = study.materialized_harness_file_hashes(self.materialization)
         self.record = {
             "schema_version": 1,
             "run_id": self.run_id,
             "study_id": "study",
-            "study_sha256": "1" * 64,
-            "condition_sha256": "2" * 64,
+            "condition_id": "baseline",
+            "condition": {"id": "baseline"},
             "effective_config": {
                 "EXPERIMENT_IMAGE": "frozen-image",
                 "PILOT_HOURS": "2",
@@ -512,11 +432,7 @@ class MaterializationLookupTests(unittest.TestCase):
                 "MODEL_PROVIDER": "zai",
                 "MODEL_THINKING": "max",
             },
-            "source_harness": {
-                "manifest_sha256": self.manifest_digest,
-                "file_hashes": {},
-            },
-            "materialized_harness": {"file_hashes": file_hashes},
+            "source_harness": {"version": "test-version"},
         }
         write_json(self.materialization / "study-materialization.json", self.record)
         write_json(self.run_dir / "study-control" / "materialization.json", self.record)
@@ -537,25 +453,11 @@ class MaterializationLookupTests(unittest.TestCase):
         with mock.patch.object(study, "REPO_ROOT", self.repo):
             return study.study_for_run(self.run_id)
 
-    def test_accepts_expected_materialization_and_manifest(self) -> None:
+    def test_accepts_expected_materialization(self) -> None:
         root, payload = self.lookup()
         self.assertEqual(root, self.materialization.resolve())
         self.assertEqual(payload["run_id"], self.run_id)
 
-    def test_rejects_mutated_script_evaluator_and_test_bytes(self) -> None:
-        paths = [
-            self.script,
-            self.materialization / "evaluator" / "evaluate.py",
-            self.visible_test,
-        ]
-        for path in paths:
-            with self.subTest(path=path.relative_to(self.materialization)):
-                original = path.read_bytes()
-                path.write_bytes(original + b"tampered\n")
-                with self.assertRaisesRegex(study.StudyError, "materialized harness files changed"):
-                    self.lookup()
-                path.write_bytes(original)
-                self.lookup()
 
     def test_rejects_sidecar_path_traversal_absolute_and_alias_paths(self) -> None:
         unsafe = [
@@ -589,24 +491,9 @@ class MaterializationLookupTests(unittest.TestCase):
         with self.assertRaisesRegex(study.StudyError, "must not be a symlink"):
             self.lookup()
 
-    def test_rejects_tampered_or_symlinked_frozen_manifest(self) -> None:
-        manifest = self.materialization / "MANIFEST.sha256"
-        manifest.write_bytes(b"tampered\n")
-        with self.assertRaisesRegex(study.StudyError, "SHA-256"):
-            self.lookup()
 
-        manifest.unlink()
-        outside = self.repo.parent / "outside-manifest"
-        outside.write_bytes(self.manifest_content)
-        manifest.symlink_to(outside)
-        with self.assertRaisesRegex(study.StudyError, "must not be a symlink"):
-            self.lookup()
-
-    def test_rejects_sidecar_provenance_drift(self) -> None:
-        self.sidecar["source_harness"] = {
-            "manifest_sha256": "0" * 64,
-            "file_hashes": {},
-        }
+    def test_rejects_sidecar_condition_drift(self) -> None:
+        self.sidecar["condition"] = {"id": "other"}
         self.write_sidecar()
 
         with self.assertRaisesRegex(study.StudyError, "disagrees"):
@@ -614,7 +501,7 @@ class MaterializationLookupTests(unittest.TestCase):
 
 
 class RuntimeCopyTests(unittest.TestCase):
-    def test_release_manifest_is_required_and_copied(self) -> None:
+    def test_runtime_version_is_copied(self) -> None:
         with tempfile.TemporaryDirectory(prefix="picc-study-runtime-") as temporary:
             base = Path(temporary)
             repo = base / "repo"
@@ -623,14 +510,12 @@ class RuntimeCopyTests(unittest.TestCase):
                 (repo / name).mkdir()
             (repo / "runs").mkdir()
             (repo / "VERSION").write_text("test\n", encoding="utf-8")
-            manifest = b"manifest\n"
-            (repo / "MANIFEST.sha256").write_bytes(manifest)
             destination = base / "materialized"
 
             with mock.patch.object(study, "REPO_ROOT", repo):
                 study.copy_runtime_root(destination)
 
-            self.assertEqual((destination / "MANIFEST.sha256").read_bytes(), manifest)
+            self.assertEqual((destination / "VERSION").read_text(encoding="utf-8"), "test\n")
             self.assertTrue((destination / "runs").is_symlink())
 
 
