@@ -53,6 +53,10 @@ frozen for each run. This is a separate study (`picc-minimal-v1`): specification
 detail, prompting, and feedback all differ from the starter baseline, so their
 comparison cannot isolate the effect of workflow instructions alone.
 
+The `spec-minimal` condition of `studies/spectests/study.json` is different
+again: it keeps the starter workflow, prompts, and experiment tools and
+reduces only the specification document (`studies/assets/specs/minimal.md`).
+
 The starter's former `prompt-minimal` condition is now named `workflow-reduced`.
 Its full specification and feedback tools remain. Historical run IDs and
 analysis tables retain the original condition name.
