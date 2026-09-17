@@ -47,8 +47,8 @@ def main() -> int:
             print("(no summary yet)\n")
             continue
         columns = [c for c in COLUMNS if c in rows[0]] or [c for c in rows[0] if "hidden" in c and "score" in c][:2]
-        by_cell = {(row["condition"], int(row["replicate"])): row for row in rows}
-        conditions = sorted({row["condition"] for row in rows}, key=lambda c: ["rust", "python", "python-typed"].index(c) if c in ("rust", "python", "python-typed") else 9)
+        by_cell = {(row["condition_id"], int(row["replicate"])): row for row in rows}
+        conditions = sorted({row["condition_id"] for row in rows}, key=lambda c: ["rust", "python", "python-typed"].index(c) if c in ("rust", "python", "python-typed") else 9)
         print("| condition | replicate | " + " | ".join(columns) + " | above floor |")
         print("|---|---:|" + "---:|" * len(columns) + "---|")
         table = []
