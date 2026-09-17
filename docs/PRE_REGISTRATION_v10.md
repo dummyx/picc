@@ -159,3 +159,25 @@ exists); the report lists per run whether compaction failed
 with `stopReason=length`. A fix for the next manifest version is left to
 the report (candidates: treat a failed overflow recovery as terminal, or a
 lower thinking level).
+
+### Amendment 2 (2026-09-17 02:00 UTC, after run 6 of 18): workspace-wide Python audit zeroes a run for its own test driver; post-hoc re-score
+
+Observation. `v10-sql-python-r2` built a 3,060-line `pisql.py` (212 tool
+calls in round 1) and eight SQL test scripts with a driver
+`tests/run_tests.py` that spawns the candidate with `subprocess`. The
+Python source audit scans the whole workspace (a documented limitation:
+Rust and Node audits were scoped to the built artifact after the v4 and v6
+incidents, `analysis/report.md` §8.5 and §12; Python was not), so every
+snapshot from round 1 on is `source_audit_failure` and the run scores 0 on
+both partitions although the product itself contains no prohibited code
+(`pisql.py` has no finding; the two blocking findings are in
+`tests/run_tests.py`).
+
+Decision. The materialized evaluators of this cohort are not touched, so
+runs 7-18 are scored exactly like runs 1-6. After the last run, the Python
+audit is scoped to the entry module's import closure (the Node rule) in
+the repository evaluator, and every v10 run is re-scored with it on the
+hidden partition under `analysis/v10-rescore/`, following the re-score
+procedure of `docs/STUDY_PROTOCOL.md`; the report presents the re-scored
+values as primary and the frozen ledgers alongside. Same class of defect
+as v6 Amendment 2 and v9 Amendment 2.
