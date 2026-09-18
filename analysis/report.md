@@ -1472,3 +1472,133 @@ already has C. The next task has to carry rules the model cannot recall
 (altered semantics, or an unseen language), which the v2 and v9 results
 together now justify.
 
+
+## 16. The v10 cohort: two new tasks, and Python with and without a strict type gate
+
+Pre-registered in `docs/PRE_REGISTRATION_v10.md` (freeze `4c817f7`, harness
+`e02c8b7` + `bd3f686`; two amendments during the cohort, `0a03525` and
+`acb3b95`). Eighteen runs, 2026-09-16 15:11 to 09-18 03:00 UTC, on image 0.5
+(image 0.4 plus mypy 2.3.1), the same model, provider, and 2-hour budget as
+v6-v9. Two studies, reported separately and never pooled:
+
+- **`picc-sql-minimal-v1`** — PiSQL, an in-memory SQLite-compatible engine
+  scored on 30 whole sqllogictest scripts in eight stages
+  (`studies/sql/README.md`).
+- **`picc-c18-minimal-v1`** — the chapters 1-18 C compiler, 949 upstream
+  tests with evaluator-side fixtures (`studies/c18/README.md`).
+
+Both use the minimal protocol of `studies/minimal`: an empty repository, one
+short behavioral contract as the initial message, blank `AGENTS.md`/`TASK.md`,
+built-in tools only, no tests, scores, or reference exposed. Conditions vary
+only the candidate: `rust` (baseline), `python` (plain, type checkers withheld
+by the guard), `python-typed` (`mypy --strict` as the build gate). Three
+replicates each. Digest: `analysis/v10-results.json`; script:
+`analysis/v10_results.py`; corrected ledgers: `analysis/v10-rescore/`.
+
+### 16.1 Every run
+
+Primary is the hidden corpus macro on the last buildable snapshot, re-scored
+under the corrected Python audit where Amendment 2 applies.
+
+**SQL engine** (floor: constant-output 0.050, reject-all 0.000)
+
+| Cell | Rep | Primary | Frozen | Rounds | Hours | LOC | End | Note |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| rust | 1 | 0.818 | 0.818 | 2 | 1.5 | 3840 | stall rule | |
+| rust | 2 | 0.000 | 0.000 | 14 | 2.0 | 3463 | wall budget | 48 compile errors |
+| rust | 3 | 0.000 | 0.000 | 2 | 1.5 | 8111 | stall rule | 6 compile errors |
+| python | 1 | 0.754 | 0.754 | 2 | 1.5 | 2406 | stall rule | |
+| python | 2 | 0.756 | 0.015 | 2 | 1.5 | 3092 | stall rule | re-scored (Amendment 2) |
+| python | 3 | 0.795 | 0.795 | 3 | 1.8 | 2430 | stall rule | re-scored final |
+| python-typed | 1 | 0.000 | 0.000 | 10 | 2.0 | 0 | wall budget | no code (overflow mode) |
+| python-typed | 2 | 0.098 | 0.098 | 14 | 2.0 | 2713 | wall budget | |
+| python-typed | 3 | 0.000 | 0.000 | 30 | 1.9 | 2689 | round cap | 71 mypy errors |
+
+**Chapters 1-18 compiler** (floor: constant-output 0.213, reject-all 0.500)
+
+| Cell | Rep | Primary | Rounds | Hours | LOC | End | Note |
+|---|---:|---:|---:|---:|---:|---|---|
+| rust | 1 | 0.000 | 2 | 1.5 | 4134 | stall rule | no `src/main.rs` |
+| rust | 2 | 0.000 | 2 | 1.5 | 5484 | stall rule | no `src/main.rs` |
+| rust | 3 | 0.000 | 2 | 1.5 | 3934 | stall rule | no `src/main.rs` |
+| python | 1 | 0.426 | 3 | 1.8 | 6640 | stall rule | |
+| python | 2 | 0.000 | 3 | 1.8 | 2645 | stall rule | no entry module |
+| python | 3 | 0.501 | 2 | 2.5 | 4848 | stall rule | visible eval hit its cap |
+| python-typed | 1 | 0.000 | 9 | 2.0 | 752 | wall budget | 13 mypy errors |
+| python-typed | 2 | 0.000 | 4 | 2.0 | 2684 | stall rule | 27 mypy errors |
+| python-typed | 3 | — | 3 | 2.0 | — | stall rule | excluded: hidden eval hit its 7200 s cap |
+
+### 16.2 Both tasks have headroom; the chapters 1-10 task does not
+
+This is the cohort's most useful result. Chapters 1-10 has sat at 0.93-0.97
+for the baseline since v6, so it cannot resolve an improvement. The best runs
+here reach **0.795 on SQL** and **0.501 on chapters 1-18**, both far above
+their floors and far below saturation. The harder task lever that v8 called
+for now exists, in two independent flavours.
+
+Plain Python on SQL is also the first tight cell of the campaign on a new
+task: 0.754, 0.756, 0.795 across three replicates.
+
+### 16.3 The strict type gate is binding at this difficulty, unlike in v7
+
+The pre-registered criterion for claiming an effect (all replicates agree in
+sign, |median| > 0.13) is **met on the SQL task**: `python-typed` minus
+`python` is -0.754, -0.659, -0.795, median -0.754. On chapters 1-18 it is not
+met (one pair is exactly zero and a third is missing).
+
+The mechanism is the gate itself, not annotation quality. Of the six typed
+runs across both tasks, three wrote substantial programs that `mypy --strict`
+rejected (13, 27, and 71 errors), one produced no code at all, one passed the
+gate and scored 0.098, and one passed the gate but was lost to an evaluation
+timeout. The model writes plausible annotated Python and cannot make it
+type-clean inside the budget.
+
+This differs from v7, where `ts-strict` cleared an equivalent `tsc --strict`
+gate routinely (0.839-0.899) and matched `js-untyped`. The difference between
+the cohorts is task difficulty, so the reading is: **a strict type gate is
+free when the task is easy and binding when it is hard**, at a fixed budget.
+It is not evidence that annotations reduce correctness. The contrast is also
+confounded, as 16.4 explains, and three replicates cannot separate the two.
+
+### 16.4 Four harness interactions dominated the outcome
+
+Ten of the eighteen runs scored zero, and mostly for reasons unrelated to
+their condition. In decreasing order of damage:
+
+1. **Context-overflow recovery failure (Amendment 1).** Cap-length thinking
+   blocks (`stopReason=length`, 65 536 tokens) fill the 131 072-token context;
+   Pi's compaction then fails permanently ("Summarization failed: 400 ...
+   exceeds the context") and every later round is a truncated thinking block
+   with no tool call. Five runs spent most of their budget this way. It hit
+   both Rust and typed Python, so it is not condition-specific.
+2. **The stall rule.** `MAX_CONSECUTIVE_ROUND_TIMEOUTS=2` ends a run after two
+   consecutive capped rounds. On these tasks a capped round usually means
+   *working*, not hung, so twelve runs ended at about 91 minutes with 29
+   minutes unspent. All three Rust compiler runs were cut with a complete
+   module tree (lexer, parser, AST, semantics) and no `src/main.rs`; the
+   agent writes the entry point last.
+3. **Workspace-wide Python audit (Amendment 2).** Two plain-Python SQL runs
+   were zeroed for their own `subprocess`-based test drivers. The corrected
+   audit scopes Python to the entry module's import closure, as Node has done
+   since v4. Re-scoring moved `python` r2 from 0.015 to 0.756 and confirmed
+   the other two affected runs. Without this correction the SQL typing
+   contrast would have looked like noise rather than an effect.
+4. **Evaluation cost on chapters 1-18.** The 668-test visible partition took
+   longer than its 3600 s cap on two runs, and one hidden evaluation exceeded
+   7200 s, which excluded `python-typed` r3 from the study. Evaluation time is
+   charged to the run's wall budget, so a slow candidate is penalised twice.
+
+### 16.5 What to change before the next cohort
+
+- Treat a failed context-overflow recovery as terminal, or lower the thinking
+  level, or cut the per-turn output cap. Any of the three ends the wasted
+  rounds; the first is the smallest change.
+- Make the stall rule condition on evidence of work (tool calls or workspace
+  changes in the round) rather than on the round being capped.
+- Keep the scoped Python audit (already in the repository evaluator).
+- Bound evaluation cost on chapters 1-18: a per-round subset, a shorter
+  per-test compile timeout, or evaluation outside the wall budget.
+
+Each needs a new manifest id and a fresh pre-registration. Until then, the
+typing result of 16.3 should be treated as a hypothesis with a plausible
+mechanism, not a settled effect.

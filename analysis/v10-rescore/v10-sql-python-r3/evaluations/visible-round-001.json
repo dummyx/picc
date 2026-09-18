@@ -1,0 +1,1378 @@
+{
+  "build": {
+    "args": [
+      "python3",
+      "-m",
+      "py_compile",
+      "pisql.py"
+    ],
+    "elapsed_seconds": 0.019109499640762806,
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "artifact": "/workspace/pisql.py",
+    "framework": "dynamic-typing",
+    "language": "python"
+  },
+  "elapsed_seconds": 137.67002892494202,
+  "input_policy": {
+    "protocol": "sqllogictest records as ;-terminated statements; candidate blocks `ok <N>` / `error <message>`",
+    "reference_disagreements_excluded": true
+  },
+  "partition": "visible",
+  "schema_version": 1,
+  "selection": {
+    "count": 22,
+    "latest_only": false,
+    "max_stage": 8,
+    "test_id": null
+  },
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".py"
+    ],
+    "source_files_scanned": 1
+  },
+  "source_revision": "c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0",
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": true,
+    "failed": 16,
+    "failures": [
+      {
+        "detail": "line 139: expected 3 values, got 0; line 169: expected 0 values, got 3; line 173: expected 0 values, got 3",
+        "failure_type": "wrong_results",
+        "id": "test/evidence/in2.test",
+        "stage": 1,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 154: wrong result hash: expected ['60 values hashing to a2af299d7b2197866b7c8f6854b77ab5'] got '60 values hashing to 524efb16f2b2db50bbec0e77f155f775'; line 174: wrong result hash: expected ['20 values hashing to 1d6b8ed1db696a5f1c8d126facddd077'] got '20 values hashing to e24e56976e3c7db02d1ba2abb60f7b08'; line 183: wrong result hash: expected ['145 values hashing to 65042db64d506f67a37c85f825cdd11f'] got '145 values hashing to 51d7cbceb0396279f64140a5c7577f77'",
+        "failure_type": "wrong_results",
+        "id": "test/select1.test",
+        "stage": 2,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 467: wrong result hash: expected ['119 values hashing to de49937f8a76d58e90ee610d71c5d209'] got '119 values hashing to 55cc1785ebbd1b750925dcd9f5425b96'; line 480: wrong result hash: expected ['119 values hashing to de49937f8a76d58e90ee610d71c5d209'] got '119 values hashing to 55cc1785ebbd1b750925dcd9f5425b96'; line 626: wrong result hash: expected ['78 values hashing to 014a4e77c58e1d60b4cbbcae9e6fd9f8'] got '78 values hashing to f0a7dd9c5fb4d463c615d7b88f392c1e'",
+        "failure_type": "wrong_results",
+        "id": "test/select3.test",
+        "stage": 2,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 1: no output block for this statement; line 11: no output block for this statement; line 21: no output block for this statement",
+        "failure_type": "script_timeout",
+        "id": "test/select4.test",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 92: query failed: 'near \"ALL\": syntax error'; line 121: query failed: 'near \"ALL\": syntax error'; line 232: query failed: 'near \"ALL\": syntax error'",
+        "failure_type": "wrong_results",
+        "id": "test/random/expr/slt_good_0.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 342: query failed: 'near \"ALL\": syntax error'; line 1683: query failed: 'near \"ALL\": syntax error'; line 2004: query failed: 'near \"ALL\": syntax error'",
+        "failure_type": "wrong_results",
+        "id": "test/random/expr/slt_good_1.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 338: query failed: 'near \"ALL\": syntax error'; line 470: query failed: 'near \"ALL\": syntax error'; line 522: query failed: 'near \"ALL\": syntax error'",
+        "failure_type": "wrong_results",
+        "id": "test/random/expr/slt_good_2.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 82: query failed: 'near \"ALL\": syntax error'; line 243: query failed: 'near \"ALL\": syntax error'; line 371: query failed: 'near \"ALL\": syntax error'",
+        "failure_type": "wrong_results",
+        "id": "test/random/expr/slt_good_3.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 39846: expected 0 values, got 3",
+        "failure_type": "wrong_results",
+        "id": "test/random/select/slt_good_4.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 81: query failed: 'near \"ALL\": syntax error'; line 148: query failed: 'near \"ALL\": syntax error'; line 453: query failed: 'near \"ALL\": syntax error'",
+        "failure_type": "wrong_results",
+        "id": "test/random/aggregates/slt_good_0.test",
+        "stage": 6,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 101: query failed: 'near \"ALL\": syntax error'; line 114: query failed: 'near \"ALL\": syntax error'; line 140: query failed: 'near \"ALL\": syntax error'",
+        "failure_type": "wrong_results",
+        "id": "test/random/aggregates/slt_good_1.test",
+        "stage": 6,
+        "validity": "valid"
+      },
+      {
+        "detail": "line 58: query failed: 'near \"ALL\": syntax error'; line 121: expected 1 values, got 0; line 205: query failed: 'near \"ALL\": syntax error'",
+        "failure_type": "wrong_results",
+        "id": "test/random/aggregates/slt_good_3.test",
+        "stage": 6,
+        "validity": "valid"
+      }
+    ],
+    "micro_score": 0.2727272727272727,
+    "passed": 6,
+    "records_passed": 178610,
+    "records_total": 187239,
+    "score": 0.8089087077339404,
+    "stages": {
+      "1": {
+        "passed": 0,
+        "records": {
+          "passed": 42,
+          "total": 49
+        },
+        "score": 0.8571428571428571,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.8571428571428571,
+          "total": 1
+        }
+      },
+      "2": {
+        "passed": 0,
+        "records": {
+          "passed": 3143,
+          "total": 4320
+        },
+        "score": 0.7294518072289157,
+        "total": 2,
+        "valid": {
+          "passed": 0,
+          "score": 0.7294518072289157,
+          "total": 2
+        }
+      },
+      "3": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 2832
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "4": {
+        "passed": 0,
+        "records": {
+          "passed": 37907,
+          "total": 40000
+        },
+        "score": 0.947675,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.947675,
+          "total": 4
+        }
+      },
+      "5": {
+        "passed": 3,
+        "records": {
+          "passed": 39997,
+          "total": 39998
+        },
+        "score": 0.9999749974997499,
+        "total": 4,
+        "valid": {
+          "passed": 3,
+          "score": 0.9999749974997499,
+          "total": 4
+        }
+      },
+      "6": {
+        "passed": 0,
+        "records": {
+          "passed": 37502,
+          "total": 40000
+        },
+        "score": 0.93755,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.93755,
+          "total": 4
+        }
+      },
+      "7": {
+        "passed": 1,
+        "records": {
+          "passed": 39979,
+          "total": 40000
+        },
+        "score": 0.9994750000000001,
+        "total": 4,
+        "valid": {
+          "passed": 1,
+          "score": 0.9994750000000001,
+          "total": 4
+        }
+      },
+      "8": {
+        "passed": 2,
+        "records": {
+          "passed": 20040,
+          "total": 20040
+        },
+        "score": 1.0,
+        "total": 2,
+        "valid": {
+          "passed": 2,
+          "score": 1.0,
+          "total": 2
+        }
+      }
+    },
+    "total": 22
+  },
+  "task": {
+    "runtime": "sql-engine",
+    "script_timeout_seconds": 120,
+    "sqlite_version": "3.40.1"
+  },
+  "tests": [
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 139: expected 3 values, got 0; line 169: expected 0 values, got 3; line 173: expected 0 values, got 3",
+      "execute_seconds": 0.014756321907043457,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "expected 3 values, got 0",
+          "kind": "query",
+          "line": 139
+        },
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 169
+        },
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 173
+        },
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 177
+        },
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 202
+        },
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 206
+        },
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 210
+        }
+      ],
+      "id": "test/evidence/in2.test",
+      "passed": false,
+      "records": {
+        "blocks": 53,
+        "executed": 53,
+        "failed": 7,
+        "passed": 42,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 49
+      },
+      "score": 0.8571428571428571,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 154: wrong result hash: expected ['60 values hashing to a2af299d7b2197866b7c8f6854b77ab5'] got '60 values hashing to 524efb16f2b2db50bbec0e77f155f775'; line 174: wrong result hash: expected ['20 values hashing to 1d6b8ed1db696a5f1c8d126facddd077'] got '20 values hashing to e24e56976e3c7db02d1ba2abb60f7b08'; line 183: wrong result hash: expected ['145 values hashing to 65042db64d506f67a37c85f825cdd11f'] got '145 values hashing to 51d7cbceb0396279f64140a5c7577f77'",
+      "execute_seconds": 0.42006240505725145,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "wrong result hash: expected ['60 values hashing to a2af299d7b2197866b7c8f6854b77ab5'] got '60 values hashing to 524efb16f2b2db50bbec0e77f155f775'",
+          "kind": "query",
+          "line": 154
+        },
+        {
+          "detail": "wrong result hash: expected ['20 values hashing to 1d6b8ed1db696a5f1c8d126facddd077'] got '20 values hashing to e24e56976e3c7db02d1ba2abb60f7b08'",
+          "kind": "query",
+          "line": 174
+        },
+        {
+          "detail": "wrong result hash: expected ['145 values hashing to 65042db64d506f67a37c85f825cdd11f'] got '145 values hashing to 51d7cbceb0396279f64140a5c7577f77'",
+          "kind": "query",
+          "line": 183
+        },
+        {
+          "detail": "wrong result hash: expected ['180 values hashing to 631b9506abcdd5dcea64c7ed2a3799ed'] got '180 values hashing to 27efb7ee91f198dd8c6ebbfd80b38e22'",
+          "kind": "query",
+          "line": 216
+        },
+        {
+          "detail": "wrong result hash: expected ['125 values hashing to 58b4ab36ed442f3837188b38cd02486a'] got '125 values hashing to 1b842bae9fd4311c5864f7295b1f0749'",
+          "kind": "query",
+          "line": 232
+        },
+        {
+          "detail": "wrong result hash: expected ['66 values hashing to 49b01d3ad62fdaa733104a9c70dfb87c'] got '66 values hashing to f71d309f863f43f0ed12c2739f627880'",
+          "kind": "query",
+          "line": 281
+        },
+        {
+          "detail": "wrong result hash: expected ['210 values hashing to b046dd2378da12da24149ec8171de183'] got '210 values hashing to 194dbdc97e9d484090e907c4a9d5d687'",
+          "kind": "query",
+          "line": 322
+        },
+        {
+          "detail": "wrong result hash: expected ['132 values hashing to b1b55f05abc1bf86626a186d4b60ea65'] got '132 values hashing to 8dc0d9b6d5f2af2431a919910475f51d'",
+          "kind": "query",
+          "line": 381
+        }
+      ],
+      "id": "test/select1.test",
+      "passed": false,
+      "records": {
+        "blocks": 1031,
+        "executed": 1031,
+        "failed": 267,
+        "passed": 733,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 1000
+      },
+      "score": 0.733,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 467: wrong result hash: expected ['119 values hashing to de49937f8a76d58e90ee610d71c5d209'] got '119 values hashing to 55cc1785ebbd1b750925dcd9f5425b96'; line 480: wrong result hash: expected ['119 values hashing to de49937f8a76d58e90ee610d71c5d209'] got '119 values hashing to 55cc1785ebbd1b750925dcd9f5425b96'; line 626: wrong result hash: expected ['78 values hashing to 014a4e77c58e1d60b4cbbcae9e6fd9f8'] got '78 values hashing to f0a7dd9c5fb4d463c615d7b88f392c1e'",
+      "execute_seconds": 1.1687656021676958,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "wrong result hash: expected ['119 values hashing to de49937f8a76d58e90ee610d71c5d209'] got '119 values hashing to 55cc1785ebbd1b750925dcd9f5425b96'",
+          "kind": "query",
+          "line": 467
+        },
+        {
+          "detail": "wrong result hash: expected ['119 values hashing to de49937f8a76d58e90ee610d71c5d209'] got '119 values hashing to 55cc1785ebbd1b750925dcd9f5425b96'",
+          "kind": "query",
+          "line": 480
+        },
+        {
+          "detail": "wrong result hash: expected ['78 values hashing to 014a4e77c58e1d60b4cbbcae9e6fd9f8'] got '78 values hashing to f0a7dd9c5fb4d463c615d7b88f392c1e'",
+          "kind": "query",
+          "line": 626
+        },
+        {
+          "detail": "wrong result hash: expected ['78 values hashing to 014a4e77c58e1d60b4cbbcae9e6fd9f8'] got '78 values hashing to f0a7dd9c5fb4d463c615d7b88f392c1e'",
+          "kind": "query",
+          "line": 639
+        },
+        {
+          "detail": "wrong result hash: expected ['90 values hashing to 92f7b45a92fe532b1299be0000c55ad3'] got '90 values hashing to bf40fcd88f4ef6b72cd70ac80d6254dd'",
+          "kind": "query",
+          "line": 911
+        },
+        {
+          "detail": "wrong result hash: expected ['90 values hashing to 92f7b45a92fe532b1299be0000c55ad3'] got '90 values hashing to bf40fcd88f4ef6b72cd70ac80d6254dd'",
+          "kind": "query",
+          "line": 919
+        },
+        {
+          "detail": "wrong result hash: expected ['182 values hashing to a296d6044702bfcca834c0a3e55f6ba2'] got '182 values hashing to bf4facf370e73fbc6fe1158382ba8dc0'",
+          "kind": "query",
+          "line": 1195
+        },
+        {
+          "detail": "wrong result hash: expected ['182 values hashing to a296d6044702bfcca834c0a3e55f6ba2'] got '182 values hashing to bf4facf370e73fbc6fe1158382ba8dc0'",
+          "kind": "query",
+          "line": 1209
+        }
+      ],
+      "id": "test/select3.test",
+      "passed": false,
+      "records": {
+        "blocks": 3351,
+        "executed": 3351,
+        "failed": 910,
+        "passed": 2410,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 3320
+      },
+      "score": 0.7259036144578314,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": -15,
+      "detail": "line 1: no output block for this statement; line 11: no output block for this statement; line 21: no output block for this statement",
+      "execute_seconds": 120.65682341484353,
+      "failure_type": "script_timeout",
+      "failures": [
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 1
+        },
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 11
+        },
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 21
+        },
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 31
+        },
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 41
+        },
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 51
+        },
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 61
+        },
+        {
+          "detail": "no output block for this statement",
+          "kind": "setup",
+          "line": 71
+        }
+      ],
+      "id": "test/select4.test",
+      "passed": false,
+      "records": {
+        "blocks": 0,
+        "executed": 3857,
+        "failed": 2832,
+        "passed": 0,
+        "reference_disagreements": 0,
+        "setup_failures": 1025,
+        "total": 2832
+      },
+      "score": 0.0,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 92: query failed: 'near \"ALL\": syntax error'; line 121: query failed: 'near \"ALL\": syntax error'; line 232: query failed: 'near \"ALL\": syntax error'",
+      "execute_seconds": 0.27174041885882616,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 92
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 121
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 232
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 272
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 306
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 407
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 470
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 499
+        }
+      ],
+      "id": "test/random/expr/slt_good_0.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 623,
+        "passed": 9377,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9377,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 342: query failed: 'near \"ALL\": syntax error'; line 1683: query failed: 'near \"ALL\": syntax error'; line 2004: query failed: 'near \"ALL\": syntax error'",
+      "execute_seconds": 0.16353640658780932,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 342
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1683
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 2004
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 2030
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 2173
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 2319
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 2331
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 2400
+        }
+      ],
+      "id": "test/random/expr/slt_good_1.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 284,
+        "passed": 9716,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9716,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 338: query failed: 'near \"ALL\": syntax error'; line 470: query failed: 'near \"ALL\": syntax error'; line 522: query failed: 'near \"ALL\": syntax error'",
+      "execute_seconds": 0.23623081762343645,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 338
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 470
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 522
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 535
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 600
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 877
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1009
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1175
+        }
+      ],
+      "id": "test/random/expr/slt_good_2.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 467,
+        "passed": 9533,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9533,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 82: query failed: 'near \"ALL\": syntax error'; line 243: query failed: 'near \"ALL\": syntax error'; line 371: query failed: 'near \"ALL\": syntax error'",
+      "execute_seconds": 0.2872456768527627,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 82
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 243
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 371
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 405
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 463
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 500
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 528
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 920
+        }
+      ],
+      "id": "test/random/expr/slt_good_3.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 719,
+        "passed": 9281,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9281,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.32726910104975104,
+      "failure_type": null,
+      "failures": [],
+      "id": "test/random/select/slt_good_0.test",
+      "passed": true,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 0,
+        "passed": 10000,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 1.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.3298956290818751,
+      "failure_type": null,
+      "failures": [],
+      "id": "test/random/select/slt_good_2.test",
+      "passed": true,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 0,
+        "passed": 10000,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 1.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.32538797426968813,
+      "failure_type": null,
+      "failures": [],
+      "id": "test/random/select/slt_good_3.test",
+      "passed": true,
+      "records": {
+        "blocks": 10011,
+        "executed": 10011,
+        "failed": 0,
+        "passed": 9999,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 9999
+      },
+      "score": 1.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 39846: expected 0 values, got 3",
+      "execute_seconds": 0.33105946192517877,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 39846
+        }
+      ],
+      "id": "test/random/select/slt_good_4.test",
+      "passed": false,
+      "records": {
+        "blocks": 10011,
+        "executed": 10011,
+        "failed": 1,
+        "passed": 9998,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 9999
+      },
+      "score": 0.9998999899989999,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 81: query failed: 'near \"ALL\": syntax error'; line 148: query failed: 'near \"ALL\": syntax error'; line 453: query failed: 'near \"ALL\": syntax error'",
+      "execute_seconds": 0.3085822337307036,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 81
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 148
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 453
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 487
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 566
+        },
+        {
+          "detail": "expected 2 values, got 0",
+          "kind": "query",
+          "line": 586
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 806
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 944
+        }
+      ],
+      "id": "test/random/aggregates/slt_good_0.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 607,
+        "passed": 9393,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9393,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 101: query failed: 'near \"ALL\": syntax error'; line 114: query failed: 'near \"ALL\": syntax error'; line 140: query failed: 'near \"ALL\": syntax error'",
+      "execute_seconds": 0.29817706905305386,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 101
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 114
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 140
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 264
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 507
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 699
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 764
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 942
+        }
+      ],
+      "id": "test/random/aggregates/slt_good_1.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 590,
+        "passed": 9410,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.941,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 58: query failed: 'near \"ALL\": syntax error'; line 121: expected 1 values, got 0; line 205: query failed: 'near \"ALL\": syntax error'",
+      "execute_seconds": 0.312840708065778,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 58
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 121
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 205
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 396
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 927
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1023
+        },
+        {
+          "detail": "expected 2 values, got 0",
+          "kind": "query",
+          "line": 1194
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1288
+        }
+      ],
+      "id": "test/random/aggregates/slt_good_3.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 634,
+        "passed": 9366,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9366,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 284: expected 1 values, got 0; line 325: query failed: 'near \"ALL\": syntax error'; line 553: expected 1 values, got 0",
+      "execute_seconds": 0.3140577469021082,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 284
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 325
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 553
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1431
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 1496
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1638
+        },
+        {
+          "detail": "query failed: 'near \"ALL\": syntax error'",
+          "kind": "query",
+          "line": 1901
+        },
+        {
+          "detail": "expected 1 values, got 0",
+          "kind": "query",
+          "line": 1978
+        }
+      ],
+      "id": "test/random/aggregates/slt_good_4.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 667,
+        "passed": 9333,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9333,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 432: query failed: \"internal error: bad node 'col'\"; line 1410: query failed: \"internal error: bad node 'col'\"; line 5597: query failed: \"internal error: bad node 'col'\"",
+      "execute_seconds": 0.31629552599042654,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 432
+        },
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 1410
+        },
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 5597
+        },
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 8222
+        },
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 9854
+        },
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 10214
+        },
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 11296
+        },
+        {
+          "detail": "query failed: \"internal error: bad node 'col'\"",
+          "kind": "query",
+          "line": 15920
+        }
+      ],
+      "id": "test/random/groupby/slt_good_0.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 19,
+        "passed": 9981,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9981,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 33130: query failed: 'near \"LEFT\": syntax error'",
+      "execute_seconds": 0.320506380405277,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "query failed: 'near \"LEFT\": syntax error'",
+          "kind": "query",
+          "line": 33130
+        }
+      ],
+      "id": "test/random/groupby/slt_good_1.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 1,
+        "passed": 9999,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9999,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": null,
+      "execute_seconds": 0.3203362091444433,
+      "failure_type": null,
+      "failures": [],
+      "id": "test/random/groupby/slt_good_3.test",
+      "passed": true,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 0,
+        "passed": 10000,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 1.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 39360: expected 0 values, got 3",
+      "execute_seconds": 0.3218326950445771,
+      "failure_type": "wrong_results",
+      "failures": [
+        {
+          "detail": "expected 0 values, got 3",
+          "kind": "query",
+          "line": 39360
+        }
+      ],
+      "id": "test/random/groupby/slt_good_4.test",
+      "passed": false,
+      "records": {
+        "blocks": 10012,
+        "executed": 10012,
+        "failed": 1,
+        "passed": 9999,
+        "reference_disagreements": 0,
+        "setup_failures": 0,
+        "total": 10000
+      },
+      "score": 0.9999,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 39: statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'; line 42: statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'; line 45: statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+      "execute_seconds": 0.6996351387351751,
+      "failure_type": null,
+      "failures": [
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 39
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 42
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 45
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 48
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab2\": syntax error'",
+          "kind": "setup",
+          "line": 57
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab2\": syntax error'",
+          "kind": "setup",
+          "line": 60
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab2\": syntax error'",
+          "kind": "setup",
+          "line": 63
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab3\": syntax error'",
+          "kind": "setup",
+          "line": 72
+        }
+      ],
+      "id": "test/index/orderby_nosort/10/slt_good_0.test",
+      "passed": true,
+      "records": {
+        "blocks": 10053,
+        "executed": 10053,
+        "failed": 0,
+        "passed": 10020,
+        "reference_disagreements": 0,
+        "setup_failures": 14,
+        "total": 10020
+      },
+      "score": 1.0,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": 0,
+      "detail": "line 39: statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'; line 42: statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'; line 45: statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+      "execute_seconds": 0.6835219459608197,
+      "failure_type": null,
+      "failures": [
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 39
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 42
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 45
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab1\": syntax error'",
+          "kind": "setup",
+          "line": 48
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"ON\": syntax error'",
+          "kind": "setup",
+          "line": 57
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab2\": syntax error'",
+          "kind": "setup",
+          "line": 60
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"ON\": syntax error'",
+          "kind": "setup",
+          "line": 63
+        },
+        {
+          "detail": "statement expected to succeed but candidate reported 'error near \"tab3\": syntax error'",
+          "kind": "setup",
+          "line": 72
+        }
+      ],
+      "id": "test/index/orderby_nosort/10/slt_good_2.test",
+      "passed": true,
+      "records": {
+        "blocks": 10052,
+        "executed": 10052,
+        "failed": 0,
+        "passed": 10020,
+        "reference_disagreements": 0,
+        "setup_failures": 13,
+        "total": 10020
+      },
+      "score": 1.0,
+      "stage": 8,
+      "validity": "valid"
+    }
+  ],
+  "timestamp": "2026-09-17T02:51:41Z",
+  "workspace": "/workspace"
+}

@@ -1,0 +1,417 @@
+{
+  "build": null,
+  "candidate": {
+    "artifact": "/workspace/pisql.py",
+    "framework": "strict-static-typing",
+    "language": "python"
+  },
+  "docker_image": {
+    "id": "sha256:9fb66bd28dcf036578e244e5e6c1df5392a793cfb46379e099be1667961da6ed",
+    "name": "picc-experiment:0.5"
+  },
+  "elapsed_seconds": 0.01286458969116211,
+  "input_policy": {
+    "protocol": "sqllogictest records as ;-terminated statements; candidate blocks `ok <N>` / `error <message>`",
+    "reference_disagreements_excluded": true
+  },
+  "partition": "hidden",
+  "schema_version": 1,
+  "selection": {
+    "count": 8,
+    "latest_only": false,
+    "max_stage": 8,
+    "test_id": null
+  },
+  "snapshot": {
+    "git_commit": "0812fc9b59efaf924158b15ac19d50e87bb9a36c",
+    "git_tree": "d647a908af3ed6d49ecb07427f11597e6279fbbd"
+  },
+  "source_audit": {
+    "advisory_findings": [
+      {
+        "excerpt": "for row in stmt.values:  # type: ignore[union-attr]",
+        "kind": "source_pattern",
+        "line": 1724,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "node, lambda e: self._resolve_one(e, schema)  # type: ignore[return-value]",
+        "kind": "source_pattern",
+        "line": 1858,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "[self._transform(x, f) for x in node.items],  # type: ignore[arg-type]",
+        "kind": "source_pattern",
+        "line": 1902,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "(self._transform(w, f), self._transform(r, f))  # type: ignore[tuple-returned]",
+        "kind": "source_pattern",
+        "line": 1910,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      }
+    ],
+    "blocking": true,
+    "blocking_findings": [
+      {
+        "kind": "python_syntax",
+        "line": 1231,
+        "path": "pisql.py",
+        "reason": "unmatched ')' (pisql.py, line 1231)"
+      }
+    ],
+    "findings": [
+      {
+        "kind": "python_syntax",
+        "line": 1231,
+        "path": "pisql.py",
+        "reason": "unmatched ')' (pisql.py, line 1231)"
+      },
+      {
+        "excerpt": "for row in stmt.values:  # type: ignore[union-attr]",
+        "kind": "source_pattern",
+        "line": 1724,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "node, lambda e: self._resolve_one(e, schema)  # type: ignore[return-value]",
+        "kind": "source_pattern",
+        "line": 1858,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "[self._transform(x, f) for x in node.items],  # type: ignore[arg-type]",
+        "kind": "source_pattern",
+        "line": 1902,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "(self._transform(w, f), self._transform(r, f))  # type: ignore[tuple-returned]",
+        "kind": "source_pattern",
+        "line": 1910,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      }
+    ],
+    "passed": false,
+    "source_extensions": [
+      ".py"
+    ],
+    "source_files_scanned": 1
+  },
+  "source_revision": "c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0",
+  "summary": {
+    "audit_blocking": true,
+    "audit_ok": false,
+    "build_ok": false,
+    "failed": 8,
+    "failures": [
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/evidence/in1.test",
+        "stage": 1,
+        "validity": "valid"
+      },
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/select2.test",
+        "stage": 2,
+        "validity": "valid"
+      },
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/select5.test",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/random/expr/slt_good_4.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/random/select/slt_good_1.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/random/aggregates/slt_good_2.test",
+        "stage": 6,
+        "validity": "valid"
+      },
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/random/groupby/slt_good_2.test",
+        "stage": 7,
+        "validity": "valid"
+      },
+      {
+        "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+        "failure_type": "source_audit_failure",
+        "id": "test/index/orderby_nosort/10/slt_good_1.test",
+        "stage": 8,
+        "validity": "valid"
+      }
+    ],
+    "micro_score": 0.0,
+    "passed": 0,
+    "records_passed": 0,
+    "records_total": 0,
+    "score": 0.0,
+    "stages": {
+      "1": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "2": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "3": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "4": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "5": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "6": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "7": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "8": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      }
+    },
+    "total": 8
+  },
+  "task": {
+    "runtime": "sql-engine",
+    "script_timeout_seconds": 120,
+    "sqlite_version": "3.40.1"
+  },
+  "tests": [
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/evidence/in1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/select2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/select5.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "[{\"kind\": \"python_syntax\", \"line\": 1231, \"path\": \"pisql.py\", \"reason\": \"unmatched ')' (pisql.py, line 1231)\"}]",
+      "execute_seconds": 0.0,
+      "failure_type": "source_audit_failure",
+      "failures": [],
+      "id": "test/index/orderby_nosort/10/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 8,
+      "validity": "valid"
+    }
+  ],
+  "timestamp": "2026-09-18T03:07:35Z",
+  "workspace": "/workspace"
+}

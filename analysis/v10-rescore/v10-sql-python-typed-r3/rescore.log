@@ -1,0 +1,63 @@
+[1/30] hidden: round 000, 53c478168149
+  score=0.0000, passed=0/8
+[2/30] hidden: round 001, e5e6817707dc
+  score=0.0000, passed=0/8
+[3/30] hidden: round 002, ff55bebda159
+  score=0.0000, passed=0/8
+[4/30] hidden: round 003, fb7ed7a71513
+  score=0.0000, passed=0/8
+[5/30] hidden: round 004, 8539f77ecee7
+  score=0.0000, passed=0/8
+[6/30] hidden: round 005, b4e7ef4dcfce
+  score=0.0000, passed=0/8
+[7/30] hidden: round 006, faaead037b83
+  score=0.0000, passed=0/8
+[8/30] hidden: round 007, 8181afef90b5
+  score=0.0000, passed=0/8
+[9/30] hidden: round 008, 6f7975284b20
+  score=0.0000, passed=0/8
+[10/30] hidden: round 009, 0812fc9b59ef
+  score=0.0000, passed=0/8
+[11/30] hidden: round 010, bd43ad90c7a9
+  score=0.0000, passed=0/8
+[12/30] hidden: round 011, baa735f517b7
+  score=0.0000, passed=0/8
+[13/30] hidden: round 012, 098bd13069a8
+  score=0.0000, passed=0/8
+[14/30] hidden: round 013, 86092c16c4d5
+  score=0.0000, passed=0/8
+[15/30] hidden: round 014, df33342b9e00
+  score=0.0000, passed=0/8
+[16/30] hidden: round 015, 38153a485b9d
+  score=0.0000, passed=0/8
+[17/30] hidden: round 016, 24442f944885
+  score=0.0000, passed=0/8
+[18/30] hidden: round 017, 3e4089afa81b
+  score=0.0000, passed=0/8
+[19/30] hidden: round 018, de7f985d8980
+  score=0.0000, passed=0/8
+[20/30] hidden: round 019, d5b7a6d4a640
+  score=0.0000, passed=0/8
+[21/30] hidden: round 020, 6aaf802dfe13
+  score=0.0000, passed=0/8
+[22/30] hidden: round 021, babede62f3cc
+  score=0.0000, passed=0/8
+[23/30] hidden: round 022, 1c6564354474
+  score=0.0000, passed=0/8
+[24/30] hidden: round 023, 5dc248597e7b
+  score=0.0000, passed=0/8
+[25/30] hidden: round 024, 8fcdd0bfef77
+  score=0.0000, passed=0/8
+[26/30] hidden: round 025, 1af162b662a2
+  score=0.0000, passed=0/8
+[27/30] hidden: round 026, 6612c65a65f0
+  score=0.0000, passed=0/8
+[28/30] hidden: round 027, b1b786423dfa
+  score=0.0000, passed=0/8
+[29/30] hidden: round 028, cb0c0676743a
+  score=0.0000, passed=0/8
+[30/30] hidden: round 029, 0626a24c241f
+  score=0.0000, passed=0/8
+Wrote /tmp/picc-v10-rescore-u6_xulvz/v10-sql-python-typed-r3/runs/v10-sql-python-typed-r3/artifacts/hidden-scores.jsonl
+fuzz oracle: disabled (FUZZ_STAGE_PROGRAMS is 0 or unset)
+

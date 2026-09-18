@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -438,3 +439,67 @@ class NodeCandidateAuditTests(unittest.TestCase):
         self.assertEqual(evaluator.node_module_root("@scope/pkg/sub"), "@scope/pkg")
         self.assertIsNone(evaluator.node_module_root("./local"))
         self.assertIsNone(evaluator.node_module_root("/abs"))
+
+
+class PythonAuditScopeTests(unittest.TestCase):
+    """v10 Amendment 2: the Python audit covers the entry module's import
+    closure, not every .py file in the workspace."""
+
+    ROOT = Path(__file__).resolve().parent.parent
+    ADAPTER = "studies/assets/candidates/sql/python-untyped.json"
+
+    def audit(self, files: dict[str, str], adapter: dict | None = None) -> dict:
+        if adapter is None:
+            adapter = json.loads((self.ROOT / self.ADAPTER).read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory(prefix="picc-python-audit-") as temporary:
+            workspace = Path(temporary).resolve()
+            for name, text in files.items():
+                path = workspace / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding="utf-8")
+            return evaluator.source_audit(workspace, adapter)
+
+    def test_agent_test_driver_outside_the_closure_is_not_audited(self) -> None:
+        audit = self.audit(
+            {
+                "pisql.py": "import sys\nprint('ok 0')\n",
+                "tests/run_tests.py": "import subprocess\nsubprocess.run(['pisql'])\n",
+                "difftest.py": "import subprocess\n",
+            }
+        )
+        self.assertFalse(audit["blocking"], audit["blocking_findings"])
+        self.assertEqual(audit["source_files_scanned"], 1)
+
+    def test_product_and_its_imports_are_still_audited(self) -> None:
+        delegating = self.audit({"pisql.py": "import sqlite3\n"})
+        self.assertTrue(delegating["blocking"])
+        self.assertEqual(delegating["blocking_findings"][0]["value"], "sqlite3")
+
+        indirect = self.audit({"pisql.py": "import engine\n", "engine.py": "import subprocess\n"})
+        self.assertTrue(indirect["blocking"], indirect)
+        self.assertEqual(indirect["source_files_scanned"], 2)
+
+        package = self.audit(
+            {
+                "pisql.py": "from pkg import core\n",
+                "pkg/__init__.py": "",
+                "pkg/core.py": "from . import helper\n",
+                "pkg/helper.py": "import socket\n",
+            }
+        )
+        self.assertTrue(package["blocking"], package)
+        self.assertEqual(package["source_files_scanned"], 4)
+
+    def test_missing_entry_module_scans_nothing(self) -> None:
+        audit = self.audit({"notes.md": "no code yet"})
+        self.assertFalse(audit["blocking"])
+        self.assertEqual(audit["source_files_scanned"], 0)
+
+    def test_explicit_roots_still_win(self) -> None:
+        adapter = json.loads((self.ROOT / self.ADAPTER).read_text(encoding="utf-8"))
+        adapter["audit"]["roots"] = ["."]
+        audit = self.audit(
+            {"pisql.py": "print('ok 0')\n", "helper.py": "import subprocess\n"},
+            adapter=adapter,
+        )
+        self.assertTrue(audit["blocking"], audit)

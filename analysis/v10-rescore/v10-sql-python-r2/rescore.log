@@ -1,0 +1,7 @@
+[1/2] hidden: round 000, b1a2814800aa
+  score=0.0147, passed=0/8
+[2/2] hidden: round 001, 79ef9f96be4b
+  score=0.7565, passed=2/8
+Wrote /tmp/picc-v10-rescore-u6_xulvz/v10-sql-python-r2/runs/v10-sql-python-r2/artifacts/hidden-scores.jsonl
+fuzz oracle: disabled (FUZZ_STAGE_PROGRAMS is 0 or unset)
+

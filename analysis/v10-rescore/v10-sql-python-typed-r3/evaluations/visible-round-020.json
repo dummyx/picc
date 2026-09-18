@@ -1,0 +1,634 @@
+{
+  "build": {
+    "args": [
+      "mypy",
+      "--strict",
+      "--no-error-summary",
+      "--cache-dir",
+      "/tmp/mypy-cache",
+      "pisql.py"
+    ],
+    "elapsed_seconds": 0.3442786689847708,
+    "returncode": 1,
+    "stderr": "",
+    "stdout": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of \"cn\"  [has-type]\npisql.py:1882: error: Argument 2 to \"BinOp\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1882: error: Argument 3 to \"BinOp\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1884: error: Argument 1 to \"NotOp\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1886: error: Argument 1 to \"IsExpr\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1886: error: Argument 3 to \"IsExpr\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1889: error: Argument 1 to \"Between\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1891: error: Argument 3 to \"Between\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1892: error: Argument 4 to \"Between\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1896: error: Argument 1 to \"InExpr\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1898: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1898: error: List comprehension has incompatible type List[Expr | None]; expected List[Expr]  [misc]\npisql.py:1898: note: Error code \"misc\" not covered by \"type: ignore[arg-type]\" comment\npisql.py:1906: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1906: error: List comprehension has incompatible type List[tuple[Expr | None, Expr | None]]; expected List[tuple[Expr, Expr]]  [misc]\npisql.py:1906: note: Error code \"misc\" not covered by \"type: ignore[tuple-returned]\" comment\npisql.py:1912: error: Argument 1 to \"Cast\" has incompatible type \"Expr | None\"; expected \"Expr\"  [arg-type]\npisql.py:1914: error: List comprehension has incompatible type List[Expr | None]; expected List[Expr]  [misc]\npisql.py:2039: error: Incompatible types in assignment (expression has type \"Expr | None\", variable has type \"Expr\")  [assignment]\npisql.py:2079: error: Incompatible types in assignment (expression has type \"Expr | None\", variable has type \"Expr\")  [assignment]\npisql.py:2096: error: Incompatible types in assignment (expression has type \"tuple[int | float | str | bytes | None, ...]\", variable has type \"ResExpr\")  [assignment]\npisql.py:2097: error: Argument 1 to \"tuple\" has incompatible type \"ResExpr\"; expected \"Iterable[int | float | str | bytes | None]\"  [arg-type]\npisql.py:2118: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2119: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2156: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2159: error: Incompatible types in assignment (expression has type \"tuple[int | float | str | bytes | None, ...]\", variable has type \"ResExpr\")  [assignment]\npisql.py:2160: error: Incompatible types in assignment (expression has type \"tuple[tuple[Any, ...], ...]\", variable has type \"str\")  [assignment]\npisql.py:2160: error: \"ResExpr\" has no attribute \"__iter__\" (not iterable)  [attr-defined]\npisql.py:2161: error: Non-overlapping container check (element type: \"str\", container item type: \"tuple[Any, ...]\")  [comparison-overlap]\npisql.py:2162: error: Argument 1 to \"add\" of \"set\" has incompatible type \"str\"; expected \"tuple[Any, ...]\"  [arg-type]\npisql.py:2163: error: Argument 1 to \"append\" of \"list\" has incompatible type \"ResExpr\"; expected \"tuple[int | float | str | bytes | None, ...]\"  [arg-type]\npisql.py:2204: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2229: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:2350: error: Incompatible types in assignment (expression has type \"int | float | str | bytes | None\", variable has type \"Meta\")  [assignment]\npisql.py:2351: error: Incompatible types in assignment (expression has type \"int | float | str | bytes | None\", variable has type \"Meta\")  [assignment]\npisql.py:2353: error: Argument 1 to \"op_add\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2353: error: Argument 2 to \"op_add\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2355: error: Argument 1 to \"op_sub\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2355: error: Argument 2 to \"op_sub\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2357: error: Argument 1 to \"op_mul\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2357: error: Argument 2 to \"op_mul\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2359: error: Argument 1 to \"op_div\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2359: error: Argument 2 to \"op_div\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2361: error: Argument 1 to \"op_mod\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2361: error: Argument 2 to \"op_mod\" has incompatible type \"Meta\"; expected \"int | float | str | bytes | None\"  [arg-type]\npisql.py:2413: error: Incompatible types in assignment (expression has type \"Expr\", variable has type \"Meta\")  [assignment]\npisql.py:2415: error: Argument 1 to \"eval\" of \"Evaluator\" has incompatible type \"Meta\"; expected \"Expr | None\"  [arg-type]\npisql.py:2418: error: Incompatible types in assignment (expression has type \"Expr\", variable has type \"Meta\")  [assignment]\npisql.py:2421: error: Argument 1 to \"eval\" of \"Evaluator\" has incompatible type \"Meta\"; expected \"Expr | None\"  [arg-type]\npisql.py:2493: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:2498: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:2583: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2589: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2604: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2616: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2626: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:2638: error: Missing type arguments for generic type \"tuple\"  [type-arg]\n",
+    "timed_out": false
+  },
+  "candidate": {
+    "artifact": "/workspace/pisql.py",
+    "framework": "strict-static-typing",
+    "language": "python"
+  },
+  "elapsed_seconds": 0.36942458152770996,
+  "input_policy": {
+    "protocol": "sqllogictest records as ;-terminated statements; candidate blocks `ok <N>` / `error <message>`",
+    "reference_disagreements_excluded": true
+  },
+  "partition": "visible",
+  "schema_version": 1,
+  "selection": {
+    "count": 22,
+    "latest_only": false,
+    "max_stage": 8,
+    "test_id": null
+  },
+  "source_audit": {
+    "advisory_findings": [
+      {
+        "excerpt": "for row in stmt.values:  # type: ignore[union-attr]",
+        "kind": "source_pattern",
+        "line": 1720,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "node, lambda e: self._resolve_one(e, schema)  # type: ignore[return-value]",
+        "kind": "source_pattern",
+        "line": 1854,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "[self._transform(x, f) for x in node.items],  # type: ignore[arg-type]",
+        "kind": "source_pattern",
+        "line": 1898,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "(self._transform(w, f), self._transform(r, f))  # type: ignore[tuple-returned]",
+        "kind": "source_pattern",
+        "line": 1906,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      }
+    ],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [
+      {
+        "excerpt": "for row in stmt.values:  # type: ignore[union-attr]",
+        "kind": "source_pattern",
+        "line": 1720,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "node, lambda e: self._resolve_one(e, schema)  # type: ignore[return-value]",
+        "kind": "source_pattern",
+        "line": 1854,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "[self._transform(x, f) for x in node.items],  # type: ignore[arg-type]",
+        "kind": "source_pattern",
+        "line": 1898,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      },
+      {
+        "excerpt": "(self._transform(w, f), self._transform(r, f))  # type: ignore[tuple-returned]",
+        "kind": "source_pattern",
+        "line": 1906,
+        "path": "pisql.py",
+        "reason": "type-check suppression"
+      }
+    ],
+    "passed": false,
+    "source_extensions": [
+      ".py"
+    ],
+    "source_files_scanned": 1
+  },
+  "source_revision": "c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0",
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": false,
+    "build_ok": false,
+    "failed": 22,
+    "failures": [
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/evidence/in2.test",
+        "stage": 1,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/select1.test",
+        "stage": 2,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/select3.test",
+        "stage": 2,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/select4.test",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_0.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_1.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_2.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_3.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_0.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_2.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_3.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_4.test",
+        "stage": 5,
+        "validity": "valid"
+      }
+    ],
+    "micro_score": 0.0,
+    "passed": 0,
+    "records_passed": 0,
+    "records_total": 0,
+    "score": 0.0,
+    "stages": {
+      "1": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "2": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 2,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 2
+        }
+      },
+      "3": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "4": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "5": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "6": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "7": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "8": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 2,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 2
+        }
+      }
+    },
+    "total": 22
+  },
+  "task": {
+    "runtime": "sql-engine",
+    "script_timeout_seconds": 120,
+    "sqlite_version": "3.40.1"
+  },
+  "tests": [
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/evidence/in2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/select1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/select3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/select4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/index/orderby_nosort/10/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "pisql.py:138: error: Missing type arguments for generic type \"tuple\"  [type-arg]\npisql.py:287: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:297: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:307: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:321: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:334: error: Argument 1 to \"float\" has incompatible type \"int | float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:343: error: Argument 1 to \"float\" has incompatible type \"float | str | bytes | None\"; expected \"str | Buffer | SupportsFloat | SupportsIndex\"  [arg-type]\npisql.py:434: error: Too many arguments for \"float\"  [call-arg]\npisql.py:936: error: Name \"NoReturn\" is not defined  [name-defined]\npisql.py:946: error: Incompatible return value type (got \"Tok | None\", expected \"Tok\")  [return-value]\npisql.py:981: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1268: error: Item \"None\" of \"Tok | None\" has no attribute \"text\"  [union-attr]\npisql.py:1275: error: Item \"None\" of \"Tok | None\" has no attribute \"kind\"  [union-attr]\npisql.py:1387: error: Item \"None\" of \"Tok | None\" has no attribute \"upper\"  [union-attr]\npisql.py:1644: error: Incompatible return value type (got \"tuple[list[str], list[tuple[int | float | str | bytes | None, ...]]]\", expected \"list[tuple[int | float | str | bytes | None, ...]]\")  [return-value]\npisql.py:1854: error: Unused \"type: ignore\" comment  [unused-ignore]\npisql.py:1868: error: Cannot determine type of\n... [truncated 6618 characters]",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/index/orderby_nosort/10/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 8,
+      "validity": "valid"
+    }
+  ],
+  "timestamp": "2026-09-17T06:53:03Z",
+  "workspace": "/workspace"
+}

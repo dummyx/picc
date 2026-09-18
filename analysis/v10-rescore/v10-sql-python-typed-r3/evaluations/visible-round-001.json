@@ -1,0 +1,576 @@
+{
+  "build": {
+    "args": [
+      "mypy",
+      "--strict",
+      "--no-error-summary",
+      "--cache-dir",
+      "/tmp/mypy-cache",
+      "pisql.py"
+    ],
+    "elapsed_seconds": 0.05023461114615202,
+    "returncode": 2,
+    "stderr": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "artifact": "/workspace/pisql.py",
+    "framework": "strict-static-typing",
+    "language": "python"
+  },
+  "elapsed_seconds": 0.051386356353759766,
+  "input_policy": {
+    "protocol": "sqllogictest records as ;-terminated statements; candidate blocks `ok <N>` / `error <message>`",
+    "reference_disagreements_excluded": true
+  },
+  "partition": "visible",
+  "schema_version": 1,
+  "selection": {
+    "count": 22,
+    "latest_only": false,
+    "max_stage": 8,
+    "test_id": null
+  },
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".py"
+    ],
+    "source_files_scanned": 0
+  },
+  "source_revision": "c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0",
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": false,
+    "failed": 22,
+    "failures": [
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/evidence/in2.test",
+        "stage": 1,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/select1.test",
+        "stage": 2,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/select3.test",
+        "stage": 2,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/select4.test",
+        "stage": 3,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_0.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_1.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_2.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/expr/slt_good_3.test",
+        "stage": 4,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_0.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_2.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_3.test",
+        "stage": 5,
+        "validity": "valid"
+      },
+      {
+        "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+        "failure_type": "build_failure",
+        "id": "test/random/select/slt_good_4.test",
+        "stage": 5,
+        "validity": "valid"
+      }
+    ],
+    "micro_score": 0.0,
+    "passed": 0,
+    "records_passed": 0,
+    "records_total": 0,
+    "score": 0.0,
+    "stages": {
+      "1": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "2": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 2,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 2
+        }
+      },
+      "3": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 1,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 1
+        }
+      },
+      "4": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "5": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "6": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "7": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 4,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 4
+        }
+      },
+      "8": {
+        "passed": 0,
+        "records": {
+          "passed": 0,
+          "total": 0
+        },
+        "score": 0.0,
+        "total": 2,
+        "valid": {
+          "passed": 0,
+          "score": 0.0,
+          "total": 2
+        }
+      }
+    },
+    "total": 22
+  },
+  "task": {
+    "runtime": "sql-engine",
+    "script_timeout_seconds": 120,
+    "sqlite_version": "3.40.1"
+  },
+  "tests": [
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/evidence/in2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 1,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/select1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/select3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 2,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/select4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 3,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/expr/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 4,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/select/slt_good_4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 5,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/aggregates/slt_good_4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 6,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_1.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_3.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/random/groupby/slt_good_4.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 7,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/index/orderby_nosort/10/slt_good_0.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 8,
+      "validity": "valid"
+    },
+    {
+      "compile_seconds": 0.0,
+      "compiler_returncode": null,
+      "detail": "mypy: error: Cannot read file 'pisql.py': No such file or directory\n",
+      "execute_seconds": 0.0,
+      "failure_type": "build_failure",
+      "failures": [],
+      "id": "test/index/orderby_nosort/10/slt_good_2.test",
+      "passed": false,
+      "records": {},
+      "score": 0.0,
+      "stage": 8,
+      "validity": "valid"
+    }
+  ],
+  "timestamp": "2026-09-17T05:40:35Z",
+  "workspace": "/workspace"
+}

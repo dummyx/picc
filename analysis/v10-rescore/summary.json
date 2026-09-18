@@ -1,0 +1,29 @@
+[
+  {
+    "run_id": "v10-sql-python-r2",
+    "returncode": 0,
+    "frozen_final": 0.0,
+    "frozen_best": 0.014705882352941176,
+    "rescored_final": 0.7564830313970988,
+    "rescored_best": 0.7564830313970988,
+    "snapshots": 2
+  },
+  {
+    "run_id": "v10-sql-python-r3",
+    "returncode": 0,
+    "frozen_final": 0.0,
+    "frozen_best": 0.7950489304812833,
+    "rescored_final": 0.7843864304812834,
+    "rescored_best": 0.7950489304812833,
+    "snapshots": 3
+  },
+  {
+    "run_id": "v10-sql-python-typed-r3",
+    "returncode": 0,
+    "frozen_final": 0.0,
+    "frozen_best": 0.0,
+    "rescored_final": 0.0,
+    "rescored_best": 0.0,
+    "snapshots": 30
+  }
+]

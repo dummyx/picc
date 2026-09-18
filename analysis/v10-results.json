@@ -1,0 +1,182 @@
+{
+  "picc-c18-minimal-v1": {
+    "rows": [
+      {
+        "condition": "rust",
+        "replicate": 1,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "rust",
+        "replicate": 2,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "rust",
+        "replicate": 3,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "python",
+        "replicate": 1,
+        "primary": 0.42554012345679015,
+        "hidden_score_last_buildable": 0.42554012345679015,
+        "hidden_score": 0.42554012345679015,
+        "rescored": false,
+        "above_floor": true
+      },
+      {
+        "condition": "python",
+        "replicate": 2,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "python",
+        "replicate": 3,
+        "primary": 0.5009920634920635,
+        "hidden_score_last_buildable": 0.5009920634920635,
+        "hidden_score": 0.5009920634920635,
+        "rescored": false,
+        "above_floor": true
+      },
+      {
+        "condition": "python-typed",
+        "replicate": 1,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "python-typed",
+        "replicate": 2,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      }
+    ],
+    "typed_minus_plain": [
+      -0.42554012345679015,
+      0.0
+    ],
+    "above_floor": {
+      "rust": 0,
+      "python": 2,
+      "python-typed": 0
+    }
+  },
+  "picc-sql-minimal-v1": {
+    "rows": [
+      {
+        "condition": "rust",
+        "replicate": 1,
+        "primary": 0.818025,
+        "hidden_score_last_buildable": 0.818025,
+        "hidden_score": 0.818025,
+        "rescored": false,
+        "above_floor": true
+      },
+      {
+        "condition": "rust",
+        "replicate": 2,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "rust",
+        "replicate": 3,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "python",
+        "replicate": 1,
+        "primary": 0.7535532185628742,
+        "hidden_score_last_buildable": 0.7535532185628742,
+        "hidden_score": 0.7535532185628742,
+        "rescored": false,
+        "above_floor": true
+      },
+      {
+        "condition": "python",
+        "replicate": 2,
+        "primary": 0.7564830313970988,
+        "hidden_score_last_buildable": 0.014705882352941176,
+        "hidden_score": 0.0,
+        "rescored": true,
+        "above_floor": true
+      },
+      {
+        "condition": "python",
+        "replicate": 3,
+        "primary": 0.7950489304812833,
+        "hidden_score_last_buildable": 0.7950489304812833,
+        "hidden_score": 0.0,
+        "rescored": true,
+        "above_floor": true
+      },
+      {
+        "condition": "python-typed",
+        "replicate": 1,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": false,
+        "above_floor": false
+      },
+      {
+        "condition": "python-typed",
+        "replicate": 2,
+        "primary": 0.09748485462230619,
+        "hidden_score_last_buildable": 0.09748485462230619,
+        "hidden_score": 0.09748485462230619,
+        "rescored": false,
+        "above_floor": true
+      },
+      {
+        "condition": "python-typed",
+        "replicate": 3,
+        "primary": 0.0,
+        "hidden_score_last_buildable": 0.0,
+        "hidden_score": 0.0,
+        "rescored": true,
+        "above_floor": false
+      }
+    ],
+    "typed_minus_plain": [
+      -0.7535532185628742,
+      -0.6589981767747927,
+      -0.7950489304812833
+    ],
+    "above_floor": {
+      "rust": 1,
+      "python": 3,
+      "python-typed": 1
+    }
+  }
+}

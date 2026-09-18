@@ -563,6 +563,80 @@ def node_import_closure(workspace: Path, entry: Path, prefixes: Sequence[tuple[s
     return closure
 
 
+PYTHON_LOCAL_IMPORT_SUFFIXES = (".py", "/__init__.py")
+
+
+def python_import_closure(workspace: Path, entry: Path, prefixes: Sequence[tuple[str, ...]]) -> list[Path]:
+    """Source files reachable from the entry module through local imports.
+
+    The Python analogue of ``node_import_closure``: the submitted product is
+    the entry module plus the workspace modules it imports, directly or
+    transitively. Test drivers, fuzzers, and helpers the agent keeps beside it
+    are its own tooling and are not part of the artifact (the v4, v6, and v10
+    lessons; `analysis/report.md` 8.5 and 12, v10 Amendment 2). A module the
+    product itself imports is still audited, so delegation cannot hide one
+    import away. Imports built from variables are not statically resolvable
+    and remain a documented limitation.
+    """
+    closure: list[Path] = []
+    seen: set[Path] = set()
+    queue = [entry]
+    while queue:
+        path = queue.pop()
+        if path.is_symlink() or not path.is_file():
+            continue
+        resolved = path.resolve()
+        if resolved in seen:
+            continue
+        try:
+            relative = resolved.relative_to(workspace)
+        except ValueError:
+            continue
+        if is_excluded(relative, prefixes) or resolved.suffix != ".py":
+            continue
+        seen.add(resolved)
+        closure.append(resolved)
+        try:
+            tree = ast.parse(resolved.read_text(encoding="utf-8", errors="replace"))
+        except (SyntaxError, ValueError):
+            continue
+        for level, name in imported_local_names(tree):
+            bases: list[Path] = []
+            if level == 0:
+                # A top-level import resolves against the entry's directory
+                # (Python puts the script's directory on sys.path) and the
+                # workspace root.
+                bases = [entry.parent, workspace]
+            else:
+                base = resolved.parent
+                for _ in range(level - 1):
+                    base = base.parent
+                bases = [base]
+            parts = [part for part in name.split(".") if part]
+            for base in bases:
+                for suffix in PYTHON_LOCAL_IMPORT_SUFFIXES:
+                    candidate = Path(str(base.joinpath(*parts)) + suffix) if parts else base / "__init__.py"
+                    if candidate.is_file() and not candidate.is_symlink():
+                        queue.append(candidate)
+    return closure
+
+
+def imported_local_names(tree: ast.AST) -> list[tuple[int, str]]:
+    """(relative level, dotted name) of every import that could name a local module."""
+    names: list[tuple[int, str]] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            names.extend((0, alias.name) for alias in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            level = int(node.level or 0)
+            module = node.module or ""
+            if module:
+                names.append((level, module))
+            for alias in node.names:
+                names.append((level, f"{module}.{alias.name}" if module else alias.name))
+    return names
+
+
 def built_package_manifests(workspace: Path) -> list[Path]:
     """The package manifests the frozen build uses: the root ``package.json``
     and, when it declares ``workspaces``, the member manifests (v9 Amendment
@@ -770,6 +844,20 @@ def source_audit(workspace: Path, adapter: dict[str, Any]) -> dict[str, Any]:
                 files.append(path)
                 known.add(path)
     entry = policy.get("entry")
+    if roots is None and ".py" in extensions:
+        # v10 Amendment 2: the submitted product is the entry module and what
+        # it imports, not every .py file in the workspace. Before this, an
+        # agent's own `subprocess`-based test driver zeroed two otherwise
+        # working runs. An explicit `audit.roots` still wins.
+        python_entry = str(entry or adapter.get("build", {}).get("artifact") or "")
+        if python_entry.endswith(".py"):
+            scanned = python_import_closure(workspace, workspace / python_entry, prefixes)
+            files = [path for path in files if path.suffix != ".py"]
+            known = {path.resolve() for path in files}
+            for path in scanned:
+                if path not in known:
+                    files.append(path)
+                    known.add(path)
     if isinstance(entry, str) and entry and extensions & NODE_SOURCE_EXTENSIONS:
         known = {path.resolve() for path in files}
         for path in node_import_closure(workspace, workspace / entry, prefixes):
