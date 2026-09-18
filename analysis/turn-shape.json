@@ -1,0 +1,245 @@
+[
+  {
+    "run": "v12-sql-python-r1",
+    "turns": 20,
+    "tools": 7,
+    "tools_per_turn": 0.35,
+    "generated": 480490,
+    "worst_compaction_request": 0,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v10-sql-python-typed-r3",
+    "turns": 46,
+    "tools": 18,
+    "tools_per_turn": 0.39,
+    "generated": 328495,
+    "worst_compaction_request": 306093,
+    "termination": "max_rounds"
+  },
+  {
+    "run": "v10-sql-python-typed-r1",
+    "turns": 14,
+    "tools": 6,
+    "tools_per_turn": 0.43,
+    "generated": 427806,
+    "worst_compaction_request": 401158,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v10-sql-rust-r2",
+    "turns": 32,
+    "tools": 19,
+    "tools_per_turn": 0.59,
+    "generated": 434985,
+    "worst_compaction_request": 313896,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v10-c18-python-typed-r1",
+    "turns": 30,
+    "tools": 21,
+    "tools_per_turn": 0.7,
+    "generated": 434531,
+    "worst_compaction_request": 269448,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v11-sql-python-r1",
+    "turns": 8,
+    "tools": 6,
+    "tools_per_turn": 0.75,
+    "generated": 227588,
+    "worst_compaction_request": 190530,
+    "termination": "context_overflow"
+  },
+  {
+    "run": "v12-sql-python-typed-r1",
+    "turns": 37,
+    "tools": 28,
+    "tools_per_turn": 0.76,
+    "generated": 347936,
+    "worst_compaction_request": 278625,
+    "termination": "context_overflow"
+  },
+  {
+    "run": "v11-sql-rust-r1",
+    "turns": 24,
+    "tools": 19,
+    "tools_per_turn": 0.79,
+    "generated": 254169,
+    "worst_compaction_request": 132902,
+    "termination": "context_overflow"
+  },
+  {
+    "run": "v10-sql-python-typed-r2",
+    "turns": 61,
+    "tools": 50,
+    "tools_per_turn": 0.82,
+    "generated": 354622,
+    "worst_compaction_request": 155406,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v12-sql-python-r2",
+    "turns": 30,
+    "tools": 25,
+    "tools_per_turn": 0.83,
+    "generated": 252427,
+    "worst_compaction_request": 207482,
+    "termination": "context_overflow"
+  },
+  {
+    "run": "v10-c18-python-typed-r2",
+    "turns": 157,
+    "tools": 156,
+    "tools_per_turn": 0.99,
+    "generated": 427881,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-c18-python-r1",
+    "turns": 183,
+    "tools": 183,
+    "tools_per_turn": 1.0,
+    "generated": 365681,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-c18-python-r2",
+    "turns": 108,
+    "tools": 108,
+    "tools_per_turn": 1.0,
+    "generated": 358034,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-c18-python-r3",
+    "turns": 138,
+    "tools": 138,
+    "tools_per_turn": 1.0,
+    "generated": 303500,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-c18-python-typed-r3",
+    "turns": 185,
+    "tools": 185,
+    "tools_per_turn": 1.0,
+    "generated": 358767,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-sql-python-r3",
+    "turns": 117,
+    "tools": 117,
+    "tools_per_turn": 1.0,
+    "generated": 359851,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-sql-rust-r1",
+    "turns": 239,
+    "tools": 241,
+    "tools_per_turn": 1.01,
+    "generated": 307094,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-c18-rust-r1",
+    "turns": 64,
+    "tools": 65,
+    "tools_per_turn": 1.02,
+    "generated": 282138,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-c18-rust-r2",
+    "turns": 50,
+    "tools": 51,
+    "tools_per_turn": 1.02,
+    "generated": 295485,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-sql-python-r1",
+    "turns": 122,
+    "tools": 124,
+    "tools_per_turn": 1.02,
+    "generated": 288845,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-c18-rust-r3",
+    "turns": 38,
+    "tools": 39,
+    "tools_per_turn": 1.03,
+    "generated": 282684,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v11-sql-python-r2",
+    "turns": 60,
+    "tools": 62,
+    "tools_per_turn": 1.03,
+    "generated": 200828,
+    "worst_compaction_request": 0,
+    "termination": null
+  },
+  {
+    "run": "v11-sql-python-typed-r1",
+    "turns": 211,
+    "tools": 220,
+    "tools_per_turn": 1.04,
+    "generated": 403456,
+    "worst_compaction_request": 0,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v12-sql-rust-r1",
+    "turns": 118,
+    "tools": 123,
+    "tools_per_turn": 1.04,
+    "generated": 380205,
+    "worst_compaction_request": 0,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v11-sql-rust-r2",
+    "turns": 343,
+    "tools": 360,
+    "tools_per_turn": 1.05,
+    "generated": 388423,
+    "worst_compaction_request": 0,
+    "termination": "wall_time_budget"
+  },
+  {
+    "run": "v10-sql-python-r2",
+    "turns": 220,
+    "tools": 236,
+    "tools_per_turn": 1.07,
+    "generated": 298711,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  },
+  {
+    "run": "v10-sql-rust-r3",
+    "turns": 145,
+    "tools": 157,
+    "tools_per_turn": 1.08,
+    "generated": 300318,
+    "worst_compaction_request": 0,
+    "termination": "round_timeout"
+  }
+]

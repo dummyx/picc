@@ -1602,3 +1602,64 @@ their condition. In decreasing order of damage:
 Each needs a new manifest id and a fresh experiment plan. Until then, the
 typing result of 16.3 should be treated as a hypothesis with a plausible
 mechanism, not a settled effect.
+
+## 17. The v11 and v12 attempts: why they were stopped, and what they showed
+
+Neither batch completed. Both were stopped deliberately, and the reason is
+worth more than the runs would have been.
+
+### 17.1 What was tried
+
+v11 (`docs/EXPERIMENT_PLAN_v11.md`) repeated the v10 design on a harness with
+the four section-16.5 fixes applied. It was stopped after four SQL runs when
+two died with the new `context_overflow` termination.
+
+v12 (`docs/EXPERIMENT_PLAN_v12.md`) repeated it again after correcting a
+configuration defect: `LOCAL_MAX_OUTPUT` had been 65536 against a 131072
+window, exactly half, while Pi's compaction reserve was 16384, so one turn
+could overshoot the compaction trigger. The cap went to 32768, the reserve to
+40960, and `scripts/common.py:context_budget_problems` now refuses to start a
+run whose output cap exceeds its compaction reserve. v12 was stopped after
+five SQL runs, four of them zero, when the same deaths reappeared.
+
+### 17.2 The real predictor: turn shape, not token volume
+
+`analysis/turn_shape.py` profiles every v10-v12 run. Compaction failure does
+not track how much the model generated; the survivors generated more. It
+tracks how often the model *acted*:
+
+| Tool calls per assistant turn | Runs | Compaction failed |
+|---|---:|---:|
+| 0.35 to 0.83 | 10 | 9 |
+| 0.99 to 1.08 | 17 | 0 |
+
+A run that acts on essentially every turn is fine. A run that thinks without
+acting on a quarter of its turns accumulates a transcript that is dropped from
+the prompt but must still be summarized: in `v12-sql-python-typed-r1` the
+visible prompt was 127052 tokens while the summarization request was 278625,
+more than twice the window. Once that request exceeds the context the provider
+returns 400 and the session cannot recover.
+
+Halving the output cap did not remove this. It doubled the number of rounds
+before it happened: those runs died at round 2-3 under the old cap and at
+round 7-8 under the new one. The cap change was correct and insufficient.
+
+### 17.3 Consequence
+
+No setting available in this harness removes the cause. The levers are the
+thinking level, which changes model behaviour and breaks comparison with v3
+onward, or incremental summarization inside Pi, which is upstream. Until one
+of them moves, a two-hour session on these tasks is a lottery over whether the
+model happens to think in acted or unacted turns, and a typing contrast run
+across it measures that lottery.
+
+The v10 result of section 16 stands as reported, with the confounds named
+there. It has not been reproduced, and on the evidence here it should not be
+treated as established.
+
+### 17.4 Retained artifacts
+
+`runs/v11-sql-*` (four runs) and `runs/v12-sql-*` (five runs) are kept as
+evidence of the failure and excluded from every summary: their manifests
+(`picc-sql-minimal-v2`, `-v3`) are not the manifests of any completed batch.
+`analysis/turn-shape.json` holds the profile table.
