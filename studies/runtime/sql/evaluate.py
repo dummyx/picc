@@ -61,6 +61,9 @@ from candidate_runtime import (  # noqa: E402
 )
 
 DEFAULT_SCRIPT_TIMEOUT_SECONDS = 120
+# The SQL analogue of the compiler evaluator's hang short-circuit: a candidate
+# that times out on this many scripts in a row is hanging on every input.
+MAX_CONSECUTIVE_SCRIPT_TIMEOUTS = 3
 FAILURE_SAMPLE = 8
 
 
@@ -331,9 +334,24 @@ def main() -> int:
             and artifact.stat().st_size > 0
         )
 
+    short_circuited = 0
     if build_ok:
+        consecutive_timeouts = 0
         for test, script in zip(selected, scripts, strict=True):
-            results.append(run_script(workspace, adapter, artifact, script, test, timeout))
+            if consecutive_timeouts >= MAX_CONSECUTIVE_SCRIPT_TIMEOUTS:
+                short_circuited += 1
+                results.append(
+                    ScriptResult(
+                        str(test["id"]), int(test["stage"]), str(test.get("validity", "valid")), False, 0.0,
+                        "script_timeout",
+                        f"not run: the candidate timed out on {MAX_CONSECUTIVE_SCRIPT_TIMEOUTS} consecutive scripts",
+                        0.0, 0.0, None,
+                    )
+                )
+                continue
+            result = run_script(workspace, adapter, artifact, script, test, timeout)
+            consecutive_timeouts = consecutive_timeouts + 1 if result.failure_type == "script_timeout" else 0
+            results.append(result)
     else:
         failure_type = "source_audit_failure" if audit["blocking"] else "build_failure"
         detail = (
@@ -378,6 +396,8 @@ def main() -> int:
         "input_policy": {
             "protocol": "sqllogictest records as ;-terminated statements; candidate blocks `ok <N>` / `error <message>`",
             "reference_disagreements_excluded": True,
+            "max_consecutive_script_timeouts": MAX_CONSECUTIVE_SCRIPT_TIMEOUTS,
+            "short_circuited_scripts": short_circuited,
         },
         "summary": summary,
         "tests": [asdict(result) for result in results],

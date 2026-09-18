@@ -162,6 +162,12 @@ def candidate_compile(
     return run_command(command, cwd=workspace, timeout=timeout, env=env)
 
 
+# A candidate that times out on this many tests in a row is hanging on every
+# input; the remaining tests are recorded as compiler timeouts without waiting
+# for each one. Before v11, 281 hidden tests x a 30 s compile timeout exceeded
+# the evaluator's own ceiling and lost a run's score entirely (report 16.4).
+MAX_CONSECUTIVE_COMPILER_TIMEOUTS = 25
+
 FIXTURE_KINDS = ("c", "assembly", "header")
 LINK_FLAG_PATTERN = re.compile(r"-l[a-z0-9_]+")
 
@@ -533,8 +539,21 @@ def main() -> int:
             and artifact.stat().st_size > 0
         )
 
+    short_circuited = 0
     if build_ok:
+        consecutive_timeouts = 0
         for test, source, fixtures, flags in zip(selected, test_sources, test_fixtures, test_link_flags, strict=True):
+            if consecutive_timeouts >= MAX_CONSECUTIVE_COMPILER_TIMEOUTS:
+                short_circuited += 1
+                results.append(
+                    TestResult(
+                        str(test["id"]), int(test["stage"]), str(test["validity"]), False,
+                        "compiler_timeout",
+                        f"not run: the candidate timed out on {MAX_CONSECUTIVE_COMPILER_TIMEOUTS} consecutive tests",
+                        0.0, 0.0, None,
+                    )
+                )
+                continue
             if test["validity"] == "valid":
                 result = evaluate_valid(
                     workspace,
@@ -550,6 +569,7 @@ def main() -> int:
                 )
             else:
                 result = evaluate_invalid(workspace, adapter, artifact, source, test, args.compile_timeout)
+            consecutive_timeouts = consecutive_timeouts + 1 if result.failure_type == "compiler_timeout" else 0
             results.append(result)
     else:
         failure_type = "source_audit_failure" if audit["blocking"] else "build_failure"
@@ -597,7 +617,11 @@ def main() -> int:
         },
         "source_audit": audit,
         "build": asdict(build_result) if build_result else None,
-        "input_policy": input_policy(),
+        "input_policy": {
+            **input_policy(),
+            "max_consecutive_compiler_timeouts": MAX_CONSECUTIVE_COMPILER_TIMEOUTS,
+            "short_circuited_tests": short_circuited,
+        },
         "summary": summary,
         "tests": [asdict(result) for result in results],
     }

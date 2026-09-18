@@ -106,6 +106,34 @@ def initialize_workspace(workspace: Path) -> None:
     run(["git", "commit", "-m", "harness: initialize empty product repository"], cwd=workspace)
 
 
+def round_evidence(events_path: Path | None) -> dict[str, Any]:
+    """What a finished round shows in its Pi event stream.
+
+    ``tool_calls``: tool executions the agent started.
+    ``overflow_recovery_failed``: Pi's context-overflow compaction reported an
+    error, which in v10 was permanent for the session (report 16.4).
+    A missing or unreadable stream reports nothing rather than failing a run.
+    """
+    evidence = {"tool_calls": 0, "overflow_recovery_failed": False}
+    if events_path is None:
+        return evidence
+    try:
+        with events_path.open("r", encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                if '"tool_execution_start"' in line:
+                    evidence["tool_calls"] += 1
+                elif '"compaction_end"' in line:
+                    try:
+                        event = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    if event.get("type") == "compaction_end" and (event.get("errorMessage") or "").strip():
+                        evidence["overflow_recovery_failed"] = True
+    except OSError:
+        pass
+    return evidence
+
+
 def snapshot_workspace(workspace: Path, round_number: int) -> dict[str, Any]:
     run(["git", "add", "-A"], cwd=workspace)
     run(
@@ -1049,6 +1077,8 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
     termination_reason = "max_rounds"
     last_round_attempted = start_round - 1
     consecutive_timeouts = 0
+    consecutive_dead_rounds = 0
+    evaluation_seconds = 0.0
     # Configurations frozen before this setting existed must stay resumable, so
     # a missing key defaults rather than failing the run.
     stall_limit = max(
@@ -1057,13 +1087,29 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
         if "MAX_CONSECUTIVE_ROUND_TIMEOUTS" in config
         else 2,
     )
+    # Configurations frozen before this setting existed stay resumable.
+    dead_round_limit = max(
+        1,
+        config_int(config, "MAX_CONSECUTIVE_DEAD_ROUNDS")
+        if "MAX_CONSECUTIVE_DEAD_ROUNDS" in config
+        else 2,
+    )
 
     def cumulative_elapsed() -> float:
         return elapsed_before + (time.monotonic() - started_monotonic)
 
+    def agent_deadline() -> float:
+        """The wall deadline, less the evaluation time spent so far.
+
+        Scoring a snapshot is the harness's work, not the agent's. Before v11
+        it was charged to the run's budget, so a candidate that was slow to
+        evaluate lost the time twice (report 16.4).
+        """
+        return deadline + evaluation_seconds
+
     try:
         for round_number in range(start_round, max_rounds):
-            remaining_seconds = max(0.0, deadline - time.monotonic())
+            remaining_seconds = max(0.0, agent_deadline() - time.monotonic())
             if remaining_seconds <= 0:
                 termination_reason = "wall_time_budget"
                 break
@@ -1105,7 +1151,18 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 max_stage=max_stage,
             )
             snapshot = snapshot_workspace(workspace, round_number)
+            evidence = round_evidence(Path(round_result["events"]) if round_result.get("events") else None)
+            # The snapshot commits the whole workspace, so a round that wrote
+            # anything shows a non-empty diff against the previous snapshot.
+            produced_work = bool(
+                int(snapshot.get("changed_files", 0) or 0)
+                or int(snapshot.get("insertions", 0) or 0)
+                or int(snapshot.get("deletions", 0) or 0)
+            )
+            evidence["changed_workspace"] = produced_work
+            snapshot["round_evidence"] = evidence
             print(f"[{run_id}] round {round_number:03d}: visible evaluation", flush=True)
+            evaluation_started = time.monotonic()
             visible = run_visible_evaluation(
                 config=config,
                 workspace=workspace,
@@ -1116,6 +1173,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 max_stage=max_stage,
                 commit=str(snapshot["git_commit"]),
             )
+            evaluation_seconds += time.monotonic() - evaluation_started
             last_visible = visible
             snapshot.update(
                 {
@@ -1134,12 +1192,28 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 flush=True,
             )
 
-            if round_result["timed_out"]:
-                # A timed-out round is usually the agent blocking on a runaway
-                # child process of its own making, not a dead session. Keep the
-                # snapshot and let the next round continue the same Pi session,
-                # so one stall costs a round rather than the whole run. Only a
-                # session that stalls repeatedly is treated as terminal.
+            # A session whose context-overflow recovery has failed emits
+            # truncated thinking and no tool call for the rest of its budget
+            # (v10, report 16.4). Two such rounds end the run instead.
+            if evidence["overflow_recovery_failed"] and evidence["tool_calls"] == 0 and not produced_work:
+                consecutive_dead_rounds += 1
+                print(
+                    f"[{run_id}] round {round_number:03d}: context-overflow recovery failed, no work "
+                    f"({consecutive_dead_rounds}/{dead_round_limit} consecutive)",
+                    flush=True,
+                )
+                if consecutive_dead_rounds >= dead_round_limit:
+                    termination_reason = "context_overflow"
+                    break
+            else:
+                consecutive_dead_rounds = 0
+
+            if round_result["timed_out"] and not produced_work:
+                # A capped round that changed nothing in the workspace is a
+                # stall: the agent is blocked on a runaway child process or is
+                # not acting. A capped round that *did* change the workspace is
+                # the agent working through its round, and before v11 it ended
+                # productive runs 29 minutes early (report 16.4).
                 consecutive_timeouts += 1
                 print(
                     f"[{run_id}] round {round_number:03d}: stalled "
@@ -1151,7 +1225,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                     break
             else:
                 consecutive_timeouts = 0
-                if round_result["returncode"] != 0:
+                if not round_result["timed_out"] and round_result["returncode"] != 0:
                     termination_reason = "pi_process_failure"
                     break
 
@@ -1164,7 +1238,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             else:
                 perfect_first_round = None
 
-            if time.monotonic() >= deadline:
+            if time.monotonic() >= agent_deadline():
                 termination_reason = "wall_time_budget"
                 break
     except KeyboardInterrupt:
