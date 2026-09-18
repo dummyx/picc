@@ -127,7 +127,7 @@ allowed only when a completed run ended in `round_timeout` or
 the same named Pi session with the unchanged continuation prompt. It is not a
 new run, does not erase the original outcome, and sets `protocol_comparable` to
 false. A resumed main trajectory must be analyzed separately rather than
-included among the pre-registered independent repetitions.
+included among the planned in advance independent repetitions.
 
 Resume is refused unless all of the following still hold:
 
@@ -145,7 +145,7 @@ execution attempt and the operator intervention in `metadata.json`. Hidden
 evaluation remains post-hoc: once postprocessing begins, that run cannot be
 resumed.
 
-A run may be excluded only under a pre-registered rule, such as failure before
+A run may be excluded only under a planned in advance rule, such as failure before
 any successful provider response due to a demonstrable harness defect. Model
 errors, bad plans, generated build failures, and ordinary provider throttling
 are outcomes, not exclusion reasons.

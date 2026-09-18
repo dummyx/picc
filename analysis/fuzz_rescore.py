@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Aggregate a differential-fuzz re-score of stored cohort finals.
+"""Aggregate a differential-fuzz re-score of stored batch finals.
 
 Input: one JSON per run written by `analysis/fuzz_differential.py --json`, named
-`<run-id>.json`, in --results-dir. Each run's cohort, condition, replicate, and
+`<run-id>.json`, in --results-dir. Each run's batch, condition, replicate, and
 corpus hidden score are read from runs/<id>/.
 
 Output: a Markdown report and a JSON table comparing the corpus oracle (hidden
 macro score) with the fuzz oracle (share of generated programs on which the
-candidate agrees with GCC), including the pre-registered paired contrasts under
-both oracles and the within-cohort rank agreement between them. Descriptive
-only: the fuzz pass rate is not the pre-registered primary endpoint.
+candidate agrees with GCC), including the planned in advance paired contrasts under
+both oracles and the within-batch rank agreement between them. Descriptive
+only: the fuzz pass rate is not the planned in advance primary endpoint.
 
 Usage:
     python3 analysis/fuzz_rescore.py --results-dir <dir> \
@@ -28,7 +28,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RUNS_ROOT = REPO_ROOT / "runs"
 
-COHORTS = {
+BATCHES = {
     "v2": {"title": "v2 (pilot profile, stages 1–6, Rust)", "baseline": "baseline", "contrast": None},
     "v3": {"title": "v3 (main profile, stages 1–10, Rust)", "baseline": "baseline", "contrast": ("tests-none", "baseline")},
     "v4": {"title": "v4 (main profile, stages 1–10, TypeScript vs JavaScript)", "baseline": "js-untyped", "contrast": ("ts-strict", "js-untyped")},
@@ -120,7 +120,7 @@ def collect(results_dir: Path, stages_dir: Path | None = None) -> list[dict[str,
             continue
         result = load_json(path)
         condition = study.get("condition") or {}
-        cohort = run_id.split("-", 1)[0]
+        batch = run_id.split("-", 1)[0]
         count = int(result.get("count") or result.get("generated") or 0)
         mismatches = result.get("mismatches") or []
         if not count and isinstance(mismatches, list):
@@ -137,7 +137,7 @@ def collect(results_dir: Path, stages_dir: Path | None = None) -> list[dict[str,
         rows.append(
             {
                 "run_id": run_id,
-                "cohort": cohort,
+                "batch": batch,
                 "condition": condition.get("id"),
                 "language": (condition.get("candidate") or {}).get("language"),
                 "replicate": metadata.get("replicate"),
@@ -171,23 +171,23 @@ def fmt(value: Any, digits: int = 4) -> str:
 
 def render(rows: list[dict[str, Any]]) -> tuple[str, dict[str, Any]]:
     lines = [
-        "# Fuzz re-score of stored cohort finals",
+        "# Fuzz re-score of stored batch finals",
         "",
-        "Every cohort final snapshot was exported from its run workspace, rebuilt inside the pinned",
+        "Every batch final snapshot was exported from its run workspace, rebuilt inside the pinned",
         "image exactly as the evaluator builds it, and fuzzed on the host against GCC with",
-        "`analysis/fuzz_differential.py` (seed 20260830, stage limit = the cohort's task scope).",
+        "`analysis/fuzz_differential.py` (seed 20260830, stage limit = the batch's task scope).",
         "**Fuzz pass rate** = share of generated programs on which the candidate's compiled output",
         "agrees with GCC's exit status and stdout; rejecting a valid program, failing to assemble,",
         "crashing, and wrong results all count as failures. **Full scope** = 300 programs using the",
-        "cohort's whole feature set at once, so one broken feature fails every program. **Fuzz macro**",
+        "batch's whole feature set at once, so one broken feature fails every program. **Fuzz macro**",
         "= mean over stages 1..K of the pass rate on 100 programs restricted to that stage's cumulative",
-        "subset, the fuzz analogue of the corpus macro score. The corpus column is the pre-registered",
+        "subset, the fuzz analogue of the corpus macro score. The corpus column is the planned in advance",
         "hidden macro score. This is a descriptive re-score, not a change to any primary endpoint.",
         "",
     ]
-    summary: dict[str, Any] = {"cohorts": {}, "runs": rows}
-    for cohort, spec in COHORTS.items():
-        group = [row for row in rows if row["cohort"] == cohort]
+    summary: dict[str, Any] = {"batches": {}, "runs": rows}
+    for batch, spec in BATCHES.items():
+        group = [row for row in rows if row["batch"] == batch]
         if not group:
             continue
         group.sort(key=lambda r: (str(r["condition"]), r["replicate"] or 0))
@@ -208,12 +208,12 @@ def render(rows: list[dict[str, Any]]) -> tuple[str, dict[str, Any]]:
             return row["fuzz_macro"] if row["fuzz_macro"] is not None else row["fuzz_pass_rate"]
 
         lines += ["| Condition | n | Corpus median | Fuzz macro median | Fuzz macro range | Full-scope fuzz median |", "|---|---:|---:|---:|---|---:|"]
-        cohort_summary: dict[str, Any] = {"conditions": {}, "contrast": None, "spearman_corpus_vs_fuzz_macro": None, "spearman_corpus_vs_fuzz_full": None}
+        batch_summary: dict[str, Any] = {"conditions": {}, "contrast": None, "spearman_corpus_vs_fuzz_macro": None, "spearman_corpus_vs_fuzz_full": None}
         for condition, crow in sorted(by_condition.items()):
             corpus_values = [r["corpus_hidden_reported"] for r in crow if r["corpus_hidden_reported"] is not None]
             macro_values = [fuzz_key(r) for r in crow if fuzz_key(r) is not None]
             full_values = [r["fuzz_pass_rate"] for r in crow if r["fuzz_pass_rate"] is not None]
-            cohort_summary["conditions"][condition] = {
+            batch_summary["conditions"][condition] = {
                 "n": len(crow),
                 "corpus_median": median(corpus_values),
                 "fuzz_macro_median": median(macro_values),
@@ -228,16 +228,16 @@ def render(rows: list[dict[str, Any]]) -> tuple[str, dict[str, Any]]:
         rho_macro = spearman([r["corpus_hidden_reported"] for r in paired], [fuzz_key(r) for r in paired])
         paired_full = [r for r in group if r["corpus_hidden_reported"] is not None and r["fuzz_pass_rate"] is not None]
         rho_full = spearman([r["corpus_hidden_reported"] for r in paired_full], [r["fuzz_pass_rate"] for r in paired_full])
-        cohort_summary["spearman_corpus_vs_fuzz_macro"] = rho_macro
-        cohort_summary["spearman_corpus_vs_fuzz_full"] = rho_full
-        lines.append(f"Rank agreement with the corpus across the cohort's {len(paired)} finals (Spearman ρ): fuzz macro {fmt(rho_macro, 3)}, full-scope fuzz {fmt(rho_full, 3)}.")
+        batch_summary["spearman_corpus_vs_fuzz_macro"] = rho_macro
+        batch_summary["spearman_corpus_vs_fuzz_full"] = rho_full
+        lines.append(f"Rank agreement with the corpus across the batch's {len(paired)} finals (Spearman ρ): fuzz macro {fmt(rho_macro, 3)}, full-scope fuzz {fmt(rho_full, 3)}.")
         lines.append("")
 
         contrast = spec["contrast"]
         if contrast:
             variant, base = contrast
             deltas = []
-            lines += [f"Pre-registered contrast `{variant}` − `{base}`, paired by replicate:", "", "| Rep | Corpus Δ | Fuzz macro Δ | Full-scope fuzz Δ |", "|---:|---:|---:|---:|"]
+            lines += [f"Planned in advance contrast `{variant}` − `{base}`, paired by replicate:", "", "| Rep | Corpus Δ | Fuzz macro Δ | Full-scope fuzz Δ |", "|---:|---:|---:|---:|"]
             for rep in sorted({r["replicate"] for r in group}):
                 v = next((r for r in group if r["condition"] == variant and r["replicate"] == rep), None)
                 b = next((r for r in group if r["condition"] == base and r["replicate"] == rep), None)
@@ -253,9 +253,9 @@ def render(rows: list[dict[str, Any]]) -> tuple[str, dict[str, Any]]:
                 mm = statistics.median([d["fuzz_macro_delta"] for d in deltas])
                 fm = statistics.median([d["fuzz_full_delta"] for d in deltas])
                 lines.append(f"| median | {cm:+.4f} | {mm:+.4f} | {fm:+.4f} |")
-                cohort_summary["contrast"] = {"variant": variant, "baseline": base, "deltas": deltas, "corpus_median": round(cm, 4), "fuzz_macro_median": round(mm, 4), "fuzz_full_median": round(fm, 4)}
+                batch_summary["contrast"] = {"variant": variant, "baseline": base, "deltas": deltas, "corpus_median": round(cm, 4), "fuzz_macro_median": round(mm, 4), "fuzz_full_median": round(fm, 4)}
             lines.append("")
-        summary["cohorts"][cohort] = cohort_summary
+        summary["batches"][batch] = batch_summary
 
     lines += [
         "\\* Corpus score recorded as 0.0 by an audit false positive and corrected post hoc (report §3.2).",

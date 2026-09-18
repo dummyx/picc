@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Exploratory cross-cohort view of the non-test dimensions: tokens, time, and
+"""Exploratory cross-batch view of the non-test dimensions: tokens, time, and
 code characteristics of every main run (v2–v5), and how they relate to the two
-correctness oracles. Descriptive only; nothing here was pre-registered.
+correctness oracles. Descriptive only; nothing here was planned in advance.
 
 Usage: python3 analysis/dimensions.py [--runs runs] [--output analysis]
 """
@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import process_metrics  # noqa: E402
 
-COHORT_OF = {"v2": "v2 prompt/spec (stages 1–6)", "v3": "v3 tests (1–10)", "v4": "v4 typing (1–10)", "v5": "v5 tests, revised oracle (1–10)"}
+BATCH_OF = {"v2": "v2 prompt/spec (stages 1–6)", "v3": "v3 tests (1–10)", "v4": "v4 typing (1–10)", "v5": "v5 tests, revised oracle (1–10)"}
 SOURCE_GLOBS = {"rust": ["src/**/*.rs"], "typescript": ["src/**/*.ts"], "javascript": ["src/**/*.js"]}
 FN_PATTERNS = {
     "rust": re.compile(r"^\s*(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?(?:unsafe\s+)?(?:extern\s+\"C\"\s+)?fn\s+[A-Za-z_]\w*"),
@@ -178,11 +178,11 @@ def analyse(run: Path, rescore: dict[str, Any], bridge: dict[str, Any]) -> dict[
     hidden = load_jsonl(run / "artifacts" / "hidden-scores.jsonl")
     corpus = float(hidden[-1]["summary"]["score"]) if hidden else None
     fuzz, fuzz_source = fuzz_lookup(run, run_id, rescore, bridge)
-    cohort = run_id.split("-")[0]
+    batch = run_id.split("-")[0]
     condition = process.get("condition") or re.sub(r"^v\d+-|-r\d+$", "", run_id)
     row = {
         "run_id": run_id,
-        "cohort": cohort,
+        "batch": batch,
         "condition": condition,
         "language": language,
         "replicate": metadata.get("replicate"),
@@ -285,25 +285,25 @@ DIMS = [
 
 def render(rows: list[dict[str, Any]]) -> str:
     lines = ["# Beyond the tests: tokens, time, and code across every main run", "",
-             "Exploratory and descriptive (not pre-registered). One row per completed main run of the v2–v5 cohorts; ",
+             "Exploratory and descriptive (not planned in advance). One row per completed main run of the v2–v5 batches; ",
              "smoke/pilot runs excluded. Corpus scores are as stored (v2–v4 under the original oracle, v5 revised); fuzz macro is ",
              "the post-hoc re-score for v2–v4 (50 programs per stage) and the in-harness score for v5 (100 per stage). ",
              "Code characteristics are regex approximations over the final `src/` tree; function boundaries are heuristic.", ""]
-    lines += ["## Per cohort and condition (medians)", ""]
+    lines += ["## Per batch and condition (medians)", ""]
     groups: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for r in rows:
-        groups[(r["cohort"], r["condition"])].append(r)
+        groups[(r["batch"], r["condition"])].append(r)
     cols = ["fuzz_macro", "corpus_hidden", "output_tokens", "active_minutes", "idle_minutes", "assistant_turns", "tool_calls", "source_loc", "functions", "mean_function_loc", "self_test_programs", "first_build_minutes"]
-    lines.append("| cohort | condition | n | " + " | ".join(c.replace("_", " ") for c in cols) + " |")
+    lines.append("| batch | condition | n | " + " | ".join(c.replace("_", " ") for c in cols) + " |")
     lines.append("|---|---|---:|" + "---:|" * len(cols))
-    for (cohort, condition), rs in sorted(groups.items()):
-        lines.append(f"| {cohort} | {condition} | {len(rs)} | " + " | ".join(fmt(median_or_none([r.get(c) for r in rs])) for c in cols) + " |")
+    for (batch, condition), rs in sorted(groups.items()):
+        lines.append(f"| {batch} | {condition} | {len(rs)} | " + " | ".join(fmt(median_or_none([r.get(c) for r in rs])) for c in cols) + " |")
     lines += ["", "## What moves with correctness (Spearman rank correlation)", "",
-              "Pooled over all main runs, and within v5 alone (the only cohort scored in-harness by both oracles). ",
+              "Pooled over all main runs, and within v5 alone (the only batch scored in-harness by both oracles). ",
               "With n this small treat |rho| below about 0.4 as noise.", ""]
     lines.append("| dimension | pooled n | rho vs fuzz | rho vs corpus | v5 n | v5 rho vs fuzz | v5 rho vs corpus |")
     lines.append("|---|---:|---:|---:|---:|---:|---:|")
-    v5 = [r for r in rows if r["cohort"] == "v5"]
+    v5 = [r for r in rows if r["batch"] == "v5"]
     for key, label in DIMS:
         def pair(rs: list[dict[str, Any]], outcome: str) -> tuple[int, float | None]:
             xs = [(r[key], r[outcome]) for r in rs if isinstance(r.get(key), (int, float)) and isinstance(r.get(outcome), (int, float))]
@@ -322,22 +322,22 @@ def render(rows: list[dict[str, Any]]) -> str:
     for key, label in DIMS:
         xs = [(r[key], r["fuzz_macro"], r["corpus_hidden"]) for r in clean if isinstance(r.get(key), (int, float)) and isinstance(r.get("fuzz_macro"), (int, float)) and isinstance(r.get("corpus_hidden"), (int, float))]
         lines.append(f"| {label} | {len(xs)} | {fmt(spearman([a for a, _, _ in xs], [b for _, b, _ in xs]))} | {fmt(spearman([a for a, _, _ in xs], [c for _, _, c in xs]))} |")
-    lines += ["", "## Paired within-cohort contrasts (variant minus its baseline, median over replicates)", "",
+    lines += ["", "## Paired within-batch contrasts (variant minus its baseline, median over replicates)", "",
               "Same replicate number = same block. Positive means the variant used or produced more.", ""]
     pairs = [("v2", "baseline", "prompt-minimal"), ("v2", "baseline", "spec-brief"), ("v2", "baseline", "spec-inline"), ("v2", "baseline", "spec-architecture"),
              ("v3", "baseline", "tests-none"), ("v4", "js-untyped", "ts-strict"), ("v5", "baseline", "tests-none")]
     pcols = ["fuzz_macro", "output_tokens", "active_minutes", "assistant_turns", "tool_calls", "source_loc", "functions", "self_test_loc", "compactions"]
-    lines.append("| cohort | contrast | pairs | " + " | ".join(c.replace("_", " ") for c in pcols) + " |")
+    lines.append("| batch | contrast | pairs | " + " | ".join(c.replace("_", " ") for c in pcols) + " |")
     lines.append("|---|---|---:|" + "---:|" * len(pcols))
-    by = {(r["cohort"], r["condition"], r["replicate"]): r for r in rows}
-    for cohort, base, variant in pairs:
-        reps = sorted({k[2] for k in by if k[0] == cohort and k[1] == base} & {k[2] for k in by if k[0] == cohort and k[1] == variant})
+    by = {(r["batch"], r["condition"], r["replicate"]): r for r in rows}
+    for batch, base, variant in pairs:
+        reps = sorted({k[2] for k in by if k[0] == batch and k[1] == base} & {k[2] for k in by if k[0] == batch and k[1] == variant})
         cells = []
         for c in pcols:
-            deltas = [by[(cohort, variant, rep)][c] - by[(cohort, base, rep)][c] for rep in reps
-                      if isinstance(by[(cohort, variant, rep)].get(c), (int, float)) and isinstance(by[(cohort, base, rep)].get(c), (int, float))]
+            deltas = [by[(batch, variant, rep)][c] - by[(batch, base, rep)][c] for rep in reps
+                      if isinstance(by[(batch, variant, rep)].get(c), (int, float)) and isinstance(by[(batch, base, rep)].get(c), (int, float))]
             cells.append(("+" if (median_or_none(deltas) or 0) > 0 else "") + fmt(median_or_none(deltas)) if deltas else "—")
-        lines.append(f"| {cohort} | {variant} − {base} | {len(reps)} | " + " | ".join(cells) + " |")
+        lines.append(f"| {batch} | {variant} − {base} | {len(reps)} | " + " | ".join(cells) + " |")
     lines += ["", "## Spread of the dimensions (all main runs)", ""]
     lines.append("| dimension | min | median | max |")
     lines.append("|---|---:|---:|---:|")
@@ -346,10 +346,10 @@ def render(rows: list[dict[str, Any]]) -> str:
         if vals:
             lines.append(f"| {label} | {fmt(min(vals))} | {fmt(median_or_none(vals))} | {fmt(max(vals))} |")
     lines += ["", "## Every run", ""]
-    every = ["cohort", "condition", "replicate", "fuzz_macro", "corpus_hidden", "output_tokens", "thinking_share", "active_minutes", "idle_minutes", "assistant_turns", "tool_calls", "first_build_minutes", "source_loc", "source_files", "functions", "mean_function_loc", "max_function_loc", "branches_per_100_loc", "comment_ratio", "unwrap_or_expect", "self_test_programs", "self_test_loc", "median_test_compile_ms", "binary_kb"]
+    every = ["batch", "condition", "replicate", "fuzz_macro", "corpus_hidden", "output_tokens", "thinking_share", "active_minutes", "idle_minutes", "assistant_turns", "tool_calls", "first_build_minutes", "source_loc", "source_files", "functions", "mean_function_loc", "max_function_loc", "branches_per_100_loc", "comment_ratio", "unwrap_or_expect", "self_test_programs", "self_test_loc", "median_test_compile_ms", "binary_kb"]
     lines.append("| run | " + " | ".join(c.replace("_", " ") for c in every) + " |")
     lines.append("|---|" + "---:|" * len(every))
-    for r in sorted(rows, key=lambda r: (r["cohort"], r["condition"], r["replicate"] or 0)):
+    for r in sorted(rows, key=lambda r: (r["batch"], r["condition"], r["replicate"] or 0)):
         lines.append(f"| {r['run_id']} | " + " | ".join(fmt(r.get(c)) for c in every) + " |")
     return "\n".join(lines) + "\n"
 

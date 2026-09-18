@@ -108,7 +108,7 @@ def make_run(
     last_buildable_fuzz: object = "default",
 ) -> Path:
     # A complete run carries a fuzz-oracle ledger for its final snapshot; pass
-    # fuzz=None to build a run without one (older cohorts) and a dict to tamper.
+    # fuzz=None to build a run without one (older batches) and a dict to tamper.
     if fuzz == "default":
         fuzz = {"rates": [1.0]}
     run_dir = runs_root / run_id
@@ -644,17 +644,17 @@ class PrimarySummaryTests(unittest.TestCase):
         self.assertEqual(row["hidden_evaluation_rounds"], 1)
         self.assertAlmostEqual(row["hidden_auc"], 0.25)
 
-    def test_model_cohort_drift_is_a_hard_error(self) -> None:
-        first_dir = make_run(self.runs, "cohort-r1", self.study, replicate=1)
-        second_dir = make_run(self.runs, "cohort-r2", self.study, replicate=2)
+    def test_model_batch_drift_is_a_hard_error(self) -> None:
+        first_dir = make_run(self.runs, "batch-r1", self.study, replicate=1)
+        second_dir = make_run(self.runs, "batch-r2", self.study, replicate=2)
         first, _ = self.collect(first_dir)
         second, _ = self.collect(second_dir)
         assert first is not None and second is not None
-        summarize_study.reject_cohort_drift([first, second])
+        summarize_study.reject_batch_drift([first, second])
 
         second["model_id"] = "different-model"
         with self.assertRaisesRegex(summarize_study.SummaryError, "model_id"):
-            summarize_study.reject_cohort_drift([first, second])
+            summarize_study.reject_batch_drift([first, second])
 
     def test_paired_deltas_use_the_declared_baseline_condition(self) -> None:
         rows = [

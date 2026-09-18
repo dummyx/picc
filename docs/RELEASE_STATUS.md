@@ -30,4 +30,4 @@ and `make auth-check` on the experiment host:
 - executing an end-to-end Pi trajectory.
 
 Do not start reportable runs until `make setup` and `make auth-check` both pass.
-Record the resulting Docker image ID and test manifests in the pre-registration.
+Record the resulting Docker image ID and test manifests in the experiment plan.

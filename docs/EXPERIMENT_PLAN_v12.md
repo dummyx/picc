@@ -1,4 +1,4 @@
-# Pre-registration: v12 cohort (supersedes v11, which was aborted)
+# Experiment plan: v12 batch (supersedes v11, which was aborted)
 
 Status: frozen by the commit that adds this file, 2026-09-19, before the
 first main run.
@@ -18,7 +18,7 @@ which the summarization request carries more than the context holds. The
 observed failing requests were 132902, 152051, and 190530 tokens against a
 131072 window; the provider returned 400 and every later round was dead.
 
-The discriminator across both cohorts is exact:
+The discriminator across both batches is exact:
 
 | Outcome | Turns truncated at the 65536 cap |
 |---|---|
@@ -31,7 +31,7 @@ They made the failure cheap and legible; they did not remove its cause. v11's
 four runs are retained under `runs/` and excluded from every analysis: their
 frozen configuration carries the defect.
 
-## What changed since v11 (commit `ffd351f` plus this cohort's commit)
+## What changed since v11 (commit `ffd351f` plus this batch's commit)
 
 - `LOCAL_MAX_OUTPUT` 65536 -> 32768.
 - `pi/settings.json` compaction `reserveTokens` 16384 -> 40960.
@@ -51,7 +51,7 @@ Mid-turn truncation is now more frequent at 32768 than at 65536. That is the
 accepted trade: truncation costs a round, overflow costs the run. If
 truncation proves disruptive the next lever is the thinking level, which
 changes model behaviour and breaks comparability with v3 onward, so it would
-be its own cohort.
+be its own batch.
 
 ## Everything else is unchanged from v11
 
@@ -60,7 +60,7 @@ three conditions (`rust`, `python`, `python-typed`), three replicates, image
 0.5, 2-hour agent budget, 45-minute round cap, the same contracts, adapters,
 partitions, and pinned selections. Research question, primary endpoint,
 secondary endpoints, interpretation rule, exclusion rules, and intervention
-policy are exactly as written in `docs/PRE_REGISTRATION_v11.md`, which this
+policy are exactly as written in `docs/EXPERIMENT_PLAN_v11.md`, which this
 file supersedes.
 
 Order from `make study-schedule`, SQL first then c18, run ids
@@ -74,7 +74,7 @@ Order from `make study-schedule`, SQL first then c18, run ids
 `make study-summary` per study, then `python3 analysis/v12_results.py` (the
 v11 script repointed at the v3 manifests). The v10 comparison stays
 descriptive: v10, v11, and v12 differ in harness and configuration, so only
-the within-cohort paired typing contrast is interpreted.
+the within-batch paired typing contrast is interpreted.
 
 ## Pilot evidence
 

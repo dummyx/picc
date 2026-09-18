@@ -2,7 +2,7 @@
 """v8 results (pushed test feedback): both oracles on the last buildable
 snapshot (primary) and on the final snapshot (comparability), paired
 contrasts, the harness check, pushed-report counts, and the paired resource
-and code secondary endpoints (docs/PRE_REGISTRATION_v8.md). v6's baseline
+and code secondary endpoints (docs/EXPERIMENT_PLAN_v8.md). v6's baseline
 and tests-none rows are printed alongside for the none / on-demand / pushed
 gradient, never pooled. Read-only.
 

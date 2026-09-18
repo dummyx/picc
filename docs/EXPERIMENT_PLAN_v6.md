@@ -1,11 +1,11 @@
-# Pre-registration: v6 cohort (test availability under the bash default timeout)
+# Experiment plan: v6 batch (test availability under the bash default timeout)
 
 Completed and committed before the first v6 main run. v5 tested the same
-contrast under the revised oracle (`docs/PRE_REGISTRATION_v5.md`) and found no
+contrast under the revised oracle (`docs/EXPERIMENT_PLAN_v5.md`) and found no
 replicable effect, but its outcome distribution was bimodal and the mode was
 set by a condition-blind hazard: an agent bash command that never returned
 (a self-test running a program its own compiler had miscompiled into an
-infinite loop) blocked the session until the round cap. v6 is a fresh cohort
+infinite loop) blocked the session until the round cap. v6 is a fresh batch
 under a separate study manifest with that hazard removed; it is not additional
 replicates of v5.
 
@@ -20,7 +20,7 @@ replicates of v5.
   description changed
 - Date frozen: 2026-09-11
 - Repository commit: `4703d83f84c7973203f02a5ac83e3710437ddc24` (this
-  pre-registration, the manifest version bump, and `analysis/v6_results.py`
+  experiment plan, the manifest version bump, and `analysis/v6_results.py`
   are committed on top; no harness, prompt, partition, adapter, or
   configuration file changes with them)
 - Investigator: dummyx
@@ -36,7 +36,7 @@ shell command can consume a round?
 
 Pre-declared from v3 and v5 (`analysis/report.md` §7, §10): v3 found a
 candidate effect of −0.136 (corpus, n=3); v5 found paired medians of −0.022
-(corpus) and −0.044 (fuzz) with n=4, both inside noise, in a cohort where 5 of
+(corpus) and −0.044 (fuzz) with n=4, both inside noise, in a batch where 5 of
 8 runs lost 30–46 minutes to hangs and the three broken compilers were the
 three runs that lost the most. The expectation is two-sided: either the v5
 null holds with tighter variance, or an effect masked by the hang lottery
@@ -104,7 +104,7 @@ budgets, model, thinking, sampling, oracle, fuzz parameters, preflight.
 
 - Docker image ID: `sha256:2e4e4dc58548e6566eed393082b9be049cc41422dd36c35f00f576d818d9a555`
   (`picc-experiment:0.4`; = image 0.3 + `@cad0p/pi-bash-timeout@0.1.0`;
-  Node.js v24.20.0, TypeScript 5.9.3 present and unused by this cohort's
+  Node.js v24.20.0, TypeScript 5.9.3 present and unused by this batch's
   Rust candidates; base image `node:24.20.0-bookworm-slim@sha256:ba849c60…`)
 - Pi version: `@earendil-works/pi-coding-agent@0.85.1`; Rust toolchain `1.88.0`
 - Provider/model: `local` — llama.cpp `llama-server` build `b1-3cb7ffb`
@@ -188,7 +188,7 @@ Report all eight runs individually, then per-condition median and range for
 both endpoints. For each endpoint separately: a paired median difference with
 magnitude greater than 0.13 is a candidate effect warranting replication; a
 smaller difference is compatible with no detectable effect at this sample
-size. The fuzz macro is bimodal in earlier cohorts (a compiler is either
+size. The fuzz macro is bimodal in earlier batches (a compiler is either
 perfect or broken on a stage), so its paired median is reported alongside the
 number of replicates whose difference exceeds 0.13 in the same direction;
 three of four in one direction is treated as consistent with the corpus
@@ -209,7 +209,7 @@ A run may be excluded only if:
 - [x] a confirmed harness implementation defect invalidates measurement;
 - [x] the preflight reports the endpoint unreachable before the run starts —
   the slot is launched after the endpoint returns rather than skipped. A
-  preflight *mismatch* (a different model file) aborts the cohort instead; it
+  preflight *mismatch* (a different model file) aborts the batch instead; it
   cannot produce an includable run. An endpoint failure after a run's first
   successful model response is an outcome, not an exclusion.
 
@@ -222,7 +222,7 @@ commands cut by the default timeout.
 - No prompts beyond the frozen initial/continuation messages.
 - No workspace edits after start.
 - No `.env`, configuration, prompt, partition, adapter, settings, image, or
-  script changes for the duration of the cohort.
+  script changes for the duration of the batch.
 - No inspecting hidden or fuzz results before a run terminates.
 - Any unavoidable intervention is logged and the run is analyzed separately.
 
@@ -236,7 +236,7 @@ commands cut by the default timeout.
 - Pair each `tests-none` run only with the `baseline` run sharing its replicate.
 - Do not select the best trajectory as the primary result.
 - v5 is reported next to v6 as the comparison for the harness check
-  (stalls, bimodality); the two cohorts are never pooled for the contrast.
+  (stalls, bimodality); the two batches are never pooled for the contrast.
 - Qualify claims as task-specific; one model, one task.
 - Disclose public-test contamination and the unarchivable local server.
 
@@ -278,7 +278,7 @@ No harness change followed the pilots.
    30–46 minutes), and zero bash calls without a result (`hangs` in the
    process metrics). Cut-offs (`guard_bash_timeouts`) are unchanged.
    `analysis/v6_results.py` reports the corrected check. No harness,
-   configuration, prompt, or image change; the running cohort is unaffected.
+   configuration, prompt, or image change; the running batch is unaffected.
 
 2. **2026-09-11 17:50Z, after run 6 of 8 (`v6-tests-none-r3`) terminated and
    before runs 7–8 started producing results; no hidden or fuzz result of any
@@ -303,7 +303,7 @@ No harness change followed the pilots.
      unaffected; a `baseline` agent would see a blocked `test_visible`
      result, so the contamination check below is part of the record.
    - **Handling, fixed before the result is known.** The primary contrast is
-     computed on every final snapshot re-scored, after the cohort ends, by
+     computed on every final snapshot re-scored, after the batch ends, by
      the evaluator with the audit scoped to the Cargo package's `src/`
      (plus any `#[path]`/`include!` file that `src/` pulls in), both oracles,
      same image, same parameters, applied identically to all eight runs. The
@@ -312,14 +312,14 @@ No harness change followed the pilots.
      must reproduce its frozen ones, and the report shows both columns. The
      frozen-protocol values remain in the study summary. The corrected
      evaluator is committed only after `CHAIN COMPLETE`; nothing in the
-     running cohort changes. This is the §10.4 bridge method applied to the
-     cohort's own finals, not a new rule invented after seeing an outcome:
+     running batch changes. This is the §10.4 bridge method applied to the
+     batch's own finals, not a new rule invented after seeing an outcome:
      the affected run's corrected score is unknown at the time of writing.
    - **Contamination check.** For each run, whether any in-run visible
      evaluation (`test_visible` results, round snapshots) reported a blocking
      audit; a `baseline` run with such a result is reported separately as
      behaviorally affected. Runs 1–6: none.
-   - **Addendum, 2026-09-11 20:45Z (after the cohort, before the re-score of
+   - **Addendum, 2026-09-11 20:45Z (after the batch, before the re-score of
      the affected run completed).** Two documents bear on whether this is a
      defect or an outcome, and they disagreed. `docs/STUDY_PROTOCOL.md` and
      `studies/README.md` still said the audit scans "recognized test paths"

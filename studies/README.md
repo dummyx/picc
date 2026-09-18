@@ -89,10 +89,10 @@ two candidate adapters on one Node.js 24 runtime:
 | `js-untyped` | study baseline | plain JavaScript, `node --check` build, `tsc` withheld by the guard |
 | `ts-strict` | variant (`candidate`) | TypeScript, `tsc --strict --noEmitOnError` build gate |
 
-The manifest id is versioned per cohort: `picc-types-v1` was the v4 cohort
-(image 0.2, original oracle); `picc-types-v2` (seed 20260912) is the v7 cohort
+The manifest id is versioned per batch: `picc-types-v1` was the v4 batch
+(image 0.2, original oracle); `picc-types-v2` (seed 20260912) is the v7 batch
 under the revised oracle and the bash default timeout on image 0.4
-(`docs/PRE_REGISTRATION_v7.md`). Conditions are unchanged between the two.
+(`docs/EXPERIMENT_PLAN_v7.md`). Conditions are unchanged between the two.
 
 ```bash
 make study-validate STUDY=studies/types/study.json
@@ -107,13 +107,13 @@ make study-summary STUDY=studies/types/study.json
 unchanged plus `tests-pushed` (on-demand tests as in baseline, and the harness
 runs the visible tests about every `push_interval_minutes` and delivers the
 same failure-level report to the agent unprompted, through the tools
-extension's `turn_end` hook). Its manifest id is versioned per cohort so each
+extension's `turn_end` hook). Its manifest id is versioned per batch so each
 aggregation stays intact: `picc-tests-v2` was the v5 replication under the
 revised harness (preprocessed candidate inputs, corpus macro and fuzz macro as
-co-primary endpoints); `picc-tests-v3` (seed 20260911) the v6 cohort under
-image 0.4, which adds the bash default timeout (`docs/PRE_REGISTRATION_v6.md`);
-`picc-tests-v4` (seed 20260913) the v8 cohort, baseline vs `tests-pushed`, with
-the last-buildable snapshot as a co-primary (`docs/PRE_REGISTRATION_v8.md`).
+co-primary endpoints); `picc-tests-v3` (seed 20260911) the v6 batch under
+image 0.4, which adds the bash default timeout (`docs/EXPERIMENT_PLAN_v6.md`);
+`picc-tests-v4` (seed 20260913) the v8 batch, baseline vs `tests-pushed`, with
+the last-buildable snapshot as a co-primary (`docs/EXPERIMENT_PLAN_v8.md`).
 Earlier runs remain summarizable from their frozen materializations.
 
 The starter deliberately does **not** claim to identify the causal effect of
@@ -151,11 +151,12 @@ make study-report RUN_ID=baseline-main-r1
 make study-summary STUDY=studies/starter/study.json
 ```
 
-The primary summary includes only completed, uninterrupted `main` runs with
-current study/condition hashes, a positive replicate identifier, verified frozen
-assets/runtime fingerprints, and hidden evaluations covering every snapshot. It
+The primary summary includes only completed, uninterrupted `main` runs whose
+frozen resolved condition matches the current manifest, with a positive
+replicate identifier, consistent ledgers and per-run report, and hidden
+evaluations covering every snapshot. It
 lists pilot, resumed, incomplete, stale, and mismatched runs as exclusions;
-cohort drift or duplicate condition/replicate cells are hard errors, while
+batch drift or duplicate condition/replicate cells are hard errors, while
 missing planned cells and unmatched baselines are explicit warnings.
 
 Inspect a materialization without running Pi:
@@ -182,7 +183,7 @@ and experiment tools, so the two are not comparable. The validator requires ever
 the factors exactly once and requires a combined cell to carry, block for
 block, the overlays of the single-factor cells it combines. Every cell is
 paired with the baseline of its replicate in the summary; the interaction is
-computed by the cohort's analysis script (`docs/PRE_REGISTRATION_v9.md`; results in
+computed by the batch's analysis script (`docs/EXPERIMENT_PLAN_v9.md`; results in
 `analysis/report.md` §15).
 
 ```bash

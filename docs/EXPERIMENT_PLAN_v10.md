@@ -1,4 +1,4 @@
-# Pre-registration: v10 cohort (new tasks; Python untyped vs typed)
+# Experiment plan: v10 batch (new tasks; Python untyped vs typed)
 
 Status: frozen by the commit that adds this section (harness at `bd3f686`),
 2026-09-16 15:11 UTC, immediately before the first main run (chain started 15:11:27 UTC). Pilot evidence below.
@@ -96,7 +96,7 @@ matches the manifest are excluded and listed; duplicate cells are errors.
 
 ## Human intervention policy
 
-None during a run. Defects found mid-cohort become numbered amendments here
+None during a run. Defects found mid-batch become numbered amendments here
 and fixes for the next manifest version.
 
 ## Analysis
@@ -149,7 +149,7 @@ consuming its wall budget in such rounds.
 Both behaviours are consequences of the frozen configuration (thinking
 `high`, 131,072 context, `LOCAL_MAX_OUTPUT=65536`, the stall rule, Pi
 0.85.1 compaction) applied identically to every condition. Nothing is
-changed for this cohort. Consequences for analysis: (1) effective budgets
+changed for this batch. Consequences for analysis: (1) effective budgets
 are heterogeneous, 91 minutes for runs ended by the stall rule versus up to
 2 hours for runs that yield short turns; elapsed time and round counts are
 reported per run; (2) a run that enters the overflow mode is included as a
@@ -173,7 +173,7 @@ both partitions although the product itself contains no prohibited code
 (`pisql.py` has no finding; the two blocking findings are in
 `tests/run_tests.py`).
 
-Decision. The materialized evaluators of this cohort are not touched, so
+Decision. The materialized evaluators of this batch are not touched, so
 runs 7-18 are scored exactly like runs 1-6. After the last run, the Python
 audit is scoped to the entry module's import closure (the Node rule) in
 the repository evaluator, and every v10 run is re-scored with it on the

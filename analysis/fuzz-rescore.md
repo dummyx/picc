@@ -1,14 +1,14 @@
-# Fuzz re-score of stored cohort finals
+# Fuzz re-score of stored batch finals
 
-Every cohort final snapshot was exported from its run workspace, rebuilt inside the pinned
+Every batch final snapshot was exported from its run workspace, rebuilt inside the pinned
 image exactly as the evaluator builds it, and fuzzed on the host against GCC with
-`analysis/fuzz_differential.py` (seed 20260830, stage limit = the cohort's task scope).
+`analysis/fuzz_differential.py` (seed 20260830, stage limit = the batch's task scope).
 **Fuzz pass rate** = share of generated programs on which the candidate's compiled output
 agrees with GCC's exit status and stdout; rejecting a valid program, failing to assemble,
 crashing, and wrong results all count as failures. **Full scope** = 300 programs using the
-cohort's whole feature set at once, so one broken feature fails every program. **Fuzz macro**
+batch's whole feature set at once, so one broken feature fails every program. **Fuzz macro**
 = mean over stages 1..K of the pass rate on 100 programs restricted to that stage's cumulative
-subset, the fuzz analogue of the corpus macro score. The corpus column is the pre-registered
+subset, the fuzz analogue of the corpus macro score. The corpus column is the planned in advance
 hidden macro score. This is a descriptive re-score, not a change to any primary endpoint.
 
 ## v2 (pilot profile, stages 1–6, Rust)
@@ -39,7 +39,7 @@ hidden macro score. This is a descriptive re-score, not a change to any primary 
 | `spec-brief` | 3 | 0.8981 | 1.0000 | 1.000–1.000 | 1.0000 |
 | `spec-inline` | 3 | 0.9583 | 1.0000 | 1.000–1.000 | 1.0000 |
 
-Rank agreement with the corpus across the cohort's 15 finals (Spearman ρ): fuzz macro 0.623, full-scope fuzz 0.623.
+Rank agreement with the corpus across the batch's 15 finals (Spearman ρ): fuzz macro 0.623, full-scope fuzz 0.623.
 
 ## v3 (main profile, stages 1–10, Rust)
 
@@ -57,9 +57,9 @@ Rank agreement with the corpus across the cohort's 15 finals (Spearman ρ): fuzz
 | `baseline` | 3 | 0.8194 | 0.9560 | 0.953–1.000 | 0.8833 |
 | `tests-none` | 3 | 0.7492 | 0.7150 | 0.228–1.000 | 0.0000 |
 
-Rank agreement with the corpus across the cohort's 6 finals (Spearman ρ): fuzz macro 0.551, full-scope fuzz 0.530.
+Rank agreement with the corpus across the batch's 6 finals (Spearman ρ): fuzz macro 0.551, full-scope fuzz 0.530.
 
-Pre-registered contrast `tests-none` − `baseline`, paired by replicate:
+Planned in advance contrast `tests-none` − `baseline`, paired by replicate:
 
 | Rep | Corpus Δ | Fuzz macro Δ | Full-scope fuzz Δ |
 |---:|---:|---:|---:|
@@ -84,9 +84,9 @@ Pre-registered contrast `tests-none` − `baseline`, paired by replicate:
 | `js-untyped` | 3 | 0.8389 | 1.0000 | 0.999–1.000 | 1.0000 |
 | `ts-strict` | 3 | 0.8653 | 1.0000 | 0.806–1.000 | 1.0000 |
 
-Rank agreement with the corpus across the cohort's 6 finals (Spearman ρ): fuzz macro -0.171, full-scope fuzz -0.664.
+Rank agreement with the corpus across the batch's 6 finals (Spearman ρ): fuzz macro -0.171, full-scope fuzz -0.664.
 
-Pre-registered contrast `ts-strict` − `js-untyped`, paired by replicate:
+Planned in advance contrast `ts-strict` − `js-untyped`, paired by replicate:
 
 | Rep | Corpus Δ | Fuzz macro Δ | Full-scope fuzz Δ |
 |---:|---:|---:|---:|

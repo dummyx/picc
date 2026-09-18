@@ -1,8 +1,8 @@
-# Pre-registration: v5 cohort (test availability, revised oracle)
+# Experiment plan: v5 batch (test availability, revised oracle)
 
-Completed and committed before the first v5 main run. The v3 cohort tested the
-same contrast under the previous oracle (`docs/PRE_REGISTRATION.md`); v5 is a
-fresh cohort under a separate study manifest, not additional replicates of v3,
+Completed and committed before the first v5 main run. The v3 batch tested the
+same contrast under the previous oracle (`docs/EXPERIMENT_PLAN.md`); v5 is a
+fresh batch under a separate study manifest, not additional replicates of v3,
 because the harness revision below changes what the task measures.
 
 ## Study identity
@@ -13,7 +13,7 @@ because the harness revision below changes what the task measures.
   both conditions are byte-identical to the starter's `baseline` and
   `tests-none`
 - Date frozen: 2026-09-10
-- Repository commit: `e6e79f6102c5190076e8d126b934eedd95156725` (this pre-registration is committed on
+- Repository commit: `e6e79f6102c5190076e8d126b934eedd95156725` (this experiment plan is committed on
   top; no harness, prompt, partition, adapter, or configuration file changes
   with it)
 - Investigator: dummyx
@@ -62,7 +62,7 @@ Applied before any v5 run, all frozen in the harness commit:
    the endpoint reports serving and refuses to proceed unless it matches
    `LOCAL_MODEL_SHA256`; the run's `model.serving_revision` records the digest.
    The chain driver runs the preflight before every slot and aborts the
-   cohort on a mismatch (a wrong substrate is never an outcome).
+   batch on a mismatch (a wrong substrate is never an outcome).
 
 Everything else is as in v3: prompts, specification, partitions, adapter,
 budgets, model, thinking, sampling.
@@ -98,7 +98,7 @@ budgets, model, thinking, sampling.
 
 - Docker image ID: `sha256:02ed179c48680acd707217505409660080a6e68c2022711754e3ba70cb32a71d`
   (`picc-experiment:0.2`, unchanged from v4; Node.js v24.20.0, TypeScript
-  5.9.3 present and unused by this cohort's Rust candidates)
+  5.9.3 present and unused by this batch's Rust candidates)
 - Pi version: `@earendil-works/pi-coding-agent@0.84.1`; Rust toolchain `1.88.0`
 - Provider/model: `local` — llama.cpp `llama-server` build `b1-3cb7ffb`
   serving `unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL`; served GGUF SHA-256
@@ -182,7 +182,7 @@ A run may be excluded only if:
 - [x] a confirmed harness implementation defect invalidates measurement;
 - [x] the preflight reports the endpoint unreachable before the run starts —
   the slot is launched after the endpoint returns rather than skipped. A
-  preflight *mismatch* (a different model file) aborts the cohort instead; it
+  preflight *mismatch* (a different model file) aborts the batch instead; it
   cannot produce an includable run. An endpoint failure after a run's first
   successful model response is an outcome, not an exclusion.
 
@@ -194,7 +194,7 @@ fuzz failures, compaction failures caused by the trajectory, or guard blocks.
 - No prompts beyond the frozen initial/continuation messages.
 - No workspace edits after start.
 - No `.env`, configuration, prompt, partition, adapter, or script changes for
-  the duration of the cohort.
+  the duration of the batch.
 - No inspecting hidden or fuzz results before a run terminates.
 - Any unavoidable intervention is logged and the run is analyzed separately.
 

@@ -1,11 +1,11 @@
-# Pre-registration: v9 cohort (specification detail x test access, 2x2)
+# Experiment plan: v9 batch (specification detail x test access, 2x2)
 
-Completed and committed before the first v9 main run. Seven cohorts have
+Completed and committed before the first v9 main run. Seven batches have
 found that no manipulated factor detectably changes behavioral correctness on
 this task while every factor changes the process. v9 asks whether the agent
 needs *either* of the two external definitions of the task, the behavioral
 specification and the visible tests, by crossing them: the first factorial
-manifest in the study layer. It is also the first cohort that removes most of
+manifest in the study layer. It is also the first batch that removes most of
 the specification, so it doubles as a measurement of how much of the task the
 model brings with it.
 
@@ -18,7 +18,7 @@ model brings with it.
   SHA-256 `d23c45c4bac3a3d9295cb0043230f8001ddfca31b23b4b03e21ab4d0e4cb35fd`)
 - Date frozen: 2026-09-14
 - Repository commit: `f2e81b9` (factorial design, manifest, minimal
-  specification, tests, docs); this pre-registration and
+  specification, tests, docs); this experiment plan and
   `analysis/v9_results.py` are committed on top with no harness, prompt,
   partition, adapter, or configuration change
 - Investigator: dummyx
@@ -208,7 +208,7 @@ Two readings are declared in advance:
 - **All four specification and tests contrasts inside the band**: the task
   is defined for the model by its training exposure rather than by the
   specification or the tests; on this task the specification factor cannot
-  be studied further, and the next cohort must change the task (altered
+  be studied further, and the next batch must change the task (altered
   semantics or an unseen language).
 - **A specification contrast beyond the band**, in either cell: the first
   factor to move correctness on the clean harness; report which stages and
@@ -233,7 +233,7 @@ A run may be excluded only if:
   wherever the defect is in the measurement layer);
 - [x] the preflight reports the endpoint unreachable before the run starts —
   the slot is launched after the endpoint returns rather than skipped. A
-  preflight *mismatch* aborts the cohort instead.
+  preflight *mismatch* aborts the batch instead.
 
 Do not exclude ordinary model mistakes, build failures, low scores, fuzz
 failures, compaction failures caused by the trajectory, guard blocks,
@@ -244,7 +244,7 @@ commands cut by the default timeout, or a final snapshot cut by the cap.
 - No prompts beyond the frozen initial/continuation messages.
 - No workspace edits after start.
 - No `.env`, configuration, prompt, specification, partition, adapter,
-  settings, image, or script changes for the duration of the cohort.
+  settings, image, or script changes for the duration of the batch.
 - No inspecting hidden or fuzz results before a run terminates.
 - Any unavoidable intervention is logged and the run is analyzed separately.
 
@@ -261,7 +261,7 @@ commands cut by the default timeout, or a final snapshot cut by the cap.
 - Do not select the best trajectory as the primary result.
 - Qualify claims as task-specific; one model, one task, one language.
 - Disclose public-test contamination and the unarchivable local server; in
-  this cohort contamination is part of the question, not only a caveat.
+  this batch contamination is part of the question, not only a caveat.
 
 ## Pilot evidence (before the freeze)
 
@@ -331,7 +331,7 @@ computed post hoc.
 
 **Handling.** Per the exclusion rules, this is a measurement-layer
 implementation defect and is handled by amendment and re-score, not by
-exclusion and not by touching the running cohort: no script changes until
+exclusion and not by touching the running batch: no script changes until
 the chain exits. After the twelfth run, the third clause is corrected in
 `scripts/evaluate_run.py`, `scripts/summarize_study.py`, and
 `analysis/v9_results.py` (with a unit test for an advisory-only snapshot),
@@ -341,7 +341,7 @@ exactly (as in v6 Amendment 2); its only permitted effect is to add the
 missing `last_buildable` fuzz row for runs whose last buildable snapshot
 carries an advisory-only finding. Runs affected are listed in the results
 section with both the frozen and the corrected values. The v6–v8 frozen
-values are unaffected (no such snapshot exists in those cohorts).
+values are unaffected (no such snapshot exists in those batches).
 
 **Why it matters.** Under the frozen rule, run 1 would have read as a
 −0.95 / −1.0 replicate on the primary endpoints purely by artifact, the

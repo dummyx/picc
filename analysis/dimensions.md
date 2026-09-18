@@ -1,13 +1,13 @@
 # Beyond the tests: tokens, time, and code across every main run
 
-Exploratory and descriptive (not pre-registered). One row per completed main run of the v2–v5 cohorts; 
+Exploratory and descriptive (not planned in advance). One row per completed main run of the v2–v5 batches; 
 smoke/pilot runs excluded. Corpus scores are as stored (v2–v4 under the original oracle, v5 revised); fuzz macro is 
 the post-hoc re-score for v2–v4 (50 programs per stage) and the in-harness score for v5 (100 per stage). 
 Code characteristics are regex approximations over the final `src/` tree; function boundaries are heuristic.
 
-## Per cohort and condition (medians)
+## Per batch and condition (medians)
 
-| cohort | condition | n | fuzz macro | corpus hidden | output tokens | active minutes | idle minutes | assistant turns | tool calls | source loc | functions | mean function loc | self test programs | first build minutes |
+| batch | condition | n | fuzz macro | corpus hidden | output tokens | active minutes | idle minutes | assistant turns | tool calls | source loc | functions | mean function loc | self test programs | first build minutes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | v2 | baseline | 3 | 1.000 | 0.898 | 155,434 | 61 | 45 | 56 | 61 | 2,061 | 62 | 32 | 27 | 45 |
 | v2 | prompt-minimal | 3 | 1.000 | 0.958 | 184,289 | 55 | 35 | 163 | 167 | 2,155 | 73 | 29 | 0 | 45 |
@@ -23,7 +23,7 @@ Code characteristics are regex approximations over the final `src/` tree; functi
 
 ## What moves with correctness (Spearman rank correlation)
 
-Pooled over all main runs, and within v5 alone (the only cohort scored in-harness by both oracles). 
+Pooled over all main runs, and within v5 alone (the only batch scored in-harness by both oracles). 
 With n this small treat |rho| below about 0.4 as noise.
 
 | dimension | pooled n | rho vs fuzz | rho vs corpus | v5 n | v5 rho vs fuzz | v5 rho vs corpus |
@@ -83,11 +83,11 @@ If a dimension still tracks correctness here, it is not merely 'the run got to w
 | fuzz macro per M output tokens | 17 | -0.080 | -0.230 |
 | source LOC per k output tokens | 17 | -0.070 | 0.510 |
 
-## Paired within-cohort contrasts (variant minus its baseline, median over replicates)
+## Paired within-batch contrasts (variant minus its baseline, median over replicates)
 
 Same replicate number = same block. Positive means the variant used or produced more.
 
-| cohort | contrast | pairs | fuzz macro | output tokens | active minutes | assistant turns | tool calls | source loc | functions | self test loc | compactions |
+| batch | contrast | pairs | fuzz macro | output tokens | active minutes | assistant turns | tool calls | source loc | functions | self test loc | compactions |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | v2 | prompt-minimal − baseline | 3 | 0.000 | +28,855 | -6.700 | +46 | +47 | -27 | +6 | +40 | +4 |
 | v2 | spec-brief − baseline | 3 | 0.000 | +142,318 | +43 | +203 | +212 | +538 | +19 | 0 | +6 |
@@ -126,7 +126,7 @@ Same replicate number = same block. Positive means the variant used or produced 
 
 ## Every run
 
-| run | cohort | condition | replicate | fuzz macro | corpus hidden | output tokens | thinking share | active minutes | idle minutes | assistant turns | tool calls | first build minutes | source loc | source files | functions | mean function loc | max function loc | branches per 100 loc | comment ratio | unwrap or expect | self test programs | self test loc | median test compile ms | binary kb |
+| run | batch | condition | replicate | fuzz macro | corpus hidden | output tokens | thinking share | active minutes | idle minutes | assistant turns | tool calls | first build minutes | source loc | source files | functions | mean function loc | max function loc | branches per 100 loc | comment ratio | unwrap or expect | self test programs | self test loc | median test compile ms | binary kb |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | v2-baseline-r1 | v2 | baseline | 1 | 1.000 | 0.958 | 242,834 | 0.968 | 76 | 0.200 | 322 | 330 | 45 | 2,406 | 6 | 67 | 33 | 277 | 12 | 0.034 | 30 | 159 | 976 | 7.230 | 626 |
 | v2-baseline-r2 | v2 | baseline | 2 | 1.000 | 0.898 | 98,612 | 0.991 | 45 | 45 | 35 | 40 | 45 | 1,765 | 1 | 62 | 28 | 192 | 12 | 0.035 | 32 | 27 | 159 | 7.050 | 568 |

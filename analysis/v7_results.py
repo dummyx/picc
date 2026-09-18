@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""v7 results (static typing, ts-strict vs js-untyped): both pre-registered
+"""v7 results (static typing, ts-strict vs js-untyped): both planned in advance
 endpoints per run, paired contrasts, the harness check (idle time, unanswered
 calls, cut-offs), and the paired resource and code secondary endpoints
-(docs/PRE_REGISTRATION_v7.md). Derived from v6_results.py.
+(docs/EXPERIMENT_PLAN_v7.md). Derived from v6_results.py.
 
 If a re-score directory is given (a v6-style amendment), its values become
 the primary contrast and the frozen values are reported alongside. Read-only.

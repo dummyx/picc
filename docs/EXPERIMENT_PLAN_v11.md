@@ -1,4 +1,4 @@
-# Pre-registration: v11 cohort (replication of v10 on the corrected harness)
+# Experiment plan: v11 batch (replication of v10 on the corrected harness)
 
 Status: frozen by the commit that adds this file, 2026-09-18 08:20 UTC,
 before the first main run. Pilot evidence below.
@@ -29,7 +29,7 @@ scored zero for reasons unrelated to their condition, so the estimate is
 confounded. v11 repeats the design on a harness where those four causes are
 removed, to see whether the contrast survives.
 
-Secondary question, answered by comparing cohorts descriptively: how much of
+Secondary question, answered by comparing batches descriptively: how much of
 v10's zero rate was harness rather than model?
 
 ## What changed since v10 (commit `ffd351f`)
@@ -55,8 +55,8 @@ image are otherwise identical to v10.
 
 Consequence for comparability: v11 runs may use more agent time than v10 runs
 (up to the full 2 hours rather than 91 minutes), so a v11-versus-v10
-difference confounds the fixes with effort. The cohorts are compared only
-descriptively; the typing contrast is within-cohort and paired, as before.
+difference confounds the fixes with effort. The batches are compared only
+descriptively; the typing contrast is within-batch and paired, as before.
 
 ## Conditions
 
@@ -125,7 +125,7 @@ as `v10-c18-python-typed-r3` was.
 
 ## Human intervention policy
 
-None during a run. Defects found mid-cohort become numbered amendments here
+None during a run. Defects found mid-batch become numbered amendments here
 and fixes for the next manifest version.
 
 ## Analysis

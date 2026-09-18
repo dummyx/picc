@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v10 cohort: per-replicate hidden scores for the chapters 1-18 compiler and
+"""v10 batch: per-replicate hidden scores for the chapters 1-18 compiler and
 SQL engine tasks (rust baseline, python, python-typed), read from the study
 summaries.  Prints one table per study and the python-typed minus python
 paired deltas.  Read-only over runs/study-results/.
@@ -90,7 +90,7 @@ def main() -> int:
             agree = len(signs) == 1 and None not in signs
             median = statistics.median(deltas)
             print(f"\npython-typed minus python (primary), paired by replicate: {[round(d, 4) for d in deltas]}, median {median:.4f}")
-            print(f"pre-registered effect criterion (all replicates agree in sign and |median| > 0.13): "
+            print(f"planned in advance effect criterion (all replicates agree in sign and |median| > 0.13): "
                   f"{'MET' if agree and abs(median) > 0.13 else 'not met'} "
                   f"(n={len(deltas)}, signs agree: {agree})")
         feasible = {c: sum(1 for t in table if t["condition"] == c and t["above_floor"]) for c in conditions}

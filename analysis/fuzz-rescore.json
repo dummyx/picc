@@ -1,5 +1,5 @@
 {
-  "cohorts": {
+  "batches": {
     "v2": {
       "conditions": {
         "baseline": {
@@ -166,7 +166,7 @@
   },
   "runs": [
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "baseline",
       "corpus_hidden": 0.9583333333333334,
       "corpus_hidden_reported": 0.9583333333333334,
@@ -192,7 +192,7 @@
       "run_id": "v2-baseline-r1"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "baseline",
       "corpus_hidden": 0.8981481481481483,
       "corpus_hidden_reported": 0.8981481481481483,
@@ -218,7 +218,7 @@
       "run_id": "v2-baseline-r2"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "baseline",
       "corpus_hidden": 0.8981481481481483,
       "corpus_hidden_reported": 0.8981481481481483,
@@ -244,7 +244,7 @@
       "run_id": "v2-baseline-r3"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "prompt-minimal",
       "corpus_hidden": 0.9583333333333334,
       "corpus_hidden_reported": 0.9583333333333334,
@@ -270,7 +270,7 @@
       "run_id": "v2-prompt-minimal-r1"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "prompt-minimal",
       "corpus_hidden": 0.9583333333333334,
       "corpus_hidden_reported": 0.9583333333333334,
@@ -296,7 +296,7 @@
       "run_id": "v2-prompt-minimal-r2"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "prompt-minimal",
       "corpus_hidden": 0.0,
       "corpus_hidden_reported": 0.8773,
@@ -322,7 +322,7 @@
       "run_id": "v2-prompt-minimal-r3"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-architecture",
       "corpus_hidden": 0.8703703703703706,
       "corpus_hidden_reported": 0.8703703703703706,
@@ -350,7 +350,7 @@
       "run_id": "v2-spec-architecture-r1"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-architecture",
       "corpus_hidden": 0.8634259259259259,
       "corpus_hidden_reported": 0.8634259259259259,
@@ -378,7 +378,7 @@
       "run_id": "v2-spec-architecture-r2"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-architecture",
       "corpus_hidden": 0.9583333333333334,
       "corpus_hidden_reported": 0.9583333333333334,
@@ -404,7 +404,7 @@
       "run_id": "v2-spec-architecture-r3"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-brief",
       "corpus_hidden": 0.9583333333333334,
       "corpus_hidden_reported": 0.9583333333333334,
@@ -430,7 +430,7 @@
       "run_id": "v2-spec-brief-r1"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-brief",
       "corpus_hidden": 0.8981481481481483,
       "corpus_hidden_reported": 0.8981481481481483,
@@ -456,7 +456,7 @@
       "run_id": "v2-spec-brief-r2"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-brief",
       "corpus_hidden": 0.876984126984127,
       "corpus_hidden_reported": 0.876984126984127,
@@ -482,7 +482,7 @@
       "run_id": "v2-spec-brief-r3"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-inline",
       "corpus_hidden": 0.8981481481481483,
       "corpus_hidden_reported": 0.8981481481481483,
@@ -508,7 +508,7 @@
       "run_id": "v2-spec-inline-r1"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-inline",
       "corpus_hidden": 0.9583333333333334,
       "corpus_hidden_reported": 0.9583333333333334,
@@ -534,7 +534,7 @@
       "run_id": "v2-spec-inline-r2"
     },
     {
-      "cohort": "v2",
+      "batch": "v2",
       "condition": "spec-inline",
       "corpus_hidden": 0.9583333333333334,
       "corpus_hidden_reported": 0.9583333333333334,
@@ -560,7 +560,7 @@
       "run_id": "v2-spec-inline-r3"
     },
     {
-      "cohort": "v3",
+      "batch": "v3",
       "condition": "baseline",
       "corpus_hidden": 0.8188492063492063,
       "corpus_hidden_reported": 0.8188492063492063,
@@ -590,7 +590,7 @@
       "run_id": "v3-baseline-r1"
     },
     {
-      "cohort": "v3",
+      "batch": "v3",
       "condition": "baseline",
       "corpus_hidden": 0.9305555555555557,
       "corpus_hidden_reported": 0.9305555555555557,
@@ -622,7 +622,7 @@
       "run_id": "v3-baseline-r2"
     },
     {
-      "cohort": "v3",
+      "batch": "v3",
       "condition": "baseline",
       "corpus_hidden": 0.8194444444444444,
       "corpus_hidden_reported": 0.8194444444444444,
@@ -654,7 +654,7 @@
       "run_id": "v3-baseline-r3"
     },
     {
-      "cohort": "v3",
+      "batch": "v3",
       "condition": "tests-none",
       "corpus_hidden": 0.8458333333333334,
       "corpus_hidden_reported": 0.8458333333333334,
@@ -684,7 +684,7 @@
       "run_id": "v3-tests-none-r1"
     },
     {
-      "cohort": "v3",
+      "batch": "v3",
       "condition": "tests-none",
       "corpus_hidden": 0.7492063492063492,
       "corpus_hidden_reported": 0.7492063492063492,
@@ -716,7 +716,7 @@
       "run_id": "v3-tests-none-r2"
     },
     {
-      "cohort": "v3",
+      "batch": "v3",
       "condition": "tests-none",
       "corpus_hidden": 0.6839285714285714,
       "corpus_hidden_reported": 0.6839285714285714,
@@ -748,7 +748,7 @@
       "run_id": "v3-tests-none-r3"
     },
     {
-      "cohort": "v4",
+      "batch": "v4",
       "condition": "js-untyped",
       "corpus_hidden": 0.8833333333333334,
       "corpus_hidden_reported": 0.8833333333333334,
@@ -778,7 +778,7 @@
       "run_id": "v4-js-untyped-r1"
     },
     {
-      "cohort": "v4",
+      "batch": "v4",
       "condition": "js-untyped",
       "corpus_hidden": 0.8388888888888889,
       "corpus_hidden_reported": 0.8388888888888889,
@@ -808,7 +808,7 @@
       "run_id": "v4-js-untyped-r2"
     },
     {
-      "cohort": "v4",
+      "batch": "v4",
       "condition": "js-untyped",
       "corpus_hidden": 0.8277777777777778,
       "corpus_hidden_reported": 0.8277777777777778,
@@ -838,7 +838,7 @@
       "run_id": "v4-js-untyped-r3"
     },
     {
-      "cohort": "v4",
+      "batch": "v4",
       "condition": "ts-strict",
       "corpus_hidden": 0.8388888888888889,
       "corpus_hidden_reported": 0.8388888888888889,
@@ -868,7 +868,7 @@
       "run_id": "v4-ts-strict-r1"
     },
     {
-      "cohort": "v4",
+      "batch": "v4",
       "condition": "ts-strict",
       "corpus_hidden": 0.8652777777777778,
       "corpus_hidden_reported": 0.8652777777777778,
@@ -898,7 +898,7 @@
       "run_id": "v4-ts-strict-r2"
     },
     {
-      "cohort": "v4",
+      "batch": "v4",
       "condition": "ts-strict",
       "corpus_hidden": 0.898611111111111,
       "corpus_hidden_reported": 0.898611111111111,

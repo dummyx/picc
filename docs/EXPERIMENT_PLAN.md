@@ -1,7 +1,7 @@
-# Pre-registration: v3 cohort
+# Experiment plan: v3 batch
 
-Completed and committed before the first v3 run. Earlier cohorts (the v1
-pilots and the v2 stages-1–6 cohort) predate this document and are reported
+Completed and committed before the first v3 run. Earlier batches (the v1
+pilots and the v2 stages-1–6 batch) predate this document and are reported
 as exploratory; see `analysis/report.md`.
 
 ## Study identity
@@ -9,7 +9,7 @@ as exploratory; see `analysis/report.md`.
 - Study title: PiCC v3 — test availability at stages 1–10 (baseline vs tests-none)
 - Date frozen: 2026-09-01
 - Starter repository commit: `ab67a7ea9b6fa587a362a876599b23fdfa6961b1`
-  (this pre-registration is committed on top; no harness, prompt, partition,
+  (this experiment plan is committed on top; no harness, prompt, partition,
   or configuration file changes with it)
 - Investigator: dummyx
 
@@ -20,9 +20,9 @@ all agent-visible tests and scores (`tests-none`) change hidden behavioral
 correctness relative to `baseline` (failure-level `test_visible` tool access)
 when the task is stages 1–10 under a 2-hour budget?
 
-Motivation, pre-declared from the v2 cohort before any v3 run: tool uptake was
+Motivation, pre-declared from the v2 batch before any v3 run: tool uptake was
 the strongest observed correlate of outcome, and stages 1–6 saturated. This
-cohort raises difficulty (report §6.2) and manipulates test availability
+batch raises difficulty (report §6.2) and manipulates test availability
 directly (§6.3).
 
 ## Planned runs
@@ -36,8 +36,8 @@ directly (§6.3).
   4. `v3-baseline-r2`
   5. `v3-baseline-r3`
   6. `v3-tests-none-r3`
-- Pilot/prior run IDs, excluded from this cohort's analysis: all `*-pilot-*`
-  runs; the `v2-*` cohort (pilot profile, stages 1–6); `baseline-main-r1`
+- Pilot/prior run IDs, excluded from this batch's analysis: all `*-pilot-*`
+  runs; the `v2-*` batch (pilot profile, stages 1–6); `baseline-main-r1`
   (prior harness revision and a 24-hour budget; stale fingerprints).
 
 ## Frozen configuration
@@ -94,7 +94,7 @@ Selected before running:
 
 Pre-declared interpretation rule: report all six runs individually, then
 per-condition median and range. A paired median difference with magnitude
-greater than 0.13 (the resolution the v2 cohort established for n=3) is a
+greater than 0.13 (the resolution the v2 batch established for n=3) is a
 candidate effect warranting replication; smaller differences are reported as
 compatible with no detectable effect at this sample size. If four or more of
 six runs score below 0.30, stages 1–10 at 2 h is a floor and the budget — not
@@ -121,7 +121,7 @@ limits.
 - No prompts beyond the frozen initial/continuation messages.
 - No workspace edits after start.
 - No `.env`, configuration, prompt, partition, or script changes for the
-  duration of the cohort.
+  duration of the batch.
 - No inspecting hidden results before a run terminates.
 - Any unavoidable intervention is logged and the run is analyzed separately.
 
@@ -138,14 +138,14 @@ limits.
 
 ## Amendments
 
-### 2026-09-02 — harness defect before any completed run; cohort restarted
+### 2026-09-02 — harness defect before any completed run; batch restarted
 
 Slot 1 (`v3-tests-none-r1`, launched 2026-09-01T07:20Z) aborted with
 `harness_exception` during its round-000 visible evaluation: the in-run
 evaluator subprocess had a fixed, uncaught 3600 s ceiling, and a candidate
 that hangs the evaluator's 30 s per-test compile timeout on many of the 227
 stage-1–10 visible tests legitimately needs longer (the killed evaluation
-had processed ~73 tests in its hour). The stages-1–6 cohorts could not
+had processed ~73 tests in its hour). The stages-1–6 batches could not
 trigger this. This is exclusion rule 3 (confirmed harness implementation
 defect); the aborted run and its materialization are retained under
 `runs/.quarantine-v3/` and excluded from all analyses.
@@ -156,8 +156,8 @@ recorded as unevaluatable (score 0.0 with an explicit error) instead of
 aborting the run — and the post-hoc snapshot evaluator gets the same
 containment at its 7200 s ceiling, so a timed-out snapshot no longer aborts
 the remaining snapshots. No budgets, prompts, partitions, per-test timeouts,
-or scoring semantics changed. All six pre-registered slots restart from
-scratch under the amended freeze commit so every run in the cohort executes
+or scoring semantics changed. All six planned in advance slots restart from
+scratch under the amended freeze commit so every run in the batch executes
 the identical harness. Disclosure: a snapshot whose visible evaluation
 exceeds one hour reads as visible 0.0 in trajectory telemetry; the hidden
 primary endpoint is evaluated post hoc under the larger ceiling and is
@@ -167,16 +167,16 @@ unaffected.
 
 The GGUF digest and HF snapshot recorded under "Frozen configuration" were
 copied from the 2026-08-18 endpoint record. Verified on 2026-09-07: the
-llama-server process serving this cohort was started on 2026-08-25 10:38 UTC
-(after the v2 cohort finished) from a re-downloaded snapshot
+llama-server process serving this batch was started on 2026-08-25 10:38 UTC
+(after the v2 batch finished) from a re-downloaded snapshot
 `4ca720788d1e01f1bff70c033e0d0028fd02e502`, file SHA-256
 `3f227079003add2511437e5b1e94812e363385225bf6a9b47b0054a72bc8b01e`
 (17,559,178,144 bytes), not `f1bfb127…`/`bee238bb…` (17,923,394,624 bytes).
 All six v3 runs and the quarantined attempt executed against the `3f227079…`
 file; the server build (`b1-3cb7ffb`) and every client-side setting are as
 recorded. Both files are unsloth `UD-Q4_K_XL` quantizations of the same model
-but are not byte-identical, so v3 and the v2 cohort differ in the served model
+but are not byte-identical, so v3 and the v2 batch differ in the served model
 file as well as in difficulty. Corrected record:
 `runs/local-endpoint-provenance-2026-09-07.json`. No analysis or conclusion in
-this document changes; the disclosure is added so that cross-cohort
+this document changes; the disclosure is added so that cross-batch
 comparisons are qualified correctly.

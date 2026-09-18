@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v5 results: both pre-registered endpoints per run, paired contrasts, and the v3 bridge.
+"""v5 results: both planned in advance endpoints per run, paired contrasts, and the v3 bridge.
 
 Reads the v5 runs under runs/ and, if present, the bridge re-score of the v3
 finals (produced by rebuilding each v3 final and running the revised study

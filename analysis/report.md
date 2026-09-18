@@ -1,19 +1,19 @@
 # PiCC: what changes the compiler a coding agent builds
 
-Eight cohorts, 71 pre-registered main runs, one model building a C compiler
+Eight batches, 71 planned in advance main runs, one model building a C compiler
 from an empty repository under a fixed budget. Prompts, specifications, test
 access, test feedback, and static typing were each varied one at a time; the
-last cohort crossed specification detail with test access.
+last batch crossed specification detail with test access.
 
 ## Summary of the campaign (v2–v9)
 
 **No manipulated factor detectably changed behavioral correctness on the
-corpus oracle.** Every contrast sits inside the pre-registered noise band
+corpus oracle.** Every contrast sits inside the planned in advance noise band
 once the harness stopped manufacturing differences; the one contrast beyond
 the band on the fuzz oracle (v9, tests withheld under the full specification)
 has an identified mechanism and awaits replication (§15):
 
-| Cohort | Factor (variant vs baseline) | n per arm | Corpus, paired median | Fuzz, paired median | Harness state |
+| Batch | Factor (variant vs baseline) | n per arm | Corpus, paired median | Fuzz, paired median | Harness state |
 |---|---|---:|---:|---:|---|
 | v2 (§1–6) | four prompt/specification strategies | 3 | within one sd (0.039) of baseline | all at ceiling | original oracle; hang hazard |
 | v3 (§7) | tests withheld | 3 | −0.136 (candidate effect) | −0.238 (re-score) | original oracle; hang hazard |
@@ -25,7 +25,7 @@ has an identified mechanism and awaits replication (§15):
 | v9 (§15) | minimal specification (with tests / without) | 3 | −0.070 / +0.046 | −0.020 / +0.200 | clean, 2×2 |
 | v9 (§15) | tests withheld (full spec / minimal spec) | 3 | −0.104 / −0.067 | **−0.200** / +0.016 | clean, 2×2 |
 
-The v3 candidate effect was the hang lottery (§10.3, §11): in every cohort
+The v3 candidate effect was the hang lottery (§10.3, §11): in every batch
 before v6 the dominant variance was a shell command that never returned,
 and once bounded (§12.1) the spread of the corpus score fell from 0.50 to
 0.08 and every contrast collapsed to noise.
@@ -50,11 +50,11 @@ cap (§3.1), workspace-wide source audits in two languages (§3.2, §8.5,
 round cap falling inside refactors (§13.4, §14.4), an advisory audit note
 disqualifying a buildable snapshot (§15.4), and a workspace-wide manifest
 audit zeroing a compiler for its developer tooling (§15.4). Each was found by a
-pre-registered check, logged as an amendment, and repaired for the next
-cohort without touching the running one. Analysis code, pre-registrations,
-and raw ledgers for every cohort are in this repository.
+planned in advance check, logged as an amendment, and repaired for the next
+batch without touching the running one. Analysis code, experiment plans,
+and raw ledgers for every batch are in this repository.
 
-- Date: 2026-08-25 (§§1–6, the v2 cohort); §7 and §8 added 2026-09-07 for the v3 and v4 cohorts at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle); §10 added 2026-09-11 (the v5 cohort under the revised oracle); §11–12 added 2026-09-12 (tokens/time/code exploration; v6 with the bash default timeout); §13 added 2026-09-12 (v7, static typing on the clean harness); §14 added 2026-09-13 (v8, pushed feedback and the last-buildable rule); §15 added 2026-09-14 (v9, specification detail × test access)
+- Date: 2026-08-25 (§§1–6, the v2 batch); §7 and §8 added 2026-09-07 for the v3 and v4 batches at stages 1–10; §9 added 2026-09-09 (every final re-scored with the fuzz oracle); §10 added 2026-09-11 (the v5 batch under the revised oracle); §11–12 added 2026-09-12 (tokens/time/code exploration; v6 with the bash default timeout); §13 added 2026-09-12 (v7, static typing on the clean harness); §14 added 2026-09-13 (v8, pushed feedback and the last-buildable rule); §15 added 2026-09-14 (v9, specification detail × test access)
 - Model: local Qwen3.8-27B (UD-Q4_K_XL) via llama.cpp, single RTX 5090
 - Profile: pilot — 45-min round cap, 2 h wall budget, stages 1–6
 - Scoring: hidden-partition macro average over 59 held-out tests, never shown to
@@ -85,7 +85,7 @@ Five conditions, each one change away from baseline, three replicates each.
 | `spec-brief` | 3 | 0.8981 | 0.9112 | 0.877–0.958 | 1/3 | 1/3 |
 | `spec-architecture` | 3 | 0.8704 | 0.8974 | 0.863–0.958 | 1/3 | 1/3 |
 
-Cohort: n=15, mean 0.9193, **SD 0.0392**, range 0.8634–0.9583. Seven of fifteen
+Batch: n=15, mean 0.9193, **SD 0.0392**, range 0.8634–0.9583. Seven of fifteen
 runs met the study's completion threshold (hidden ≥ 0.95 with a clean build and
 audit).
 
@@ -118,7 +118,7 @@ positive. See §3.2.
 
 ### 2.1 No strategy separated from baseline
 
-Every condition's median sits within one cohort standard deviation of baseline's.
+Every condition's median sits within one batch standard deviation of baseline's.
 The two nominally ahead of baseline — `spec-inline` and `prompt-minimal` — are
 ahead by 0.06, which is 1.5 SD in a comparison with three observations per cell.
 At n=3 this design resolves differences of roughly 0.13; nothing here approaches
@@ -136,13 +136,13 @@ here.
 Ordering the conditions by how much guidance they supply produces no
 corresponding ordering in score. The most prescriptive condition,
 `spec-architecture`, has the *lowest* median. Its first two replicates finished
-last in the cohort (0.8704, 0.8634) before the third reached the ceiling, so the
+last in the batch (0.8704, 0.8634) before the third reached the ceiling, so the
 effect is not reliable — but no replicate of it ever beat the least prescriptive
 conditions, across two different versions of the condition and five runs total.
 
 An earlier single run had made `spec-architecture` look like the clear winner.
 Replication reversed that reading entirely, and the reversal is the point: at one
-run per condition this cohort's own spread would have supported almost any
+run per condition this batch's own spread would have supported almost any
 conclusion we cared to draw.
 
 ### 2.3 The task saturates
@@ -301,7 +301,7 @@ single disagreement. The corpus is low-resolution, not wrong.
 
 ## 4. Secondary observations
 
-**Tool uptake.** In the earlier cohort, every run that called the provided test
+**Tool uptake.** In the earlier batch, every run that called the provided test
 tool scored ≥ 0.863 and no run that ignored it exceeded 0.877, with both
 catastrophic failures coming from runs that never touched it. That was the
 strongest signal in the data at the time. It is confounded with run quality and
@@ -311,10 +311,10 @@ was not tested directly; it remains the most actionable open hypothesis.
 42–139 leading entries at ~127k tokens, always including the opening request. For
 `spec-inline`, whose specification exists *only* there, this means the controlling
 document was evicted mid-run — and it still produced the joint-highest median in
-the cohort. Specification persistence appears to matter less than expected once
+the batch. Specification persistence appears to matter less than expected once
 the code exists.
 
-**A shared blind spot.** Eight of nine compilers in the earlier cohort failed on
+**A shared blind spot.** Eight of nine compilers in the earlier batch failed on
 `unexpected character '#'` at line 1. Independently written compilers converged on
 the same missing feature.
 
@@ -328,7 +328,7 @@ generation.
 ## 5. Limitations
 
 - **Three replicates resolve ~0.13.** The differences of interest are ~0.05. This
-  cohort can rule out large effects; it cannot establish small ones.
+  batch can rule out large effects; it cannot establish small ones.
 - **The measure saturates.** Seven of fifteen runs hit the completion threshold and
   the outcome takes only a few discrete values.
 - **Run length is not controlled.** Rounds per run varied 2–4 depending on stall
@@ -369,7 +369,7 @@ generation.
 
 ## 7. v3: withholding tests at stages 1–10 (summary)
 
-Pre-registered (`docs/PRE_REGISTRATION.md`), run 2026-09-02, main profile: 2 h
+Planned in advance (`docs/EXPERIMENT_PLAN.md`), run 2026-09-02, main profile: 2 h
 wall, 45-min round cap, stages 1–10, hidden partition of 104 tests. Three
 replicates of `baseline` (Rust, failure-level `test_visible`) against
 `tests-none` (no agent-visible tests or scores).
@@ -383,9 +383,9 @@ replicates of `baseline` (Rust, failure-level `test_visible`) against
 Paired median −0.136 against the pre-declared 0.13 threshold: a candidate
 effect warranting replication, not a confirmed one (one replicate reversed).
 At this difficulty the saturation of §2.3 is gone (no run reached 0.95;
-cohort SD 0.084), and `tests-none` used roughly half the tokens of `baseline`.
-Provenance correction recorded 2026-09-07: this cohort ran on the re-downloaded
-model file (SHA-256 `3f227079…`), not the file its pre-registration quoted.
+batch SD 0.084), and `tests-none` used roughly half the tokens of `baseline`.
+Provenance correction recorded 2026-09-07: this batch ran on the re-downloaded
+model file (SHA-256 `3f227079…`), not the file its experiment plan quoted.
 
 ---
 
@@ -397,7 +397,7 @@ of the typed arm, below the pre-declared 0.13 threshold; the largest paired
 difference (+0.071) is one agent's handling of a lexer corner case, and the
 typed arm's best-scoring compiler cannot compile a call with two arguments.
 
-Pre-registered before the first run (`docs/PRE_REGISTRATION_v4.md`, commits
+Planned in advance before the first run (`docs/EXPERIMENT_PLAN_v4.md`, commits
 `6ebc1a3`/`3ff1e68`, amended `5a35741`); run 2026-09-06/07 on the same model
 file, prompts, specification, tests, and budgets as v3.
 
@@ -437,13 +437,13 @@ study seed, six 2-hour runs in sequence.
 | `js-untyped` | 3 | 0.8389 | 0.8500 | 0.828–0.883 | 0.029 | 0.629 |
 
 Paired differences (typed − untyped): −0.044, +0.026, +0.071; **median +0.026**
-(mean +0.018). Cohort n=6, mean 0.859, SD 0.028 — the tightest cohort so far.
+(mean +0.018). Batch n=6, mean 0.859, SD 0.028 — the tightest batch so far.
 Every run ended by two consecutive 45-minute stalls at 1.5 h, every final
 snapshot built and passed the audit, and no `ts-strict` snapshot was ever lost
 to the type gate: all six typed snapshots type-checked. The visible–hidden gap
 is 0.01–0.05 in both arms.
 
-Under the pre-registered rule the contrast is compatible with no detectable
+Under the planned in advance rule the contrast is compatible with no detectable
 effect at this sample size. Two further observations make it weaker than that
 number suggests.
 
@@ -455,7 +455,7 @@ the entire +0.071 of replicate 3 and most of the spread between arms. Three
 tests fail in all six runs (a block-scope function declaration, an assignment to
 a conditional expression that every compiler accepts, and a `#`-prefixed
 chapter-9 file); four of six reject block-scope `static`. If only the tests
-that every run fails had failed, the macro score would be 0.971; the cohort's
+that every run fails had failed, the macro score would be 0.971; the batch's
 0.83–0.90 range is a handful of shared gaps plus the `#` lottery. The same gap
 appeared in eight of nine v2 runs (§2.3).
 
@@ -481,7 +481,7 @@ Round 0 had passed the chapter-9 multi-argument tests; the final snapshot fails
 the two hidden tests that exercise them and is otherwise the corpus's favourite.
 A strict type-checker is silent on this kind of regression, and the visible
 corpus exercises multi-argument calls too rarely for `test_visible` to flag it.
-Under the fuzz oracle the typed arm has the only broken compiler in the cohort
+Under the fuzz oracle the typed arm has the only broken compiler in the batch
 and the paired contrast for replicate 3 reverses sign. §6.1's recommendation to
 fold the fuzzer into scoring stands; here it would have changed the ranking.
 
@@ -558,7 +558,7 @@ workspace, or it measures the agent's testing habits.
 ## 9. Every final re-scored with the fuzz oracle
 
 **Headline: the corpus and the fuzz oracle disagree about which compilers are good,
-and the disagreement is not noise.** All 27 cohort finals (v2, v3, v4) were rebuilt
+and the disagreement is not noise.** All 27 batch finals (v2, v3, v4) were rebuilt
 from their committed snapshots and fuzzed against GCC. The v3 result gets stronger
 under the fuzz oracle, the v4 null stays null with its best typed run becoming its
 worst, and thirteen v2 compilers that the corpus spreads over 0.877–0.958 are
@@ -569,14 +569,14 @@ indistinguishable at the fuzzer's resolution. Full tables:
 
 Each final snapshot is exported from its run workspace, built inside the pinned image
 exactly as the evaluator builds it, and run through `analysis/fuzz_differential.py`
-on the host, which generates UB-free C programs from the cohort's cumulative feature
+on the host, which generates UB-free C programs from the batch's cumulative feature
 subset, compiles them with GCC as the reference, and compares exit status and stdout.
-Two views: **full scope** (300 programs using every feature of the cohort's task at
+Two views: **full scope** (300 programs using every feature of the batch's task at
 once, one seed) and **fuzz macro** (100 programs at each of stages 1..K, seeded per
 stage, averaged with equal stage weights like the corpus macro score). A single broken
 feature fails every full-scope program; the stage average grades it. Rejecting a valid
 program, failing to assemble, crashing, hanging, and wrong results all count as
-failures. No score here changes any pre-registered primary endpoint.
+failures. No score here changes any planned in advance primary endpoint.
 
 ### 9.2 What the fuzzer found that the corpus did not
 
@@ -584,9 +584,9 @@ failures. No score here changes any pre-registered primary endpoint.
 |---|---:|---:|---|
 | `v3-tests-none-r3` | 0.684 | 0.228 | SIGFPE on nested `%`/`/` and wrong results from stage 3; invalid register forms at stages 9–10 |
 | `v3-tests-none-r2` | 0.749 | 0.715 | wrong `&&`/`\|\|` results with bitwise operands from stage 4; loops that hang from stage 8 (47 of 100 programs time out); invalid assembly at stage 9; cannot parse an initialized file-scope variable (stage 10: 0.00) |
-| `v3-baseline-r2` | **0.931** (cohort best) | 0.953 | segfaults on calls with seven or more arguments (stages 9–10: 0.72, 0.81) |
+| `v3-baseline-r2` | **0.931** (batch best) | 0.953 | segfaults on calls with seven or more arguments (stages 9–10: 0.72, 0.81) |
 | `v3-baseline-r3` | 0.819 | 0.956 | wrong results in nested conditionals from stage 6 |
-| `v4-ts-strict-r3` | **0.899** (cohort best) | 0.806 | rejects every call with two or more arguments (stages 9–10: 0.04, 0.02) |
+| `v4-ts-strict-r3` | **0.899** (batch best) | 0.806 | rejects every call with two or more arguments (stages 9–10: 0.04, 0.02) |
 | `v2-spec-architecture-r1` | 0.870 | 0.820 | wrong results from stage 2 (unary/binary nesting) |
 | `v2-spec-architecture-r2` | 0.863 | 0.968 | wrong results from stage 4 |
 
@@ -595,9 +595,9 @@ stage. The corpus's residual spread among those twenty is the `#ifdef` lexer gap
 (§8.2), invalid-program rejection, and a few shared parse gaps; none of it is
 codegen quality.
 
-### 9.3 Cohort conclusions under both oracles
+### 9.3 Batch conclusions under both oracles
 
-| Cohort | Pre-registered contrast | Corpus paired median | Fuzz macro paired median | Rank agreement (Spearman ρ, corpus vs fuzz macro) |
+| Batch | Planned in advance contrast | Corpus paired median | Fuzz macro paired median | Rank agreement (Spearman ρ, corpus vs fuzz macro) |
 |---|---|---:|---:|---:|
 | v3 | `tests-none` − `baseline` | −0.136 | −0.238 (per-replicate 0.000, −0.238, −0.728) | 0.55 |
 | v4 | `ts-strict` − `js-untyped` | +0.026 | 0.000 (per-replicate 0.000, 0.000, −0.193) | −0.17 |
@@ -624,11 +624,11 @@ The two oracles see different things. The corpus checks invalid-program rejectio
 diagnostics, and a fixed set of valid programs with shallow expressions; the fuzzer
 checks deep, composed valid programs and never touches rejection. Neither alone
 ranks these compilers correctly: the corpus promotes crashing and argument-blind
-compilers to the top of two cohorts, and the fuzzer cannot see a compiler that
+compilers to the top of two batches, and the fuzzer cannot see a compiler that
 accepts every invalid program. The scoring change proposed in §6.1 should therefore
 add the fuzz macro as a co-primary endpoint alongside the corpus macro rather than
 replace it, with the stage-averaged form so that one broken feature does not zero a
-compiler, and it should be pre-registered before the next cohort. Two mechanical
+compiler, and it should be planned in advance before the next batch. Two mechanical
 follow-ups: the fuzzer now records a hanging program as a `timeout` mismatch instead
 of aborting the batch (it lost two stage cells on the first pass), and the
 preprocessor-prefixed test files (§8.2) should be handled at the corpus or
@@ -642,11 +642,11 @@ unstated rule.
 **Headline: the v3 candidate effect did not replicate.** Four replicates per arm
 under the revised harness give paired medians of −0.022 (corpus) and −0.044
 (fuzz macro), with one replicate past the 0.13 threshold in each direction on
-both oracles. What the cohort shows instead is a bimodal outcome: five of eight
+both oracles. What the batch shows instead is a bimodal outcome: five of eight
 compilers are near-perfect and three are broken on every valid program, and the
 broken ones are the runs that hung early on their own self-tests, in either arm.
 
-Pre-registered (`docs/PRE_REGISTRATION_v5.md`, commits `e6e79f6`/`c50610f`),
+Planned in advance (`docs/EXPERIMENT_PLAN_v5.md`, commits `e6e79f6`/`c50610f`),
 run 2026-09-10, main profile (2 h, 45-min round cap, stages 1–10), same
 prompts, partitions, adapter, budgets, and model file as v3.
 
@@ -678,7 +678,7 @@ model file's digest before each slot. Both pilots exercised the whole path.
 | Hidden macro (corpus) | 0.839 (0.585–0.967) | 0.911 (0.476–0.974) | −0.063, +0.018, −0.246, +0.333 | −0.022 | 1 below, 1 above |
 | Fuzz macro | 0.696 (0.019–1.000) | 0.956 (0.000–1.000) | −0.088, 0.000, −0.392, +0.981 | −0.044 | 1 below, 1 above |
 
-Under the pre-registered rule both endpoints are compatible with no detectable
+Under the planned in advance rule both endpoints are compatible with no detectable
 effect, and the "three of four in one direction" reading does not apply. Three
 runs met the completion threshold (hidden ≥ 0.95 with a clean build and audit):
 `baseline` replicates 1 and 2 and `tests-none` replicate 2, the first
@@ -686,7 +686,7 @@ completions at stages 1–10 in the project. Every run again ended by two
 consecutive 45-minute stalls; all eight final snapshots built and passed the
 audit.
 
-### 10.3 The cohort is bimodal, and the mode is set by hangs, not by tests
+### 10.3 The batch is bimodal, and the mode is set by hangs, not by tests
 
 The eight finals split cleanly: five score ≥ 0.90 on the corpus and ≥ 0.91 on
 the fuzzer, three are broken on valid programs. The three defects:
@@ -734,7 +734,7 @@ descriptive only, never pooled with v5):
 
 Preprocessing raises every compiler that lacked `#`-line handling by
 0.06–0.09 and leaves the v3 paired median at −0.122 (from −0.136); the fuzz
-paired median is −0.273. So the v3 cohort, re-read with the better oracle,
+paired median is −0.273. So the v3 batch, re-read with the better oracle,
 still leans negative, and v5 does not. Taken together (seven replicate pairs
 across two harness revisions, so a reading rather than a test) the paired
 deltas on the preprocessed corpus are −0.246, −0.163, −0.122, −0.063, +0.018,
@@ -797,7 +797,7 @@ source size and shape (files, functions, function length, branch density,
 comment ratio, `unwrap`/`panic` sites), self-written tests, build time, and
 per-test compile time, next to both oracles. Full tables:
 [`dimensions.md`](dimensions.md); raw rows: `dimensions.json`/`.csv`. Nothing
-here was pre-registered; the code-shape metrics are regex approximations.
+here was planned in advance; the code-shape metrics are regex approximations.
 
 - **Almost all generation is thinking.** Between 96.2% and 99.6% of generated
   characters (median 98.1%) are reasoning; visible text and tool calls are the
@@ -835,8 +835,8 @@ here was pre-registered; the code-shape metrics are regex approximations.
   Node-hosted ones; final builds take under a second. Within a language the
   spread is negligible.
 
-These dimensions are cheap to carry as pre-registered secondary endpoints in
-the next cohort (tokens, active minutes, turns, source LOC and function count,
+These dimensions are cheap to carry as planned in advance secondary endpoints in
+the next batch (tokens, active minutes, turns, source LOC and function count,
 self-test LOC, cut-off count), where the per-command timeout removes the
 confound that dominates them here.
 
@@ -844,8 +844,8 @@ confound that dominates them here.
 
 ### 12.1 What changed from v5
 
-Two harness changes, both applied before any v6 run and pre-registered in
-`docs/PRE_REGISTRATION_v6.md` (manifest `picc-tests-v3`, conditions
+Two harness changes, both applied before any v6 run and planned in advance in
+`docs/EXPERIMENT_PLAN_v6.md` (manifest `picc-tests-v3`, conditions
 byte-identical to v3 and v5):
 
 - **Pi 0.84.1 → 0.85.1** (image 0.3), verified by a pilot to change nothing
@@ -906,7 +906,7 @@ Paired `tests-none` − `baseline`:
 
 Per arm: corpus median 0.941 (baseline, sd 0.030) vs 0.917 (`tests-none`, sd
 0.012); fuzz 1.000 in all four baseline runs and in three of four
-`tests-none` runs. Two baseline runs reached the pre-registered completion
+`tests-none` runs. Two baseline runs reached the planned in advance completion
 threshold (0.95 with a clean build and audit); no `tests-none` run did (best
 0.924). Under the interpretation rule this is no detectable effect on either
 endpoint at n=4, now with the variance that v3 and v5 lacked: every paired
@@ -933,13 +933,13 @@ the handling: every final snapshot re-scored by the evaluator with the Rust
 audit scoped to `src/` plus its `#[path]`/`include!` closure, same image and
 parameters, applied to all eight runs. Seven of eight reproduce their frozen
 values exactly; r3 becomes 0.911 / 1.000. The evaluator fix, its tests, and
-the corrected documents are committed after the cohort; raw re-score
+the corrected documents are committed after the batch; raw re-score
 outputs are in `analysis/v6-rescore/`.
 
 Had the frozen values stood, the fuzz endpoint would have read a paired
 median of −0.122 with two of four replicates below −0.13, "unresolved" under
 the rule, manufactured by an audit finding on a test helper. The measurement
-layer, not the agent, produced the only large difference in the cohort.
+layer, not the agent, produced the only large difference in the batch.
 
 ### 12.5 What withholding the tests costs
 
@@ -974,7 +974,7 @@ hang fix.
   fell from 0.50 to 0.08. This is the harness change that made the contrast
   readable, ahead of any additional replicate.
 - **Test availability does not detectably change behavioral correctness at
-  stages 1–10 under this budget.** Third cohort, first clean one: −0.017 on
+  stages 1–10 under this budget.** Third batch, first clean one: −0.017 on
   the corpus, 0.000 on the fuzzer, no replicate beyond the threshold on the
   corpus. The v3 candidate effect of −0.136 is not reproduced.
 - **What it changes is process, not product:** more turns, more self-written
@@ -1007,7 +1007,7 @@ and one more replicate. `ts-strict` (TypeScript, `tsc --strict
 --noEmitOnError` as the build gate) versus `js-untyped` (plain JavaScript,
 `node --check`, `tsc` withheld by the guard), same Node.js 24 runtime, same
 prompts apart from the adapter's typing notes, 4 replicates in the frozen
-block order (`docs/PRE_REGISTRATION_v7.md`, manifest `picc-types-v2`,
+block order (`docs/EXPERIMENT_PLAN_v7.md`, manifest `picc-types-v2`,
 conditions byte-identical to v4). Eight runs, 2026-09-11 21:33 to
 2026-09-12 09:28 UTC, no amendments.
 
@@ -1016,7 +1016,7 @@ conditions byte-identical to v4). Eight runs, 2026-09-11 21:33 to
 No run idled five minutes or more (maximum 1.6); no bash call went
 unanswered; five commands were cut by the default timeout, all in
 `js-untyped` runs, all recovered. `ts-strict` r4 is the first run in any
-cohort to finish by the perfect-visible rule (227 of 227, held through the
+batch to finish by the perfect-visible rule (227 of 227, held through the
 review round) at 77 minutes rather than at the budget.
 
 The treatment was delivered: every typed run invoked `tsc` 21–27 times,
@@ -1059,7 +1059,7 @@ recur: all four typed compilers are perfect on the fuzzer.
 
 ### 13.4 The cap now falls inside refactors
 
-With hangs gone, the largest differences in the cohort come from a new
+With hangs gone, the largest differences in the batch come from a new
 place: the 45-minute round cap landing in the middle of a rewrite. It
 happened once per arm. `ts-strict` r2 was rewriting `semantics.ts` when the
 cap hit; `tsc --strict` rejects the final snapshot on one arity error, so it
@@ -1069,14 +1069,14 @@ left a reference to an undefined variable; `node --check` accepts the file,
 every valid program is rejected at runtime, and the corpus scores it 0.500
 by crediting the rejection of every invalid program (the §9 floor) while
 the fuzzer scores 0. The event is condition-blind in occurrence and
-arm-asymmetric in how the two build gates score it; in this cohort the two
+arm-asymmetric in how the two build gates score it; in this batch the two
 cancel. Both were pre-declared outcomes (the type-gate loss is a listed
 secondary endpoint), and the primary endpoint stands as scored. Two of
 eight finals is a hazard of the same order as the hangs were (five of eight
 in v5), and the obvious remedies are endpoint-level, not harness-level: a
-pre-registered co-primary "last buildable snapshot", or a graceful wrap-up
+planned in advance co-primary "last buildable snapshot", or a graceful wrap-up
 signal before the cap, either of which must be declared before the next
-cohort rather than applied to this one.
+batch rather than applied to this one.
 
 ### 13.5 What typing costs
 
@@ -1109,13 +1109,13 @@ lead, not a finding.
 ### 13.6 What this settles
 
 - **Static typing does not detectably change behavioral correctness on this
-  task**, in a second cohort and now without the hang and preprocessing
+  task**, in a second batch and now without the hang and preprocessing
   confounds: +0.004 corpus, +0.001 fuzz, six clean finals within 0.014 of
   each other across the two arms.
 - **It changes what gets written:** more source, many more self-tests, a
   type-checker invoked two dozen times per run, fewer turns.
 - **The harness is now limited by its snapshot rule, not by hangs.** The cap
-  cut a refactor in two of eight runs; the next pre-registration should
+  cut a refactor in two of eight runs; the next experiment plan should
   carry a last-buildable co-primary or a wrap-up signal.
 
 ### 13.7 Limitations
@@ -1141,10 +1141,10 @@ evaluation and queues the same failure-level report the tool returns as a
 user message delivered before the next model call. The agent's guidance
 carries one sentence announcing it. Four replicates per arm in the frozen
 block order, image 0.4, same budget as v6/v7
-(`docs/PRE_REGISTRATION_v8.md`, manifest `picc-tests-v4`; baseline's
+(`docs/EXPERIMENT_PLAN_v8.md`, manifest `picc-tests-v4`; baseline's
 resolved condition hash is unchanged since v3).
 
-The cohort also introduced the snapshot rule §13.4 asked for. The primary
+The batch also introduced the snapshot rule §13.4 asked for. The primary
 endpoints are both oracles on the **last buildable snapshot** (the last
 frozen snapshot whose hidden evaluation built and passed the audit); the
 harness scores that snapshot with the fuzz oracle as a second ledger row
@@ -1187,7 +1187,7 @@ No detectable effect on either primary endpoint. Baseline medians 0.956
 (corpus, sd 0.015) and 1.000 (fuzz); pushed 0.942 (sd 0.026) and 0.998.
 Three of four corpus differences are small and negative, one small and
 positive; the fuzzer is at or within 0.07 of the ceiling everywhere. This is
-the fourth cohort on the test factor and the fourth null: none, on demand,
+the fourth batch on the test factor and the fourth null: none, on demand,
 and pushed feedback produce the same compilers.
 
 ### 14.4 The snapshot rule did its job
@@ -1195,14 +1195,14 @@ and pushed feedback produce the same compilers.
 `tests-pushed` r4 was mid-edit of `parser.rs` when the cap fell (a struct
 field added on one side of a refactor and not the other), so its final
 snapshot does not build. Under the v6/v7 rule the replicate reads −0.950 on
-the corpus and −1.000 on the fuzzer, and the cohort's fuzz endpoint would
-have shown one replicate beyond the threshold. Under the pre-registered rule
+the corpus and −1.000 on the fuzzer, and the batch's fuzz endpoint would
+have shown one replicate beyond the threshold. Under the planned in advance rule
 the run scores its round-0 snapshot, 0.894 / 0.932, and the contrast reads
 as the other three replicates do. Its own pushed reports show what the cap
 discarded: a compiler at 0.98 on the visible tests two minutes before the
 snapshot. That is the remaining limitation of round-end snapshots; the
 pushed condition's report trail is a finer trajectory the harness could
-snapshot on in a later cohort.
+snapshot on in a later batch.
 
 ### 14.5 What pushing changes
 
@@ -1234,12 +1234,12 @@ see. Turns rise by about 10%, tokens and time do not.
 
 - **Test feedback, in any form this harness can deliver, does not change
   behavioral correctness on this task.** Withheld (v3, v5, v6), on demand
-  (every cohort), or pushed every ten minutes (v8): the compilers are the
-  same within noise, with the clean cohorts' variance.
+  (every batch), or pushed every ten minutes (v8): the compilers are the
+  same within noise, with the clean batches' variance.
 - **It changes the work again, in a new direction:** pushed agents ask
   less, test more by hand, and take more turns for the same result.
 - **The last-buildable rule removes the cap artifact without touching the
-  harness.** It caught the one cap-cut final in this cohort; with it, no
+  harness.** It caught the one cap-cut final in this batch; with it, no
   run in v8 is a measurement accident.
 
 ### 14.7 Limitations
@@ -1261,10 +1261,10 @@ Per-run process detail: [`process-report.md`](process-report.md). Raw metrics:
 
 ---
 
-## 15. The v9 cohort: specification detail × test access (2×2)
+## 15. The v9 batch: specification detail × test access (2×2)
 
-Pre-registered in `docs/PRE_REGISTRATION_v9.md` (commit `1e566f5`, harness
-`f2e81b9`; two amendments during the cohort, `09f261d` and `2ff1245`, fixes
+Planned in advance in `docs/EXPERIMENT_PLAN_v9.md` (commit `1e566f5`, harness
+`f2e81b9`; two amendments during the batch, `09f261d` and `2ff1245`, fixes
 applied after it, `198bbb0`). Twelve runs, 2026-09-13 16:35 to 09-14 10:42
 UTC, image 0.4, the same model, budget, and oracles as v6–v8. Four cells,
 three replicates each, in the frozen block order: `baseline` (full
@@ -1300,7 +1300,7 @@ spec-minimal 0.901 (0.784–0.946), tests-none 0.869 (0.682–0.924),
 spec-minimal-tests-none 0.879 (0.825–0.915). Fuzz: 1.000, 0.980, 0.800,
 0.996.
 
-### 15.2 The pre-registered contrasts
+### 15.2 The planned in advance contrasts
 
 Paired by replicate, median with the per-replicate deltas; threshold 0.13.
 
@@ -1319,7 +1319,7 @@ and positive without tests (+0.046). On the fuzz oracle the minimal
 specification costs nothing with tests (−0.020, one replicate beyond, the
 cap-cut r1) and is *ahead* by +0.200 without tests, two of three above the
 threshold, because the cell it is compared with (`tests-none` under the
-full specification) contains the two worst compilers of the cohort. So the
+full specification) contains the two worst compilers of the batch. So the
 first pre-declared reading applies to the specification factor: the
 behavioral specification is redundant with what the model brings, and the
 agent with the 143-word version builds a compiler that agrees with GCC on
@@ -1329,9 +1329,9 @@ suite (§15.3).
 
 **Tests.** Under the full specification, withholding tests reads −0.104 on
 the corpus (inside the band) and **−0.200 on the fuzz oracle, two of three
-replicates below the threshold**: by the pre-registered fuzz rule an
+replicates below the threshold**: by the planned in advance fuzz rule an
 unresolved verdict, and by the corpus rule a candidate effect warranting
-replication. This is the first tests contrast in five cohorts (v3, v5, v6,
+replication. This is the first tests contrast in five batches (v3, v5, v6,
 v8, v9) with a mechanism rather than a lottery behind it (§15.4). Under the
 minimal specification the same contrast is null (−0.067 / +0.016).
 
@@ -1430,7 +1430,7 @@ Per-cell medians, paired deltas against `baseline` in brackets:
 | self-written test programs | 10 | 0 [−10] | 0 [−10] | 13 [+3] |
 | self-test LOC | 55 | 0 | 1303 [+1300] | 306 [+303] |
 
-Time and tokens are flat, as in every cohort. The minimal specification
+Time and tokens are flat, as in every batch. The minimal specification
 adds 60–80% more compiler source and 70–100% more functions in the same
 time: the agents implement shifts, pointers, unsigned and long integers,
 and other features the stage list never names (the self-written test files
@@ -1453,7 +1453,7 @@ last-buildable rule.
 
 ### 15.6 Reading
 
-The question the cohort was built to answer, whether the agent needs the
+The question the batch was built to answer, whether the agent needs the
 specification or the tests, has a two-part answer. It does not need the
 specification: on this task the language itself is the specification, the
 model knows it, and the written document's only measurable contribution is
@@ -1463,20 +1463,20 @@ cannot derive: when the visible tests are withheld under a specification
 that describes the target in detail, two of three agents replaced the
 assembler with a model of the assembler and shipped compilers whose output
 does not assemble. That is a candidate effect with a mechanism, not a
-lottery, and the natural replication is a `tests-none` cohort with four or
+lottery, and the natural replication is a `tests-none` batch with four or
 more replicates that records assembler use as a pre-declared mediator.
 
-The cohort also closes the specification factor on this task: no wording of
+The batch also closes the specification factor on this task: no wording of
 a C specification can test whether specifications matter for a model that
 already has C. The next task has to carry rules the model cannot recall
 (altered semantics, or an unseen language), which the v2 and v9 results
 together now justify.
 
 
-## 16. The v10 cohort: two new tasks, and Python with and without a strict type gate
+## 16. The v10 batch: two new tasks, and Python with and without a strict type gate
 
-Pre-registered in `docs/PRE_REGISTRATION_v10.md` (freeze `4c817f7`, harness
-`e02c8b7` + `bd3f686`; two amendments during the cohort, `0a03525` and
+Planned in advance in `docs/EXPERIMENT_PLAN_v10.md` (freeze `4c817f7`, harness
+`e02c8b7` + `bd3f686`; two amendments during the batch, `0a03525` and
 `acb3b95`). Eighteen runs, 2026-09-16 15:11 to 09-18 03:00 UTC, on image 0.5
 (image 0.4 plus mypy 2.3.1), the same model, provider, and 2-hour budget as
 v6-v9. Two studies, reported separately and never pooled:
@@ -1530,7 +1530,7 @@ under the corrected Python audit where Amendment 2 applies.
 
 ### 16.2 Both tasks have headroom; the chapters 1-10 task does not
 
-This is the cohort's most useful result. Chapters 1-10 has sat at 0.93-0.97
+This is the batch's most useful result. Chapters 1-10 has sat at 0.93-0.97
 for the baseline since v6, so it cannot resolve an improvement. The best runs
 here reach **0.795 on SQL** and **0.501 on chapters 1-18**, both far above
 their floors and far below saturation. The harder task lever that v8 called
@@ -1541,7 +1541,7 @@ task: 0.754, 0.756, 0.795 across three replicates.
 
 ### 16.3 The strict type gate is binding at this difficulty, unlike in v7
 
-The pre-registered criterion for claiming an effect (all replicates agree in
+The planned in advance criterion for claiming an effect (all replicates agree in
 sign, |median| > 0.13) is **met on the SQL task**: `python-typed` minus
 `python` is -0.754, -0.659, -0.795, median -0.754. On chapters 1-18 it is not
 met (one pair is exactly zero and a third is missing).
@@ -1555,7 +1555,7 @@ type-clean inside the budget.
 
 This differs from v7, where `ts-strict` cleared an equivalent `tsc --strict`
 gate routinely (0.839-0.899) and matched `js-untyped`. The difference between
-the cohorts is task difficulty, so the reading is: **a strict type gate is
+the batches is task difficulty, so the reading is: **a strict type gate is
 free when the task is easy and binding when it is hard**, at a fixed budget.
 It is not evidence that annotations reduce correctness. The contrast is also
 confounded, as 16.4 explains, and three replicates cannot separate the two.
@@ -1588,7 +1588,7 @@ their condition. In decreasing order of damage:
    7200 s, which excluded `python-typed` r3 from the study. Evaluation time is
    charged to the run's wall budget, so a slow candidate is penalised twice.
 
-### 16.5 What to change before the next cohort
+### 16.5 What to change before the next batch
 
 - Treat a failed context-overflow recovery as terminal, or lower the thinking
   level, or cut the per-turn output cap. Any of the three ends the wasted
@@ -1599,6 +1599,6 @@ their condition. In decreasing order of damage:
 - Bound evaluation cost on chapters 1-18: a per-round subset, a shorter
   per-test compile timeout, or evaluation outside the wall budget.
 
-Each needs a new manifest id and a fresh pre-registration. Until then, the
+Each needs a new manifest id and a fresh experiment plan. Until then, the
 typing result of 16.3 should be treated as a hypothesis with a plausible
 mechanism, not a settled effect.

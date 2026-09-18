@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Re-score v10 runs under the corrected Python source audit (Amendment 2).
 
-The cohort's evaluators are frozen inside each run's materialization, so the
+The batch's evaluators are frozen inside each run's materialization, so the
 scoped audit cannot be applied through `study.py evaluate`. This follows the
 re-score procedure of `docs/STUDY_PROTOCOL.md`: copy the materialization to a
 scratch directory, point its `runs` entry at a copy of the run directory so

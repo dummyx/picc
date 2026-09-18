@@ -86,7 +86,7 @@ one-factor condition because they change compute or tooling.
   `python_stdlib_only`/`allowed_python_modules` bound Python imports;
 - `agent_notes`: adapter-specific layout or typing rules appended to the
   candidate bullet of the rendered `AGENTS.md`; adapters without notes render
-  byte-identically to earlier cohorts;
+  byte-identically to earlier batches;
 - `agent_policy.blocked_bash_patterns`: `{pattern, reason}` rows rendered into
   the condition's Pi guard as additional bash blocks (the untyped JavaScript
   adapter withholds `tsc`, which the shared image contains);
@@ -200,7 +200,7 @@ Before inclusion, the reporter checks runtime model/image/configuration and
 every hidden snapshot's Git commit and tree. The hidden report, score ledger, full evaluator files, and
 frozen manifest selection must agree for every round. Passed/failed totals and
 macro/micro scores are recomputed from per-test boolean results. Raw Pi-event
-usage and guard ledgers must also reproduce the report. Shared model, image, version, or test-count drift across the cohort stops
+usage and guard ledgers must also reproduce the report. Shared model, image, version, or test-count drift across the batch stops
 aggregation.
 
 Important run columns include `profile`, `replicate`, study/condition IDs,

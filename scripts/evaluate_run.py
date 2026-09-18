@@ -44,7 +44,7 @@ def last_buildable_snapshot(hidden_rows: list[dict[str, Any]], snapshots: list[d
 
     The final snapshot is whatever the workspace held when the round cap
     fell; two of eight v7 finals were half-finished rewrites. The last
-    buildable snapshot is the pre-registered co-primary that ignores that
+    buildable snapshot is the planned in advance co-primary that ignores that
     accident; None when no snapshot built.
     """
     by_key = {(str(row.get("git_commit")), str(row.get("git_tree"))): row for row in hidden_rows}

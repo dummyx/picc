@@ -3,7 +3,7 @@
 buildable snapshot (primary) and on the final snapshot (comparability); each
 cell paired with its replicate's baseline; the two simple effects of each
 factor and the per-replicate interaction; the harness check; and the paired
-resource and code secondary endpoints (docs/PRE_REGISTRATION_v9.md).
+resource and code secondary endpoints (docs/EXPERIMENT_PLAN_v9.md).
 Read-only.
 
 Re-score awareness (v9 Amendments 1 and 2): when analysis/v9-rescore/<run>/
@@ -146,7 +146,7 @@ def paired(by: dict, key: str, variant: str, base: str = BASELINE) -> list[tuple
     return out
 
 
-# (label, variant, base): the pre-registered contrasts, all paired by replicate.
+# (label, variant, base): the planned in advance contrasts, all paired by replicate.
 CONTRASTS = [
     ("spec-minimal - baseline (spec effect, tests on demand)", SPEC, BASELINE),
     ("spec-minimal-tests-none - tests-none (spec effect, no tests)", BOTH, TESTS),

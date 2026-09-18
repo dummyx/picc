@@ -15,15 +15,15 @@ conditions; see [`STUDIES.md`](STUDIES.md).
 
 ## Results so far
 
-Eight pre-registered cohorts (71 main runs) varied prompts, specifications,
+Eight planned in advance batches (71 main runs) varied prompts, specifications,
 test access, test feedback, and static typing one factor at a time, then
 crossed specification detail with test access. None detectably changed the
 compiler's behavioral correctness on the corpus oracle; each changed how the
 agent worked. The one candidate effect with a mechanism (v9: without tests,
 two of three agents replaced the assembler with a self-written simulator) is
-awaiting replication. The campaign summary, per-cohort sections, and the harness
+awaiting replication. The campaign summary, per-batch sections, and the harness
 defects found along the way are in [`analysis/report.md`](analysis/report.md);
-pre-registrations are under `docs/PRE_REGISTRATION*.md`; session reports for
+experiment plans are under `docs/EXPERIMENT_PLAN*.md`; session reports for
 the project owner under `docs/REPORT_*.md`.
 
 ## Frozen default configuration
@@ -369,7 +369,7 @@ This extension blocks obvious attempts to:
 Pi's bash tool has no default timeout, and its maintainer declined to add one
 (earendil-works/pi#2987). An agent that runs a program its own half-built
 compiler miscompiled into an infinite loop therefore blocks the session for the
-rest of the round: across the v3–v5 cohorts 18 of 20 runs lost a median 34
+rest of the round: across the v3–v5 batches 18 of 20 runs lost a median 34
 minutes to one such call, while 99% of completed commands finished within 5 s.
 The image pins the community package `@cad0p/pi-bash-timeout` (loaded through
 `pi/settings.json`), which re-registers the bash tool with a 120 s default
@@ -423,7 +423,7 @@ Before main runs:
 2. fix infrastructure defects only;
 3. freeze this repository commit, Docker image ID, prompts, split manifests, and
    configuration;
-4. write the pre-registration fields in `docs/PRE_REGISTRATION.md`;
+4. write the experiment plan fields in `docs/EXPERIMENT_PLAN.md`;
 5. do not inspect hidden results until the run is complete.
 
 During main runs:

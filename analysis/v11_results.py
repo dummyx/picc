@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v11 cohort: per-replicate hidden scores for the chapters 1-18 compiler and
+"""v11 batch: per-replicate hidden scores for the chapters 1-18 compiler and
 SQL engine tasks (rust baseline, python, python-typed), read from the study
 summaries.  Prints one table per study and the python-typed minus python
 paired deltas.  Read-only over runs/study-results/.
@@ -43,7 +43,7 @@ def rescored() -> dict[str, dict[str, float]]:
 
 
 def v10_rescored() -> dict[str, dict[str, float]]:
-    """The v10 Amendment 2 corrections, for the cross-cohort comparison."""
+    """The v10 Amendment 2 corrections, for the cross-batch comparison."""
     path = ROOT / "analysis" / "v10-rescore" / "summary.json"
     if not path.is_file():
         return {}
@@ -102,16 +102,16 @@ def main() -> int:
             agree = len(signs) == 1 and None not in signs
             median = statistics.median(deltas)
             print(f"\npython-typed minus python (primary), paired by replicate: {[round(d, 4) for d in deltas]}, median {median:.4f}")
-            print(f"pre-registered effect criterion (all replicates agree in sign and |median| > 0.13): "
+            print(f"planned in advance effect criterion (all replicates agree in sign and |median| > 0.13): "
                   f"{'MET' if agree and abs(median) > 0.13 else 'not met'} "
                   f"(n={len(deltas)}, signs agree: {agree})")
         feasible = {c: sum(1 for t in table if t["condition"] == c and t["above_floor"]) for c in conditions}
         print(f"runs above the constant-output floor ({FLOORS[study_id]}): {feasible}\n")
         output[study_id] = {"rows": table, "typed_minus_plain": deltas, "above_floor": feasible}
-    print("## Zero-rate comparison with v10 (descriptive; effort differs, see the pre-registration)")
-    print("| cohort | study | runs | scored zero | above floor |")
+    print("## Zero-rate comparison with v10 (descriptive; effort differs, see the experiment plan)")
+    print("| batch | study | runs | scored zero | above floor |")
     print("|---|---|---:|---:|---:|")
-    for cohort, suffix in (("v10", "v1"), ("v11", "v2")):
+    for batch, suffix in (("v10", "v1"), ("v11", "v2")):
         for study_id, label in STUDIES.items():
             path = ROOT / "runs" / "study-results" / study_id.replace("v2", suffix) / "runs.csv"
             if not path.is_file():
@@ -121,7 +121,7 @@ def main() -> int:
             if not rows:
                 continue
             column = "hidden_score_last_buildable" if "hidden_score_last_buildable" in rows[0] else "hidden_score"
-            # Use the corrected value where a cohort was re-scored, as the
+            # Use the corrected value where a batch was re-scored, as the
             # per-run tables above do.
             fixes = {**rescored(), **v10_rescored()}
             scores = []
@@ -130,7 +130,7 @@ def main() -> int:
                 scores.append(max(fix["final"], fix["best"]) if fix else (value(row, column) or 0.0))
             zeros = sum(1 for s in scores if s == 0.0)
             above = sum(1 for s in scores if s > FLOORS[study_id])
-            print(f"| {cohort} | {label} | {len(rows)} | {zeros} | {above} |")
+            print(f"| {batch} | {label} | {len(rows)} | {zeros} | {above} |")
     (ROOT / "analysis" / "v11-results.json").write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
     return 0
 

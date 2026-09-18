@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "picc-c18-minimal-v3",
-  "description": "Chapters 1-18 C compiler under the minimal protocol; v12 cohort on the corrected harness (context-budget invariant, work-conditioned stall rule, context-overflow termination, evaluation time outside the agent budget, hang short-circuit, scoped Python audit).",
+  "description": "Chapters 1-18 C compiler under the minimal protocol; v12 batch on the corrected harness (context-budget invariant, work-conditioned stall rule, context-overflow termination, evaluation time outside the agent budget, hang short-circuit, scoped Python audit).",
   "baseline_condition": "rust",
   "seed": 20260919,
   "completion_threshold": 0.95,

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create deterministic visible/hidden partitions of the C compiler test corpus.
 
-Two scopes exist.  ``core`` (the default, unchanged since the first cohort) keeps
+Two scopes exist.  ``core`` (the default, unchanged since the first batch) keeps
 standalone tests only: multi-file library tests, assembly helpers, math-library
 cases, and extra credit are excluded.  ``core-with-fixtures`` (the chapters 1-18
 task) keeps the multi-file and helper-dependent tests and records, per test, the

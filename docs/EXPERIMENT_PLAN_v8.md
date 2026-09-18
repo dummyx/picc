@@ -1,8 +1,8 @@
-# Pre-registration: v8 cohort (pushed test feedback, last-buildable endpoint)
+# Experiment plan: v8 batch (pushed test feedback, last-buildable endpoint)
 
-Completed and committed before the first v8 main run. Three cohorts have now
+Completed and committed before the first v8 main run. Three batches have now
 found no effect of test availability (v3, v5, v6) and one no effect of static
-typing (v7) on behavioral correctness; the clean cohorts (v6, v7) found that
+typing (v7) on behavioral correctness; the clean batches (v6, v7) found that
 conditions change the process (turns, self-tests, code size) rather than the
 product. v8 asks the last open question on the test factor: does feedback
 change anything when the agent cannot decline it? It also fixes the
@@ -19,7 +19,7 @@ the primary snapshot rule.
   (resolved condition hashes unchanged); `tests-pushed` is `baseline` plus
   `tests.push_interval_minutes = 10`
 - Date frozen: 2026-09-12
-- Repository commit: `f87d762` (this pre-registration and
+- Repository commit: `f87d762` (this experiment plan and
   `analysis/v8_results.py` are committed on top; no harness, prompt,
   partition, adapter, or configuration file changes with them)
 - Investigator: dummyx
@@ -196,7 +196,7 @@ A run may be excluded only if:
   wherever the defect is in the measurement layer);
 - [x] the preflight reports the endpoint unreachable before the run starts —
   the slot is launched after the endpoint returns rather than skipped. A
-  preflight *mismatch* aborts the cohort instead.
+  preflight *mismatch* aborts the batch instead.
 
 Do not exclude ordinary model mistakes, build failures, low scores, fuzz
 failures, compaction failures caused by the trajectory, guard blocks,
@@ -209,7 +209,7 @@ commands cut by the default timeout, or a final snapshot cut by the cap
   reports the condition itself generates.
 - No workspace edits after start.
 - No `.env`, configuration, prompt, partition, adapter, settings, image, or
-  script changes for the duration of the cohort.
+  script changes for the duration of the batch.
 - No inspecting hidden or fuzz results before a run terminates.
 - Any unavoidable intervention is logged and the run is analyzed separately.
 

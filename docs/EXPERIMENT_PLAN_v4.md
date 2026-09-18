@@ -1,7 +1,7 @@
-# Pre-registration: v4 cohort (static typing)
+# Experiment plan: v4 batch (static typing)
 
-Completed and committed before the first v4 main run. The v3 cohort has its
-own document (`docs/PRE_REGISTRATION.md`); this cohort uses a separate study
+Completed and committed before the first v4 main run. The v3 batch has its
+own document (`docs/EXPERIMENT_PLAN.md`); this batch uses a separate study
 manifest so that the v3 aggregation stays intact.
 
 ## Study identity
@@ -9,7 +9,7 @@ manifest so that the v3 aggregation stays intact.
 - Study title: PiCC v4 — static typing at stages 1–10 (`ts-strict` vs `js-untyped`)
 - Study manifest: `studies/types/study.json` (`picc-types-v1`, seed 20260907)
 - Date frozen: 2026-09-07
-- Repository commit: `6ebc1a3e5011e7c0249830a3c1be185f77481d9a` (this pre-registration is committed on
+- Repository commit: `6ebc1a3e5011e7c0249830a3c1be185f77481d9a` (this experiment plan is committed on
   top; no harness, prompt, partition, adapter, or configuration file changes
   with it)
 - Investigator: dummyx
@@ -64,17 +64,17 @@ process metrics: prompt instructions are followed roughly half the time).
   the Dockerfile adds only `typescript@5.9.3` and `@types/node@24.13.3`
   installed globally. Disclosure: the base tag `node:24-bookworm-slim` is not
   digest-pinned and resolved to Node.js v24.20.0 / npm 11.19.0 for image 0.2
-  (image 0.1 carries v24.19.0 / 11.17.0). Both arms of this cohort use image
+  (image 0.1 carries v24.19.0 / 11.17.0). Both arms of this batch use image
   0.2, so the difference matters only for descriptive comparison with v3.
 - Pi version: `@earendil-works/pi-coding-agent@0.84.1`
 - TypeScript compiler: `5.9.3`; Node type declarations `@types/node@24.13.3`;
-  Rust toolchain `1.88.0` (present, unused by this cohort's candidates)
+  Rust toolchain `1.88.0` (present, unused by this batch's candidates)
 - Provider/model: `local` — llama.cpp `llama-server` build `b1-3cb7ffb`
   (commit 3cb7ffb) serving `unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL`; served GGUF
   SHA-256 `3f227079003add2511437e5b1e94812e363385225bf6a9b47b0054a72bc8b01e`
   (HF snapshot `4ca720788d1e01f1bff70c033e0d0028fd02e502`, 17,559,178,144
-  bytes; verified 2026-09-07; the same file the v3 cohort ran on — see the
-  2026-09-07 amendment in `docs/PRE_REGISTRATION.md`); single RTX 5090; full
+  bytes; verified 2026-09-07; the same file the v3 batch ran on — see the
+  2026-09-07 amendment in `docs/EXPERIMENT_PLAN.md`); single RTX 5090; full
   endpoint provenance in `runs/local-endpoint-provenance-2026-09-07.json`
 - Thinking setting: `high`; sampling pinned client-side
   (`temperature 1.0, top_p 0.95, top_k 20, min_p 0`)
@@ -186,7 +186,7 @@ scores, compaction failures caused by the trajectory, or guard blocks.
 - No prompts beyond the frozen initial/continuation messages.
 - No workspace edits after start.
 - No `.env`, configuration, prompt, partition, adapter, or script changes for
-  the duration of the cohort.
+  the duration of the batch.
 - No inspecting hidden results before a run terminates.
 - Any unavoidable intervention is logged and the run is analyzed separately.
 
@@ -240,7 +240,7 @@ and are part of the frozen commit.
 
 ## Amendments
 
-### 2026-09-06 — audit scope defect found on the first JavaScript run; cohort restarted
+### 2026-09-06 — audit scope defect found on the first JavaScript run; batch restarted
 
 Slot 2 (`v4-js-untyped-r1`, launched 18:25 UTC) had its round-0 snapshot
 scored 0.0 by a **blocking** source-audit finding: the agent had written a
@@ -258,7 +258,7 @@ natural self-test tooling is JavaScript, which the untyped adapter scans; a
 TypeScript agent's quick helpers are bash or `.js` files, which the typed
 adapter does not scan. A run that ends with such a driver present scores 0
 on the primary endpoint by artifact, which would invert the typed-vs-untyped
-contrast for reasons unrelated to typing (the v2 cohort's audit-gate failure
+contrast for reasons unrelated to typing (the v2 batch's audit-gate failure
 mode). The v3 Rust runs never triggered the equivalent Rust rule because
 those agents self-tested through bash.
 
@@ -278,7 +278,7 @@ prompts, partitions, per-test timeouts, or scoring semantics changed.
 Disposition: both runs executed so far (`v4-ts-strict-r1`, complete;
 `v4-js-untyped-r1`, stopped during round 1 at 19:13 UTC) and their
 materializations are retained under `runs/.quarantine-v4/` and excluded from
-all analyses; all six pre-registered slots restart from scratch, in the same
-order, under the amended freeze commit so every run in the cohort executes
+all analyses; all six planned in advance slots restart from scratch, in the same
+order, under the amended freeze commit so every run in the batch executes
 the identical harness. Cost: about 3.5 hours of runs redone. Observations
 from the quarantined runs are not used for any decision beyond this fix.

@@ -5,9 +5,9 @@ Answers "how did the agent work?" rather than "what did it score", by reading
 the Pi event streams, ledgers, and evaluator output that every run already
 produces. Read-only: it never touches a run directory.
 
-This lives outside scripts/ on purpose. scripts/ is fingerprinted by the study
-layer (MATERIALIZED_HASH_DIRS), so adding a file there would change the harness
-hash and break comparability with already-materialized runs.
+This lives outside scripts/ on purpose. The study layer copies scripts/ into
+every materialization as the frozen runtime harness, so analysis code kept
+there would be duplicated into each run and would count as a harness change.
 
 Usage:
     python3 analysis/process_metrics.py                 # all runs under runs/
@@ -331,7 +331,7 @@ def analyse_run(run: Path) -> dict[str, Any] | None:
                 row.get("reason") for row in guard if row.get("event", "blocked_tool_call") == "blocked_tool_call"
             ).most_common()
         ),
-        # Bash commands the default timeout cut off (0 for cohorts before v6).
+        # Bash commands the default timeout cut off (0 for batches before v6).
         "bash_timeouts": sum(1 for row in guard if row.get("event") == "bash_timeout_fired"),
         "compactions": sum(1 for row in extension if "compact" in str(row.get("event"))),
         **events,
@@ -351,15 +351,15 @@ def render_condition_summary(reports: list[dict[str, Any]]) -> list[str]:
     lines = ["## By condition", ""]
     caps = sorted({r["output_cap"] for r in reports if r["output_cap"]}, reverse=True)
     for cap in caps:
-        cohort = [r for r in reports if r["output_cap"] == cap]
-        lines.append(f"Output cap `{cap}` — {len(cohort)} run(s)")
+        batch = [r for r in reports if r["output_cap"] == cap]
+        lines.append(f"Output cap `{cap}` — {len(batch)} run(s)")
         lines.append("")
         lines.append(
             "| Condition | n | Scores (audit-passing) | Median | Spread | Audit pass | Declined tool |"
         )
         lines.append("|---|---:|---|---:|---:|---:|---:|")
         by: dict[str, list[dict[str, Any]]] = {}
-        for report in cohort:
+        for report in batch:
             by.setdefault(report["condition"], []).append(report)
         for condition in sorted(by):
             runs = sorted(by[condition], key=lambda r: r["replicate"] or 0)

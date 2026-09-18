@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "picc-tests-v4",
-  "description": "Test-feedback gradient at stages 1-10 under the revised oracle and the bash default timeout (image 0.4): the starter baseline (tests on demand through test_visible), tests-none (withheld), and tests-pushed (on demand plus a failure-level report pushed by the harness about every 10 minutes), every other factor held at the starter baseline. The v8 cohort runs baseline and tests-pushed; tests-none has v6 data under the same harness (picc-tests-v3). Co-primary endpoints on the last buildable snapshot as well as the final one.",
+  "description": "Test-feedback gradient at stages 1-10 under the revised oracle and the bash default timeout (image 0.4): the starter baseline (tests on demand through test_visible), tests-none (withheld), and tests-pushed (on demand plus a failure-level report pushed by the harness about every 10 minutes), every other factor held at the starter baseline. The v8 batch runs baseline and tests-pushed; tests-none has v6 data under the same harness (picc-tests-v3). Co-primary endpoints on the last buildable snapshot as well as the final one.",
   "design": "one-factor-at-a-time",
   "baseline_condition": "baseline",
   "seed": 20260913,

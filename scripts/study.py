@@ -625,7 +625,7 @@ def operational_guidance(condition: dict[str, Any], adapter: dict[str, Any]) -> 
         f"Dependency policy: {adapter.get('dependency_policy', 'preinstalled dependencies only')}."
     )
     # Adapter-specific layout or typing rules travel with the candidate factor;
-    # adapters without notes render byte-identically to earlier cohorts.
+    # adapters without notes render byte-identically to earlier batches.
     notes = str(adapter.get("agent_notes") or "").strip()
     if notes:
         candidate_guidance += " " + notes

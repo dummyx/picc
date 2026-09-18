@@ -383,7 +383,7 @@ class PushedFeedbackTests(unittest.TestCase):
 
 
 class TestsStudyManifestTests(unittest.TestCase):
-    """The tests manifest (versioned per cohort): the starter's baseline and tests-none, nothing else changed."""
+    """The tests manifest (versioned per batch): the starter's baseline and tests-none, nothing else changed."""
 
     def test_manifest_matches_the_starter_conditions(self) -> None:
         payload, conditions = study.load_study(ROOT / "studies" / "tests" / "study.json")

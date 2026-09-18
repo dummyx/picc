@@ -123,7 +123,7 @@ JavaScript was chosen over an "unannotated Python" arm because the absence of
 annotations is syntactically guaranteed rather than an instruction the agent may
 ignore. Treatment fidelity (annotation density, `any`, suppressions, JSDoc type
 tags, `tsc` invocations, guard blocks) is measured post hoc from the final
-snapshots and event streams. Both arms run in the same image; the v4 cohort
+snapshots and event streams. Both arms run in the same image; the v4 batch
 used `picc-experiment:0.2`, which adds only `typescript@5.9.3` and
 `@types/node@24.13.3` to image 0.1 (image 0.3 differs from 0.2 only by the Pi
 version, 0.85.1).
@@ -199,7 +199,7 @@ The evaluator hands the candidate each test after the C preprocessor
 student compiler its input: `#ifdef`/`#pragma` blocks are resolved, the test's
 own comments are kept, and nothing is added. The GCC reference compile still
 uses the original file. Ten hidden and eighteen visible tests begin with an
-`#ifdef SUPPRESS_WARNINGS` block; before this change (cohorts v2–v4) they
+`#ifdef SUPPRESS_WARNINGS` block; before this change (batches v2–v4) they
 measured an unstated rule about `#` lines rather than compilation, and five of
 six v4 compilers lost the same ten tests to it. A test whose preprocessing
 fails falls back to its raw text and is recorded in the evaluation's
@@ -208,7 +208,7 @@ fails falls back to its raw text and is recorded in the evaluation's
 ## Bash default timeout
 
 Pi's bash tool has no default timeout and its maintainer declined one
-(earendil-works/pi#2987), so before this change (cohorts v2–v5) a program the
+(earendil-works/pi#2987), so before this change (batches v2–v5) a program the
 candidate miscompiled into an infinite loop blocked the session until the
 round cap: 18 of the 20 v3–v5 main runs lost a median 34 minutes to one such
 call (8.9 of 40 budget hours), condition-blind but unevenly distributed, while
@@ -218,7 +218,7 @@ community package `@cad0p/pi-bash-timeout@0.1.0`, loaded through the frozen
 command without an agent-set timeout is killed after 120 s (an explicit
 timeout always wins). Each cut-off is logged as `bash_timeout_fired` and
 counted in the run report and study summary (`guard_bash_timeouts`). Runs
-with and without the default are not comparable; a cohort under it needs its
+with and without the default are not comparable; a batch under it needs its
 own manifest version.
 
 ## Outcomes
@@ -236,7 +236,7 @@ summarizer reports `hidden_score` / `fuzz_macro` for the final snapshot and
 `hidden_score_last_buildable` / `fuzz_macro_last_buildable`; `study-hidden-all`
 scores the last buildable snapshot with the fuzz oracle as well (a second
 row, `role: last_buildable`, in `artifacts/fuzz-scores.jsonl`) when it differs
-from the final one. A pre-registration names which snapshot rule is primary.
+from the final one. A experiment plan names which snapshot rule is primary.
 
 1. Final hidden macro score, equally averaging stages and valid/invalid classes
    (the corpus oracle).
@@ -251,7 +251,7 @@ from the final one. A pre-registration names which snapshot rule is primary.
    invalid-program rejection and shallow hand-written programs, the fuzzer
    deep composed programs and the calling convention. Re-scoring the v2–v4
    finals showed each oracle promoting compilers the other rates as broken
-   (`analysis/report.md` §9), so both are reported and pre-registered
+   (`analysis/report.md` §9), so both are reported and planned in advance
    thresholds apply to each.
 3. Hidden-score area under active-time trajectory.
 4. Completion: hidden macro score at or above 0.95 with successful build and
@@ -305,7 +305,7 @@ condition medians.
 
 A duplicate eligible `(condition, replicate)` is a protocol error and stops
 aggregation. Hidden-test count, model, image, and starter version must be
-constant across the cohort. Each run's configuration and budget must agree
+constant across the batch. Each run's configuration and budget must agree
 with its recorded effective configuration. Drift stops aggregation.
 
 ### Re-scoring after an amendment
@@ -339,11 +339,11 @@ intervals when the repetition count supports it, and do not pool
 language/scaffold variants into a prompt/spec treatment estimate.
 
 A factorial manifest (`design: "factorial"`, `factors: [...]`) is limited to
-interactions justified by the one-factor cohorts; the first is specification
+interactions justified by the one-factor batches; the first is specification
 detail x test access (`studies/spectests/study.json`). The validator requires a
 full crossing, and each combined cell must reuse the single-factor overlays it
 combines. Each cell is still paired with its replicate's baseline; main effects
-and the interaction are pre-registered per cohort and computed by the cohort's
+and the interaction are planned in advance per batch and computed by the batch's
 analysis script. Running all factors as a full factorial would be expensive and
 difficult to interpret.
 

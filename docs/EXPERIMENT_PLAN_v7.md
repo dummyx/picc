@@ -1,12 +1,12 @@
-# Pre-registration: v7 cohort (static typing under the revised harness)
+# Experiment plan: v7 batch (static typing under the revised harness)
 
 Completed and committed before the first v7 main run. v4 tested the same
-contrast (`docs/PRE_REGISTRATION_v4.md`) on image 0.2 under the original
+contrast (`docs/EXPERIMENT_PLAN_v4.md`) on image 0.2 under the original
 corpus oracle, without the fuzz oracle, and without a bound on the agent's
 shell commands; it found no effect at n=3, but two of its six runs lost
 34–45 minutes to hangs and five of its six compilers lost the same ten
 hidden tests to the `#ifdef` preprocessing artifact (`analysis/report.md`
-§8, §9, §10.4b). v7 is a fresh cohort under a separate study manifest with
+§8, §9, §10.4b). v7 is a fresh batch under a separate study manifest with
 those three defects removed and one more replicate; it is not additional
 replicates of v4. It is the first re-test of the project's original question
 ("does static typing change what the agent builds?") on a harness whose
@@ -21,7 +21,7 @@ variance is known to be small (§12).
   both conditions are byte-identical to the v4 manifest's (resolved condition
   hashes unchanged); only the manifest id, seed, and description changed
 - Date frozen: 2026-09-11
-- Repository commit: `90904b9` (this pre-registration, the manifest version
+- Repository commit: `90904b9` (this experiment plan, the manifest version
   bump, and `analysis/v7_results.py` are committed on top; no harness,
   prompt, partition, adapter, or configuration file changes with them)
 - Investigator: dummyx
@@ -57,7 +57,7 @@ All frozen before any v7 run:
    hang hazard completely: eight of eight runs used their full budget, and
    the corpus spread fell from 0.50 to 0.08 (§12.2).
 3. **Audit scope** (commit `32a6e81`): the Rust audit is now scoped like the
-   Node audit already was since v4. Irrelevant to this cohort's candidates
+   Node audit already was since v4. Irrelevant to this batch's candidates
    except that both arms' audits are the v4 ones (declared roots `src/`,
    entry-module import closure, `dist/` excluded for TypeScript).
 
@@ -201,7 +201,7 @@ A run may be excluded only if:
   wherever the defect is in the measurement layer);
 - [x] the preflight reports the endpoint unreachable before the run starts —
   the slot is launched after the endpoint returns rather than skipped. A
-  preflight *mismatch* aborts the cohort instead.
+  preflight *mismatch* aborts the batch instead.
 
 Do not exclude ordinary model mistakes, type-gate build failures, low scores,
 fuzz failures, compaction failures caused by the trajectory, guard blocks, or
@@ -212,7 +212,7 @@ commands cut by the default timeout.
 - No prompts beyond the frozen initial/continuation messages.
 - No workspace edits after start.
 - No `.env`, configuration, prompt, partition, adapter, settings, image, or
-  script changes for the duration of the cohort.
+  script changes for the duration of the batch.
 - No inspecting hidden or fuzz results before a run terminates.
 - Any unavoidable intervention is logged and the run is analyzed separately.
 

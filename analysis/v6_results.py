@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""v6 results: both pre-registered endpoints per run, paired contrasts, the
+"""v6 results: both planned in advance endpoints per run, paired contrasts, the
 harness check (idle time, unanswered calls, cut-offs), and the paired resource
-and code secondary endpoints (docs/PRE_REGISTRATION_v6.md).
+and code secondary endpoints (docs/EXPERIMENT_PLAN_v6.md).
 
 Per Amendment 2 the primary contrast uses every final snapshot re-scored by
 the evaluator with the Rust audit scoped to src/ (both oracles, same image and

@@ -6,7 +6,7 @@ task's visible and hidden partitions hold: source revision, split policy,
 per-partition test ids, and exclusion counts.  ``--write`` creates it from
 generated partitions; ``--check`` (used by the fetch scripts and the study
 validator) fails when regenerated partitions differ from the record, so a
-selection cannot drift silently after it was pre-registered.
+selection cannot drift silently after it was planned in advance.
 """
 
 from __future__ import annotations

@@ -665,7 +665,7 @@ def last_buildable_index(hidden_rows: list[dict[str, Any]]) -> int | None:
     """Index of the last hidden-evaluated snapshot that built with no blocking
     audit finding; None when no snapshot did. The final snapshot is whatever the
     workspace held when the round cap fell, so the last buildable snapshot is
-    the co-primary that ignores a rewrite cut in half (v8 pre-registration)."""
+    the co-primary that ignores a rewrite cut in half (v8 experiment plan)."""
     for index in range(len(hidden_rows) - 1, -1, -1):
         summary = hidden_rows[index].get("summary")
         if not isinstance(summary, dict):
@@ -972,7 +972,7 @@ def reject_duplicate_included_runs(rows: list[dict[str, Any]]) -> None:
         seen[key] = str(row.get("run_id"))
 
 
-def reject_cohort_drift(rows: list[dict[str, Any]]) -> None:
+def reject_batch_drift(rows: list[dict[str, Any]]) -> None:
     shared_fields = (
         "hidden_test_count",
         "model_provider",
@@ -991,7 +991,7 @@ def reject_cohort_drift(rows: list[dict[str, Any]]) -> None:
             details = "; ".join(
                 f"{', '.join(run_ids)}={value[:80]}" for value, run_ids in sorted(values.items())
             )
-            raise SummaryError(f"Primary cohort drift in shared field {field}: {details}")
+            raise SummaryError(f"Primary batch drift in shared field {field}: {details}")
 
 
 def planned_cell_warnings(study: dict[str, Any], rows: list[dict[str, Any]]) -> list[str]:
@@ -1159,7 +1159,7 @@ def markdown(study: dict[str, Any], rows: list[dict[str, Any]], groups: list[dic
         "## Interpretation boundary",
         "",
         (
-            "- Conditions are a full crossing of the declared factors; every cell is paired with the baseline of its replicate, and interactions are for the per-cohort analysis script."
+            "- Conditions are a full crossing of the declared factors; every cell is paired with the baseline of its replicate, and interactions are for the per-batch analysis script."
             if study.get("design") == "factorial"
             else "- Conditions are one-factor variants against a shared baseline; this is not a full factorial design."
         ),
@@ -1210,7 +1210,7 @@ def main() -> int:
         detail = "; ".join(warnings[:5])
         suffix = f" Exclusions: {detail}" if detail else ""
         raise SummaryError(f"No eligible primary-analysis runs found for study {study_id!r}.{suffix}")
-    reject_cohort_drift(rows)
+    reject_batch_drift(rows)
     warnings.extend(planned_cell_warnings(study, rows))
     for warning in warnings:
         print(f"warning: {warning}", file=sys.stderr)
@@ -1230,7 +1230,7 @@ def main() -> int:
             "protocol_comparable": True,
             "replicate": "positive integer",
             "hidden_trajectory": "every frozen snapshot",
-            "cohort_drift": "hard error",
+            "batch_drift": "hard error",
             "missing_cells": "warning",
         },
         "runs": rows,
