@@ -98,6 +98,63 @@ def load_config() -> dict[str, str]:
     return config
 
 
+def context_budget_problems(config: Mapping[str, str], compaction: Mapping[str, Any] | None = None) -> list[str]:
+    """Check that one model turn cannot make the session unsummarizable.
+
+    Pi compacts when the conversation reaches ``n_ctx - reserveTokens``; the
+    reserve is what absorbs the turn that follows. If a single turn may emit
+    more than the reserve, the conversation can jump past the window, and the
+    summarization request (which must carry what it summarizes) then exceeds
+    the context: the provider returns 400 and the session is permanently dead.
+
+    This killed five v10 runs and two v11 runs with `LOCAL_MAX_OUTPUT=65536`
+    against a 131072-token window, exactly half, so two maximal turns filled
+    it. Every run with two or more cap-length turns died; every run with at
+    most one survived. The harness refuses to start rather than repeat it.
+    """
+    problems: list[str] = []
+    try:
+        window = int(config["LOCAL_CONTEXT_WINDOW"])
+        output = int(config["LOCAL_MAX_OUTPUT"])
+    except (KeyError, ValueError):
+        return problems
+    if window <= 0 or output <= 0:
+        return ["LOCAL_CONTEXT_WINDOW and LOCAL_MAX_OUTPUT must be positive"]
+
+    if compaction is None:
+        settings_path = REPO_ROOT / "pi" / "settings.json"
+        try:
+            compaction = json.loads(settings_path.read_text(encoding="utf-8")).get("compaction") or {}
+        except (OSError, json.JSONDecodeError):
+            compaction = {}
+    reserve = int(compaction.get("reserveTokens") or 0)
+    keep_recent = int(compaction.get("keepRecentTokens") or 0)
+
+    if compaction.get("enabled") is not False and reserve and output > reserve:
+        problems.append(
+            f"LOCAL_MAX_OUTPUT={output} exceeds Pi's compaction reserveTokens={reserve}: one turn can "
+            f"overshoot the compaction threshold and leave the session unsummarizable. Lower the output "
+            f"cap or raise reserveTokens in pi/settings.json."
+        )
+    if output + reserve > window:
+        problems.append(
+            f"LOCAL_MAX_OUTPUT={output} plus reserveTokens={reserve} exceeds LOCAL_CONTEXT_WINDOW={window}: "
+            f"compaction cannot leave room for a maximal turn."
+        )
+    if keep_recent and keep_recent + output > window:
+        problems.append(
+            f"keepRecentTokens={keep_recent} plus LOCAL_MAX_OUTPUT={output} exceeds "
+            f"LOCAL_CONTEXT_WINDOW={window}: a compacted session has no room to continue."
+        )
+    return problems
+
+
+def require_context_budget(config: Mapping[str, str]) -> None:
+    problems = context_budget_problems(config)
+    if problems:
+        raise ExperimentError("Unsafe context budget: " + "; ".join(problems))
+
+
 def config_int(config: Mapping[str, str], key: str) -> int:
     try:
         return int(config[key])

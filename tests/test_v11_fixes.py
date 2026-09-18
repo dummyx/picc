@@ -138,3 +138,37 @@ class StallRuleTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ContextBudgetInvariantTests(unittest.TestCase):
+    """The v10/v11 context-overflow deaths: one model turn must never be able
+    to push the session past the window and leave it unsummarizable."""
+
+    def problems(self, *, window: int, output: int, reserve: int, keep_recent: int = 20000, enabled: bool = True):
+        from common import context_budget_problems
+
+        return context_budget_problems(
+            {"LOCAL_CONTEXT_WINDOW": str(window), "LOCAL_MAX_OUTPUT": str(output)},
+            {"enabled": enabled, "reserveTokens": reserve, "keepRecentTokens": keep_recent},
+        )
+
+    def test_rejects_the_configuration_that_killed_v10_and_v11_runs(self) -> None:
+        problems = self.problems(window=131072, output=65536, reserve=16384)
+        self.assertTrue(problems)
+        self.assertIn("unsummarizable", problems[0])
+
+    def test_accepts_the_corrected_configuration(self) -> None:
+        self.assertEqual(self.problems(window=131072, output=32768, reserve=40960), [])
+
+    def test_rejects_a_reserve_that_cannot_fit_beside_the_output(self) -> None:
+        self.assertTrue(self.problems(window=65536, output=32768, reserve=40960))
+        self.assertTrue(self.problems(window=40000, output=32768, reserve=32768, keep_recent=20000))
+
+    def test_the_live_configuration_satisfies_the_invariant(self) -> None:
+        from common import context_budget_problems, load_config
+
+        self.assertEqual(context_budget_problems(load_config()), [])
+
+    def test_a_run_refuses_to_start_on_an_unsafe_budget(self) -> None:
+        source = (ROOT / "scripts" / "run_experiment.py").read_text(encoding="utf-8")
+        self.assertIn("require_context_budget(config)", source)

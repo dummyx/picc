@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "id": "picc-c18-minimal-v2",
-  "description": "Chapters 1-18 C compiler under the minimal protocol; v11 cohort on the corrected harness (work-conditioned stall rule, context-overflow termination, evaluation time outside the agent budget, hang short-circuit, scoped Python audit).",
+  "id": "picc-c18-minimal-v3",
+  "description": "Chapters 1-18 C compiler under the minimal protocol; v12 cohort on the corrected harness (context-budget invariant, work-conditioned stall rule, context-overflow termination, evaluation time outside the agent budget, hang short-circuit, scoped Python audit).",
   "baseline_condition": "rust",
-  "seed": 20260918,
+  "seed": 20260919,
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
@@ -27,7 +27,7 @@
       "access": "none",
       "feedback": "none",
       "visible_subset_fraction": 1.0,
-      "subset_seed": 20260918,
+      "subset_seed": 20260919,
       "visible_partition": "data/partitions-c18/visible",
       "hidden_partition": "data/partitions-c18/hidden",
       "provenance": {

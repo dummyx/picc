@@ -5,7 +5,7 @@
   "hideThinkingBlock": false,
   "compaction": {
     "enabled": true,
-    "reserveTokens": 16384,
+    "reserveTokens": 40960,
     "keepRecentTokens": 20000
   },
   "retry": {
@@ -18,7 +18,9 @@
       "maxRetryDelayMs": 60000
     }
   },
-  "packages": ["/usr/local/lib/node_modules/@cad0p/pi-bash-timeout"],
+  "packages": [
+    "/usr/local/lib/node_modules/@cad0p/pi-bash-timeout"
+  ],
   "skills": [],
   "prompts": []
 }

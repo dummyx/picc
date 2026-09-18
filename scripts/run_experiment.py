@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from common import (
+    require_context_budget,
     LEGACY_KEY_RENAMES,
     ExperimentError,
     REPO_ROOT,
@@ -1069,6 +1070,10 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             "execution_attempts": [current_attempt],
         }
         atomic_write_json(run_dir / "metadata.json", metadata)
+
+    # A model turn must never be able to make the session unsummarizable
+    # (v10/v11 context-overflow deaths); refuse before spending any budget.
+    require_context_budget(config)
 
     agent_visible_tests = REPO_ROOT / config.get("AGENT_VISIBLE_TESTS", "data/partitions/visible")
     started_monotonic = time.monotonic()

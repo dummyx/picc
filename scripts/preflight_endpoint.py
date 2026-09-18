@@ -24,7 +24,15 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from common import ExperimentError, api_key_for, atomic_write_json, is_local_provider, load_config, require_model_id
+from common import (
+    ExperimentError,
+    api_key_for,
+    atomic_write_json,
+    context_budget_problems,
+    is_local_provider,
+    load_config,
+    require_model_id,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -53,6 +61,12 @@ def preflight(config: dict[str, str], *, timeout: float) -> tuple[int, dict[str,
         record["status"] = "not_applicable"
         record["detail"] = "hosted provider; the harness cannot inspect the served model"
         return 0, record
+
+    budget_problems = context_budget_problems(config)
+    if budget_problems:
+        record["status"] = "unsafe_context_budget"
+        record["problems"] = budget_problems
+        return 2, record
 
     root = endpoint_root(config.get("LOCAL_BASE_URL", ""))
     _, key = api_key_for(config)
