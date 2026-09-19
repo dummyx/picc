@@ -1657,7 +1657,54 @@ The v10 result of section 16 stands as reported, with the confounds named
 there. It has not been reproduced, and on the evidence here it should not be
 treated as established.
 
-### 17.4 Retained artifacts
+### 17.4 What the three attempts did measure
+
+Treating "the runs did not finish" as a null result throws away the finding.
+Across all 27 main runs of v10-v12, pooled because the endpoint here is
+behavioural rather than a score (`analysis/condition-shape.json`):
+
+| Condition | n | Median tool calls per turn | Sessions broken | Best hidden |
+|---|---:|---:|---:|---:|
+| `rust` | 9 | 1.02 | 2/9 | 0.825 |
+| `python` | 10 | 1.00 | 2/10 | 0.795 |
+| `python-typed` | 8 | 0.79 | 5/8 | 0.757 |
+
+Two things follow.
+
+**When a run completes, the conditions are comparable.** Best hidden scores
+are 0.825, 0.795, and 0.757. There is no sign that annotated Python produces a
+worse engine than plain Python or Rust.
+
+**The strict type gate changes how the agent works, and that is what costs
+it.** Requiring `mypy --strict` moves the median turn shape from about one
+action per turn to 0.79, and sessions break in five of eight runs against two
+of nine and two of ten. The agent deliberates more and acts less, and on a
+two-hour session that is what exhausts the context.
+
+So the honest statement of the v10 result is not "strict typing scores worse".
+It is: **strict typing lowers the completion rate, not the quality of what
+gets completed**, and the mechanism is a measurable shift in turn shape. That
+also explains why v10 met its effect criterion while v11 and v12 pointed the
+other way: the criterion was scoring completions against non-completions.
+
+This is a weaker claim than a score contrast and it rests on 27 runs that were
+never designed to test it, so it is a hypothesis with a mechanism and a
+predictor, not a settled effect. It is testable cheaply: turn shape is visible
+within two rounds, so a batch designed around completion rate rather than
+score would need far less compute than the ones that failed.
+
+### 17.5 Task difficulty, which was the original point
+
+| Task | Runs | Scoring zero | Best hidden |
+|---|---:|---:|---:|
+| SQL engine | 18 | 10 | 0.825 |
+| Chapters 1-18 compiler | 9 | 7 | 0.501 |
+
+Both sit far below the chapters 1-10 task, which has been saturated at
+0.93-0.97 since v6. The two new tasks give the campaign the headroom it asked
+for after v8, and that result does not depend on any of the above.
+
+### 17.6 Retained artifacts
 
 `runs/v11-sql-*` (four runs) and `runs/v12-sql-*` (five runs) are kept as
 evidence of the failure and excluded from every summary: their manifests

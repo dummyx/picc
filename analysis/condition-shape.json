@@ -1,0 +1,218 @@
+[
+  {
+    "run": "v10-c18-python-r1",
+    "task": "c18",
+    "cond": "python",
+    "ratio": 1.0,
+    "failed": false,
+    "hidden": 0.42554012345679015
+  },
+  {
+    "run": "v10-c18-python-r2",
+    "task": "c18",
+    "cond": "python",
+    "ratio": 1.0,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-c18-python-r3",
+    "task": "c18",
+    "cond": "python",
+    "ratio": 1.0,
+    "failed": false,
+    "hidden": 0.5009920634920635
+  },
+  {
+    "run": "v10-c18-python-typed-r1",
+    "task": "c18",
+    "cond": "python-typed",
+    "ratio": 0.7,
+    "failed": true,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-c18-python-typed-r2",
+    "task": "c18",
+    "cond": "python-typed",
+    "ratio": 0.9936305732484076,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-c18-python-typed-r3",
+    "task": "c18",
+    "cond": "python-typed",
+    "ratio": 1.0,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-c18-rust-r1",
+    "task": "c18",
+    "cond": "rust",
+    "ratio": 1.015625,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-c18-rust-r2",
+    "task": "c18",
+    "cond": "rust",
+    "ratio": 1.02,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-c18-rust-r3",
+    "task": "c18",
+    "cond": "rust",
+    "ratio": 1.0263157894736843,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-sql-python-r1",
+    "task": "sql",
+    "cond": "python",
+    "ratio": 1.0163934426229508,
+    "failed": false,
+    "hidden": 0.7535532185628742
+  },
+  {
+    "run": "v10-sql-python-r2",
+    "task": "sql",
+    "cond": "python",
+    "ratio": 1.0727272727272728,
+    "failed": false,
+    "hidden": 0.014705882352941176
+  },
+  {
+    "run": "v10-sql-python-r3",
+    "task": "sql",
+    "cond": "python",
+    "ratio": 1.0,
+    "failed": false,
+    "hidden": 0.7950489304812833
+  },
+  {
+    "run": "v10-sql-python-typed-r1",
+    "task": "sql",
+    "cond": "python-typed",
+    "ratio": 0.42857142857142855,
+    "failed": true,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-sql-python-typed-r2",
+    "task": "sql",
+    "cond": "python-typed",
+    "ratio": 0.819672131147541,
+    "failed": true,
+    "hidden": 0.09748485462230619
+  },
+  {
+    "run": "v10-sql-python-typed-r3",
+    "task": "sql",
+    "cond": "python-typed",
+    "ratio": 0.391304347826087,
+    "failed": true,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-sql-rust-r1",
+    "task": "sql",
+    "cond": "rust",
+    "ratio": 1.00836820083682,
+    "failed": false,
+    "hidden": 0.8253092213114754
+  },
+  {
+    "run": "v10-sql-rust-r2",
+    "task": "sql",
+    "cond": "rust",
+    "ratio": 0.59375,
+    "failed": true,
+    "hidden": 0.0
+  },
+  {
+    "run": "v10-sql-rust-r3",
+    "task": "sql",
+    "cond": "rust",
+    "ratio": 1.0827586206896551,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v11-sql-python-r1",
+    "task": "sql",
+    "cond": "python",
+    "ratio": 0.75,
+    "failed": true,
+    "hidden": 0.0
+  },
+  {
+    "run": "v11-sql-python-r2",
+    "task": "sql",
+    "cond": "python",
+    "ratio": 1.0333333333333334,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v11-sql-python-typed-r1",
+    "task": "sql",
+    "cond": "python-typed",
+    "ratio": 1.042654028436019,
+    "failed": false,
+    "hidden": 0.7565169886163501
+  },
+  {
+    "run": "v11-sql-rust-r1",
+    "task": "sql",
+    "cond": "rust",
+    "ratio": 0.7916666666666666,
+    "failed": true,
+    "hidden": 0.0
+  },
+  {
+    "run": "v11-sql-rust-r2",
+    "task": "sql",
+    "cond": "rust",
+    "ratio": 1.0495626822157433,
+    "failed": false,
+    "hidden": 0.8239553892215569
+  },
+  {
+    "run": "v12-sql-python-r1",
+    "task": "sql",
+    "cond": "python",
+    "ratio": 0.35,
+    "failed": false,
+    "hidden": 0.0
+  },
+  {
+    "run": "v12-sql-python-r2",
+    "task": "sql",
+    "cond": "python",
+    "ratio": 0.8333333333333334,
+    "failed": true,
+    "hidden": 0.2450751621089372
+  },
+  {
+    "run": "v12-sql-python-typed-r1",
+    "task": "sql",
+    "cond": "python-typed",
+    "ratio": 0.7567567567567568,
+    "failed": true,
+    "hidden": 0.0
+  },
+  {
+    "run": "v12-sql-rust-r1",
+    "task": "sql",
+    "cond": "rust",
+    "ratio": 1.0423728813559323,
+    "failed": false,
+    "hidden": 0.0
+  }
+]
