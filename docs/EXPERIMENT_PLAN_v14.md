@@ -15,10 +15,21 @@ provider returned 400, and the session was dead for the rest of the run.
 `scripts/common.py:context_budget_problems` refuses to start a run that
 violates the relation, with the old configuration as a unit-test case.
 
-Verified empirically in `probe-compaction` (rust, 1.5 h, 25-minute rounds)
-before this plan was frozen: the conversation reached 84411 then 92730 tokens
-and compaction fired five times with no failure, while tool use rose to 38
-calls in the final round. The same path killed `v13-sql-rust-r1` at 65 minutes.
+`reserveTokens` is 65536, so compaction triggers at 65536 tokens of
+conversation. With one turn capped at 32768, the conversation can never exceed
+98304, structurally below the size where summarization outgrew the window.
+
+Two probes were run. The first (`probe-compaction`, keepRecentTokens alone)
+reached 92730 tokens with five clean compactions, and that verification was
+**insufficient**: the first full run then failed at 117537 with a 230801-token
+request. The measured relation is that the summarization request runs about
+3.4-3.6x the span above `keepRecentTokens`, so the old trigger at 90112 needed
+roughly 139000 tokens and could not fit.
+
+The second probe (`probe-compaction2`, rust, 2.5 h, 30-minute rounds) is the
+verification this plan rests on: 8 rounds over 150 minutes, **21 compactions,
+none failed**, peak conversation 84317, 88 tool calls, ended on the wall budget
+rather than breakage. That is more compactions than any real run has needed.
 
 ## Question, design, endpoints, decision rule
 
