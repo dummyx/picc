@@ -1693,7 +1693,24 @@ predictor, not a settled effect. It is testable cheaply: turn shape is visible
 within two rounds, so a batch designed around completion rate rather than
 score would need far less compute than the ones that failed.
 
-### 17.5 Task difficulty, which was the original point
+### 17.5 The thinking level is not the lever (ruled out)
+
+Before concluding, four short probes on the SQL task varied `MODEL_THINKING`
+while holding everything else fixed (`runs/probe-{medium,low}-{rust,python-typed}`):
+
+| Level | `python-typed` | `rust` |
+|---|---:|---:|
+| high (baseline, full runs) | 0.76 | 1.04 |
+| medium | 0.67 | 1.14 |
+| low | 0.86 | 0.67 |
+
+No consistent direction: low helps the typed arm and ruins Rust, medium does
+the reverse, and every probe still produced at least one cap-length turn.
+Lowering the thinking level is therefore not a fix for the session breakdown,
+and it is not worth spending a batch on. The probes are pilots and excluded
+from every summary.
+
+### 17.6 Task difficulty, which was the original point
 
 | Task | Runs | Scoring zero | Best hidden |
 |---|---:|---:|---:|
@@ -1704,7 +1721,7 @@ Both sit far below the chapters 1-10 task, which has been saturated at
 0.93-0.97 since v6. The two new tasks give the campaign the headroom it asked
 for after v8, and that result does not depend on any of the above.
 
-### 17.6 Retained artifacts
+### 17.7 Retained artifacts
 
 `runs/v11-sql-*` (four runs) and `runs/v12-sql-*` (five runs) are kept as
 evidence of the failure and excluded from every summary: their manifests
