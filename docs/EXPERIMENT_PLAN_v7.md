@@ -21,9 +21,9 @@ variance is known to be small (§12).
   both conditions are byte-identical to the v4 manifest's (resolved condition
   hashes unchanged); only the manifest id, seed, and description changed
 - Date frozen: 2026-09-11
-- Repository commit: `90904b9` (this experiment plan, the manifest version
-  bump, and `analysis/v7_results.py` are committed on top; no harness,
-  prompt, partition, adapter, or configuration file changes with them)
+- Repository state: this experiment plan, the manifest version bump, and
+  `analysis/v7_results.py` are committed on top; no harness, prompt,
+  partition, adapter, or configuration file changes with them
 - Investigator: dummyx
 
 ## Research question
@@ -46,7 +46,7 @@ whether that recurs is a pre-declared secondary question.
 
 All frozen before any v7 run:
 
-1. **Revised oracle** (v5 harness, commit `e6e79f6`): candidate inputs are
+1. **Revised oracle** (v5 harness): candidate inputs are
    preprocessed (`gcc -E -P -C -nostdinc`), removing the `#ifdef` artifact that
    cost five of six v4 compilers the same ten hidden tests; the fuzz macro is
    computed in-harness on the final snapshot and is a co-primary endpoint;
@@ -56,7 +56,7 @@ All frozen before any v7 run:
    none, loaded from the frozen `pi/settings.json`). In v6 this removed the
    hang hazard completely: eight of eight runs used their full budget, and
    the corpus spread fell from 0.50 to 0.08 (§12.2).
-3. **Audit scope** (commit `32a6e81`): the Rust audit is now scoped like the
+3. **Audit scope**: the Rust audit is now scoped like the
    Node audit already was since v4. Irrelevant to this batch's candidates
    except that both arms' audits are the v4 ones (declared roots `src/`,
    entry-module import closure, `dist/` excluded for TypeScript).

@@ -46,8 +46,7 @@ should no longer be bimodal.
 
 ## What changed since v5 (the harness revision)
 
-Applied before any v6 run, all frozen in the harness commits `4513e94`,
-`7218e06`:
+Applied before any v6 run, all frozen in the harness:
 
 1. **Pi 0.84.1 → 0.85.1** (image 0.3). No change to anything the harness
    parses; the JSON event stream only gained fields. Verified by the

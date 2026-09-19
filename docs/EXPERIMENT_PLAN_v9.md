@@ -17,8 +17,8 @@ model brings with it.
   20260914, `design: factorial`, `factors: [specification, tests]`; manifest
   SHA-256 `d23c45c4bac3a3d9295cb0043230f8001ddfca31b23b4b03e21ab4d0e4cb35fd`)
 - Date frozen: 2026-09-14
-- Repository commit: `f2e81b9` (factorial design, manifest, minimal
-  specification, tests, docs); this experiment plan and
+- Repository state: factorial design, manifest, minimal specification,
+  tests, and docs; this experiment plan and
   `analysis/v9_results.py` are committed on top with no harness, prompt,
   partition, adapter, or configuration change
 - Investigator: dummyx
@@ -45,7 +45,7 @@ already knows; the interesting cell is `spec-minimal-tests-none`, where the
 agent has only the interface, the feature list, and its own knowledge of C.
 The pre-declared readings (§Interpretation rule) cover both outcomes.
 
-## What changed since v8 (commit `f2e81b9`)
+## What changed since v8
 
 1. **Factorial design in the study validator**: `design: "factorial"` with
    `factors` naming the crossed blocks; every non-empty combination must be
@@ -92,7 +92,7 @@ scope, or the last-buildable rule. The rendered `AGENTS.md` for the two
 - Pilot runs, excluded from every analysis:
   `v9-pilot-spec-minimal-tests-none-smoke1` and `v9-pilot-spec-minimal-smoke1`
   (pilot profile, 0.4 h wall, 12-minute round cap, 2 rounds, stages 1–3),
-  run on image 0.4 with commit `f2e81b9` before the freeze to exercise the
+  run on image 0.4 with this harness before the freeze to exercise the
   two new cells end to end. `baseline` and `tests-none` are the v6/v8 cells
   and were not re-piloted.
 
@@ -266,7 +266,7 @@ commands cut by the default timeout, or a final snapshot cut by the cap.
 ## Pilot evidence (before the freeze)
 
 Both pilots ran to their 0.4 h budget on 2026-09-13 (15:45–16:09 UTC and
-16:09–16:33 UTC) on image 0.4 with commit `f2e81b9`, two 12-minute rounds
+16:09–16:33 UTC) on image 0.4 with this harness, two 12-minute rounds
 each, stages 1–3, after the validation suite (171 tests) passed. They are
 excluded from every analysis; what they establish:
 

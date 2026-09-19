@@ -19,9 +19,9 @@ the primary snapshot rule.
   (resolved condition hashes unchanged); `tests-pushed` is `baseline` plus
   `tests.push_interval_minutes = 10`
 - Date frozen: 2026-09-12
-- Repository commit: `f87d762` (this experiment plan and
-  `analysis/v8_results.py` are committed on top; no harness, prompt,
-  partition, adapter, or configuration file changes with them)
+- Repository state: this experiment plan and `analysis/v8_results.py` are
+  committed on top; no harness, prompt, partition, adapter, or configuration
+  file changes with them
 - Investigator: dummyx
 
 ## Research question
@@ -40,7 +40,7 @@ write their own tests. The expectation is two-sided and, given three nulls on
 this factor, skeptical: the pre-declared secondary endpoints (self-tests,
 turns, on-demand calls) are where a difference is expected to show first.
 
-## What changed since v7 (the harness revision, commit `f87d762`)
+## What changed since v7 (the harness revision)
 
 1. **Pushed feedback** (`tests.push_interval_minutes`): the tools extension's
    `turn_end` hook runs the full visible evaluation once the interval has
@@ -231,7 +231,7 @@ commands cut by the default timeout, or a final snapshot cut by the cap
 ## Pilot evidence (before the freeze)
 
 Both pilots ran to their 0.4 h budget on 2026-09-12 (12:37–13:01 UTC and
-13:01–13:25 UTC) on image 0.4 with this harness (commit `f87d762`), two
+13:01–13:25 UTC) on image 0.4 with this harness, two
 12-minute rounds each, stages 1–3, after the validation suite (163 tests,
 including the new two-row ledger, stray-row, legacy-ledger, interval, and
 rendering cases) and the evaluator smoke passed. They are excluded from every

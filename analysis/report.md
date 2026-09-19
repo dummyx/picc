@@ -397,8 +397,8 @@ of the typed arm, below the pre-declared 0.13 threshold; the largest paired
 difference (+0.071) is one agent's handling of a lexer corner case, and the
 typed arm's best-scoring compiler cannot compile a call with two arguments.
 
-Planned in advance before the first run (`docs/EXPERIMENT_PLAN_v4.md`, commits
-`6ebc1a3`/`3ff1e68`, amended `5a35741`); run 2026-09-06/07 on the same model
+Planned in advance before the first run (`docs/EXPERIMENT_PLAN_v4.md`, amended
+during the batch); run 2026-09-06/07 on the same model
 file, prompts, specification, tests, and budgets as v3.
 
 ### 8.1 Design
@@ -646,7 +646,7 @@ both oracles. What the batch shows instead is a bimodal outcome: five of eight
 compilers are near-perfect and three are broken on every valid program, and the
 broken ones are the runs that hung early on their own self-tests, in either arm.
 
-Planned in advance (`docs/EXPERIMENT_PLAN_v5.md`, commits `e6e79f6`/`c50610f`),
+Planned in advance (`docs/EXPERIMENT_PLAN_v5.md`),
 run 2026-09-10, main profile (2 h, 45-min round cap, stages 1–10), same
 prompts, partitions, adapter, budgets, and model file as v3.
 
@@ -1263,9 +1263,8 @@ Per-run process detail: [`process-report.md`](process-report.md). Raw metrics:
 
 ## 15. The v9 batch: specification detail × test access (2×2)
 
-Planned in advance in `docs/EXPERIMENT_PLAN_v9.md` (commit `1e566f5`, harness
-`f2e81b9`; two amendments during the batch, `09f261d` and `2ff1245`, fixes
-applied after it, `198bbb0`). Twelve runs, 2026-09-13 16:35 to 09-14 10:42
+Planned in advance in `docs/EXPERIMENT_PLAN_v9.md`, with two amendments during
+the batch and fixes applied after it. Twelve runs, 2026-09-13 16:35 to 09-14 10:42
 UTC, image 0.4, the same model, budget, and oracles as v6–v8. Four cells,
 three replicates each, in the frozen block order: `baseline` (full
 behavioral specification, tests on demand), `spec-minimal` (a 143-word
@@ -1399,8 +1398,7 @@ amendment before any corrected value was known:
   declared: the dependency audit applies to the manifests the frozen build
   compiles. Corrected: 0.869 / 0.800 (frozen 0 / 0).
 
-Both fixes (`198bbb0`, with unit tests for each case and the Node analogue)
-were applied after the twelfth run, and every v9 run was re-scored with the
+Both fixes, with unit tests for each case and the Node analogue, were applied after the twelfth run, and every v9 run was re-scored with the
 corrected evaluator from a scratch copy of its frozen materialization: 9 of
 12 reproduce their frozen corpus and fuzz values exactly, the two amended
 runs change as declared, and one unaffected run
@@ -1475,9 +1473,8 @@ together now justify.
 
 ## 16. The v10 batch: two new tasks, and Python with and without a strict type gate
 
-Planned in advance in `docs/EXPERIMENT_PLAN_v10.md` (freeze `4c817f7`, harness
-`e02c8b7` + `bd3f686`; two amendments during the batch, `0a03525` and
-`acb3b95`). Eighteen runs, 2026-09-16 15:11 to 09-18 03:00 UTC, on image 0.5
+Planned in advance in `docs/EXPERIMENT_PLAN_v10.md`, with two amendments
+during the batch. Eighteen runs, 2026-09-16 15:11 to 09-18 03:00 UTC, on image 0.5
 (image 0.4 plus mypy 2.3.1), the same model, provider, and 2-hour budget as
 v6-v9. Two studies, reported separately and never pooled:
 

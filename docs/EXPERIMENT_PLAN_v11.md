@@ -9,8 +9,9 @@ before the first main run. Pilot evidence below.
   `studies/c18/study.json` (`picc-c18-minimal-v2`), seed 20260918, analyzed
   and reported separately. New manifest ids: v10 runs are never pooled with
   these.
-- Harness: `ffd351f` (the four fixes below) on top of `f43514f` (v10 results
-  and the scoped Python audit). Image `picc-experiment:0.5`
+- Harness: the four fixes below, on top of the v10 results and the scoped
+  Python audit. The exact code each run used is frozen in its own
+  materialization under `runs/.study-materializations/<run-id>/`. Image `picc-experiment:0.5`
   (`sha256:9fb66bd28dcf036578e244e5e6c1df5392a793cfb46379e099be1667961da6ed`),
   unchanged from v10: Pi 0.85.1, mypy 2.3.1, Rust 1.88.0, SQLite 3.40.1.
 - Provider/model unchanged from v7-v10: `local`, llama.cpp serving
@@ -32,7 +33,7 @@ removed, to see whether the contrast survives.
 Secondary question, answered by comparing batches descriptively: how much of
 v10's zero rate was harness rather than model?
 
-## What changed since v10 (commit `ffd351f`)
+## What changed since v10
 
 1. **Context-overflow termination.** A round whose compaction reported an
    error, with no tool call and no workspace change, is dead;

@@ -31,7 +31,7 @@ They made the failure cheap and legible; they did not remove its cause. v11's
 four runs are retained under `runs/` and excluded from every analysis: their
 frozen configuration carries the defect.
 
-## What changed since v11 (commit `ffd351f` plus this batch's commit)
+## What changed since v11
 
 - `LOCAL_MAX_OUTPUT` 65536 -> 32768.
 - `pi/settings.json` compaction `reserveTokens` 16384 -> 40960.

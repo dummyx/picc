@@ -107,7 +107,7 @@ process metrics: prompt instructions are followed roughly half the time).
   `MAIN_HOURS=2`, `MAIN_ROUND_TIMEOUT_MINUTES=45`.
   Effective main budget: 2 h wall, 30 rounds, 45-min round cap, stages 1–10,
   two consecutive stalls terminal (`MAX_CONSECUTIVE_ROUND_TIMEOUTS=2` default).
-- Harness revision relative to the v3 freeze (`c85ad70`), all applied before
+- Harness revision relative to the v3 freeze, all applied before
   any v4 run: the study evaluator audits JavaScript/TypeScript candidates
   (imports, `package.json` dependencies, vendored `node_modules`, binary
   artifacts, dynamic loading, all on comment-stripped code; `process.env` and

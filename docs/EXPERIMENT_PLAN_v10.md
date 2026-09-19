@@ -1,6 +1,6 @@
 # Experiment plan: v10 batch (new tasks; Python untyped vs typed)
 
-Status: frozen by the commit that adds this section (harness at `bd3f686`),
+Status: frozen by the commit that adds this section,
 2026-09-16 15:11 UTC, immediately before the first main run (chain started 15:11:27 UTC). Pilot evidence below.
 
 ## Study identity
@@ -8,8 +8,9 @@ Status: frozen by the commit that adds this section (harness at `bd3f686`),
 - Studies: `studies/c18/study.json` (`picc-c18-minimal-v1`) and
   `studies/sql/study.json` (`picc-sql-minimal-v1`), seed 20260916, analyzed
   and reported separately.
-- Harness: task infrastructure `e02c8b7`, typed-Python condition and image
-  0.5 `bd3f686`. Image `picc-experiment:0.5` `sha256:9fb66bd28dcf036578e244e5e6c1df5392a793cfb46379e099be1667961da6ed` = image 0.4
+- Harness: the task infrastructure and the typed-Python condition on image
+  0.5. The exact code each run used is frozen in its own materialization
+  under `runs/.study-materializations/<run-id>/`. Image `picc-experiment:0.5` `sha256:9fb66bd28dcf036578e244e5e6c1df5392a793cfb46379e099be1667961da6ed` = image 0.4
   plus mypy 2.3.1 in `/opt/mypy`; Pi 0.85.1; `@cad0p/pi-bash-timeout@0.1.0`;
   Rust 1.88.0; SQLite 3.40.1 (image python3).
 - Provider/model as in v7-v9: `local`, llama.cpp serving
