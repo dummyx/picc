@@ -1718,7 +1718,49 @@ Both sit far below the chapters 1-10 task, which has been saturated at
 0.93-0.97 since v6. The two new tasks give the campaign the headroom it asked
 for after v8, and that result does not depend on any of the above.
 
-### 17.7 Retained artifacts
+### 17.7 Why the session breakage cannot be fixed from this repository
+
+Three configuration fixes were tried and measured. All three are improvements
+and all three are committed; none solves the problem, and the reason is now
+precise.
+
+Pi decides *when* to compact from the prompt size, but what it must summarize
+is the session history. For a thinking-heavy run these diverge, because
+thinking is dropped from the prompt and retained in the history:
+
+| Run | Prompt at first compaction | Accumulated history | Summarization request | Window |
+|---|---:|---:|---:|---:|
+| `v14-sql-python-r1` | 69,139 | ~448,000 | 322,007 | 131,072 |
+
+Moving the trigger changes the prompt size at which compaction starts and does
+nothing about the history it must swallow. In `v14-sql-python-r1` compaction
+fired exactly at the intended point and failed immediately, then failed on
+every retry.
+
+The three attempts and what each showed:
+
+1. `LOCAL_MAX_OUTPUT` 65536 -> 32768. A single turn could fill half the window.
+   Real defect, but deaths moved from round 2-3 to round 7-8 rather than
+   stopping.
+2. `keepRecentTokens` 20000 -> 49152, so one turn cannot exceed the keep
+   budget and force Pi's split-turn path. Verified at 92,730 tokens; the next
+   full run still died at 117,537.
+3. `reserveTokens` 40960 -> 65536, triggering compaction earlier. Verified
+   over 150 minutes with 21 successful compactions on an *active* run; the
+   next low-action run died at round 11.
+
+The probes passed because active runs keep history close to prompt (about one
+action per turn). The runs that die generate a capped thinking block per round
+and almost never act, so history grows roughly 32,768 tokens per round while
+the prompt stays near 30,000. After ten such rounds the first compaction is
+already impossible.
+
+The fix belongs upstream, in bounding what Pi sends to be summarized. Until
+then a long session on these tasks fails whenever the model settles into
+thinking without acting, and lowering the output cap only changes how many
+rounds that takes.
+
+### 17.8 Retained artifacts
 
 `runs/v11-sql-*` (four runs) and `runs/v12-sql-*` (five runs) are kept as
 evidence of the failure and excluded from every summary: their manifests
