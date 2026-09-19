@@ -158,7 +158,15 @@ class ContextBudgetInvariantTests(unittest.TestCase):
         self.assertIn("unsummarizable", problems[0])
 
     def test_accepts_the_corrected_configuration(self) -> None:
-        self.assertEqual(self.problems(window=131072, output=32768, reserve=40960), [])
+        self.assertEqual(self.problems(window=131072, output=32768, reserve=40960, keep_recent=49152), [])
+
+    def test_rejects_a_turn_larger_than_the_keep_recent_budget(self) -> None:
+        # The v13 finding: a single assistant message bigger than
+        # keepRecentTokens forces Pi's split-turn compaction, which summarizes
+        # a span containing every oversized turn and outgrows the window.
+        problems = self.problems(window=131072, output=32768, reserve=40960, keep_recent=20000)
+        self.assertTrue(problems)
+        self.assertIn("split-turn", problems[0])
 
     def test_rejects_a_reserve_that_cannot_fit_beside_the_output(self) -> None:
         self.assertTrue(self.problems(window=65536, output=32768, reserve=40960))

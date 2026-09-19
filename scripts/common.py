@@ -141,6 +141,13 @@ def context_budget_problems(config: Mapping[str, str], compaction: Mapping[str, 
             f"LOCAL_MAX_OUTPUT={output} plus reserveTokens={reserve} exceeds LOCAL_CONTEXT_WINDOW={window}: "
             f"compaction cannot leave room for a maximal turn."
         )
+    if keep_recent and output > keep_recent:
+        problems.append(
+            f"LOCAL_MAX_OUTPUT={output} exceeds Pi's keepRecentTokens={keep_recent}: one assistant message "
+            f"is larger than the whole 'keep recent' budget, so every compaction takes Pi's split-turn path "
+            f"and summarizes a span containing those oversized turns. Raise keepRecentTokens above the "
+            f"output cap in pi/settings.json."
+        )
     if keep_recent and keep_recent + output > window:
         problems.append(
             f"keepRecentTokens={keep_recent} plus LOCAL_MAX_OUTPUT={output} exceeds "

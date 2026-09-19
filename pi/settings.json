@@ -6,7 +6,7 @@
   "compaction": {
     "enabled": true,
     "reserveTokens": 40960,
-    "keepRecentTokens": 20000
+    "keepRecentTokens": 49152
   },
   "retry": {
     "enabled": true,
