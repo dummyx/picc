@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "id": "picc-sql-minimal-v4",
+  "id": "picc-sql-minimal-v5",
   "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol; v12 batch on the corrected harness (context-budget invariant, work-conditioned stall rule, context-overflow termination, evaluation time outside the agent budget, hang short-circuit, scoped Python audit).",
   "baseline_condition": "rust",
   "seed": 20260920,
