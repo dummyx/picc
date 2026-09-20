@@ -135,6 +135,42 @@ def round_evidence(events_path: Path | None) -> dict[str, Any]:
     return evidence
 
 
+def extension_log_size(artifacts: Path) -> int:
+    """Bytes already in the extension log, so a check can read only what a
+    round appends. A resumed run starts with the earlier rounds' events."""
+    try:
+        return (artifacts / "extension-events.jsonl").stat().st_size
+    except OSError:
+        return 0
+
+
+def require_compaction_extension(artifacts: Path, events_path: Path | None, offset: int = 0) -> None:
+    """Fail the run if pi/extensions/compaction-bound.ts did not load.
+
+    That extension is what keeps Pi's summarization request inside the context
+    window. If its import fails to resolve, Pi logs the load error and carries
+    on with the defect in place: compaction then dies on the first oversized
+    request and every later round of the session dies with it. A run that
+    silently lost the fix is worse than a run that refuses to start.
+    """
+    if events_path is None or not events_path.exists() or events_path.stat().st_size == 0:
+        return  # Pi produced nothing; the process-failure path reports that.
+    log = artifacts / "extension-events.jsonl"
+    try:
+        with log.open("rb") as handle:
+            handle.seek(offset)
+            loaded = b'"compaction_bound_loaded"' in handle.read()
+    except OSError:
+        loaded = False
+    if not loaded:
+        raise SystemExit(
+            "compaction-bound.ts did not load: no compaction_bound_loaded event in "
+            f"{log}. Pi would summarize without a bound on the request and the "
+            "session would die at the first compaction. Check the Pi stderr log "
+            "for an extension load error."
+        )
+
+
 def snapshot_workspace(workspace: Path, round_number: int) -> dict[str, Any]:
     run(["git", "add", "-A"], cwd=workspace)
     run(
@@ -1139,6 +1175,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 f"[{run_id}] round {round_number:03d}: Pi ({effective_timeout / 60:.1f} min cap)",
                 flush=True,
             )
+            extension_log_offset = extension_log_size(artifacts)
             round_result = run_pi_round(
                 config=config,
                 run_id=run_id,
@@ -1155,8 +1192,11 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 api_key=api_key,
                 max_stage=max_stage,
             )
+            events_path = Path(round_result["events"]) if round_result.get("events") else None
+            if round_number == start_round:
+                require_compaction_extension(artifacts, events_path, extension_log_offset)
             snapshot = snapshot_workspace(workspace, round_number)
-            evidence = round_evidence(Path(round_result["events"]) if round_result.get("events") else None)
+            evidence = round_evidence(events_path)
             # The snapshot commits the whole workspace, so a round that wrote
             # anything shows a non-empty diff against the previous snapshot.
             produced_work = bool(

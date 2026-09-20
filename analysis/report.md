@@ -1643,6 +1643,10 @@ round 7-8 under the new one. The cap change was correct and insufficient.
 
 ### 17.3 Consequence
 
+*Superseded by section 17.7. The conclusion below was drawn before the cause
+was read out of Pi's source; it was wrong about the fix being upstream, and it
+is kept because the reasoning that led there is part of the record.*
+
 No setting available in this harness removes the cause. The levers are the
 thinking level, which changes model behaviour and breaks comparison with v3
 onward, or incremental summarization inside Pi, which is upstream. Until one
@@ -1718,47 +1722,77 @@ Both sit far below the chapters 1-10 task, which has been saturated at
 0.93-0.97 since v6. The two new tasks give the campaign the headroom it asked
 for after v8, and that result does not depend on any of the above.
 
-### 17.7 Why the session breakage cannot be fixed from this repository
+### 17.7 The session breakage: cause and fix
 
-Three configuration fixes were tried and measured. All three are improvements
-and all three are committed; none solves the problem, and the reason is now
-precise.
+Three configuration changes were tried first. All three are improvements, all
+three are committed, and none of them solved the problem, because none of them
+touched the cause. The cause is now established by reading the pinned agent's
+source and confirmed by resuming a session that died.
 
-Pi decides *when* to compact from the prompt size, but what it must summarize
-is the session history. For a thinking-heavy run these diverge, because
-thinking is dropped from the prompt and retained in the history:
+**What Pi does.** To compact, Pi serializes the conversation to text and sends
+that text to the model in one request. The serializer
+(`dist/core/compaction/utils.js` in pi-coding-agent 0.85.1) truncates tool
+results to 2,000 characters, on the stated assumption that tool results are the
+largest contributors to context size. Nothing else is truncated. Assistant
+thinking blocks and tool-call arguments — which carry a whole file body for a
+`write` call — are serialized whole. Pi 0.86.0 ships the same code.
 
-| Run | Prompt at first compaction | Accumulated history | Summarization request | Window |
-|---|---:|---:|---:|---:|
-| `v14-sql-python-r1` | 69,139 | ~448,000 | 322,007 | 131,072 |
+That assumption does not hold for this campaign. The agent runs a local
+reasoning model at the highest thinking level with a 32,768-token output cap,
+so a round of planning with few tool calls is almost entirely thinking. The
+summarization request then outgrows the window, compaction fails, the session
+cannot shed context, and every later round fails the same way.
 
-Moving the trigger changes the prompt size at which compaction starts and does
-nothing about the history it must swallow. In `v14-sql-python-r1` compaction
-fired exactly at the intended point and failed immediately, then failed on
-every retry.
+**Two failure modes, cleanly separated by batch.** Every compaction failure in
+`runs/*/artifacts/events/` falls into one of two kinds, and which kind appears
+is decided by the reserve in force at the time:
 
-The three attempts and what each showed:
+| Batches | `reserveTokens` | Failure | Runs affected |
+|---|---:|---|---:|
+| v6-v9 | 16,384 | Turn-prefix summary stopped on length | 9 |
+| v10-v14 | 40,960 / 65,536 | Summarization request exceeded the window | 12 |
 
-1. `LOCAL_MAX_OUTPUT` 65536 -> 32768. A single turn could fill half the window.
-   Real defect, but deaths moved from round 2-3 to round 7-8 rather than
-   stopping.
-2. `keepRecentTokens` 20000 -> 49152, so one turn cannot exceed the keep
-   budget and force Pi's split-turn path. Verified at 92,730 tokens; the next
-   full run still died at 117,537.
-3. `reserveTokens` 40960 -> 65536, triggering compaction earlier. Verified
-   over 150 minutes with 21 successful compactions on an *active* run; the
-   next low-action run died at round 11.
+The first kind is the same defect seen from the output side. The summary shares
+one token budget — a fraction of `reserveTokens` — with the thinking that
+precedes it. A thinking model spends the budget before writing the summary, the
+response stops on length, and Pi refuses a length-stopped summary as a session
+checkpoint. Raising the reserve moved every failure into the second kind:
+requests of 132,716 to 401,158 tokens against a 131,072-token window.
 
-The probes passed because active runs keep history close to prompt (about one
-action per turn). The runs that die generate a capped thinking block per round
-and almost never act, so history grows roughly 32,768 tokens per round while
-the prompt stays near 30,000. After ten such rounds the first compaction is
-already impossible.
+**Why the earlier probes passed.** Each configuration attempt was verified on an
+active run, where history stays close to prompt size because the agent acts
+about once per turn. The runs that die produce a capped thinking block per round
+and almost never act, so history grows by roughly 32,768 tokens per round while
+the prompt stays near 30,000. The probes never reached the shape that fails.
 
-The fix belongs upstream, in bounding what Pi sends to be summarized. Until
-then a long session on these tasks fails whenever the model settles into
-thinking without acting, and lowering the output cap only changes how many
-rounds that takes.
+**The fix.** Pi exposes a documented extension hook, `session_before_compact`,
+that can supply the compaction result itself. `pi/extensions/compaction-bound.ts`
+uses it to cap thinking blocks, assistant text, and tool-call arguments, drop
+the oldest messages if the capped text still does not fit, and then hand the
+bounded work back to Pi's own `compact()` with thinking switched off for that
+one call. Pi's prompts, split-turn handling, and file-operation lists are
+unchanged; only the size of what it is asked to summarize changes. Nothing is
+patched and no dependency is forked, so the pin stays at 0.85.1.
+
+**Verification.** `runs/v14-sql-python-r1` died at round 10 with a
+354,786-token summarization request. Resuming that exact session in the pinned
+image reproduces the failure in 60 seconds. Resuming it again with the
+extension loaded compacts successfully at the first attempt — a split-turn
+overflow compaction over 32 messages serializing to 19,588 characters — and the
+session then completed 32 further turns and 35 tool calls where the unfixed run
+produced none. A second, threshold-triggered compaction later in the same
+session also succeeded. `scripts/smoke_compaction.sh` drives the bound's logic
+directly in the pinned image, including the drop path that real conversations do
+not reach: 38,030,198 characters of maximal thinking reduce to 166,211, under
+budget, with the omission announced to the summarizer.
+
+An unloaded extension would restore the defect silently, so
+`run_experiment.py` fails the run after round 0 unless the extension logged its
+load.
+
+With the bound in place, `reserveTokens` returns to 40,960, the value the
+output-cap invariant asks for. It was raised to 65,536 only to delay the
+oversized request, which cost the agent half its context window for nothing.
 
 ### 17.8 Retained artifacts
 

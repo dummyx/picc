@@ -5,7 +5,7 @@
   "hideThinkingBlock": false,
   "compaction": {
     "enabled": true,
-    "reserveTokens": 65536,
+    "reserveTokens": 40960,
     "keepRecentTokens": 49152
   },
   "retry": {

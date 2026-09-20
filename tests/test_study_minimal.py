@@ -64,7 +64,10 @@ class MinimalStudyTests(unittest.TestCase):
             self.assertEqual((root / "prompts" / "CONTINUE.txt").read_text(), "Continue.\n")
 
             extensions = root / "pi" / "extensions"
-            self.assertEqual(sorted(path.name for path in extensions.iterdir()), ["experiment-guard.ts"])
+            self.assertEqual(
+                sorted(path.name for path in extensions.iterdir()),
+                ["compaction-bound.ts", "experiment-guard.ts"],
+            )
             guard = (extensions / "experiment-guard.ts").read_text()
             self.assertNotIn("registerTool", guard)
             self.assertNotIn("promptGuidelines", guard)

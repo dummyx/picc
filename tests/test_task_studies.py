@@ -94,7 +94,10 @@ class TaskStudyManifestTests(unittest.TestCase):
                 self.assertEqual(record["effective_config"]["FUZZ_STAGE_PROGRAMS"], "0")
                 self.assertEqual(record["effective_config"]["MAIN_MAX_STAGE"], str(task["max_stage"]))
                 self.assertEqual(record["effective_config"]["PI_TOOLS"], "read,bash,edit,write,grep,find,ls")
-                self.assertEqual([p.name for p in (root / "pi" / "extensions").iterdir()], ["experiment-guard.ts"])
+                self.assertEqual(
+                    sorted(p.name for p in (root / "pi" / "extensions").iterdir()),
+                    ["compaction-bound.ts", "experiment-guard.ts"],
+                )
                 hidden = json.loads((root / "data" / "partitions" / "hidden" / "manifest.json").read_text())
                 for row in hidden["tests"]:
                     for fixture in row.get("fixtures", []):
