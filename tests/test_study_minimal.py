@@ -66,7 +66,7 @@ class MinimalStudyTests(unittest.TestCase):
             extensions = root / "pi" / "extensions"
             self.assertEqual(
                 sorted(path.name for path in extensions.iterdir()),
-                ["compaction-bound.ts", "experiment-guard.ts"],
+                ["compaction-bound.ts", "experiment-guard.ts", "truncation-repair.ts"],
             )
             guard = (extensions / "experiment-guard.ts").read_text()
             self.assertNotIn("registerTool", guard)

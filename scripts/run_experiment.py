@@ -144,14 +144,23 @@ def extension_log_size(artifacts: Path) -> int:
         return 0
 
 
-def require_compaction_extension(artifacts: Path, events_path: Path | None, offset: int = 0) -> None:
-    """Fail the run if pi/extensions/compaction-bound.ts did not load.
+# Extensions that repair what the harness's own context and output limits do to
+# the conversation, and the event each logs when it loads. Losing one silently
+# restores a defect that costs the whole run, so a round that did not load them
+# stops the run instead.
+REQUIRED_EXTENSIONS = {
+    "compaction-bound.ts": "compaction_bound_loaded",
+    "truncation-repair.ts": "truncation_repair_loaded",
+}
 
-    That extension is what keeps Pi's summarization request inside the context
-    window. If its import fails to resolve, Pi logs the load error and carries
-    on with the defect in place: compaction then dies on the first oversized
-    request and every later round of the session dies with it. A run that
-    silently lost the fix is worse than a run that refuses to start.
+
+def require_extensions(artifacts: Path, events_path: Path | None, offset: int = 0) -> None:
+    """Fail the run if any of REQUIRED_EXTENSIONS did not load this round.
+
+    A value import that fails to resolve leaves Pi logging the load error and
+    carrying on without the fix: compaction dies on the first oversized
+    request, or a cut-off reply poisons every later round. A run that silently
+    lost either is worse than a run that refuses to start.
     """
     if events_path is None or not events_path.exists() or events_path.stat().st_size == 0:
         return  # Pi produced nothing; the process-failure path reports that.
@@ -159,15 +168,18 @@ def require_compaction_extension(artifacts: Path, events_path: Path | None, offs
     try:
         with log.open("rb") as handle:
             handle.seek(offset)
-            loaded = b'"compaction_bound_loaded"' in handle.read()
+            appended = handle.read()
     except OSError:
-        loaded = False
-    if not loaded:
+        appended = b""
+    missing = [
+        name
+        for name, event in sorted(REQUIRED_EXTENSIONS.items())
+        if f'"{event}"'.encode() not in appended
+    ]
+    if missing:
         raise SystemExit(
-            "compaction-bound.ts did not load: no compaction_bound_loaded event in "
-            f"{log}. Pi would summarize without a bound on the request and the "
-            "session would die at the first compaction. Check the Pi stderr log "
-            "for an extension load error."
+            f"{', '.join(missing)} did not load: the matching load event is absent from "
+            f"{log}. Check the Pi stderr log for an extension load error."
         )
 
 
@@ -1194,7 +1206,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
             )
             events_path = Path(round_result["events"]) if round_result.get("events") else None
             if round_number == start_round:
-                require_compaction_extension(artifacts, events_path, extension_log_offset)
+                require_extensions(artifacts, events_path, extension_log_offset)
             snapshot = snapshot_workspace(workspace, round_number)
             evidence = round_evidence(events_path)
             # The snapshot commits the whole workspace, so a round that wrote

@@ -9,7 +9,7 @@ CONDITION ?= baseline
 PROFILE ?= pilot
 REPLICATES ?= 3
 
-.PHONY: doctor validate image tests tests-c18 tests-sql tasks-smoke compaction-smoke smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
+.PHONY: doctor validate image tests tests-c18 tests-sql tasks-smoke extensions-smoke smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
 	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs
 
 doctor:
@@ -36,9 +36,9 @@ tests-sql:
 tasks-smoke:
 	./scripts/smoke_tasks.sh
 
-# Bound on Pi's summarization request (pi/extensions/compaction-bound.ts).
-compaction-smoke:
-	./scripts/smoke_compaction.sh
+# The two repair extensions in pi/extensions/.
+extensions-smoke:
+	./scripts/smoke_extensions.sh
 
 smoke-tests:
 	./scripts/validate.sh

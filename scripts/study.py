@@ -1024,12 +1024,10 @@ def _materialize_direct(
     render_extension(runtime / "experiment-guard.ts.in", extensions / "experiment-guard.ts", replacements)
     if experiment_tools or has_scaffold:
         render_extension(runtime / "study-setup.ts.in", extensions / "study-setup.ts", replacements)
-    # Harness-wide, condition-independent: bounds what Pi sends to the
-    # summarization model so compaction cannot outgrow the context window.
-    shutil.copy2(
-        REPO_ROOT / "pi" / "extensions" / "compaction-bound.ts",
-        extensions / "compaction-bound.ts",
-    )
+    # Harness-wide and condition-independent: both repair damage the harness's
+    # own limits do to the conversation, so every condition carries them.
+    for name in ("compaction-bound.ts", "truncation-repair.ts"):
+        shutil.copy2(REPO_ROOT / "pi" / "extensions" / name, extensions / name)
     effective_config = effective_config_overrides(condition)
     effective_config["AGENT_VISIBLE_TESTS"] = "data/agent-visible"
     effective_config["PI_TOOLS"] = "read,bash,edit,write,grep,find,ls"

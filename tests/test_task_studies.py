@@ -96,7 +96,7 @@ class TaskStudyManifestTests(unittest.TestCase):
                 self.assertEqual(record["effective_config"]["PI_TOOLS"], "read,bash,edit,write,grep,find,ls")
                 self.assertEqual(
                     sorted(p.name for p in (root / "pi" / "extensions").iterdir()),
-                    ["compaction-bound.ts", "experiment-guard.ts"],
+                    ["compaction-bound.ts", "experiment-guard.ts", "truncation-repair.ts"],
                 )
                 hidden = json.loads((root / "data" / "partitions" / "hidden" / "manifest.json").read_text())
                 for row in hidden["tests"]:

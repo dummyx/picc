@@ -1794,7 +1794,62 @@ With the bound in place, `reserveTokens` returns to 40,960, the value the
 output-cap invariant asks for. It was raised to 65,536 only to delay the
 oversized request, which cost the agent half its context window for nothing.
 
-### 17.8 Retained artifacts
+### 17.8 The other failure: replies cut off before they act
+
+Fixing compaction exposed the second failure the batches kept hitting, which is
+unrelated to it and has its own cause.
+
+The model reaches its output token limit while still reasoning. The reply then
+ends with no tool call and no text, so the round produces nothing, and the
+unfinished reasoning stays in the conversation. Across 3,217 assistant replies
+in v10-v15:
+
+| | Rate of a cut-off reply |
+|---|---:|
+| Overall | 5.8% |
+| Following a cut-off reply | **64.7%** |
+| Following a normal reply | 2.0% |
+
+Thirty times higher. Truncation is self-reinforcing, and a run that enters the
+state stops producing for the rest of its budget. The first v15 run, kept as
+`runs/v15-stopped-sql-python-r1`, spent rounds 1 through 5 that way: each round
+it thought roughly 110,000 characters, hit the cap, and wrote nothing. Reading
+those five thoughts side by side shows what it was doing: every one of them
+restarts the same engine design from the first sentence, because what it sees
+in context is its own design, unfinished.
+
+Two things feed it. One is the harness's and is fixed; the other is the size of
+the output cap, and this window cannot afford the value that would help.
+
+**The unfinished reasoning left in context.**
+`pi/extensions/truncation-repair.ts` replaces a cut-off reply that produced
+nothing with the first 1,500 characters of its reasoning and a note saying the
+reply hit the output limit. The note states what happened and nothing about
+what to do next: how the agent spends a turn is part of what is being measured,
+so the repair removes the artifact and leaves the choice alone. Replies that
+called a tool or said something are left untouched, cut off or not, because
+they did work the next round needs.
+
+**The size of the cap itself**, which is left alone. v10 ran with
+`LOCAL_MAX_OUTPUT` at 65,536 and recorded what this model actually wants:
+2.89% of its replies exceeded 32,768 output tokens, and of those 57, twenty-
+eight finished and called a tool. Only 0.56% fall between 32,768 and 40,960,
+though, and 40,960 is the largest value this window admits without compaction
+thrash. Rescuing one reply in two hundred does not pay for making every wasted
+reply a quarter longer, so the cap stays at 32,768 — which is in any case the
+value under which the v11, v12 and v13 runs that did land a working engine ran.
+
+The value with real evidence behind it is 65,536, and it does not fit a 131,072
+window: it would need `reserveTokens` and `keepRecentTokens` at 65,536 too, and
+the context after a compaction would sit above the trigger and compact again
+every turn. It needs a wider window, llama.cpp at `-c 163840` instead of
+`131072`. The card has room, measured rather than assumed: 17.9 GiB of weights
+against 26.8 GiB in use at the current window leaves about 8.9 GiB of cache and
+buffers for 131,072 tokens, roughly 71 KiB per token, and 5.0 GiB is free.
+Another 32,768 tokens costs about 2.2 GiB. That is a change to how the model
+server is started, not to this repository, and it is the operator's call.
+
+### 17.9 Retained artifacts
 
 `runs/v11-sql-*` (four runs) and `runs/v12-sql-*` (five runs) are kept as
 evidence of the failure and excluded from every summary: their manifests
