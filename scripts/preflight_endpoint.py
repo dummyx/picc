@@ -161,7 +161,15 @@ def preflight(config: dict[str, str], *, timeout: float) -> tuple[int, dict[str,
         return 3, record
 
     served = described["served_model"]
-    record.update({k: v for k, v in described.items() if v is not None and k != "served_model"})
+    # Keep the server-specific extras (attention backend, pool sizes, build)
+    # under their own names; the four normalised fields are set explicitly.
+    extras = {
+        key: value
+        for key, value in described.items()
+        if value is not None
+        and key not in {"kind", "served_model", "served_model_path", "context_length"}
+    }
+    record.update(extras)
     record.update(
         {
             "health": health,
