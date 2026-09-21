@@ -72,6 +72,13 @@ Also: **first launch is slow.** FlashInfer JIT-compiles its kernels for
 idle. The results are cached under `~/.cache/sglang/`, so later launches skip
 it. Budget for that before concluding a boot has hung.
 
+`config/sglang.lock.txt` is the `uv pip freeze` of the environment that was
+actually measured (205 packages), and the install script reproduces it when it
+is present. `SGLANG_VERSION` in `config/sglang.env` is the fallback pin.
+Unpinned, `sglang` resolves to whatever is newest that day, and the behaviour
+recorded here -- pool sizes, parser behaviour, tool-call buffering -- belongs
+to a version. `make sglang-lock` regenerates it, deliberately.
+
 Installed and verified 2026-09-21:
 
 | Component | Version |
@@ -130,6 +137,12 @@ over ordinary HTTPS at ~10 MB/s, so `fetch_model.sh` fetches them directly,
 with `curl -C -` for resume. This is worth knowing before anyone "fixes" the
 script back to the CLI.
 
+Every file is then checked against the Hub's own hashes at that revision:
+sha256 for the four LFS objects, git blob id for the rest. Sizes are not
+integrity, and pinning a revision means nothing unless the bytes on disk are
+the bytes that revision names. `make model-verify` reruns the check without
+downloading; on 2026-09-21 all 20 files matched.
+
 The revision is resolved once and written into `config/sglang.env`, and every
 file is fetched at that revision, so a later `main` cannot silently change the
 checkpoint underneath a campaign. Because `--model-path` is then a local
@@ -181,23 +194,38 @@ that would come out of the KV pool, and this experiment is bound by context
 length rather than tokens per second. It is also the only RTX 5090 row that
 needs no `--mamba-full-memory-ratio` or `--max-total-tokens` pinning.
 
-### Strict thinking (available, off by default)
+### Strict thinking (on)
 
-`--enable-strict-thinking` builds a reasoner grammar that can force the
-end-of-thinking token once a request's thinking budget is spent. The budget is
-per request: `custom_params: {"thinking_budget": N}` on a
-`/v1/chat/completions` call, which Pi can send through `models.json`
-`samplingParams` (`LOCAL_SAMPLING_PARAMS`).
+`--enable-strict-thinking` does two separate things, and only one needs a
+budget.
 
-This is the first control this project has had over thinking length that is
-not the output cap. Under llama.cpp the only lever was the output cap, and a
-reply that reached it while still reasoning produced no text and no tool call
-at all — 62% of replies in the strict-typing condition against 3–10%
-elsewhere, and raising the cap did not help, because the reasoning expanded to
-fill whatever budget it was given (report section 18).
+1. **A token filter on every reasoning request.** While the model is inside
+   its think block, four tokens are masked: `<tool_call>`, `</tool_call>`,
+   `<|im_end|>` and `<|endoftext|>`. It cannot call a tool from inside its
+   reasoning, and it cannot end its turn while still thinking. This applies
+   whether or not a budget is sent.
+2. **A per-request reasoning budget.** With
+   `custom_params: {"thinking_budget": N}` on a `/v1/chat/completions` call,
+   the server forces the end-of-thinking token once N reasoning tokens are
+   spent. Pi sends it through `models.json` `samplingParams`, which the
+   harness builds from `LOCAL_THINKING_BUDGET`. Without the server flag the
+   budget is accepted and silently ignored, so the two are set together and a
+   test fails if only one is.
 
-It is off in the committed configuration because turning it on changes what
-the model does, which is an experimental decision and not a serving one.
+Measured on this endpoint, same prompt, production 32768-token output cap:
+
+| budget | reasoning tokens | answer | finish |
+|---|---|---|---|
+| none | 32,768 | **0 chars** | `length` |
+| 8192 | 8,193 | 58,114 chars | `stop` |
+
+Because of (1), a run with the flag on and no budget is **not** equivalent to
+a run with the flag off. A control that empties `LOCAL_THINKING_BUDGET`
+isolates the budget, not strict thinking as a whole.
+
+The server does not report this flag anywhere -- it is absent from
+`/get_server_info` -- so `make inference-smoke` measures enforcement instead of
+asking: same prompt with and without a small budget, compared.
 
 ## 3a. Thinking: two levers, and one landmine
 
@@ -266,6 +294,25 @@ chat_template_kwargs = { enable_thinking: !!reasoningEffort, preserve_thinking: 
 and no `reasoning_effort`. `preserve_thinking: true` keeps earlier reasoning in
 the rendered prompt, which is part of why context grows as fast as it does.
 
+## 3b. The API key and the logs
+
+Launching from a 0600 YAML file keeps the key out of `ps`. It does not keep it
+out of the log: **SGLang prints its entire `server_args` at startup, `api_key`
+included.** Every launch record written before this was noticed held the key
+in a world-readable `server.log` -- the one file someone attaches when asking
+for help.
+
+What is in place now: the log is created 0600; `scripts/sglang_server.sh`
+overwrites the key in place with a same-length mask once the server is ready,
+again on `stop`, and on a failed start; and the existing records were scrubbed
+the same way. Same length and same inode are deliberate: the server holds the
+file open and keeps appending, and an edit that rewrote the file would detach
+its log from the path.
+
+`.env` itself was 0664 on this host and is now 0600. A key that has been in
+argv (an earlier `ps` dump) and in ten log files should be treated as exposed
+and rotated; rotation needs a server restart, so do it between runs.
+
 ## 4. Configuration log
 
 Every configuration actually launched, in order, with what happened. Add a row
@@ -280,6 +327,9 @@ versions and GPU, and `server.log`.
 | 0 | through 2026-09-20 | **llama.cpp** `llama-server`, `unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL` (snapshot `4ca72078`), n_ctx 131072, port 4545, sampling `temperature=1.0 top_p=0.95 top_k=20 min_p=0` | Ran batches v10–v15. Two harness defects found and fixed (compaction overflow, truncation compounding). Left unexplained: the strict-typing condition produced nothing, with 62% of replies cut off mid-reasoning; raising the output cap from 32768 to 65536 did not help. Retired in favour of SGLang. |
 | 1 | 2026-09-21 | SGLang 0.5.20, `RadixArk/Qwen3.8-27B-NVFP4` rev `319f741c`, **`--mem-fraction-static 0.9`**, no `--max-mamba-cache-size` | **Failed.** Weights 20.14 GB, GDN state pool 45 slots / 3.23 GB, KV 125,335 tokens, leaving 3.10 GB. CUDA graph capture then died with `CUDA error: out of memory`, surfaced as a PyTorch internal assert about `markCaptureEnd`. The 45-slot state pool is sized for a concurrency this server never sees. |
 | 2 | 2026-09-21 | As above with **`--mem-fraction-static 0.85`** and **`--max-mamba-cache-size 16`** | **Serving.** State pool 1.20 GB, **KV 147,731 tokens**, 4.64 GB free, graph capture completed. Verified: `make preflight` verified, `make inference-smoke` all checks passed (tool calls parsed into `tool_calls`, reasoning separated into `reasoning_content`, `finish_reason` present), `make auth-check` returned AUTH_OK through the pinned image. This is the current configuration. |
+
+| 3 | 2026-09-21 08:18Z | As #2 plus **`--enable-strict-thinking`**, with the harness sending `thinking_budget: 8192` | **Serving.** Enforcement verified by measurement (above). Ran `v16-sql-python-typed-r1`: 99 writes, 0.0% cut off, hidden 0.8139, where all three v15 typed runs scored 0.0. Token arithmetic shows the budget bound on 4 of 437 replies -- the three whole-file writes and one planning reply. Also ran the budget control `v16nb-sql-python-typed-r9` on this same server with no budget sent. |
+| 4 | pending next restart | As #3 plus **`--enable-cache-report`** | Reporting only. Makes run records carry real prefix-cache hits instead of `cacheRead: 0`. |
 
 <!-- Append new rows below. -->
 

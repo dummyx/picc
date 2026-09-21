@@ -275,6 +275,21 @@ Notes:
   published recommendation is
   `{"temperature": 1.0, "top_p": 0.95, "top_k": 20, "min_p": 0}`) to pin
   sampling server-side. Everything lands in the frozen `models.json`.
+- `LOCAL_THINKING_BUDGET` caps *reasoning* tokens per reply, separately from
+  `LOCAL_MAX_OUTPUT`, which caps the whole reply. They fail differently: a
+  reply that reaches the output cap while still reasoning contains no answer
+  and no tool call, whereas one that reaches the thinking budget is made to
+  stop reasoning and answer with the output budget that remains. It is sent as
+  `custom_params.thinking_budget` and only SGLang launched with
+  `--enable-strict-thinking` enforces it; anything else accepts and ignores it.
+  `LOCAL_THINKING_LEVEL_MAP` maps Pi's thinking levels onto the values the
+  served model accepts, for models whose chat template rejects Pi's names.
+- `EVALUATION_MEMORY` (default 8g) is the ceiling for containers that score a
+  candidate, separate from the agent's `AGENT_MEMORY`. The model server shares
+  the host, and a candidate with a runaway query should not be able to take it.
+- `pi/settings.json` sets `httpIdleTimeoutMs` well above Pi's 300000 default:
+  SGLang buffers a whole tool call instead of streaming it, so a long file
+  write is silent for minutes and the default kills it mid-call.
 - Provenance: the harness freezes the client configuration. The server side is
   frozen separately, by `config/sglang.env` (copied into every materialization)
   and by the per-launch records under `runs/inference/`.
