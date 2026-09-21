@@ -27,6 +27,51 @@ neither, and it is what SGLang's own installation guide recommends.
 `--prerelease=allow` is required because SGLang's wheels depend on prerelease
 CUDA 13 builds of torch and flashinfer.
 
+### Four things this host needed before SGLang would start
+
+None of these are in SGLang's install guide, and each one fails at a different
+point with an error that does not name the cause. `scripts/install_sglang.sh`
+handles all four; this is the record of why.
+
+1. **A Python with headers.** `/usr/bin/python3.12` here is a stripped build:
+   no `ensurepip`, and no `Python.h`. Triton compiles a small CUDA utility
+   module at first launch and fails with a bare `CalledProcessError` from gcc.
+   The venv is therefore built on a **uv-managed CPython 3.12.14**, which ships
+   its own headers. (`uv python find 3.12` may resolve to a different managed
+   directory that has no headers; the install script uses the versioned one.)
+
+2. **`ninja` on PATH.** SGLang JIT-compiles kernels and shells out to `ninja`
+   by name. It is installed in the venv, but the venv is invoked by absolute
+   path rather than activated, so `scripts/sglang_server.sh` prepends
+   `$VENV/bin` and the CUDA `bin` directory to PATH before launching.
+
+3. **CUDA development symlinks.** The JIT links with
+   `-L$CUDA_HOME/lib64 -lcudart`, which is how a system CUDA install is laid
+   out. The pip packages put libraries in `lib/` and ship only versioned
+   sonames, because the unversioned development symlinks belong to a `-dev`
+   package with no pip equivalent. Without them the kernels compile and then
+   fail to link. `scripts/link_cuda_dev.py` adds `lib64 -> lib` and the
+   unversioned `.so` links inside the venv, idempotently.
+
+4. **A self-consistent CUDA toolchain.** This is the one worth knowing about.
+   SGLang's dependency graph resolves `nvidia-cuda-nvcc`, `nvidia-nvvm` and
+   `nvidia-nvjitlink` to **13.4** while `nvidia-cuda-runtime` and its headers
+   stay at **13.0**. Both halves of that mismatch are fatal, at different
+   points:
+
+   | Mismatch | Error |
+   |---|---|
+   | nvcc 13.4 against 13.0 headers | `CUDA compiler and CUDA toolkit headers are incompatible` (flashinfer) |
+   | nvvm 13.4 against ptxas 13.0 | `Unsupported .version 9.4; current version is '9.0'` (ptxas) |
+
+   The install script pins the compiler side down to `13.0.*` so every
+   component agrees with the runtime.
+
+Also: **first launch is slow.** FlashInfer JIT-compiles its kernels for
+`sm120`, which ran ~20 minutes here with 22 compiler processes and the GPU
+idle. The results are cached under `~/.cache/sglang/`, so later launches skip
+it. Budget for that before concluding a boot has hung.
+
 Installed and verified 2026-09-21:
 
 | Component | Version |

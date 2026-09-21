@@ -35,9 +35,33 @@ if [[ ! -d "$VENV" ]]; then
 fi
 
 # --prerelease=allow is required: SGLang's published wheels depend on
-# prerelease CUDA 13 builds of torch and flashinfer.
+# prerelease CUDA 13 builds of torch and flashinfer. ninja is needed because
+# SGLang JIT-compiles some kernels at first launch and shells out to it.
 echo "installing sglang into ${VENV#"$ROOT"/}"
-uv pip install --python "$VENV/bin/python" --prerelease=allow ${1:+--upgrade} sglang
+uv pip install --python "$VENV/bin/python" --prerelease=allow ${1:+--upgrade} sglang ninja
+
+# The CUDA wheels do not agree with each other out of the box: sglang's
+# dependency graph resolves nvcc, nvvm and nvjitlink to 13.4 while the runtime
+# and its headers stay at 13.0. Both mismatches are fatal, in different ways
+# and at different points in the build:
+#
+#   nvcc 13.4 against 13.0 headers  -> "CUDA compiler and CUDA toolkit headers
+#                                       are incompatible" from flashinfer
+#   nvvm 13.4 against ptxas 13.0    -> "Unsupported .version 9.4; current
+#                                       version is 9.0" from ptxas
+#
+# Pin the compiler side down to the runtime's 13.0 so every component agrees.
+echo "aligning the CUDA toolchain with the 13.0 runtime"
+uv pip install --python "$VENV/bin/python" \
+  'nvidia-cuda-nvcc==13.0.*' 'nvidia-cuda-crt==13.0.*' \
+  'nvidia-nvvm==13.0.*' 'nvidia-nvjitlink==13.0.*'
+
+# SGLang JIT-compiles a few kernels at first launch. Its linker flags are
+# written for a system CUDA toolkit -- "-L$CUDA_HOME/lib64 -lcudart" -- but
+# the toolkit here comes from pip, which puts libraries in lib/ and ships
+# only versioned sonames. Without these links the server compiles its
+# kernels and then dies at the link step with "cannot find -lcudart".
+"$VENV/bin/python" "$ROOT/scripts/link_cuda_dev.py" "$VENV"
 
 "$VENV/bin/python" - <<'PY'
 import sglang, torch
