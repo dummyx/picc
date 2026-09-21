@@ -8,9 +8,11 @@ STUDY ?= studies/starter/study.json
 CONDITION ?= baseline
 PROFILE ?= pilot
 REPLICATES ?= 3
+PREFIX ?= batch
 
 .PHONY: doctor validate image tests tests-c18 tests-sql tasks-smoke extensions-smoke smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
-	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs
+	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs \
+	sglang-install sglang-config inference-smoke sglang-serve sglang-start sglang-stop sglang-status sglang-logs sglang-pin experiment
 
 doctor:
 	./scripts/doctor.sh
@@ -110,3 +112,47 @@ study-summary:
 
 clean-runs:
 	@echo "Refusing to delete runs automatically. Remove a specific runs/<id> directory explicitly."
+
+# --- Inference (SGLang) -----------------------------------------------------
+# The model server lives in its own virtualenv: the harness's own Python is
+# standard library only, and installing a CUDA stack into it would make the
+# harness's dependencies unreproducible. Everything the server is launched
+# with is pinned in config/sglang.env and recorded per launch under
+# runs/inference/. See docs/INFERENCE_SGLANG.md.
+
+sglang-install:
+	./scripts/install_sglang.sh
+
+sglang-config:
+	./scripts/sglang_server.sh config
+
+sglang-serve:
+	./scripts/sglang_server.sh serve
+
+sglang-start:
+	./scripts/sglang_server.sh start
+
+sglang-stop:
+	./scripts/sglang_server.sh stop
+
+sglang-status:
+	./scripts/sglang_server.sh status
+
+sglang-logs:
+	./scripts/sglang_server.sh logs
+
+sglang-pin:
+	./scripts/sglang_server.sh pin
+
+# What preflight cannot check: that the endpoint parses tool calls and
+# separates reasoning. Both fail silently when the parsers are wrong.
+inference-smoke:
+	python3 scripts/smoke_inference.py
+
+# --- One-command batch ------------------------------------------------------
+# Brings up inference, verifies the endpoint against the frozen config, and
+# runs the schedule. PREFIX is the run-id prefix (ids are <PREFIX>-<cond>-r<n>).
+#   make experiment STUDY=studies/sql/study.json PREFIX=v16 REPLICATES=3 PROFILE=main
+experiment:
+	./scripts/start_experiment.sh --study "$(STUDY)" --prefix "$(PREFIX)" \
+		--replicates "$(REPLICATES)" --profile "$(PROFILE)"

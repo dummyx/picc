@@ -201,27 +201,53 @@ and one model from the `LOCAL_*` configuration, freezes it into
 `runs/<run-id>/control/pi/models.json`, and records the endpoint shape in
 `metadata.json`. Resume revalidates all of it like every other frozen setting.
 
-Example: serve the intended checkpoint with llama.cpp on the host,
+This project serves its own model with SGLang. That side is set up once and
+then driven from the repository:
 
 ```bash
-llama-server -hf unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL --jinja -c 131072 --port 8080
+make sglang-install          # SGLang into its own virtualenv (not the harness's)
+scripts/fetch_model.sh       # pin the checkpoint revision and download it
+make sglang-start            # launch, wait for /health
+make sglang-status           # served model, KV pool size, parsers
 ```
 
-then select it in `.env` (no hosted key is required):
+Every pin lives in `config/sglang.env`, every launch is recorded under
+`runs/inference/<timestamp>/`, and the whole arrangement — which checkpoint,
+which flags, and why each one — is written up in
+[docs/INFERENCE_SGLANG.md](docs/INFERENCE_SGLANG.md).
+
+Then select it in `.env` (no hosted key is required):
 
 ```dotenv
 MODEL_PROVIDER=local
-MODEL_ID=unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL
+MODEL_ID=RadixArk/Qwen3.8-27B-NVFP4     # = SGLANG_SERVED_MODEL_NAME
 MODEL_THINKING=high
-LOCAL_BASE_URL=http://host.docker.internal:8080/v1
+LOCAL_BASE_URL=http://127.0.0.1:30000/v1
+LOCAL_NETWORK_MODE=host
 LOCAL_CONTEXT_WINDOW=131072
 ```
 
 and verify the endpoint end to end before any run:
 
 ```bash
-make auth-check
+make preflight      # served model and usable context match the frozen config
+make auth-check     # one real Pi request through the pinned image
 ```
+
+Or do all of it in one command, which is the intended way to start a batch:
+
+```bash
+make experiment STUDY=studies/sql/study.json PREFIX=v16 REPLICATES=3 PROFILE=main
+```
+
+That starts the server if it is not already healthy, refuses to continue
+unless preflight verifies the endpoint against the frozen configuration, and
+only then runs the schedule.
+
+Any other OpenAI-compatible endpoint (llama.cpp `llama-server`, LM Studio,
+vLLM, Ollama) still works: set the `LOCAL_*` values to match it and skip the
+`sglang-*` targets. `make preflight` understands both `llama-server` and
+SGLang metadata.
 
 Notes:
 
@@ -229,9 +255,14 @@ Notes:
   runs cannot be mislabeled. Single-model servers usually ignore the requested
   ID, so the configured value is also the run's provenance label — keep it
   exact.
-- Keep `LOCAL_CONTEXT_WINDOW` equal to the server's real context size
-  (`llama-server -c`); Pi uses it for compaction thresholds.
-  `LOCAL_MAX_OUTPUT` caps output tokens per request.
+- Keep `LOCAL_CONTEXT_WINDOW` within the server's real usable context; Pi uses
+  it for compaction thresholds. With SGLang this is not just the
+  `--context-length` flag: the KV pool is sized from whatever VRAM is left
+  after the weights, so the pool can be much smaller than the advertised
+  context and a conversation that outgrows it is rejected mid-run.
+  `make preflight` reads both numbers from `/get_server_info` and refuses to
+  start when the window exceeds the smaller one. `LOCAL_MAX_OUTPUT` caps
+  output tokens per request.
 - Docker Desktop (macOS/Windows) resolves `host.docker.internal` even for a
   server bound to `127.0.0.1`. On a Linux engine the harness adds
   `host.docker.internal:host-gateway`, but the server must listen on an
@@ -244,8 +275,9 @@ Notes:
   published recommendation is
   `{"temperature": 1.0, "top_p": 0.95, "top_k": 20, "min_p": 0}`) to pin
   sampling server-side. Everything lands in the frozen `models.json`.
-- Provenance: the harness freezes the client configuration but cannot archive
-  the server. Record the server build and served model path alongside the run.
+- Provenance: the harness freezes the client configuration. The server side is
+  frozen separately, by `config/sglang.env` (copied into every materialization)
+  and by the per-launch records under `runs/inference/`.
 - Runs against a local model are a different experimental condition. Do not
   pool them with hosted-provider repetitions.
 

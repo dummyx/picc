@@ -62,6 +62,86 @@ class PreflightTests(unittest.TestCase):
         self.assertEqual((status, record["status"]), (0, "verified"))
         self.assertEqual(record["served_model_path"], "")
 
+    def sglang_fetch(
+        self,
+        served: str = "vendor/model",
+        *,
+        context_length: int | None = 131072,
+        max_total: int | None = 131072,
+    ):
+        """An SGLang endpoint: /props 404s, /get_model_info identifies it."""
+
+        def fetch(url: str, key: str, timeout: float) -> dict:
+            if url.endswith("/health"):
+                raise ValueError("empty body")
+            if url.endswith("/props"):
+                raise OSError("404 Not Found")
+            if url.endswith("/get_model_info"):
+                return {
+                    "model_path": "/models/" + served,
+                    "served_model_name": served,
+                    "tokenizer_path": "/models/" + served,
+                    "is_generation": True,
+                }
+            return {
+                "context_length": context_length,
+                "max_total_num_tokens": max_total,
+                "max_running_requests": 1,
+                "version": "0.5.19",
+                "server_args": {"attention_backend": "flashinfer", "kv_cache_dtype": "fp8_e4m3"},
+            }
+
+        return fetch
+
+    def test_sglang_endpoint_verifies(self) -> None:
+        config = dict(LOCAL, LOCAL_CONTEXT_WINDOW="131072")
+        with mock.patch.object(preflight_endpoint, "fetch_json", self.sglang_fetch()):
+            status, record = preflight_endpoint.preflight(config, timeout=1)
+        self.assertEqual((status, record["status"]), (0, "verified"))
+        self.assertEqual(record["server_kind"], "sglang")
+        self.assertEqual(record["served_model_alias"], "vendor/model")
+        self.assertEqual(record["server_attention_backend"], "flashinfer")
+        self.assertEqual(record["server_kv_cache_dtype"], "fp8_e4m3")
+        self.assertEqual(record["server_n_ctx"], 131072)
+
+    def test_sglang_wrong_model_is_a_mismatch(self) -> None:
+        with mock.patch.object(preflight_endpoint, "fetch_json", self.sglang_fetch(served="other/model")):
+            status, record = preflight_endpoint.preflight(LOCAL, timeout=1)
+        self.assertEqual((status, record["status"]), (2, "mismatch"))
+
+    def test_kv_pool_smaller_than_declared_window_is_refused(self) -> None:
+        """The failure SGLang introduces: it advertises the launch flag's
+        context length but sizes its KV pool from leftover VRAM."""
+        config = dict(LOCAL, LOCAL_CONTEXT_WINDOW="131072")
+        fetch = self.sglang_fetch(context_length=131072, max_total=97280)
+        with mock.patch.object(preflight_endpoint, "fetch_json", fetch):
+            status, record = preflight_endpoint.preflight(config, timeout=1)
+        self.assertEqual((status, record["status"]), (2, "context_too_small"))
+        self.assertIn("97280", record["problems"][0])
+
+    def test_window_within_the_pool_is_fine(self) -> None:
+        config = dict(LOCAL, LOCAL_CONTEXT_WINDOW="65536")
+        fetch = self.sglang_fetch(context_length=131072, max_total=97280)
+        with mock.patch.object(preflight_endpoint, "fetch_json", fetch):
+            status, record = preflight_endpoint.preflight(config, timeout=1)
+        self.assertEqual((status, record["status"]), (0, "verified"))
+        self.assertEqual(record["server_n_ctx"], 97280)
+
+    def test_llama_cpp_short_context_is_refused_too(self) -> None:
+        def fetch(url: str, key: str, timeout: float) -> dict:
+            if url.endswith("/health"):
+                return {"status": "ok"}
+            return {
+                "model_alias": "vendor/model",
+                "model_path": "/models/model.gguf",
+                "default_generation_settings": {"n_ctx": 32768},
+            }
+
+        config = dict(LOCAL, LOCAL_CONTEXT_WINDOW="131072")
+        with mock.patch.object(preflight_endpoint, "fetch_json", fetch):
+            status, record = preflight_endpoint.preflight(config, timeout=1)
+        self.assertEqual((status, record["status"]), (2, "context_too_small"))
+
     def test_unreachable_endpoint(self) -> None:
         def fetch(url: str, key: str, timeout: float) -> dict:
             raise OSError("connection refused")

@@ -6,6 +6,11 @@
 /runs/*
 !/runs/.gitkeep
 
+# The SGLang inference venv (~10 GB) and the checkpoint it serves live
+# outside version control; config/sglang.env is what is tracked.
+/.venv-sglang/
+/models/
+
 **/__pycache__/
 *.py[cod]
 .pytest_cache/
