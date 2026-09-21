@@ -78,6 +78,7 @@ emit_config() {
     echo "reasoning-parser: ${SGLANG_REASONING_PARSER}"
     echo "tool-call-parser: ${SGLANG_TOOL_CALL_PARSER}"
     [[ "${SGLANG_ENABLE_STRICT_THINKING:-0}" == "1" ]] && echo "enable-strict-thinking: true"
+    [[ "${SGLANG_ENABLE_CACHE_REPORT:-0}" == "1" ]] && echo "enable-cache-report: true"
     [[ -n "${SGLANG_SPECULATIVE_ALGORITHM:-}" ]] && echo "speculative-algorithm: ${SGLANG_SPECULATIVE_ALGORITHM}"
     [[ -n "${SGLANG_MAX_MAMBA_CACHE_SIZE:-}" ]] && echo "max-mamba-cache-size: ${SGLANG_MAX_MAMBA_CACHE_SIZE}"
     [[ -n "${SGLANG_MAX_TOTAL_TOKENS:-}" ]] && echo "max-total-tokens: ${SGLANG_MAX_TOTAL_TOKENS}"
@@ -89,6 +90,28 @@ emit_config() {
     [[ -n "${SGLANG_EXTRA_YAML:-}" ]] && printf '%s\n' "$SGLANG_EXTRA_YAML"
     true
   }
+}
+
+# SGLang prints its whole server_args at startup, api_key included, so keeping
+# the key out of argv is not enough: it lands in server.log, which is exactly
+# the file someone attaches when asking for help. Overwrite it in place with a
+# mask of the same length. Same length and same inode matter: the server holds
+# the file open and keeps appending, and an edit that rewrote the file would
+# silently detach its log from the path. The key travels to the helper through
+# the environment, never argv.
+scrub_log() {
+  local log="$1"
+  [[ -n "${LOCAL_API_KEY:-}" && -f "$log" ]] || return 0
+  PICC_SCRUB="$LOCAL_API_KEY" python3 - "$log" <<'PY' || true
+import os, sys
+key = os.environ["PICC_SCRUB"].encode()
+path = sys.argv[1]
+data = open(path, "rb").read()
+with open(path, "r+b") as handle:
+    start = 0
+    while (i := data.find(key, start)) >= 0:
+        handle.seek(i); handle.write(b"*" * len(key)); start = i + len(key)
+PY
 }
 
 # One directory per launch holding exactly what was run, so a run's inference
@@ -115,6 +138,15 @@ record_launch() {
 
 run_server() {
   require_venv
+  # Starting a second server over a live one fails on the port bind and then
+  # overwrites server.pid with the dead attempt, leaving `stop` unable to find
+  # the server that is actually running.
+  if [[ "$(curl_auth -o /dev/null -w '%{http_code}' "$BASE_URL/health" 2>/dev/null || echo 000)" == "200" ]]; then
+    die "a server is already answering on $BASE_URL; stop it first (make sglang-stop)"
+  fi
+  if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+    die "pid $(cat "$PID_FILE") from a previous start is still alive; stop it first"
+  fi
   # SGLang JIT-compiles kernels at first launch and shells out to `ninja` and
   # `nvcc` by name. Both are installed in the venv, but the venv is invoked by
   # absolute path rather than activated, so without this they are not on PATH
@@ -149,12 +181,15 @@ for base in nvidia.__path__:
   # not a secret; the API key stays in the 0600 file.
   local path
   path="$(model_path)"
+  # The log is private: until it is scrubbed it holds the API key.
+  install -m 600 /dev/null "$dir/server.log"
   if [[ "$1" == "detached" ]]; then
-    nohup "$SGLANG" serve --model-path "$path" --config "$cfg" >"$dir/server.log" 2>&1 &
+    nohup "$SGLANG" serve --model-path "$path" --config "$cfg" >>"$dir/server.log" 2>&1 &
     echo $! > "$PID_FILE"
     echo "started pid $(cat "$PID_FILE"); log ${dir#"$ROOT"/}/server.log" >&2
   else
-    "$SGLANG" serve --model-path "$path" --config "$cfg" 2>&1 | tee "$dir/server.log"
+    "$SGLANG" serve --model-path "$path" --config "$cfg" 2>&1 | tee -a "$dir/server.log"
+    scrub_log "$dir/server.log"
   fi
 }
 
@@ -172,9 +207,11 @@ wait_ready() {
   while (( SECONDS < deadline )); do
     if [[ "$(curl_auth -o /dev/null -w '%{http_code}' "$BASE_URL/health" 2>/dev/null || echo 000)" == "200" ]]; then
       echo "ready after ${SECONDS}s"
+      [[ -e "$CURRENT" ]] && scrub_log "$(readlink -f "$CURRENT")/server.log"
       return 0
     fi
     if [[ -f "$PID_FILE" ]] && ! kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+      [[ -e "$CURRENT" ]] && scrub_log "$(readlink -f "$CURRENT")/server.log"
       echo "server exited before becoming ready; last lines of its log:" >&2
       tail -n 25 "$(readlink -f "$CURRENT")/server.log" >&2 || true
       return 1
@@ -198,6 +235,7 @@ case "${1:-status}" in
       for _ in $(seq 60); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
       kill -0 "$pid" 2>/dev/null && kill -9 "$pid" || true
       echo "stopped $pid"
+      [[ -e "$CURRENT" ]] && scrub_log "$(readlink -f "$CURRENT")/server.log"
     else
       echo "pid $pid is not running"
     fi

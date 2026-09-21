@@ -210,5 +210,80 @@ class StreamIdleTimeoutTests(unittest.TestCase):
         )
 
 
+
+class ReproducibleInstallTests(unittest.TestCase):
+    """The serving behaviour this project records belongs to a version."""
+
+    def setUp(self) -> None:
+        self.env = parse_env(ROOT / "config" / "sglang.env")
+        self.installer = (ROOT / "scripts" / "install_sglang.sh").read_text(encoding="utf-8")
+
+    def test_the_release_is_pinned(self) -> None:
+        self.assertRegex(self.env.get("SGLANG_VERSION", ""), r"^\d+\.\d+\.\d+")
+        self.assertIn('"sglang==${SGLANG_VERSION}"', self.installer)
+        self.assertNotRegex(self.installer, r"uv pip install[^\n]*\ssglang ninja",
+                            "an unpinned `sglang` resolves to whatever is newest that day")
+
+    def test_the_lock_agrees_with_the_pin(self) -> None:
+        lock = (ROOT / "config" / "sglang.lock.txt").read_text(encoding="utf-8")
+        self.assertIn(f"sglang=={self.env['SGLANG_VERSION']}", lock)
+
+    def test_the_cuda_toolchain_in_the_lock_is_self_consistent(self) -> None:
+        """nvcc/nvvm/nvjitlink at 13.4 against a 13.0 runtime is fatal twice
+        over: flashinfer rejects the headers one way, ptxas the PTX the other."""
+        lock = (ROOT / "config" / "sglang.lock.txt").read_text(encoding="utf-8")
+        versions = {}
+        for line in lock.splitlines():
+            for name in ("nvidia-cuda-nvcc", "nvidia-cuda-crt", "nvidia-nvvm",
+                         "nvidia-nvjitlink", "nvidia-cuda-runtime"):
+                if line.startswith(name + "=="):
+                    versions[name] = ".".join(line.split("==")[1].split(".")[:2])
+        self.assertEqual(len(versions), 5, f"toolchain packages missing from the lock: {versions}")
+        self.assertEqual(len(set(versions.values())), 1,
+                         f"CUDA toolchain minor versions disagree: {versions}")
+
+    def test_the_venv_is_built_on_an_interpreter_with_headers(self) -> None:
+        """A venv on a header-less system Python installs fine and then dies at
+        first launch, when Triton compiles against Python.h."""
+        self.assertIn("--managed-python", self.installer)
+        self.assertIn("Python.h", self.installer)
+
+
+class SecretHygieneTests(unittest.TestCase):
+    """SGLang prints its server_args, api_key included, at startup."""
+
+    def setUp(self) -> None:
+        self.launcher = (ROOT / "scripts" / "sglang_server.sh").read_text(encoding="utf-8")
+
+    def test_the_log_is_private_and_scrubbed(self) -> None:
+        self.assertIn('install -m 600 /dev/null "$dir/server.log"', self.launcher)
+        self.assertIn("scrub_log", self.launcher)
+        # after ready, on stop, and on a failed start
+        self.assertGreaterEqual(self.launcher.count('scrub_log "$(readlink -f "$CURRENT")/server.log"'), 3)
+
+    def test_the_key_never_travels_in_argv(self) -> None:
+        code = "\n".join(line for line in self.launcher.splitlines()
+                         if not line.lstrip().startswith("#"))
+        self.assertNotIn("--api-key", code, "the key must reach the server through the 0600 file")
+        self.assertIn('PICC_SCRUB="$LOCAL_API_KEY"', self.launcher)
+
+    def test_no_recorded_log_holds_the_key(self) -> None:
+        env_file = ROOT / ".env"
+        if not env_file.exists():
+            self.skipTest(".env absent")
+        key = parse_env(env_file).get("LOCAL_API_KEY", "")
+        if not key:
+            self.skipTest("no LOCAL_API_KEY configured")
+        records = ROOT / "runs" / "inference"
+        if not records.is_dir():
+            self.skipTest("no launch records")
+        leaking = [str(log.relative_to(ROOT)) for log in records.glob("*/server.log")
+                   if key.encode() in log.read_bytes()]
+        self.assertEqual(leaking, [], "launch records hold the API key")
+
+    def test_a_second_start_is_refused(self) -> None:
+        self.assertIn("a server is already answering", self.launcher)
+
+
 if __name__ == "__main__":
     unittest.main()
