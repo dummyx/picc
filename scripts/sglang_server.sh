@@ -79,6 +79,7 @@ emit_config() {
     echo "tool-call-parser: ${SGLANG_TOOL_CALL_PARSER}"
     [[ "${SGLANG_ENABLE_STRICT_THINKING:-0}" == "1" ]] && echo "enable-strict-thinking: true"
     [[ -n "${SGLANG_SPECULATIVE_ALGORITHM:-}" ]] && echo "speculative-algorithm: ${SGLANG_SPECULATIVE_ALGORITHM}"
+    [[ -n "${SGLANG_MAX_MAMBA_CACHE_SIZE:-}" ]] && echo "max-mamba-cache-size: ${SGLANG_MAX_MAMBA_CACHE_SIZE}"
     [[ -n "${SGLANG_MAX_TOTAL_TOKENS:-}" ]] && echo "max-total-tokens: ${SGLANG_MAX_TOTAL_TOKENS}"
     [[ -n "${SGLANG_CHUNKED_PREFILL_SIZE:-}" ]] && echo "chunked-prefill-size: ${SGLANG_CHUNKED_PREFILL_SIZE}"
     [[ -n "${SGLANG_MAMBA_FULL_MEMORY_RATIO:-}" ]] && echo "mamba-full-memory-ratio: ${SGLANG_MAMBA_FULL_MEMORY_RATIO}"

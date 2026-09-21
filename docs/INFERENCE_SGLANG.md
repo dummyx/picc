@@ -278,8 +278,32 @@ versions and GPU, and `server.log`.
 | # | Date | Configuration | Outcome |
 |---|---|---|---|
 | 0 | through 2026-09-20 | **llama.cpp** `llama-server`, `unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL` (snapshot `4ca72078`), n_ctx 131072, port 4545, sampling `temperature=1.0 top_p=0.95 top_k=20 min_p=0` | Ran batches v10–v15. Two harness defects found and fixed (compaction overflow, truncation compounding). Left unexplained: the strict-typing condition produced nothing, with 62% of replies cut off mid-reasoning; raising the output cap from 32768 to 65536 did not help. Retired in favour of SGLang. |
+| 1 | 2026-09-21 | SGLang 0.5.20, `RadixArk/Qwen3.8-27B-NVFP4` rev `319f741c`, **`--mem-fraction-static 0.9`**, no `--max-mamba-cache-size` | **Failed.** Weights 20.14 GB, GDN state pool 45 slots / 3.23 GB, KV 125,335 tokens, leaving 3.10 GB. CUDA graph capture then died with `CUDA error: out of memory`, surfaced as a PyTorch internal assert about `markCaptureEnd`. The 45-slot state pool is sized for a concurrency this server never sees. |
+| 2 | 2026-09-21 | As above with **`--mem-fraction-static 0.85`** and **`--max-mamba-cache-size 16`** | **Serving.** State pool 1.20 GB, **KV 147,731 tokens**, 4.64 GB free, graph capture completed. Verified: `make preflight` verified, `make inference-smoke` all checks passed (tool calls parsed into `tool_calls`, reasoning separated into `reasoning_content`, `finish_reason` present), `make auth-check` returned AUTH_OK through the pinned image. This is the current configuration. |
 
 <!-- Append new rows below. -->
+
+### What the working configuration measures
+
+| | |
+|---|---|
+| Weights | 20.14 GB |
+| GDN state pool | 1.20 GB (16 slots at bfloat16) |
+| KV pool | **147,731 tokens** (fp8_e4m3, 2.25 GB each for K and V) |
+| Free after pools | 4.64 GB, enough for CUDA graph capture |
+| Usable context | 131,072 — the `--context-length` pin, since the KV pool is larger |
+
+The KV pool is well above SGLang's published 97,280 for this card. Two reasons:
+their figure is measured against the dense-BF16-`lm_head` export, which costs
+~3.2 GB more at runtime than the FP4-head one used here, and their cell does
+not pin `--max-mamba-cache-size`, so its state pool takes 3.23 GB where this
+one takes 1.20 GB.
+
+That headroom is why `LOCAL_CONTEXT_WINDOW` can stay at 131,072 — the value
+the whole campaign through v15 used — rather than having to shrink, which
+would have moved Pi's compaction threshold and made the new batches
+incomparable with the old ones for a reason that has nothing to do with the
+experiment.
 
 ## 5. Harness-side settings that must agree
 
