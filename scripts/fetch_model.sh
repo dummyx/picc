@@ -13,16 +13,19 @@
 # run metadata even though the path on disk is local.
 #
 #   scripts/fetch_model.sh [--revision SHA] [--force]
+#   scripts/fetch_model.sh --verify      check what is on disk, download nothing
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT/config/sglang.env"
 
 revision="${SGLANG_MODEL_REVISION:-}"
 force=0
+verify_only=0
 while (($#)); do
   case "$1" in
     --revision) revision="$2"; shift 2 ;;
     --force)    force=1; shift ;;
+    --verify)   verify_only=1; shift ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -66,6 +69,7 @@ for f in json.load(sys.stdin).get("siblings", []):
 (( ${#files[@]} )) || { echo "no files listed for $repo@$revision" >&2; exit 1; }
 
 for name in "${files[@]}"; do
+  ((verify_only)) && break
   out="$dest/$name"
   mkdir -p "$(dirname "$out")"
   url="https://huggingface.co/$repo/resolve/$revision/$name"
@@ -79,16 +83,42 @@ for name in "${files[@]}"; do
 done
 
 echo
-echo "verifying sizes"
-fail=0
-for name in "${files[@]}"; do
-  url="https://huggingface.co/$repo/resolve/$revision/$name"
-  want="$(remote_size "$url")"
-  got="$(stat -c %s "$dest/$name" 2>/dev/null || echo 0)"
-  if [[ -n "$want" && "$got" != "$want" ]]; then
-    echo "  MISMATCH $name: have $got, expected $want" >&2
-    fail=1
-  fi
-done
-(( fail )) && { echo "download incomplete" >&2; exit 1; }
+echo "verifying contents against the Hub's own hashes"
+# Sizes are not integrity. The Hub publishes a sha256 for every LFS object and
+# a git blob id for every small file at the pinned revision, so every byte that
+# the server will load can be checked against what the revision actually is --
+# which is the only thing that makes pinning the revision mean anything.
+python3 - "$api/revision/$revision?blobs=true" "$dest" <<'PY'
+import hashlib, json, pathlib, sys, urllib.request
+url, dest = sys.argv[1], pathlib.Path(sys.argv[2])
+with urllib.request.urlopen(url, timeout=60) as response:
+    siblings = json.load(response).get("siblings", [])
+bad = checked = 0
+for entry in siblings:
+    name = entry["rfilename"]
+    if name.startswith("."):
+        continue
+    path = dest / name
+    if not path.is_file():
+        print(f"  MISSING   {name}"); bad += 1; continue
+    lfs = entry.get("lfs") or {}
+    if lfs.get("sha256"):
+        digest = hashlib.sha256()
+        with path.open("rb") as handle:
+            while chunk := handle.read(16 << 20):
+                digest.update(chunk)
+        ok, kind = digest.hexdigest() == lfs["sha256"], "sha256"
+    elif entry.get("blobId"):
+        data = path.read_bytes()
+        ok = hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest() == entry["blobId"]
+        kind = "git blob"
+    else:
+        print(f"  UNHASHED  {name} (the Hub lists no hash for it)"); continue
+    checked += 1
+    if not ok:
+        bad += 1
+    print(f"  {'ok      ' if ok else 'MISMATCH'}  {name}  ({kind})")
+print(f"{checked} file(s) checked, {bad} problem(s)")
+sys.exit(1 if bad else 0)
+PY
 echo "complete: $dest"

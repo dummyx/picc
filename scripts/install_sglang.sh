@@ -29,16 +29,45 @@ if ! command -v uv >/dev/null 2>&1; then
   fi
 fi
 
+# The interpreter has to ship its own development headers. Triton compiles a
+# small C module against Python.h the first time the server starts, and this
+# host's /usr/bin/python3.12 is a stripped build with no headers (and no
+# ensurepip), so a venv on it installs cleanly and then dies at first launch
+# with a bare CalledProcessError from gcc. A uv-managed CPython carries its
+# headers with it; --managed-python refuses the system interpreter.
 if [[ ! -d "$VENV" ]]; then
-  echo "creating $VENV"
-  uv venv --python 3.12 "$VENV"
+  echo "creating $VENV on a uv-managed CPython"
+  uv python install 3.12
+  uv venv --python 3.12 --managed-python "$VENV"
 fi
+"$VENV/bin/python" - <<'PY'
+import os, sys, sysconfig
+include = sysconfig.get_paths()["include"]
+if not os.path.exists(os.path.join(include, "Python.h")):
+    sys.exit(
+        f"error: {sys.executable} has no development headers ({include}/Python.h is missing).\n"
+        "SGLang would install and then fail at first launch. Remove the venv and rerun;\n"
+        "this script builds it on a uv-managed CPython, which ships its headers."
+    )
+print(f"python  {sys.version.split()[0]} with headers at {include}")
+PY
 
-# --prerelease=allow is required: SGLang's published wheels depend on
-# prerelease CUDA 13 builds of torch and flashinfer. ninja is needed because
-# SGLang JIT-compiles some kernels at first launch and shells out to it.
-echo "installing sglang into ${VENV#"$ROOT"/}"
-uv pip install --python "$VENV/bin/python" --prerelease=allow ${1:+--upgrade} sglang ninja
+# Install the exact environment that was measured when a lock exists, and the
+# pinned release otherwise. Unpinned, `sglang` resolves to whatever is newest
+# that day, and the serving behaviour this project records -- pool sizes,
+# parser behaviour, the tool-call buffering -- is specific to a version.
+# --prerelease=allow is required: the wheels depend on prerelease CUDA 13
+# builds of torch and flashinfer. ninja is needed because SGLang JIT-compiles
+# kernels at first launch and shells out to it.
+LOCK="$ROOT/config/sglang.lock.txt"
+if [[ -f "$LOCK" && "${1:-}" != "--upgrade" ]]; then
+  echo "installing the locked environment ($(grep -vc '^#' "$LOCK") packages) into ${VENV#"$ROOT"/}"
+  uv pip install --python "$VENV/bin/python" --prerelease=allow -r "$LOCK"
+else
+  echo "installing sglang==${SGLANG_VERSION} into ${VENV#"$ROOT"/}"
+  uv pip install --python "$VENV/bin/python" --prerelease=allow ${1:+--upgrade} \
+    "sglang==${SGLANG_VERSION}" ninja
+fi
 
 # The CUDA wheels do not agree with each other out of the box: sglang's
 # dependency graph resolves nvcc, nvvm and nvjitlink to 13.4 while the runtime

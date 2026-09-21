@@ -12,7 +12,7 @@ PREFIX ?= batch
 
 .PHONY: doctor validate image tests tests-c18 tests-sql tasks-smoke extensions-smoke smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
 	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs \
-	sglang-install sglang-config inference-smoke sglang-serve sglang-start sglang-stop sglang-status sglang-logs sglang-pin experiment
+	sglang-install sglang-lock model-verify sglang-config inference-smoke sglang-serve sglang-start sglang-stop sglang-status sglang-logs sglang-pin experiment
 
 doctor:
 	./scripts/doctor.sh
@@ -122,6 +122,17 @@ clean-runs:
 
 sglang-install:
 	./scripts/install_sglang.sh
+
+# Record the exact package set of the working venv. Deliberate, not automatic:
+# the lock is what install_sglang.sh reproduces, so it should only move when a
+# new environment has been measured.
+sglang-lock:
+	@{ sed -n '/^#/p' config/sglang.lock.txt; PATH="$$HOME/.local/bin:$$PATH" uv pip freeze --python .venv-sglang/bin/python; } > config/sglang.lock.txt.new && mv config/sglang.lock.txt.new config/sglang.lock.txt && echo "locked $$(grep -vc '^#' config/sglang.lock.txt) packages"
+
+# Check every file of the downloaded checkpoint against the Hub's hashes at
+# the pinned revision. Downloads nothing.
+model-verify:
+	./scripts/fetch_model.sh --verify
 
 sglang-config:
 	./scripts/sglang_server.sh config
