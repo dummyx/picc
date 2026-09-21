@@ -3,7 +3,7 @@
 // @earendil-works/pi-coding-agent resolves.
 import assert from "node:assert/strict";
 import { serializeConversation, convertToLlm } from "@earendil-works/pi-coding-agent";
-import { truncate, boundMessage, fitMessages } from "./compaction-bound.ts";
+import { truncate, boundMessage, fitMessages, isDeterministic } from "./compaction-bound.ts";
 
 function assistant(thinkingChars, textChars, argChars) {
   return {
@@ -86,3 +86,19 @@ console.log(JSON.stringify({
   ordinary_chars: plain.chars,
 }));
 console.log("compaction bound: ok");
+
+// A size rejection must be recognized in either server's own words, or the
+// extension spends its retries on a request that cannot succeed. The SGLang
+// strings are verbatim from sglang/srt/managers/tokenizer_manager.py 0.5.20.
+for (const wording of [
+  "exceed_context_size_error",
+  "the request exceeds the available context size",
+  "The input (140000 tokens) is longer than the model's context length (131072 tokens).",
+  "Requested token count exceeds the model's maximum context length of 131072 tokens.",
+]) {
+  assert.equal(isDeterministic(wording), true, `unrecognized size error: ${wording}`);
+}
+for (const wording of ["terminated", "fetch failed", "socket hang up", "503 Service Unavailable"]) {
+  assert.equal(isDeterministic(wording), false, `a transient error was treated as final: ${wording}`);
+}
+console.log("size errors recognized for llama.cpp and SGLang; transient errors left retryable");

@@ -194,9 +194,19 @@ export function fitMessages(
  * The one error retrying cannot fix: the request is unchanged, so a provider
  * that rejected it for size will reject it again. Everything else, notably a
  * dropped stream, is worth another attempt.
+ *
+ * The wording is the server's, so it is per server. llama.cpp says
+ * "exceed_context_size_error" / "exceeds the available context"; SGLang says
+ * the input "is longer than the model's context length" or that the request
+ * "exceeds the model's (maximum) context length". Matching only one server's
+ * phrasing is not fatal -- an unrecognized size error is retried twice more
+ * and then handed back to Pi -- but it spends the retries on a request that
+ * cannot succeed.
  */
-function isDeterministic(message: string): boolean {
-  return /exceed_context_size_error|exceeds the available context/.test(message);
+export function isDeterministic(message: string): boolean {
+  return /exceed_context_size_error|exceeds the available context|model's (maximum )?context length/.test(
+    message,
+  );
 }
 
 function isAbort(error: unknown): boolean {
