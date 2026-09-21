@@ -59,8 +59,14 @@ if ((single)) && [[ -z "$condition" ]]; then die "--single needs --condition"; f
 server="$ROOT/scripts/sglang_server.sh"
 
 if ((dry_run)); then
-  say "would ensure server: $("$server" command | head -1) ..."
-  say "would run: study=$study prefix=$prefix profile=$profile replicates=$replicates single=$single condition=$condition"
+  say "server configuration:"
+  "$server" config | sed 's/^/    /'
+  if ((single)); then
+    say "would run one $condition at profile=$profile as $prefix-$condition-r1"
+  else
+    say "would schedule $replicates replicate(s) per condition from $study at profile=$profile,"
+    say "then chain them with run ids $prefix-<condition>-r<n>"
+  fi
   exit 0
 fi
 
