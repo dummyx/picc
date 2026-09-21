@@ -162,6 +162,10 @@ for base in nvidia.__path__:
   [[ -n "$cuda_bin" ]] && export CUDA_HOME="${cuda_bin%/bin}"
   # Bound the first-launch kernel build so it cannot be OOM-killed. See
   # SGLANG_BUILD_JOBS in config/sglang.env.
+  # The harness timestamps everything in UTC; the server would otherwise log
+  # in local time, nine hours off on this host, and lining a server event up
+  # with a harness event means doing that arithmetic every time.
+  export TZ=UTC
   export MAX_JOBS="${SGLANG_BUILD_JOBS:-4}"
   export FLASHINFER_NVCC_THREADS="${FLASHINFER_NVCC_THREADS:-1}"
 

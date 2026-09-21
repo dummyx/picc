@@ -44,8 +44,25 @@ for slot in "${slots[@]}"; do
   fi
   say "slot $sequence $run_id: preflight"
   if ! (cd "$ROOT" && make preflight >>"$log" 2>&1); then
-    say "slot $sequence $run_id: preflight FAILED, chain aborted"
-    exit 1
+    # An unattended batch is many hours, and a server that died between runs
+    # should not cost the rest of them. One recovery per chain, only when the
+    # caller asked for it, and only by relaunching the pinned configuration;
+    # a second failure means something is actually wrong and the chain stops.
+    if [[ "${PICC_RECOVER_SERVER:-0}" == "1" && "${recovered:-0}" == "0" ]]; then
+      recovered=1
+      say "slot $sequence $run_id: preflight failed; relaunching the pinned server once"
+      "$ROOT/scripts/sglang_server.sh" stop >>"$log" 2>&1 || true
+      if "$ROOT/scripts/sglang_server.sh" start 1800 >>"$log" 2>&1 \
+         && (cd "$ROOT" && make preflight >>"$log" 2>&1); then
+        say "slot $sequence $run_id: server recovered, continuing"
+      else
+        say "slot $sequence $run_id: recovery FAILED, chain aborted"
+        exit 1
+      fi
+    else
+      say "slot $sequence $run_id: preflight FAILED, chain aborted"
+      exit 1
+    fi
   fi
   if [[ ! -d "$ROOT/runs/$run_id" ]]; then
     say "slot $sequence $run_id: run"

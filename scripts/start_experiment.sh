@@ -91,6 +91,24 @@ fi
 say "preflight"
 (cd "$ROOT" && make preflight) || die "preflight failed; not starting the batch"
 
+# 2b. Preflight checks identity and size. It cannot check that a thinking
+#     budget is enforced, because the server reports --enable-strict-thinking
+#     nowhere: a server restarted without it accepts the budget and silently
+#     ignores it, and a whole batch then fails the way v15 did, one empty
+#     reply at a time, with nothing in any log to say why. The smoke test
+#     measures enforcement, so run it once before committing hours of GPU.
+#     Costs a few minutes; skipped when no budget is configured.
+budget="$(cd "$ROOT" && python3 -c '
+import sys; sys.path.insert(0, "scripts")
+from common import load_config
+print((load_config().get("LOCAL_THINKING_BUDGET") or "").strip())')"
+if [[ -n "$budget" ]]; then
+  say "inference smoke (thinking budget $budget must be enforced, not just accepted)"
+  (cd "$ROOT" && make inference-smoke) || die "inference smoke failed; not starting the batch"
+else
+  say "no thinking budget configured; skipping the enforcement check"
+fi
+
 # 3. Run.
 finish() {
   if ((stop_after)); then say "stopping server"; "$server" stop || true; fi
@@ -111,7 +129,14 @@ else
   (cd "$ROOT" && python3 scripts/study.py schedule --study "$study" \
       --replicates "$replicates" --profile "$profile" --output "$schedule" >/dev/null)
   say "running chain; progress in runs/$prefix-chain.log"
-  "$ROOT/scripts/chain_study.sh" "$schedule" "$prefix"
+  # Let the chain bring the server back once if it dies between runs. Same
+  # config/sglang.env, so the serving configuration does not change; it is
+  # recorded as a new launch like any other.
+  if ((no_server)); then
+    "$ROOT/scripts/chain_study.sh" "$schedule" "$prefix"
+  else
+    PICC_RECOVER_SERVER=1 "$ROOT/scripts/chain_study.sh" "$schedule" "$prefix"
+  fi
 fi
 
 say "batch finished"

@@ -34,7 +34,20 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-STUDY_ID = "picc-sql-minimal-v6"
+
+
+def current_study_id() -> str:
+    """The manifest's own id, so the script follows a version bump.
+
+    v6 holds the probe and the budget control; the batch proper gets its own
+    id so that neither can be pooled with it. Hardcoding the id here would
+    leave this script reading the probes' summary after that bump.
+    """
+    manifest = json.loads((ROOT / "studies" / "sql" / "study.json").read_text(encoding="utf-8"))
+    return str(manifest["id"])
+
+
+STUDY_ID = current_study_id()
 ORDER = ("rust", "python", "python-typed")
 # A constant-output SQL engine scores this much; at or below it the candidate
 # is indistinguishable from one that works on nothing.
