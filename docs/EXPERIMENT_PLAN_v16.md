@@ -100,21 +100,55 @@ which were never the problem. What differs is the maximum: 31,924 against
 just below 32,000, which at roughly 3.9 characters per token for dense
 reasoning is the 8,192-token budget binding — on the order of 1% of replies.
 
-That is a coherent mechanism: a reply reasoning to 96,669 characters is
-spending about 24,800 of its 32,768 output tokens before it writes anything,
-so any further thinking ends the reply with nothing in it. Clipping the tail
-removes exactly that. It is not proof. The serving stack changed in the same
-step, and SGLang reports reasoning tokens as 0 in the usage Pi records, so the
-budget cannot be observed firing directly -- only inferred from where the
-distribution stops.
+### The budget is enforced, and it did not bind in this run
 
-An earlier note here claimed the budget never bound at all. That used 4.7-5.3
-characters per token, measured on short generations, where long code-heavy
-reasoning runs nearer 3.9.
+Both halves measured against the endpoint directly, same prompt, the
+production 32768-token output cap:
 
-**Open for the full batch**: whether the budget or the serving change is doing
-the work. Running one typed condition with `LOCAL_THINKING_BUDGET` empty would
-separate them, and costs one run.
+| thinking budget | reasoning tokens | reasoning chars | chars/token | answer | finish |
+|---|---|---|---|---|---|
+| none | **32,768** | 139,809 | 4.27 | **0 chars** | `length` |
+| 8192 | **8,193** | 36,335 | 4.43 | 58,114 chars | `stop` |
+
+The first row is the v15 failure on demand: reasoning consumes the entire
+output budget and the reply contains nothing. The second is the budget
+stopping it at 8,193 tokens and leaving room to answer. So the budget works,
+and the failure it targets is real.
+
+Applying the measured 4.3 characters per token to the run, however, its four
+longest replies are 7,424, 7,252, 7,148 and 6,365 tokens of reasoning. **None
+reached the 8,192 budget.** The budget was enforced and never fired.
+
+The run therefore does not show the budget fixing anything. It shows that on
+this serving stack the model reasons to about 7,400 tokens at most, where v15
+reached roughly 22,500 (96,669 characters). The budget sits between those two,
+so it would have clipped v15's behaviour, but here it had nothing to clip.
+
+Whatever shortened the reasoning is in the serving change, not the budget.
+
+Two earlier readings of this were wrong and are superseded. The first claimed
+the budget caused the improvement; the second, correcting it, claimed the
+budget bound on about 1% of replies. Both came from inferring
+characters-per-token rather than reading `reasoning_tokens` from the endpoint.
+
+### Reasoning tokens are not in the run records
+
+SGLang reports them as a top-level `usage.reasoning_tokens`. Pi reads
+`usage.completion_tokens_details.reasoning_tokens`, the OpenAI-standard
+location, so every reply in a run records `reasoning: 0`. Neither is wrong;
+they disagree on where the field lives, and Pi has no compat option for it.
+
+Consequence for analysis: reasoning length in run data is only available as a
+character count. At 4.3 characters per token for long reasoning it converts,
+but that ratio is not constant -- short reasoning measured 2.8 -- so character
+counts should not be turned into token counts without saying which ratio and
+why. Querying the endpoint directly is the only way to get the real number.
+
+**Open, and now the most important thing to settle**: what shortened the
+reasoning. One typed run with `LOCAL_THINKING_BUDGET` empty answers it. If it
+succeeds, the budget is an unused guard and the serving change did the work.
+If it fails the v15 way, the budget matters after all and this run was simply
+under it.
 
 ## Exclusions
 
