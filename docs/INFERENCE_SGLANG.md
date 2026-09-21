@@ -305,6 +305,32 @@ would have moved Pi's compaction threshold and made the new batches
 incomparable with the old ones for a reason that has nothing to do with the
 experiment.
 
+## 4a. The tool-call parser does not stream
+
+Worth knowing before anyone debugs a "terminated" error.
+
+While the model emits ordinary text, chunks arrive continuously: the largest
+gap measured over 19,999 chunks was **0.1 s**. While it emits a *tool call*,
+SGLang's `qwen3_coder` parser buffers the call and sends it in a handful of
+chunks at the end. One measured `write` of a single source file produced
+**5 chunks and a 223-second silent gap**.
+
+Pi kills a stream that goes quiet for `httpIdleTimeoutMs`, whose default is
+300000. At ~68 tokens/s against a 32768-token output cap, a full-length
+`write` sits silent well past that. When it fires the reply arrives with the
+tool call's `path` and no `content`, `stopReason: "error"`,
+`errorMessage: "terminated"` — the agent announced it would write the file and
+then wrote nothing.
+
+`pi/settings.json` now sets `httpIdleTimeoutMs` to 1800000, and a test fails if
+it drops below what a full-length reply needs. Not infinite, so a genuinely
+dead connection still fails instead of hanging out the round.
+
+This never happened under llama.cpp: 303 replies across three v15 runs, zero
+errors. It appeared on the first SGLang run at **3 of 7 replies**. Pi retries,
+so a run survives it and only loses the time, which is exactly why it needs a
+test rather than a pair of eyes.
+
 ## 5. Harness-side settings that must agree
 
 The server and the harness are configured separately and must not drift apart.

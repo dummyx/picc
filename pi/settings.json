@@ -3,6 +3,7 @@
   "quietStartup": true,
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false,
+  "httpIdleTimeoutMs": 1800000,
   "compaction": {
     "enabled": true,
     "reserveTokens": 40960,

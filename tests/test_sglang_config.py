@@ -10,6 +10,7 @@ cannot check offline.
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import unittest
@@ -169,6 +170,44 @@ class ThinkingBudgetAgreementTests(unittest.TestCase):
         if self.sg.get("SGLANG_ENABLE_STRICT_THINKING", "0").strip() != "1":
             self.skipTest("strict thinking off")
         self.assertEqual(emitted_config().get("enable-strict-thinking"), "true")
+
+
+
+class StreamIdleTimeoutTests(unittest.TestCase):
+    """Pi kills a response stream that goes quiet for httpIdleTimeoutMs.
+
+    Its default is 300000. That is fine while the model is emitting text --
+    measured gaps between chunks are 0.1 s -- but SGLang's qwen3_coder parser
+    buffers a whole tool call rather than streaming it, so a `write` of a
+    large file sends nothing at all until the call is complete. One measured
+    tool call went 223 s without a chunk; at ~68 tokens/s against a
+    32768-token output cap a full-length write goes well past 300 s.
+
+    When it fires, the reply arrives with the tool call's `path` and no
+    `content`, stopReason "error", errorMessage "terminated". Pi retries, so
+    the run survives and merely loses the time -- which is why this needs a
+    test rather than being noticed. The llama.cpp batches never saw it: 303
+    replies across three v15 runs, zero errors.
+    """
+
+    def test_idle_timeout_clears_a_full_length_tool_call(self) -> None:
+        settings = json.loads((ROOT / "pi" / "settings.json").read_text(encoding="utf-8"))
+        idle = settings.get("httpIdleTimeoutMs")
+        self.assertIsNotNone(idle, "httpIdleTimeoutMs is unset, so Pi's 300000 default applies")
+        if idle == 0:
+            return  # disabled entirely, which also cannot fire
+
+        dot = parse_env(ROOT / ".env") if (ROOT / ".env").exists() else {}
+        output = int(dot.get("LOCAL_MAX_OUTPUT") or 32768)
+        # The slowest generation rate this endpoint has been measured at.
+        slowest_tokens_per_second = 60
+        needed_ms = 1000 * output / slowest_tokens_per_second
+        self.assertGreater(
+            idle, needed_ms,
+            f"httpIdleTimeoutMs={idle} is below the {needed_ms:.0f} ms a full "
+            f"{output}-token reply takes at {slowest_tokens_per_second} tokens/s. A buffered "
+            f"tool call that long would be cut off mid-write.",
+        )
 
 
 if __name__ == "__main__":
