@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import common  # noqa: E402
 import run_experiment as runner  # noqa: E402
 
 
@@ -134,6 +135,45 @@ class StallRuleTests(unittest.TestCase):
         self.assertIn('if round_result["timed_out"] and not produced_work:', source)
         self.assertIn('termination_reason = "context_overflow"', source)
         self.assertIn("MAX_CONSECUTIVE_DEAD_ROUNDS", source)
+
+
+
+class ContainerMemoryTests(unittest.TestCase):
+    """An evaluation container must not be able to take the whole host.
+
+    The model server runs on the same machine during a run. A v16 candidate
+    had a query that reached the 16 GB the agent gets, which left this 30 GB
+    host under 5 GB free and the kernel killing processes until the
+    evaluator's per-script timeout ended it. Scoring one candidate against one
+    script does not need the agent's allowance.
+    """
+
+    CONFIG = {"AGENT_MEMORY": "16g", "EVALUATION_MEMORY": "8g"}
+
+    def memory_of(self, role: str) -> str:
+        args = common.base_container_args(dict(self.CONFIG), name="t", role=role)
+        return args[args.index("--memory") + 1]
+
+    def test_agent_keeps_its_allowance(self) -> None:
+        self.assertEqual(self.memory_of("agent"), "16g")
+
+    def test_evaluation_gets_less(self) -> None:
+        self.assertEqual(self.memory_of("evaluation"), "8g")
+
+    def test_default_role_is_the_agent(self) -> None:
+        args = common.base_container_args(dict(self.CONFIG), name="t")
+        self.assertEqual(args[args.index("--memory") + 1], "16g")
+
+    def test_evaluation_ceiling_is_below_the_agent_ceiling(self) -> None:
+        """The live configuration, not a fixture: the two are set separately
+        in config/defaults.env and nothing else stops them being equal."""
+        config = common.load_config()
+        def gigabytes(value: str) -> float:
+            value = value.strip().lower()
+            return float(value[:-1]) * (1024 if value.endswith("t") else 1 if value.endswith("g") else 1 / 1024)
+        agent = gigabytes(config.get("AGENT_MEMORY", "16g"))
+        evaluation = gigabytes(config.get("EVALUATION_MEMORY", "8g"))
+        self.assertLess(evaluation, agent)
 
 
 if __name__ == "__main__":

@@ -340,7 +340,7 @@ def _run_visible_evaluation_in_workspace(
     output_host = artifacts / "evaluations" / f"visible-round-{round_number:03d}.json"
     output_host.parent.mkdir(parents=True, exist_ok=True)
     container_name = f"picc-veval-{os.getpid()}-{round_number:03d}"
-    command = base_container_args(config, name=container_name)
+    command = base_container_args(config, name=container_name, role="evaluation")
     command += docker_mount(workspace, "/workspace")
     command += docker_mount(visible_tests, "/tests", readonly=True)
     command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)

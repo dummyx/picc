@@ -97,7 +97,7 @@ def evaluate_snapshot(
 ) -> tuple[int, str, str, Path]:
     output_path = artifacts / "evaluations" / output_name
     container_name = f"picc-peval-{os.getpid()}-{output_name.removesuffix('.json')}"
-    command = base_container_args(config, name=container_name)
+    command = base_container_args(config, name=container_name, role="evaluation")
     command += docker_mount(workspace, "/workspace")
     command += docker_mount(tests, "/tests", readonly=True)
     command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
@@ -150,7 +150,7 @@ def fuzz_snapshot(
     """Run the stage-averaged fuzz oracle on one checked-out snapshot."""
     output_path = artifacts / "evaluations" / output_name
     container_name = f"picc-pfuzz-{os.getpid()}"
-    command = base_container_args(config, name=container_name)
+    command = base_container_args(config, name=container_name, role="evaluation")
     command += docker_mount(workspace, "/workspace")
     command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
     command += docker_mount(artifacts, "/run-artifacts")

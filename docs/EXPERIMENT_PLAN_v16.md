@@ -68,6 +68,54 @@ Primary, per run, in this order:
 - **Budget is not the mechanism**: cut-off rate stays high. The budget is not
   being enforced; check the server before concluding anything about typing.
 
+## What the probe run measured, and a correction
+
+`v16-sql-python-typed-r1` met every clause of the decision rule: 99 write and
+edit calls, 0.0% of replies cut off, 0.0% stream errors, hidden score 0.8139
+on the final snapshot against 0.0 for all three v15 typed runs and 0.8044 for
+the best run anywhere in v15.
+
+The attribution needs care, and a first pass at it was wrong. Reasoning length
+per reply, same measurement over both batches:
+
+| run | replies | cut off | median | p90 | max |
+|---|---|---|---|---|---|
+| v16 typed r1 | 437 | 0.0% | 605 | 4,542 | 31,924 |
+| v15 typed r1 | 22 | 63.6% | 1,500 | 1,500 | 62,234 |
+| v15 typed r2 | 23 | 60.9% | 1,500 | 1,500 | 96,669 |
+| v15 typed r3 | 21 | 61.9% | 1,500 | 1,500 | 96,448 |
+| v15 python r1 | 104 | 9.6% | 660 | 3,591 | 68,118 |
+| v15 rust r1 | 177 | 2.8% | 678 | 5,277 | 58,304 |
+
+Two things follow.
+
+**The v15 typed medians are an artefact.** 1,500 at both the median and the
+p90 is `truncation-repair.ts` replacing a cut-off reply with 1,500 characters
+of its reasoning. Over 60% of those replies are repair stubs, not reasoning.
+
+**The budget did not change typical reasoning; it clipped the tail.** v16's
+median of 605 is indistinguishable from v15's *untyped* runs at 660 and 678,
+which were never the problem. What differs is the maximum: 31,924 against
+58,304 to 96,669. Three v16 replies sit within 1,200 characters of each other
+just below 32,000, which at roughly 3.9 characters per token for dense
+reasoning is the 8,192-token budget binding — on the order of 1% of replies.
+
+That is a coherent mechanism: a reply reasoning to 96,669 characters is
+spending about 24,800 of its 32,768 output tokens before it writes anything,
+so any further thinking ends the reply with nothing in it. Clipping the tail
+removes exactly that. It is not proof. The serving stack changed in the same
+step, and SGLang reports reasoning tokens as 0 in the usage Pi records, so the
+budget cannot be observed firing directly -- only inferred from where the
+distribution stops.
+
+An earlier note here claimed the budget never bound at all. That used 4.7-5.3
+characters per token, measured on short generations, where long code-heavy
+reasoning runs nearer 3.9.
+
+**Open for the full batch**: whether the budget or the serving change is doing
+the work. Running one typed condition with `LOCAL_THINKING_BUDGET` empty would
+separate them, and costs one run.
+
 ## Exclusions
 
 The pilot-profile run `v16probe-python-typed-r1` is not part of this. It ran

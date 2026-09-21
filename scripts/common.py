@@ -338,9 +338,31 @@ def local_network_mode(config: Mapping[str, str]) -> str:
     return mode
 
 
+def _container_memory(config: Mapping[str, str], role: str) -> str:
+    """Memory ceiling for a container, by what it is for."""
+    if role == "evaluation":
+        return config.get("EVALUATION_MEMORY", "") or "8g"
+    return config.get("AGENT_MEMORY", "16g")
+
+
 def base_container_args(
-    config: dict[str, str], *, name: str | None = None, model_endpoint: bool = False
+    config: dict[str, str],
+    *,
+    name: str | None = None,
+    model_endpoint: bool = False,
+    role: str = "agent",
 ) -> list[str]:
+    """Docker arguments shared by the agent and evaluation containers.
+
+    `role` selects the memory ceiling. The agent needs room to run a build and
+    whatever it spawns; an evaluation container runs one candidate against one
+    test script and needs far less. Giving them the same ceiling means a
+    candidate with a runaway query can take the agent's whole allowance: on a
+    30 GB host with the model server resident, a candidate that reached 16 GB
+    left under 5 GB free and the kernel started killing processes. The
+    evaluator's own per-script timeout ends such a script, but the host should
+    not be at risk for the two minutes that takes.
+    """
     args = [
         "docker",
         "run",
@@ -358,7 +380,7 @@ def base_container_args(
         "--cpus",
         config.get("AGENT_CPUS", "8"),
         "--memory",
-        config.get("AGENT_MEMORY", "16g"),
+        _container_memory(config, role),
         "--pids-limit",
         config.get("AGENT_PIDS", "512"),
     ]
