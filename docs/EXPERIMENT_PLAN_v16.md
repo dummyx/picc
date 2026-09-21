@@ -100,36 +100,45 @@ which were never the problem. What differs is the maximum: 31,924 against
 just below 32,000, which at roughly 3.9 characters per token for dense
 reasoning is the 8,192-token budget binding — on the order of 1% of replies.
 
-### The budget is enforced, and it did not bind in this run
+### The budget is enforced, and it bound on exactly four replies
 
-Both halves measured against the endpoint directly, same prompt, the
-production 32768-token output cap:
+Counted, not inferred. `analysis/reasoning_tokens.py` rebuilds each reply's
+reasoning from the `thinking_delta` events and tokenizes it with the served
+checkpoint's own tokenizer, so these are the numbers the server saw:
 
-| thinking budget | reasoning tokens | reasoning chars | chars/token | answer | finish |
-|---|---|---|---|---|---|
-| none | **32,768** | 139,809 | 4.27 | **0 chars** | `length` |
-| 8192 | **8,193** | 36,335 | 4.43 | 58,114 chars | `stop` |
+| run | replies | cut off | median | p90 | max | at budget | over 8192 |
+|---|---|---|---|---|---|---|---|
+| v16 typed r1, budget 8192 | 437 | 0 | 160 | 1,339 | **8,192** | **4** | **0** |
+| v15 typed r1 | 22 | 14 | **32,766** | 32,768 | 32,769 | 0 | 15 |
+| v15 typed r2 | 23 | 14 | **32,766** | 32,768 | 32,769 | 0 | 15 |
+| v15 python r1 | 104 | 10 | 190 | 19,910 | 32,770 | 0 | 13 |
+| v15 rust r1 | 177 | 5 | 169 | 2,220 | 32,768 | 0 | 8 |
 
-The first row is the v15 failure on demand: reasoning consumes the entire
-output budget and the reply contains nothing. The second is the budget
-stopping it at 8,193 tokens and leaving room to answer. So the budget works,
-and the failure it targets is real.
+In v15's typed runs the *median* reply reasoned 32,766 tokens: more than half
+of all replies spent the entire 32,768-token output cap thinking and so
+contained nothing. That is the failure, measured. It was present in every v15
+condition -- 13 runaway replies in the python run that scored 0.856, 8 in the
+rust run that scored 0.811 -- and the typed condition simply had it worst.
 
-Applying the measured 4.3 characters per token to the run, however, its four
-longest replies are 7,424, 7,252, 7,148 and 6,365 tokens of reasoning. **None
-reached the 8,192 budget.** The budget was enforced and never fired.
+In v16 r1 the maximum is exactly 8,192, four replies sit at the budget and
+none is over it. Output-token arithmetic says which four: the three whole-file
+writes (8,192 reasoning tokens followed by 19,387, 21,114 and 23,390 tokens of
+file, at an identical 4.03-4.06 characters per token) and one planning reply
+(8,192 followed by a 65-token tool call). Those are the replies that would
+have run to the cap.
 
-The run therefore does not show the budget fixing anything. It shows that on
-this serving stack the model reasons to about 7,400 tokens at most, where v15
-reached roughly 22,500 (96,669 characters). The budget sits between those two,
-so it would have clipped v15's behaviour, but here it had nothing to clip.
+Direct measurement against the endpoint agrees, same prompt, production
+output cap: with no budget 32,768 reasoning tokens and a 0-character answer,
+`finish=length`; with a budget of 8192, 8,193 reasoning tokens and a
+58,114-character answer, `finish=stop`.
 
-Whatever shortened the reasoning is in the serving change, not the budget.
-
-Two earlier readings of this were wrong and are superseded. The first claimed
-the budget caused the improvement; the second, correcting it, claimed the
-budget bound on about 1% of replies. Both came from inferring
-characters-per-token rather than reading `reasoning_tokens` from the endpoint.
+Three earlier readings here were wrong and are superseded: that the budget
+caused the improvement (right, but asserted without evidence), that it never
+bound, and that it bound on "about 1%". All three divided character counts by
+a characters-per-token ratio, and that ratio is not a constant: 2.8 on short
+prose, 3.3-3.9 on the agent's code reasoning, 4.3 on a design essay. Reasoning
+length in this project should be counted with the tokenizer or read from the
+endpoint, never converted.
 
 ### Reasoning tokens are not in the run records
 
@@ -137,18 +146,7 @@ SGLang reports them as a top-level `usage.reasoning_tokens`. Pi reads
 `usage.completion_tokens_details.reasoning_tokens`, the OpenAI-standard
 location, so every reply in a run records `reasoning: 0`. Neither is wrong;
 they disagree on where the field lives, and Pi has no compat option for it.
-
-Consequence for analysis: reasoning length in run data is only available as a
-character count. At 4.3 characters per token for long reasoning it converts,
-but that ratio is not constant -- short reasoning measured 2.8 -- so character
-counts should not be turned into token counts without saying which ratio and
-why. Querying the endpoint directly is the only way to get the real number.
-
-**Open, and now the most important thing to settle**: what shortened the
-reasoning. One typed run with `LOCAL_THINKING_BUDGET` empty answers it. If it
-succeeds, the budget is an unused guard and the serving change did the work.
-If it fails the v15 way, the budget matters after all and this run was simply
-under it.
+`analysis/reasoning_tokens.py` is the way around it.
 
 ## The budget control run
 
