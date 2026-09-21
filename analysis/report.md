@@ -1855,3 +1855,96 @@ server is started, not to this repository, and it is the operator's call.
 evidence of the failure and excluded from every summary: their manifests
 (`picc-sql-minimal-v2`, `-v3`) are not the manifests of any completed batch.
 `analysis/turn-shape.json` holds the profile table.
+
+## 18. The v15 batch: the harness fixed, the typing question not answered
+
+Nine runs, `picc-sql-minimal-v5`, SQL engine task, three conditions × three
+replicates, 2 h agent budget. Plan in `docs/EXPERIMENT_PLAN_v15.md`, written
+before the first run; results from `analysis/v15_results.py`.
+
+### 18.1 What the batch was for
+
+Two defects had to be fixed before anything could be measured, and both were
+(sections 17.7 and 17.8): the compaction request that outgrew the context
+window and killed sessions, and the cut-off reply that poisoned every round
+after it. v15 is the first batch to run with both repairs in place.
+
+### 18.2 Results
+
+| Condition | Hidden scores | Produced a working engine |
+|---|---|---:|
+| `rust` | 0.8019, 0.5690, 0.2376 | 3/3 |
+| `python` | 0.8044, 0.0000, 0.1675 | 2/3 |
+| `python-typed` | 0.0000, 0.0000, 0.0000 | 0/3 |
+
+Endpoint 2, the paired score comparison, is **not measurable**: no replicate
+had both Python arms working, so there is nothing to pair.
+
+### 18.3 The harness result, which is sound
+
+Zero failed compactions across nine runs and roughly ninety-five rounds, with
+81 cut-off replies repaired. The failure that ended v11, v12, v13 and v14 did
+not occur once. That is the batch's reliable finding.
+
+### 18.4 The typing result, which is not
+
+`python-typed` scoring 0/3 looks like an answer and is not one. The output cap
+censors the three conditions at very different rates. Pooled over every SQL run
+in v10-v15 (`analysis/v15-censoring.json`):
+
+| Condition | Runs | Assistant replies | Cut off at the cap | Rate | Replies per run |
+|---|---:|---:|---:|---:|---:|
+| `python` | 12 | 1220 | 78 | 6.4% | 102 |
+| `python-typed` | 9 | 451 | 121 | **26.8%** | 50 |
+| `rust` | 10 | 1516 | 44 | 2.9% | 152 |
+
+A reply that hits the cap while still reasoning produces nothing, so the typed
+arm loses a quarter of its turns and emits half as many replies per run as the
+untyped arm and a third as many as `rust`. In v15 that was total: across three
+typed runs and 44 rounds there is not one `write` or `edit` call. The arm never
+produced a candidate to score. Comparing product quality when one arm's product
+is destroyed before it exists measures the censor, not the condition.
+
+The mechanism is visible in the runs' own reasoning. Every typed round restates
+the same plan — `v15-sql-python-typed-r2`, round 7: *"I'll write the whole file
+at once, carefully, with full type annotations for `mypy --strict`"* — and is
+cut off before reaching it. It is not that typed engines are larger: where
+typed runs did produce files in v10-v12 they are 2171-4588 lines against
+2279-3060 untyped, overlapping ranges. What differs is how much design is done
+before the first line is written.
+
+### 18.5 Why a bigger cap is not the fix
+
+The obvious remedy fails. v10 ran at `LOCAL_MAX_OUTPUT` 65536, twice the
+current cap, and the asymmetry was worse, not better:
+
+| Condition | Cut-off rate at a 65536 cap (v10) |
+|---|---:|
+| `python` | 1.1% |
+| `python-typed` | **44.6%** |
+| `rust` | 3.1% |
+
+The typed arm's long replies are not near a boundary that more room would
+clear; they run away. Raising the context window so the cap can go back to
+65536 would not rescue this comparison, and section 17.8's suggestion should
+not be read as one.
+
+### 18.6 What this means for the question
+
+The v10 result of section 16 remains unreproduced, and v15 does not reproduce
+it. The typing contrast cannot be run on this task with this model until the
+typed arm can reliably yield a product. Three directions, none of them free:
+bound thinking separately from output instead of sharing one budget; give the
+arm a scaffold so it is not designing from an empty file; or use a task small
+enough that one reply can finish it. Each changes the protocol and needs its
+own plan.
+
+### 18.7 A correction
+
+The decision to leave `LOCAL_MAX_OUTPUT` at 32768 before this batch was argued
+from the v10 reply-length distribution *pooled across conditions*, where only
+0.56% of replies fell between 32768 and 40960. Broken out by condition the same
+data shows 12.4% of typed replies above 32768 against 1.5% of untyped. The
+aggregate averaged away the asymmetry that mattered. The conclusion — that the
+cap should not move — survives for the reason in 18.5 rather than the reason
+given at the time.

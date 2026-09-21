@@ -1,0 +1,103 @@
+{
+  "rows": [
+    {
+      "condition": "rust",
+      "replicate": 1,
+      "run_id": "v15-sql-rust-r1",
+      "hidden_score": 0.801863770053476,
+      "hidden_score_last_buildable": 0.801863770053476,
+      "broken_rounds": 0,
+      "repaired_replies": 4,
+      "above_floor": true
+    },
+    {
+      "condition": "rust",
+      "replicate": 2,
+      "run_id": "v15-sql-rust-r2",
+      "hidden_score": 0.5690222067590076,
+      "hidden_score_last_buildable": 0.5690222067590076,
+      "broken_rounds": 0,
+      "repaired_replies": 7,
+      "above_floor": true
+    },
+    {
+      "condition": "rust",
+      "replicate": 3,
+      "run_id": "v15-sql-rust-r3",
+      "hidden_score": 0.23758282085561497,
+      "hidden_score_last_buildable": 0.23758282085561497,
+      "broken_rounds": 0,
+      "repaired_replies": 1,
+      "above_floor": true
+    },
+    {
+      "condition": "python",
+      "replicate": 1,
+      "run_id": "v15-sql-python-r1",
+      "hidden_score": 0.804420840004483,
+      "hidden_score_last_buildable": 0.804420840004483,
+      "broken_rounds": 0,
+      "repaired_replies": 10,
+      "above_floor": true
+    },
+    {
+      "condition": "python",
+      "replicate": 2,
+      "run_id": "v15-sql-python-r2",
+      "hidden_score": 0.0,
+      "hidden_score_last_buildable": 0.0,
+      "broken_rounds": 0,
+      "repaired_replies": 6,
+      "above_floor": false
+    },
+    {
+      "condition": "python",
+      "replicate": 3,
+      "run_id": "v15-sql-python-r3",
+      "hidden_score": 0.1674875,
+      "hidden_score_last_buildable": 0.1674875,
+      "broken_rounds": 0,
+      "repaired_replies": 12,
+      "above_floor": true
+    },
+    {
+      "condition": "python-typed",
+      "replicate": 1,
+      "run_id": "v15-sql-python-typed-r1",
+      "hidden_score": 0.0,
+      "hidden_score_last_buildable": 0.0,
+      "broken_rounds": 0,
+      "repaired_replies": 14,
+      "above_floor": false
+    },
+    {
+      "condition": "python-typed",
+      "replicate": 2,
+      "run_id": "v15-sql-python-typed-r2",
+      "hidden_score": 0.0,
+      "hidden_score_last_buildable": 0.0,
+      "broken_rounds": 0,
+      "repaired_replies": 14,
+      "above_floor": false
+    },
+    {
+      "condition": "python-typed",
+      "replicate": 3,
+      "run_id": "v15-sql-python-typed-r3",
+      "hidden_score": 0.0,
+      "hidden_score_last_buildable": 0.0,
+      "broken_rounds": 0,
+      "repaired_replies": 13,
+      "above_floor": false
+    }
+  ],
+  "typed_minus_plain": [],
+  "verdict": "not measurable",
+  "broken_runs": 0,
+  "repaired_replies": 81,
+  "working": {
+    "rust": 3,
+    "python": 2,
+    "python-typed": 0
+  }
+}

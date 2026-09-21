@@ -1,0 +1,26 @@
+{
+  "python": {
+    "runs": 12,
+    "replies": 1220,
+    "cut_off": 78,
+    "cut_off_rate": 6.4,
+    "tool_calls": 1188,
+    "replies_per_run": 101.7
+  },
+  "python-typed": {
+    "runs": 9,
+    "replies": 451,
+    "cut_off": 121,
+    "cut_off_rate": 26.8,
+    "tool_calls": 353,
+    "replies_per_run": 50.1
+  },
+  "rust": {
+    "runs": 10,
+    "replies": 1516,
+    "cut_off": 44,
+    "cut_off_rate": 2.9,
+    "tool_calls": 1570,
+    "replies_per_run": 151.6
+  }
+}
