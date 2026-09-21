@@ -33,8 +33,11 @@ rust run that scored 0.811); the typed condition had them worst.
    for the budget. When this plan was written the control was three rounds in
    and failing the v15 way -- no writes, 40% of replies cut off, reasoning to
    32,767 tokens, score 0.0 -- and its final result is recorded in
-   `docs/EXPERIMENT_PLAN_v16.md`. This batch is launched only if it ends that
-   way; a control that recovers changes the premise and stops the launch.
+   `docs/EXPERIMENT_PLAN_v16.md`. The batch is launched when the control
+   finishes, whichever way it ends, at the project owner's direction
+   (2026-09-21). Should the control recover, the budget stays -- v16 r1 ran
+   with it and scored 0.8139, so it is not harmful -- but the write-up must
+   then say it was not shown to be necessary.
 3. **`httpIdleTimeoutMs` raised to 1,800,000.** SGLang buffers a tool call
    instead of streaming it, so a long file write is silent for minutes and
    Pi's 300-second default killed it mid-call: 3 of 7 replies on the first
