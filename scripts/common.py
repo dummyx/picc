@@ -409,6 +409,47 @@ def _config_json_object(config: Mapping[str, str], key: str) -> dict[str, Any] |
     return value
 
 
+def _local_sampling_params(config: Mapping[str, str]) -> dict[str, Any] | None:
+    """Sampling parameters sent with every request, plus the thinking budget.
+
+    Pi merges this object into the request body verbatim, so anything the
+    endpoint accepts can go here. LOCAL_THINKING_BUDGET is broken out as its
+    own key because it is the one setting in here that changes what the model
+    does rather than how it samples, and because its shape is awkward: SGLang
+    takes a per-request thinking budget as `custom_params.thinking_budget`,
+    and only enforces it when the server was launched with
+    --enable-strict-thinking (SGLANG_ENABLE_STRICT_THINKING in
+    config/sglang.env). Setting one without the other silently does nothing.
+
+    The budget bounds *reasoning* rather than the whole reply: when it is
+    spent, the server forces the end-of-thinking token and the model answers
+    with whatever output budget remains. That is the difference from
+    LOCAL_MAX_OUTPUT, which cuts the reply off wherever it happens to be --
+    and a reply cut off while still reasoning contains no answer at all.
+    """
+    params = _config_json_object(config, "LOCAL_SAMPLING_PARAMS")
+    raw = (config.get("LOCAL_THINKING_BUDGET", "") or "").strip()
+    if not raw:
+        return params
+    try:
+        budget = int(raw)
+    except ValueError as exc:
+        raise ExperimentError("LOCAL_THINKING_BUDGET must be an integer") from exc
+    if budget <= 0:
+        raise ExperimentError("LOCAL_THINKING_BUDGET must be positive, or empty to disable")
+    output = config_int(config, "LOCAL_MAX_OUTPUT") if "LOCAL_MAX_OUTPUT" in config else 0
+    if output and budget >= output:
+        raise ExperimentError(
+            f"LOCAL_THINKING_BUDGET={budget} leaves nothing for the answer: it is not below "
+            f"LOCAL_MAX_OUTPUT={output}. The budget exists to reserve room for the reply."
+        )
+    params = dict(params or {})
+    custom = dict(params.get("custom_params") or {})
+    custom["thinking_budget"] = budget
+    params["custom_params"] = custom
+    return params
+
+
 def _local_thinking_level_map(config: Mapping[str, str]) -> dict[str, Any]:
     """Pi thinking level -> the value the endpoint's model expects.
 
@@ -469,7 +510,7 @@ def resolve_local_provider(config: Mapping[str, str]) -> dict[str, Any]:
         "reasoning": config_bool(config, "LOCAL_REASONING"),
         "thinking_level_map": _local_thinking_level_map(config),
         "thinking_format": thinking_format,
-        "sampling_params": _config_json_object(config, "LOCAL_SAMPLING_PARAMS"),
+        "sampling_params": _local_sampling_params(config),
         "compat": compat,
     }
 

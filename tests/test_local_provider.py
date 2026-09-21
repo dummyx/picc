@@ -355,5 +355,63 @@ class ThinkingLevelMapTests(unittest.TestCase):
             self.model(config)
 
 
+
+class ThinkingBudgetTests(unittest.TestCase):
+    """A hard cap on reasoning, distinct from the cap on the whole reply.
+
+    LOCAL_MAX_OUTPUT cuts a reply off wherever it is, and a reply cut off
+    while still reasoning carries no answer and no tool call. The thinking
+    budget ends the reasoning instead and leaves the rest of the output
+    budget for the answer.
+    """
+
+    BASE = {
+        "MODEL_PROVIDER": "local",
+        "MODEL_ID": "vendor/model",
+        "LOCAL_BASE_URL": "http://127.0.0.1:30000/v1",
+        "LOCAL_CONTEXT_WINDOW": "131072",
+        "LOCAL_MAX_OUTPUT": "32768",
+        "LOCAL_REASONING": "1",
+    }
+
+    def sampling(self, config):
+        payload = common.local_models_json(config)
+        return payload["providers"]["local"]["models"][0].get("samplingParams")
+
+    def test_absent_by_default(self) -> None:
+        self.assertIsNone(self.sampling(dict(self.BASE)))
+
+    def test_budget_becomes_custom_params(self) -> None:
+        config = dict(self.BASE, LOCAL_THINKING_BUDGET="8192")
+        self.assertEqual(self.sampling(config), {"custom_params": {"thinking_budget": 8192}})
+
+    def test_budget_merges_with_sampling_params(self) -> None:
+        config = dict(
+            self.BASE,
+            LOCAL_THINKING_BUDGET="8192",
+            LOCAL_SAMPLING_PARAMS=json.dumps({"temperature": 1.0, "top_k": 20}),
+        )
+        params = self.sampling(config)
+        self.assertEqual(params["temperature"], 1.0)
+        self.assertEqual(params["top_k"], 20)
+        self.assertEqual(params["custom_params"]["thinking_budget"], 8192)
+
+    def test_budget_at_or_above_the_output_cap_is_refused(self) -> None:
+        """A budget that fills the whole reply reserves nothing for the answer,
+        which is the failure it exists to prevent."""
+        for value in ("32768", "40000"):
+            with self.subTest(value=value):
+                config = dict(self.BASE, LOCAL_THINKING_BUDGET=value)
+                with self.assertRaises(common.ExperimentError):
+                    self.sampling(config)
+
+    def test_non_integer_and_nonpositive_are_refused(self) -> None:
+        for value in ("many", "0", "-1"):
+            with self.subTest(value=value):
+                config = dict(self.BASE, LOCAL_THINKING_BUDGET=value)
+                with self.assertRaises(common.ExperimentError):
+                    self.sampling(config)
+
+
 if __name__ == "__main__":
     unittest.main()

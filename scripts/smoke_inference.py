@@ -117,11 +117,9 @@ def main() -> int:
         declared = info.get("context_length") or sargs.get("context_length")
         pool = info.get("max_total_num_tokens") or sargs.get("max_total_num_tokens")
         checks.note("context", f"declared {declared}, KV pool {pool}")
-        strict = bool(sargs.get("enable_strict_thinking"))
-        checks.note("strict thinking", "on" if strict else "off")
     except (urllib.error.URLError, OSError, ValueError) as error:
         checks.note("server info", f"unavailable ({error})")
-        pool, strict = None, False
+        pool = None
 
     # 1. A completion at all.
     try:
@@ -186,25 +184,50 @@ def main() -> int:
     except Exception as error:  # noqa: BLE001
         checks.bad("tool_calls", str(error))
 
-    # 5. Thinking budget, when the server can enforce one.
-    if strict:
-        try:
-            reply = post(f"{base}/chat/completions", key, {
+    # 5. The thinking budget, tested rather than asked about.
+    #
+    # The server does not report --enable-strict-thinking anywhere, so whether
+    # a budget is enforced cannot be read off /get_server_info. It has to be
+    # measured: ask for something the model will over-think, once with a small
+    # budget and once without, and compare. Without enforcement the two are
+    # identical and the budget is being silently ignored -- which is the whole
+    # hazard, since the request is accepted either way.
+    budget = (config.get("LOCAL_THINKING_BUDGET", "") or "").strip()
+    prompt = ("Design a complete SQL query engine from scratch: tokenizer, parser, "
+              "planner, and executor. Consider alternatives for each component and "
+              "justify your choices before writing any code.")
+    try:
+        def reason_and_answer(with_budget: int | None) -> tuple[int, int]:
+            payload = {
                 "model": model,
-                "messages": [{"role": "user", "content": "Carefully prove that 17 is prime."}],
-                "max_tokens": 8192,
-                "custom_params": {"thinking_budget": 256},
-            })
-            got = reply["choices"][0]["message"].get("reasoning_content") or ""
-            usage = reply.get("usage", {})
-            checks.ok("thinking budget", f"reasoning {len(got)} chars, "
-                                         f"{usage.get('completion_tokens', '?')} completion tokens")
-        except Exception as error:  # noqa: BLE001
-            checks.bad("thinking budget", str(error))
-    else:
-        checks.note("thinking budget",
-                    "not testable: server has no --enable-strict-thinking "
-                    "(set SGLANG_ENABLE_STRICT_THINKING=1 in config/sglang.env)")
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 4096,
+            }
+            if with_budget:
+                payload["custom_params"] = {"thinking_budget": with_budget}
+            message = post(f"{base}/chat/completions", key, payload)["choices"][0]["message"]
+            return (len(message.get("reasoning_content") or ""),
+                    len(message.get("content") or ""))
+
+        free_reasoning, free_answer = reason_and_answer(None)
+        capped_reasoning, capped_answer = reason_and_answer(256)
+
+        if capped_reasoning < free_reasoning / 2:
+            detail = (f"256-token budget cut reasoning from {free_reasoning} to "
+                      f"{capped_reasoning} chars")
+            if free_answer == 0 and capped_answer > 0:
+                detail += f"; the uncapped reply produced no answer at all, the capped one {capped_answer} chars"
+            checks.ok("thinking budget enforced", detail)
+        else:
+            checks.bad("thinking budget enforced",
+                       f"a 256-token budget barely changed reasoning "
+                       f"({free_reasoning} -> {capped_reasoning} chars). The server is "
+                       f"ignoring it; launch it with --enable-strict-thinking "
+                       f"(SGLANG_ENABLE_STRICT_THINKING=1 in config/sglang.env).")
+    except Exception as error:  # noqa: BLE001
+        checks.bad("thinking budget enforced", str(error))
+
+    checks.note("configured budget", budget or "none (LOCAL_THINKING_BUDGET empty)")
 
     print()
     if checks.failures:

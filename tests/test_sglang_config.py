@@ -138,5 +138,38 @@ class HarnessAgreementTests(unittest.TestCase):
         self.assertEqual(context_budget_problems(self.dot), [])
 
 
+
+class ThinkingBudgetAgreementTests(unittest.TestCase):
+    """The budget needs both halves: the harness sends it, the server enforces
+    it. Either one alone is silent -- the request is accepted and the budget
+    is ignored -- so the mismatch has to be caught here."""
+
+    def setUp(self) -> None:
+        env_file = ROOT / ".env"
+        if not env_file.exists():
+            self.skipTest(".env absent")
+        self.dot = parse_env(env_file)
+        self.sg = parse_env(ROOT / "config" / "sglang.env")
+
+    def test_budget_and_enforcement_are_set_together(self) -> None:
+        budget = self.dot.get("LOCAL_THINKING_BUDGET", "").strip()
+        strict = self.sg.get("SGLANG_ENABLE_STRICT_THINKING", "0").strip()
+        if budget and strict != "1":
+            self.fail(
+                f"LOCAL_THINKING_BUDGET={budget} is set but the server is launched without "
+                "--enable-strict-thinking (SGLANG_ENABLE_STRICT_THINKING=0), so it is ignored"
+            )
+        if strict == "1" and not budget:
+            self.fail(
+                "SGLANG_ENABLE_STRICT_THINKING=1 but no LOCAL_THINKING_BUDGET is set, "
+                "so nothing bounds the reasoning"
+            )
+
+    def test_the_launcher_emits_the_enforcement_flag(self) -> None:
+        if self.sg.get("SGLANG_ENABLE_STRICT_THINKING", "0").strip() != "1":
+            self.skipTest("strict thinking off")
+        self.assertEqual(emitted_config().get("enable-strict-thinking"), "true")
+
+
 if __name__ == "__main__":
     unittest.main()
