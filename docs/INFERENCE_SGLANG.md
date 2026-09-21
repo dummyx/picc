@@ -154,6 +154,73 @@ fill whatever budget it was given (report section 18).
 It is off in the committed configuration because turning it on changes what
 the model does, which is an experimental decision and not a serving one.
 
+## 3a. Thinking: two levers, and one landmine
+
+Verified against the checkpoint's own `chat_template.jinja`, not just the docs.
+
+### The landmine
+
+The template accepts `reasoning_effort` in **`low`, `medium`, `xhigh` only**,
+and calls `raise_exception` on anything else:
+
+```jinja
+{%- set resolved_reasoning_effort = reasoning_effort|default('xhigh') %}
+{%- if resolved_reasoning_effort not in ('xhigh', 'medium', 'low') %}
+    {{- raise_exception('Unexpected reasoning effort ' ~ reasoning_effort ~ ' ...') }}
+```
+
+Pi's thinking levels are `minimal, low, medium, high, xhigh, max`. With
+`supportsReasoningEffort: true` Pi sends `thinkingLevelMap[level]`, and the
+harness used to hardcode that map to the identity — so turning the compat flag
+on at `MODEL_THINKING=high` (which is what `.env` has) would have failed every
+single request. `LOCAL_THINKING_LEVEL_MAP` now exists so the map can be
+written to suit the model; `config/defaults.env` carries a worked example.
+
+This is currently inert: `supportsReasoningEffort` is `false`, so Pi sends no
+`reasoning_effort` at all and the template takes its default.
+
+### Lever 1: reasoning effort (soft, prompt-level)
+
+The template turns the level into an instruction prepended to the system
+message. The default — what every run so far has silently used — is `xhigh`:
+
+> *Reasoning effort is set to xhigh. Please think carefully through the task,
+> validate key assumptions, consider plausible alternatives, and prioritize
+> correctness, consistency, and clarity in the final answer.*
+
+against `low`:
+
+> *Reasoning effort is set to low. Keep your thinking brief and focused,
+> moving directly to the conclusion without unnecessary elaboration.*
+
+`medium` adds no instruction at all.
+
+Worth noting against report section 18: every run in this campaign has been
+asking the model, in the system prompt, to consider alternatives and validate
+assumptions before answering — and the failure being investigated is replies
+that reason until they hit the output cap and emit nothing. Nobody chose
+`xhigh`; it is what the template does when the field is absent.
+
+### Lever 2: thinking budget (hard, server-enforced)
+
+`--enable-strict-thinking` plus `custom_params: {"thinking_budget": N}` per
+request, which forces the end-of-thinking token once the budget is spent. See
+`SGLANG_ENABLE_STRICT_THINKING` in `config/sglang.env`.
+
+Unlike the output cap, this leaves the rest of the budget for the answer, so a
+bounded reply still produces a tool call instead of nothing.
+
+### What Pi actually sends today
+
+With `thinkingFormat: "qwen-chat-template"`, Pi sends exactly:
+
+```js
+chat_template_kwargs = { enable_thinking: !!reasoningEffort, preserve_thinking: true }
+```
+
+and no `reasoning_effort`. `preserve_thinking: true` keeps earlier reasoning in
+the rendered prompt, which is part of why context grows as fast as it does.
+
 ## 4. Configuration log
 
 Every configuration actually launched, in order, with what happened. Add a row

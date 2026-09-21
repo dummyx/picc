@@ -309,5 +309,51 @@ class LegacyKeyMigrationTests(unittest.TestCase):
                 study.safe_environment(root)
 
 
+
+class ThinkingLevelMapTests(unittest.TestCase):
+    """Pi sends thinkingLevelMap[level] as reasoning_effort. The served model
+    decides which values are legal, and Qwen3.8's template raises on the ones
+    Pi would send by default, so the map has to be configurable."""
+
+    BASE = {
+        "MODEL_PROVIDER": "local",
+        "MODEL_ID": "vendor/model",
+        "LOCAL_BASE_URL": "http://127.0.0.1:30000/v1",
+        "LOCAL_CONTEXT_WINDOW": "131072",
+        "LOCAL_MAX_OUTPUT": "32768",
+        "LOCAL_REASONING": "1",
+    }
+
+    def model(self, config):
+        payload = common.local_models_json(config)
+        return payload["providers"]["local"]["models"][0]
+
+    def test_default_is_the_identity_map(self) -> None:
+        levels = self.model(dict(self.BASE))["thinkingLevelMap"]
+        self.assertEqual(levels, {level: level for level in common.PI_THINKING_LEVELS})
+
+    def test_override_replaces_the_map(self) -> None:
+        config = dict(self.BASE, LOCAL_THINKING_LEVEL_MAP=json.dumps({
+            "minimal": "low", "low": "low", "medium": "medium",
+            "high": "xhigh", "xhigh": "xhigh", "max": "xhigh",
+        }))
+        self.assertEqual(self.model(config)["thinkingLevelMap"]["max"], "xhigh")
+        self.assertEqual(self.model(config)["thinkingLevelMap"]["minimal"], "low")
+
+    def test_null_marks_a_level_unsupported(self) -> None:
+        config = dict(self.BASE, LOCAL_THINKING_LEVEL_MAP=json.dumps({"minimal": None}))
+        self.assertIsNone(self.model(config)["thinkingLevelMap"]["minimal"])
+
+    def test_unknown_level_is_refused(self) -> None:
+        config = dict(self.BASE, LOCAL_THINKING_LEVEL_MAP=json.dumps({"enormous": "xhigh"}))
+        with self.assertRaises(common.ExperimentError):
+            self.model(config)
+
+    def test_non_string_value_is_refused(self) -> None:
+        config = dict(self.BASE, LOCAL_THINKING_LEVEL_MAP=json.dumps({"high": 3}))
+        with self.assertRaises(common.ExperimentError):
+            self.model(config)
+
+
 if __name__ == "__main__":
     unittest.main()

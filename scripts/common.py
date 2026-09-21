@@ -409,6 +409,34 @@ def _config_json_object(config: Mapping[str, str], key: str) -> dict[str, Any] |
     return value
 
 
+def _local_thinking_level_map(config: Mapping[str, str]) -> dict[str, Any]:
+    """Pi thinking level -> the value the endpoint's model expects.
+
+    The default is the identity: a level passes through unchanged, which is
+    right for a server that accepts Pi's own level names. It is not right for
+    every model. Qwen3.8's chat template accepts only 'low', 'medium' and
+    'xhigh', and *raises* on anything else, so an identity map would turn
+    MODEL_THINKING=high into a failed request rather than a lower effort.
+
+    LOCAL_THINKING_LEVEL_MAP overrides it with a JSON object. A null value
+    marks a level as unsupported, which is Pi's own convention.
+    """
+    override = _config_json_object(config, "LOCAL_THINKING_LEVEL_MAP")
+    if override is None:
+        return {level: level for level in PI_THINKING_LEVELS}
+    for level, value in override.items():
+        if level not in PI_THINKING_LEVELS and level != "off":
+            raise ExperimentError(
+                f"LOCAL_THINKING_LEVEL_MAP has an unknown thinking level {level!r}; "
+                f"expected one of: off, " + ", ".join(PI_THINKING_LEVELS)
+            )
+        if value is not None and not isinstance(value, str):
+            raise ExperimentError(
+                f"LOCAL_THINKING_LEVEL_MAP[{level!r}] must be a string or null"
+            )
+    return override
+
+
 def resolve_local_provider(config: Mapping[str, str]) -> dict[str, Any]:
     """Validate the LOCAL_* endpoint configuration used when MODEL_PROVIDER=local."""
     if not is_local_provider(config):
@@ -439,6 +467,7 @@ def resolve_local_provider(config: Mapping[str, str]) -> dict[str, Any]:
         "context_window": context_window,
         "max_tokens": max_tokens,
         "reasoning": config_bool(config, "LOCAL_REASONING"),
+        "thinking_level_map": _local_thinking_level_map(config),
         "thinking_format": thinking_format,
         "sampling_params": _config_json_object(config, "LOCAL_SAMPLING_PARAMS"),
         "compat": compat,
@@ -457,7 +486,7 @@ def local_models_json(config: Mapping[str, str]) -> dict[str, Any]:
         "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
     }
     if resolved["reasoning"]:
-        model["thinkingLevelMap"] = {level: level for level in PI_THINKING_LEVELS}
+        model["thinkingLevelMap"] = resolved["thinking_level_map"]
     if resolved["sampling_params"] is not None:
         model["samplingParams"] = resolved["sampling_params"]
     provider: dict[str, Any] = {
