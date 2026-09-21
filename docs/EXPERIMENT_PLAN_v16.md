@@ -167,6 +167,54 @@ It answers the one question the first run could not. Read it against
 Either way the batch that follows has one configuration with a reason behind
 it, instead of a setting nobody can account for.
 
+## Result of the control, and what the pair of runs shows
+
+Both runs finished on the wall budget. Same server process, byte-identical
+prompts, Pi settings and extensions; the only differences on record are the
+budget and the scoring containers' memory ceiling (16 GB for r1, 8 GB for the
+control), which cannot reach the agent because it never sees scores here.
+
+| | r1, budget 8192 | control, no budget |
+|---|---|---|
+| rounds | 3 | 7 |
+| replies | 437 | 303 |
+| writes and edits | 99 | 101 |
+| replies cut off | 0 | 5 (1.7%) |
+| reasoning tokens: median / p90 / max | 160 / 1,339 / **8,192** | 136 / 1,099 / **32,767** |
+| replies reasoning past 8,192 | 0 | 9 |
+| visible score by round | 0.427, 0.864, 0.866 | 0, 0, 0, 0, 0, 0, 0.789 |
+| hidden score, final snapshot | **0.8139** | **0.7852** |
+
+**The control recovered.** Its first five rounds each ended on a reply that
+reasoned through the entire 32,768-token output cap and contained nothing:
+48 minutes, 40% of the run, with no tool call that did anything. In round 5
+the pattern broke without intervention -- 77 replies, no cut-offs, 24 writes
+-- and the last round produced an engine scoring 0.789 visible, 0.7852 hidden.
+
+What that does and does not show, at one run each:
+
+- **The budget is not necessary for a working engine on this stack.** The
+  decision rule above expected a control without it to write nothing; it
+  wrote 101 times and scored 0.7852. That branch of the rule did not occur.
+- **The budget removes the failure it targets.** Nine runaway replies without
+  it, none with it; five dead rounds without it, none with it; first non-zero
+  score in round 0 with it, round 6 without.
+- **No score difference can be claimed.** 0.8139 against 0.7852 is 0.029,
+  under a quarter of the 0.13 threshold, from one run per side.
+- **Why v15's typed runs never recovered and this one did is not known.** The
+  three v15 runs stayed in the dead-round pattern for 44 rounds between them;
+  the control left it after five. The serving stack differs, the strict-
+  thinking token filter was on, and it may also simply be chance. One run
+  cannot separate these.
+
+Typical reasoning is the same in both runs (median 160 against 136). The
+difference is confined to the tail, which is where the budget acts.
+
+The v17 batch keeps the budget: it costs nothing measurable (it bound on 4 of
+437 replies in r1) and it spares a run the dead rounds. The v17 write-up is to
+describe it as a guard against wasted rounds, not as the thing that makes the
+typed condition possible.
+
 ## Exclusions
 
 The pilot-profile run `v16probe-python-typed-r1` is not part of this. It ran
