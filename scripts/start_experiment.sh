@@ -23,13 +23,17 @@
 #   --profile NAME      pilot | main (default main)
 #   --condition NAME    with --single, the one condition to run
 #   --single            run one condition once instead of a schedule
+#   --replicate N       with --single, the replicate number (default 1). Use a
+#                       distinct number for a control run: a summary treats two
+#                       runs of the same condition and replicate as a duplicate
+#                       cell and refuses the whole study.
 #   --no-server         assume a server is already running; do not start one
 #   --stop-after        stop the server when the batch finishes
 #   --dry-run           print what would run, start nothing
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-study=""; prefix=""; replicates=3; profile=main; condition=""
+study=""; prefix=""; replicates=3; profile=main; condition=""; replicate=1
 single=0; no_server=0; stop_after=0; dry_run=0
 
 while (($#)); do
@@ -39,6 +43,7 @@ while (($#)); do
     --replicates)  replicates="$2"; shift 2 ;;
     --profile)     profile="$2"; shift 2 ;;
     --condition)   condition="$2"; shift 2 ;;
+    --replicate)   replicate="$2"; shift 2 ;;
     --single)      single=1; shift ;;
     --no-server)   no_server=1; shift ;;
     --stop-after)  stop_after=1; shift ;;
@@ -62,7 +67,7 @@ if ((dry_run)); then
   say "server configuration:"
   "$server" config | sed 's/^/    /'
   if ((single)); then
-    say "would run one $condition at profile=$profile as $prefix-$condition-r1"
+    say "would run one $condition at profile=$profile as $prefix-$condition-r$replicate"
   else
     say "would schedule $replicates replicate(s) per condition from $study at profile=$profile,"
     say "then chain them with run ids $prefix-<condition>-r<n>"
@@ -93,10 +98,10 @@ finish() {
 trap finish EXIT
 
 if ((single)); then
-  run_id="$prefix-$condition-r1"
-  say "single run $run_id"
+  run_id="$prefix-$condition-r$replicate"
+  say "single run $run_id (replicate $replicate)"
   (cd "$ROOT" && make study-run STUDY="$study" CONDITION="$condition" \
-      PROFILE="$profile" RUN_ID="$run_id" REPLICATE=1)
+      PROFILE="$profile" RUN_ID="$run_id" REPLICATE="$replicate")
   (cd "$ROOT" && make study-hidden-all RUN_ID="$run_id")
   (cd "$ROOT" && make study-report RUN_ID="$run_id")
 else

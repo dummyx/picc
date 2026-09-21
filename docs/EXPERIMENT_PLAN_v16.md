@@ -150,6 +150,25 @@ succeeds, the budget is an unused guard and the serving change did the work.
 If it fails the v15 way, the budget matters after all and this run was simply
 under it.
 
+## The budget control run
+
+`v16nb-sql-python-typed-r9`: the same typed condition, same budget, same
+everything, with `LOCAL_THINKING_BUDGET` empty so no thinking budget is sent.
+Replicate 9 so it cannot occupy a cell a real replicate needs, and excluded
+from pooling like the probe.
+
+It answers the one question the first run could not. Read it against
+`v16-sql-python-typed-r1`:
+
+- **writes, and cut-offs near zero** -> the budget is an unused guard. The
+  serving change is what fixed the typed condition, and the full batch should
+  run without the budget rather than carry a setting that does nothing.
+- **no writes, and cut-offs high** -> the budget matters, the first run simply
+  stayed under it, and the batch keeps it.
+
+Either way the batch that follows has one configuration with a reason behind
+it, instead of a setting nobody can account for.
+
 ## Exclusions
 
 The pilot-profile run `v16probe-python-typed-r1` is not part of this. It ran
