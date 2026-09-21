@@ -139,10 +139,13 @@ def main() -> int:
             print("For a single run before then: python3 analysis/v16_results.py --run <run-id>")
             return 1
 
+    for row in rows:
+        row.setdefault("condition", row.get("condition_id", "?"))
+
     print(f"{'run':<30} {'cond':<14} {'writes':>7} {'cutoff':>7} {'termd':>7} {'tools':>7} {'hidden':>8}")
     print("-" * 86)
     by_condition: dict[str, list[float]] = {}
-    for row in sorted(rows, key=lambda r: (ORDER.index(r["condition"]) if r.get("condition") in ORDER else 9,
+    for row in sorted(rows, key=lambda r: (ORDER.index(r["condition_id"]) if r.get("condition") in ORDER else 9,
                                            r.get("replicate", ""))):
         run_id = row["run_id"]
         shape = reply_shape(run_id)
