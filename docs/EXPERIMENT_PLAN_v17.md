@@ -65,6 +65,53 @@ changes so the two can never be pooled.
   that the budget is enforced before the first run, and may relaunch the
   pinned server once if it dies between runs.
 
+## Amendment, 2026-09-22: JavaScript and TypeScript added
+
+Added at the project owner's direction while the batch was running, after 7 of
+its 9 runs had reported. Recorded here as an amendment rather than folded into
+the text above, because the distinction matters when the results are read.
+
+**What was added.** Two conditions on the same SQL task, `javascript`
+(`node --check` as the build gate) and `typescript` (`tsc --strict
+--noEmitOnError`), using the adapters that already existed at
+`studies/assets/candidates/sql/`. Three replicates each, same `main` profile.
+
+**Why.** The typed-against-untyped contrast has been run twice in this
+project, both times as TypeScript against JavaScript on the chapters 1-10
+compiler task, and both times null: v4 paired median +0.026 (n=3), v7 +0.004
+on the corpus and +0.001 on the fuzzer (n=4), with six of eight v7 finals
+between 0.954 and 0.968. That task was saturated, so it could not show an
+effect in either direction. This task is not: v17's completed runs span 0.134
+to 0.851. Running the TS/JS pair here separates "static typing does not
+matter" from "the compiler task was too easy to tell", which neither earlier
+batch could do.
+
+**What this does not do.** It does not disturb the nine runs already
+scheduled. The running chain works from `runs/v17-sql-schedule.json`, frozen
+at launch with those nine slots. The three existing conditions resolve
+byte-identically before and after the edit, and each finished run's frozen
+condition still matches the manifest, so none is excluded from the summary;
+this was verified before the manifest was written.
+
+**How to read the result.** The six new runs are a *later addition to a batch
+whose partial results were already visible*, and they are not blind to them.
+The Python comparison in this plan was fixed before any data; the TS/JS
+comparison was not. It is therefore reported as its own contrast with its own
+decision rule below, and the two are not pooled.
+
+**Decision rule for the added contrast**, fixed before its first run and the
+same one used in v4 and v7: among replicates where both arms produced a
+working engine, `typescript` minus `javascript`, paired by replicate,
+**typing helps** at +0.13 or more, **typing hurts** at -0.13 or less, **no
+effect detected** in between, **not measurable** below two usable pairs. At
+three replicates this is descriptive.
+
+**The question it is actually able to answer.** Given v17's Python arms span
+0.134 to 0.851 across three replicates of one condition, a three-replicate
+median is unlikely to resolve a difference smaller than that spread. The
+honest expected outcome is a variance measurement, and the write-up should
+lead with the spread rather than the median.
+
 ## Endpoints
 
 v15's, unchanged.

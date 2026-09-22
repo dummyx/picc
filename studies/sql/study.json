@@ -98,6 +98,28 @@
         "framework": "strict-static-typing",
         "scaffold": null
       }
+    },
+    {
+      "id": "javascript",
+      "factor": "candidate",
+      "description": "JavaScript on Node, `node --check` as the build gate; same contract.",
+      "candidate": {
+        "adapter": "studies/assets/candidates/sql/javascript-node.json",
+        "language": "javascript",
+        "framework": "dynamic-typing",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "typescript",
+      "factor": "candidate",
+      "description": "TypeScript under `tsc --strict --noEmitOnError` as the build gate; same contract.",
+      "candidate": {
+        "adapter": "studies/assets/candidates/sql/typescript-strict.json",
+        "language": "typescript",
+        "framework": "strict-static-typing",
+        "scaffold": null
+      }
     }
   ],
   "design": "one-factor-at-a-time"
