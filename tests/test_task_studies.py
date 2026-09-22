@@ -55,11 +55,18 @@ class TaskBlockValidationTests(unittest.TestCase):
 
 class TaskStudyManifestTests(unittest.TestCase):
     def test_language_conditions_share_the_behavioral_contract(self) -> None:
+        # Pinned per study, so a condition cannot be added, removed or renamed
+        # without a deliberate edit here. The SQL task gained javascript and
+        # typescript in the v17 amendment; the compiler task is unchanged.
+        expected = {
+            "c18": ["rust", "python", "python-typed"],
+            "sql": ["rust", "python", "python-typed", "javascript", "typescript"],
+        }
         for name in ("c18", "sql"):
             with self.subTest(study=name):
                 payload, conditions = study.load_study(ROOT / "studies" / name / "study.json")
                 self.assertEqual(payload["design"], "one-factor-at-a-time")
-                self.assertEqual([row["id"] for row in conditions], ["rust", "python", "python-typed"])
+                self.assertEqual([row["id"] for row in conditions], expected[name])
                 spec = (ROOT / conditions[0]["specification"]["path"]).read_text()
                 for row in conditions:
                     self.assertFalse(row["prompt"]["experiment_tools"])
