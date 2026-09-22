@@ -43,7 +43,10 @@ ROOT = Path(__file__).resolve().parent.parent
 # Hardcoded on purpose: this script belongs to one batch, and must keep
 # reading that batch's summary after the manifest moves on.
 STUDY_ID = "picc-sql-minimal-v7"
-ORDER = ("rust", "python", "python-typed")
+ORDER = ("rust", "python", "python-typed", "javascript", "typescript")
+# The two typed/untyped contrasts, reported separately and never pooled: the
+# Python one was fixed before any data, the TS/JS one was added mid-batch.
+CONTRASTS = (("python-typed", "python"), ("typescript", "javascript"))
 THRESHOLD = 0.13
 # A constant-output SQL engine scores this much; at or below it the candidate
 # is indistinguishable from one that works on nothing.
@@ -148,24 +151,42 @@ def main() -> int:
             print(f"- {condition}: {working}/{len(cells)}")
     print("\nWith three replicates a difference of 3 to 0 is worth stating; anything smaller is not.\n")
 
-    print("### Endpoint 2: hidden score, python-typed minus python, paired by replicate\n")
-    deltas = []
-    for replicate in sorted({r for c, r in table if c == "python-typed"}):
-        typed, plain = table.get(("python-typed", replicate)), table.get(("python", replicate))
-        if not typed or not plain or not (typed["above_floor"] and plain["above_floor"]):
+    print("### Endpoint 2: hidden score, typed minus untyped, paired by replicate\n")
+    for typed_id, plain_id in CONTRASTS:
+        if not any(c == typed_id for c, _ in table):
             continue
-        delta = typed["hidden"] - plain["hidden"]  # type: ignore[operator]
-        deltas.append(delta)
-        print(f"- replicate {replicate}: {delta:+.4f}")
-    if len(deltas) < 2:
-        verdict = "not measurable (fewer than two replicates with both arms working)"
-    else:
-        median = statistics.median(deltas)
-        print(f"\npaired median: {median:+.4f} (threshold ±{THRESHOLD})")
-        verdict = ("typing helps" if median >= THRESHOLD
-                   else "typing hurts" if median <= -THRESHOLD
-                   else "no effect detected")
-    print(f"\n**{verdict}**. At three replicates this is descriptive, not a test.")
+        print(f"**{typed_id} against {plain_id}**"
+              + ("  *(added mid-batch; see the amendment in the plan)*"
+                 if typed_id == "typescript" else "") + "\n")
+        deltas = []
+        for replicate in sorted({r for c, r in table if c == typed_id}):
+            typed, plain = table.get((typed_id, replicate)), table.get((plain_id, replicate))
+            if not typed or not plain or not (typed["above_floor"] and plain["above_floor"]):
+                continue
+            delta = typed["hidden"] - plain["hidden"]  # type: ignore[operator]
+            deltas.append(delta)
+            print(f"- replicate {replicate}: {delta:+.4f}")
+        if len(deltas) < 2:
+            verdict = "not measurable (fewer than two replicates with both arms working)"
+        else:
+            median = statistics.median(deltas)
+            print(f"\npaired median: {median:+.4f} (threshold ±{THRESHOLD})")
+            verdict = ("typing helps" if median >= THRESHOLD
+                       else "typing hurts" if median <= -THRESHOLD
+                       else "no effect detected")
+        print(f"\n**{verdict}**. At three replicates this is descriptive, not a test.\n")
+
+    # A median is only worth reading against the noise it sits in. When one
+    # condition's own replicates span more than the threshold, the contrast
+    # cannot resolve the threshold and the spread is the finding.
+    print("### Within-condition spread\n")
+    for condition in ORDER:
+        vals = [v["hidden"] for (c, _), v in table.items() if c == condition and v["hidden"] is not None]
+        if len(vals) >= 2:
+            spread = max(vals) - min(vals)
+            flag = "  <- exceeds the ±%.2f threshold" % THRESHOLD if spread > THRESHOLD else ""
+            print(f"- {condition}: n={len(vals)}, median {statistics.median(vals):.4f}, "
+                  f"range {min(vals):.4f}-{max(vals):.4f}, spread {spread:.4f}{flag}")
     return 0
 
 
