@@ -1,0 +1,7205 @@
+{
+ "runs": [
+  {
+   "run": "v17-sql-python-r1",
+   "condition": "python",
+   "replicate": 1,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.4581,
+     0.7637,
+     0.7656
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.5168,
+     0.7536,
+     0.7555
+    ],
+    "hidden_final": 0.7555,
+    "hidden_scripts_passed": 1,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 44630,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 1,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.9251,
+     "failure": "wrong_results",
+     "seconds": 0.02
+    },
+    {
+     "script": "select2.test",
+     "score": 0.749,
+     "failure": "wrong_results",
+     "seconds": 0.55
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "script_timeout",
+     "seconds": 120.01
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.9329,
+     "failure": "wrong_results",
+     "seconds": 0.27
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.9993,
+     "failure": "wrong_results",
+     "seconds": 0.35
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.9466,
+     "failure": "wrong_results",
+     "seconds": 0.31
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 0.33
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.491,
+     "failure": "wrong_results",
+     "seconds": 1.02
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 16,
+    "ok": 16,
+    "conversation_tokens_before": [
+     91126,
+     91555,
+     91323,
+     90548,
+     90505,
+     91681,
+     90373,
+     90127,
+     90618,
+     90508,
+     91620,
+     91800,
+     90609,
+     90247,
+     90807,
+     92362
+    ],
+    "messages_dropped": 0,
+    "minutes": 24.1,
+    "tokens_written": 99602,
+    "tokens_written_median": 5983,
+    "tokens_written_max": 10641
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 1,
+    "by_kind": {
+     "blocked_tool_call": 1
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 1
+    },
+    "examples": [
+     "which sqlite3; python3 -c \"import sqlite3; print(sqlite3.sqlite_version)\" 2>&1 | head -1"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 258,
+     "errors": 22,
+     "minutes": 0.2
+    },
+    "edit": {
+     "calls": 120,
+     "errors": 7,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 74,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "grep": {
+     "calls": 4,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "ls": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 90.9,
+    "tools": 0.2,
+    "summarizing": 24.1,
+    "startup": 0.0,
+    "lost_at_round_end": 4.8,
+    "total": 120.0,
+    "longest_summary_seconds": 157.5
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 258,
+    "does_this": {
+     "read or search files": 182,
+     "run own engine on SQL": 132,
+     "type-check or build": 40,
+     "write SQL test input": 34,
+     "probe engine internals": 29,
+     "run own test script": 16,
+     "write source via shell": 7,
+     "other": 4,
+     "edit source via script": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 84,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 83,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 39,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 28,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 11,
+      "minutes": 0.1
+     },
+     "write source via shell": {
+      "calls": 7,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 4,
+      "minutes": 0.0
+     },
+     "write SQL test input": {
+      "calls": 1,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 0.6
+   },
+   "file_tools": {
+    "writes": 1,
+    "write_targets": {
+     "pisql.py": 1
+    },
+    "bytes_written": 17355,
+    "largest_write_bytes": 17355,
+    "edits": 120,
+    "edit_lines_added": 2965,
+    "edit_lines_removed": 1946,
+    "failed_edits": 7,
+    "reads": 74,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 457,
+    "stops": {
+     "toolUse": 457
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 90.9,
+    "reply_seconds_median": 6.6,
+    "reply_seconds_p90": 23.8,
+    "reply_seconds_max": 174.1
+   },
+   "tokens": {
+    "generated": 336697,
+    "reasoning": 219396,
+    "answer_and_tool_calls": 117301,
+    "reasoning_share": 0.652,
+    "read_by_model": 35351868,
+    "read_from_cache": 34035136,
+    "cache_share": 0.963,
+    "conversation_size_median": 78678,
+    "conversation_size_max": 90117,
+    "generated_per_reply_median": 378,
+    "generated_per_reply_max": 11596,
+    "generated_per_minute": 3704
+   },
+   "reasoning": {
+    "median": 180,
+    "p90": 977,
+    "max": 8192,
+    "replies_at_budget": 6,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "pisql.py",
+    "files": 37,
+    "source_files": 1,
+    "source_lines": 3972,
+    "engine_bytes": 126856,
+    "engine_shape": {
+     "lines": 3972,
+     "blank_or_comment": 516,
+     "functions": 222,
+     "classes": 37,
+     "type_ignores": 0,
+     "any_uses": 0,
+     "casts": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 9,
+     "share_of_functions_with_return_type": 0.0
+    },
+    "test_files": 33,
+    "test_lines": 421,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "main source": 1,
+     "agent-written tests": 33
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "pisql.py",
+      "kind": "main source",
+      "bytes": 126856,
+      "lines": 3972
+     },
+     {
+      "path": "tests/t13.sql",
+      "kind": "agent-written tests",
+      "bytes": 499,
+      "lines": 8
+     },
+     {
+      "path": "tests/t15.sql",
+      "kind": "agent-written tests",
+      "bytes": 358,
+      "lines": 7
+     },
+     {
+      "path": "tests/t16.sql",
+      "kind": "agent-written tests",
+      "bytes": 904,
+      "lines": 18
+     },
+     {
+      "path": "tests/t17.sql",
+      "kind": "agent-written tests",
+      "bytes": 766,
+      "lines": 26
+     },
+     {
+      "path": "tests/t18.sql",
+      "kind": "agent-written tests",
+      "bytes": 1124,
+      "lines": 26
+     },
+     {
+      "path": "tests/t19.sql",
+      "kind": "agent-written tests",
+      "bytes": 1024,
+      "lines": 31
+     },
+     {
+      "path": "tests/t20.sql",
+      "kind": "agent-written tests",
+      "bytes": 951,
+      "lines": 22
+     },
+     {
+      "path": "tests/t21.sql",
+      "kind": "agent-written tests",
+      "bytes": 18,
+      "lines": 0
+     },
+     {
+      "path": "tests/t22.sql",
+      "kind": "agent-written tests",
+      "bytes": 8,
+      "lines": 0
+     },
+     {
+      "path": "tests/t23.sql",
+      "kind": "agent-written tests",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "tests/t24.sql",
+      "kind": "agent-written tests",
+      "bytes": 792,
+      "lines": 19
+     },
+     {
+      "path": "tests/t25.sql",
+      "kind": "agent-written tests",
+      "bytes": 55,
+      "lines": 1
+     },
+     {
+      "path": "tests/t26.sql",
+      "kind": "agent-written tests",
+      "bytes": 93,
+      "lines": 1
+     },
+     {
+      "path": "tests/t27.sql",
+      "kind": "agent-written tests",
+      "bytes": 451,
+      "lines": 14
+     },
+     {
+      "path": "tests/t28.sql",
+      "kind": "agent-written tests",
+      "bytes": 193,
+      "lines": 4
+     },
+     {
+      "path": "tests/t29.sql",
+      "kind": "agent-written tests",
+      "bytes": 673,
+      "lines": 15
+     },
+     {
+      "path": "tests/t30.sql",
+      "kind": "agent-written tests",
+      "bytes": 493,
+      "lines": 9
+     },
+     {
+      "path": "tests/t31.sql",
+      "kind": "agent-written tests",
+      "bytes": 346,
+      "lines": 9
+     },
+     {
+      "path": "tests/t32.sql",
+      "kind": "agent-written tests",
+      "bytes": 261,
+      "lines": 11
+     },
+     {
+      "path": "tests/t33.sql",
+      "kind": "agent-written tests",
+      "bytes": 67,
+      "lines": 1
+     },
+     {
+      "path": "tests/t34.sql",
+      "kind": "agent-written tests",
+      "bytes": 304,
+      "lines": 9
+     },
+     {
+      "path": "tests/t35.sql",
+      "kind": "agent-written tests",
+      "bytes": 174,
+      "lines": 5
+     },
+     {
+      "path": "tests/t36.sql",
+      "kind": "agent-written tests",
+      "bytes": 181,
+      "lines": 5
+     },
+     {
+      "path": "tests/t37.sql",
+      "kind": "agent-written tests",
+      "bytes": 300,
+      "lines": 8
+     },
+     {
+      "path": "tests/t38.sql",
+      "kind": "agent-written tests",
+      "bytes": 745,
+      "lines": 23
+     },
+     {
+      "path": "tests/t39.sql",
+      "kind": "agent-written tests",
+      "bytes": 762,
+      "lines": 19
+     },
+     {
+      "path": "tests/t40.sql",
+      "kind": "agent-written tests",
+      "bytes": 563,
+      "lines": 15
+     },
+     {
+      "path": "tests/t41.sql",
+      "kind": "agent-written tests",
+      "bytes": 1132,
+      "lines": 26
+     },
+     {
+      "path": "tests/t42.sql",
+      "kind": "agent-written tests",
+      "bytes": 456,
+      "lines": 10
+     },
+     {
+      "path": "tests/t43.sql",
+      "kind": "agent-written tests",
+      "bytes": 288,
+      "lines": 6
+     },
+     {
+      "path": "tests/t44.sql",
+      "kind": "agent-written tests",
+      "bytes": 1030,
+      "lines": 24
+     },
+     {
+      "path": "tests/t5.sql",
+      "kind": "agent-written tests",
+      "bytes": 1189,
+      "lines": 24
+     },
+     {
+      "path": "tests/t_err.sql",
+      "kind": "agent-written tests",
+      "bytes": 685,
+      "lines": 25
+     }
+    ],
+    "lines_added_by_round": [
+     3055,
+     830,
+     651
+    ],
+    "lines_removed_by_round": [
+     0,
+     94,
+     47
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-python-r2",
+   "condition": "python",
+   "replicate": 2,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.8271,
+     0.1186,
+     0.8207
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.8299,
+     0.2312,
+     0.8508
+    ],
+    "hidden_final": 0.8508,
+    "hidden_scripts_passed": 2,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 50110,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 7,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.9144,
+     "failure": "wrong_results",
+     "seconds": 0.03
+    },
+    {
+     "script": "select2.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 1.23
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "script_timeout",
+     "seconds": 120.09
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.9348,
+     "failure": "wrong_results",
+     "seconds": 0.35
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.9998,
+     "failure": "wrong_results",
+     "seconds": 0.4
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.9574,
+     "failure": "wrong_results",
+     "seconds": 0.38
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.9999,
+     "failure": "wrong_results",
+     "seconds": 0.42
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 2.03
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 17,
+    "ok": 17,
+    "conversation_tokens_before": [
+     102187,
+     91294,
+     93389,
+     92077,
+     91053,
+     90156,
+     90745,
+     90254,
+     91077,
+     90717,
+     90151,
+     90312,
+     90404,
+     90339,
+     90488,
+     90354,
+     90720
+    ],
+    "messages_dropped": 0,
+    "minutes": 8.5,
+    "tokens_written": 34828,
+    "tokens_written_median": 1668,
+    "tokens_written_max": 4972
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 2,
+    "by_kind": {
+     "blocked_tool_call": 2
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 2
+    },
+    "examples": [
+     "cd /workspace && python3 -c \"import sqlite3; print(sqlite3.sqlite_version)\"",
+     "cd /workspace && python3 -c \"\nimport sqlite3\nc = sqlite3.connect(':memory:')\nc.execute('CREATE TABLE t(x TEXT)')\nc.execute('INSERT INTO t VALUES (5)')\nprint('st"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 236,
+     "errors": 12,
+     "minutes": 0.1
+    },
+    "edit": {
+     "calls": 96,
+     "errors": 7,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 58,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 26,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "grep": {
+     "calls": 3,
+     "errors": 1,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 110.7,
+    "tools": 0.1,
+    "summarizing": 8.5,
+    "startup": 0.0,
+    "lost_at_round_end": 0.6,
+    "total": 120.0,
+    "longest_summary_seconds": 73.5
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 236,
+    "does_this": {
+     "read or search files": 213,
+     "run own engine on SQL": 100,
+     "type-check or build": 31,
+     "write SQL test input": 31,
+     "other": 7,
+     "probe engine internals": 3,
+     "run own test script": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 119,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 75,
+      "minutes": 0.1
+     },
+     "type-check or build": {
+      "calls": 31,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 7,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 3,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 0.3
+   },
+   "file_tools": {
+    "writes": 26,
+    "write_targets": {
+     "pisql.py": 3,
+     "tests/t1.exp": 2,
+     "tests/t2.sql": 2,
+     "tests/t1.sql": 1,
+     "tests/t2.exp": 1,
+     "tests/t3.sql": 1
+    },
+    "bytes_written": 270734,
+    "largest_write_bytes": 92330,
+    "edits": 96,
+    "edit_lines_added": 3252,
+    "edit_lines_removed": 1868,
+    "failed_edits": 7,
+    "reads": 58,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 415,
+    "stops": {
+     "toolUse": 415
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 110.7,
+    "reply_seconds_median": 6.6,
+    "reply_seconds_p90": 32.5,
+    "reply_seconds_max": 441.4
+   },
+   "tokens": {
+    "generated": 413498,
+    "reasoning": 257699,
+    "answer_and_tool_calls": 155799,
+    "reasoning_share": 0.623,
+    "read_by_model": 32085356,
+    "read_from_cache": 30712000,
+    "cache_share": 0.957,
+    "conversation_size_median": 78105,
+    "conversation_size_max": 90178,
+    "generated_per_reply_median": 382,
+    "generated_per_reply_max": 30539,
+    "generated_per_minute": 3735
+   },
+   "reasoning": {
+    "median": 185,
+    "p90": 1561,
+    "max": 8192,
+    "replies_at_budget": 7,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "pisql.py",
+    "files": 30,
+    "source_files": 1,
+    "source_lines": 3793,
+    "engine_bytes": 128732,
+    "engine_shape": {
+     "lines": 3793,
+     "blank_or_comment": 457,
+     "functions": 169,
+     "classes": 39,
+     "type_ignores": 0,
+     "any_uses": 0,
+     "casts": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 5,
+     "share_of_functions_with_return_type": 0.0
+    },
+    "test_files": 26,
+    "test_lines": 927,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "main source": 1,
+     "agent-written tests": 26
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "pisql.py",
+      "kind": "main source",
+      "bytes": 128732,
+      "lines": 3793
+     },
+     {
+      "path": "tests/t1.exp",
+      "kind": "agent-written tests",
+      "bytes": 235,
+      "lines": 31
+     },
+     {
+      "path": "tests/t1.sql",
+      "kind": "agent-written tests",
+      "bytes": 435,
+      "lines": 14
+     },
+     {
+      "path": "tests/t10.exp",
+      "kind": "agent-written tests",
+      "bytes": 260,
+      "lines": 27
+     },
+     {
+      "path": "tests/t10.sql",
+      "kind": "agent-written tests",
+      "bytes": 608,
+      "lines": 16
+     },
+     {
+      "path": "tests/t11.exp",
+      "kind": "agent-written tests",
+      "bytes": 371,
+      "lines": 54
+     },
+     {
+      "path": "tests/t11.sql",
+      "kind": "agent-written tests",
+      "bytes": 1454,
+      "lines": 37
+     },
+     {
+      "path": "tests/t12.exp",
+      "kind": "agent-written tests",
+      "bytes": 168,
+      "lines": 28
+     },
+     {
+      "path": "tests/t12.sql",
+      "kind": "agent-written tests",
+      "bytes": 794,
+      "lines": 17
+     },
+     {
+      "path": "tests/t13.exp",
+      "kind": "agent-written tests",
+      "bytes": 403,
+      "lines": 30
+     },
+     {
+      "path": "tests/t13.sql",
+      "kind": "agent-written tests",
+      "bytes": 470,
+      "lines": 15
+     },
+     {
+      "path": "tests/t2.exp",
+      "kind": "agent-written tests",
+      "bytes": 473,
+      "lines": 59
+     },
+     {
+      "path": "tests/t2.sql",
+      "kind": "agent-written tests",
+      "bytes": 1640,
+      "lines": 30
+     },
+     {
+      "path": "tests/t3.exp",
+      "kind": "agent-written tests",
+      "bytes": 657,
+      "lines": 70
+     },
+     {
+      "path": "tests/t3.sql",
+      "kind": "agent-written tests",
+      "bytes": 1438,
+      "lines": 37
+     },
+     {
+      "path": "tests/t4.exp",
+      "kind": "agent-written tests",
+      "bytes": 298,
+      "lines": 57
+     },
+     {
+      "path": "tests/t4.sql",
+      "kind": "agent-written tests",
+      "bytes": 843,
+      "lines": 20
+     },
+     {
+      "path": "tests/t5.exp",
+      "kind": "agent-written tests",
+      "bytes": 315,
+      "lines": 47
+     },
+     {
+      "path": "tests/t5.sql",
+      "kind": "agent-written tests",
+      "bytes": 1233,
+      "lines": 20
+     },
+     {
+      "path": "tests/t6.exp",
+      "kind": "agent-written tests",
+      "bytes": 452,
+      "lines": 46
+     },
+     {
+      "path": "tests/t6.sql",
+      "kind": "agent-written tests",
+      "bytes": 1026,
+      "lines": 26
+     },
+     {
+      "path": "tests/t7.exp",
+      "kind": "agent-written tests",
+      "bytes": 328,
+      "lines": 71
+     },
+     {
+      "path": "tests/t7.sql",
+      "kind": "agent-written tests",
+      "bytes": 1229,
+      "lines": 28
+     },
+     {
+      "path": "tests/t8.exp",
+      "kind": "agent-written tests",
+      "bytes": 414,
+      "lines": 40
+     },
+     {
+      "path": "tests/t8.sql",
+      "kind": "agent-written tests",
+      "bytes": 1226,
+      "lines": 22
+     },
+     {
+      "path": "tests/t9.exp",
+      "kind": "agent-written tests",
+      "bytes": 512,
+      "lines": 55
+     },
+     {
+      "path": "tests/t9.sql",
+      "kind": "agent-written tests",
+      "bytes": 1250,
+      "lines": 30
+     }
+    ],
+    "lines_added_by_round": [
+     3009,
+     1175,
+     698
+    ],
+    "lines_removed_by_round": [
+     0,
+     101,
+     61
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-python-r3",
+   "condition": "python",
+   "replicate": 3,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "hidden_final": 0.0,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 0,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": null
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    },
+    {
+     "script": "select2.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.02
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 1
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 1
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 1
+    }
+   ],
+   "summaries": {
+    "count": 15,
+    "ok": 15,
+    "conversation_tokens_before": [
+     92040,
+     90370,
+     90284,
+     90608,
+     90544,
+     90235,
+     90924,
+     90916,
+     90353,
+     92362,
+     90243,
+     90394,
+     90363,
+     90559,
+     92558
+    ],
+    "messages_dropped": 0,
+    "minutes": 18.6,
+    "tokens_written": 76054,
+    "tokens_written_median": 4963,
+    "tokens_written_max": 9465
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 4,
+    "by_kind": {
+     "blocked_tool_call": 3,
+     "bash_timeout_fired": 1
+    },
+    "reasons": {
+     "credential/environment inspection is prohibited": 1,
+     "credential or harness-internal access is prohibited": 1,
+     "None": 1,
+     "delegating to an existing database engine is prohibited": 1
+    },
+    "examples": [
+     "env | grep -i -E \"pcc|pi_|sql|input|task\" | head -30; ls / 2>/dev/null",
+     "ls -la /run-artifacts 2>/dev/null; ls /workspace/.pi; cat /workspace/.gitignore",
+     "cd /workspace && cat > INPUT.sql << 'EOF'\nCREATE TABLE t (a INTEGER PRIMARY KEY, b TEXT, c REAL);\nINSERT INTO t VALUES (1, 'one', 1.5), (2, 'two', 2.5);\nSELECT "
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 337,
+     "errors": 18,
+     "minutes": 2.6
+    },
+    "edit": {
+     "calls": 123,
+     "errors": 4,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 17,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "ls": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 98.1,
+    "tools": 2.6,
+    "summarizing": 18.6,
+    "startup": 0.0,
+    "lost_at_round_end": 0.6,
+    "total": 120.0,
+    "longest_summary_seconds": 139.7
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 337,
+    "does_this": {
+     "read or search files": 261,
+     "run own engine on SQL": 100,
+     "probe engine internals": 38,
+     "write SQL test input": 30,
+     "run own test script": 13,
+     "type-check or build": 13,
+     "write source via shell": 10,
+     "edit source via script": 6,
+     "other": 4,
+     "git": 3
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 180,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 77,
+      "minutes": 2.4
+     },
+     "probe engine internals": {
+      "calls": 37,
+      "minutes": 0.1
+     },
+     "type-check or build": {
+      "calls": 13,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 11,
+      "minutes": 0.0
+     },
+     "write source via shell": {
+      "calls": 10,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 5,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 4,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 1,
+    "slowest_seconds": 120.1
+   },
+   "file_tools": {
+    "writes": 1,
+    "write_targets": {
+     "pisql.py": 1
+    },
+    "bytes_written": 8251,
+    "largest_write_bytes": 8251,
+    "edits": 123,
+    "edit_lines_added": 3031,
+    "edit_lines_removed": 2060,
+    "failed_edits": 4,
+    "reads": 17,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 478,
+    "stops": {
+     "toolUse": 478
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 98.1,
+    "reply_seconds_median": 6.3,
+    "reply_seconds_p90": 25.3,
+    "reply_seconds_max": 173.9
+   },
+   "tokens": {
+    "generated": 365556,
+    "reasoning": 237737,
+    "answer_and_tool_calls": 127819,
+    "reasoning_share": 0.65,
+    "read_by_model": 36112151,
+    "read_from_cache": 34882688,
+    "cache_share": 0.966,
+    "conversation_size_median": 76600,
+    "conversation_size_max": 90090,
+    "generated_per_reply_median": 385,
+    "generated_per_reply_max": 11533,
+    "generated_per_minute": 3726
+   },
+   "reasoning": {
+    "median": 177,
+    "p90": 955,
+    "max": 8192,
+    "replies_at_budget": 6,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "pisql.py",
+    "files": 32,
+    "source_files": 1,
+    "source_lines": 3881,
+    "engine_bytes": 129798,
+    "engine_shape": {
+     "lines": 3881,
+     "blank_or_comment": 402,
+     "functions": 175,
+     "classes": 36,
+     "type_ignores": 0,
+     "any_uses": 0,
+     "casts": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 9,
+     "share_of_functions_with_return_type": 0.0
+    },
+    "test_files": 28,
+    "test_lines": 364,
+    "by_kind": {
+     "project config": 1,
+     "agent-written tests": 28,
+     "provided (empty)": 2,
+     "main source": 1
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": ".tests/agg.sql",
+      "kind": "agent-written tests",
+      "bytes": 664,
+      "lines": 12
+     },
+     {
+      "path": ".tests/agg2.sql",
+      "kind": "agent-written tests",
+      "bytes": 1201,
+      "lines": 18
+     },
+     {
+      "path": ".tests/agg3.sql",
+      "kind": "agent-written tests",
+      "bytes": 1406,
+      "lines": 22
+     },
+     {
+      "path": ".tests/bit.sql",
+      "kind": "agent-written tests",
+      "bytes": 312,
+      "lines": 10
+     },
+     {
+      "path": ".tests/bit2.sql",
+      "kind": "agent-written tests",
+      "bytes": 92,
+      "lines": 5
+     },
+     {
+      "path": ".tests/dbg.sql",
+      "kind": "agent-written tests",
+      "bytes": 259,
+      "lines": 3
+     },
+     {
+      "path": ".tests/dbg2.sql",
+      "kind": "agent-written tests",
+      "bytes": 314,
+      "lines": 4
+     },
+     {
+      "path": ".tests/err.sql",
+      "kind": "agent-written tests",
+      "bytes": 865,
+      "lines": 25
+     },
+     {
+      "path": ".tests/ins2.sql",
+      "kind": "agent-written tests",
+      "bytes": 654,
+      "lines": 17
+     },
+     {
+      "path": ".tests/is.sql",
+      "kind": "agent-written tests",
+      "bytes": 118,
+      "lines": 2
+     },
+     {
+      "path": ".tests/isel.sql",
+      "kind": "agent-written tests",
+      "bytes": 1112,
+      "lines": 23
+     },
+     {
+      "path": ".tests/j2.sql",
+      "kind": "agent-written tests",
+      "bytes": 1232,
+      "lines": 15
+     },
+     {
+      "path": ".tests/mini.sql",
+      "kind": "agent-written tests",
+      "bytes": 187,
+      "lines": 5
+     },
+     {
+      "path": ".tests/misc.sql",
+      "kind": "agent-written tests",
+      "bytes": 1112,
+      "lines": 16
+     },
+     {
+      "path": ".tests/o1.sql",
+      "kind": "agent-written tests",
+      "bytes": 55,
+      "lines": 0
+     },
+     {
+      "path": ".tests/o2.sql",
+      "kind": "agent-written tests",
+      "bytes": 304,
+      "lines": 7
+     },
+     {
+      "path": ".tests/one.sql",
+      "kind": "agent-written tests",
+      "bytes": 81,
+      "lines": 1
+     },
+     {
+      "path": ".tests/rid.sql",
+      "kind": "agent-written tests",
+      "bytes": 620,
+      "lines": 16
+     },
+     {
+      "path": ".tests/run.sql",
+      "kind": "agent-written tests",
+      "bytes": 254,
+      "lines": 5
+     },
+     {
+      "path": ".tests/sem.sql",
+      "kind": "agent-written tests",
+      "bytes": 882,
+      "lines": 32
+     },
+     {
+      "path": ".tests/sub.sql",
+      "kind": "agent-written tests",
+      "bytes": 1062,
+      "lines": 16
+     },
+     {
+      "path": ".tests/t3.sql",
+      "kind": "agent-written tests",
+      "bytes": 2003,
+      "lines": 27
+     },
+     {
+      "path": ".tests/t4.sql",
+      "kind": "agent-written tests",
+      "bytes": 1090,
+      "lines": 15
+     },
+     {
+      "path": ".tests/t5.sql",
+      "kind": "agent-written tests",
+      "bytes": 674,
+      "lines": 13
+     },
+     {
+      "path": ".tests/t6.sql",
+      "kind": "agent-written tests",
+      "bytes": 791,
+      "lines": 16
+     },
+     {
+      "path": ".tests/t7.sql",
+      "kind": "agent-written tests",
+      "bytes": 789,
+      "lines": 18
+     },
+     {
+      "path": ".tests/un.sql",
+      "kind": "agent-written tests",
+      "bytes": 663,
+      "lines": 15
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "INPUT.sql",
+      "kind": "agent-written tests",
+      "bytes": 236,
+      "lines": 6
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "pisql.py",
+      "kind": "main source",
+      "bytes": 129798,
+      "lines": 3881
+     }
+    ],
+    "lines_added_by_round": [
+     3200,
+     914,
+     400
+    ],
+    "lines_removed_by_round": [
+     0,
+     160,
+     108
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-python-typed-r1",
+   "condition": "python-typed",
+   "replicate": 1,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.2221,
+     0.2291,
+     0.2291
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.2952,
+     0.1341,
+     0.1341
+    ],
+    "hidden_final": 0.1341,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 6913,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.3904,
+     "failure": "malformed_output",
+     "seconds": 0.03
+    },
+    {
+     "script": "select2.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.09
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "malformed_output",
+     "seconds": 0.73
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.42
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.33
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.45
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.63
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.6826,
+     "failure": "malformed_output",
+     "seconds": 3.17
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 17,
+    "ok": 17,
+    "conversation_tokens_before": [
+     103474,
+     90133,
+     90688,
+     91743,
+     90967,
+     91424,
+     90437,
+     91312,
+     94215,
+     90141,
+     91421,
+     93097,
+     90532,
+     96077,
+     92568,
+     92212,
+     90828
+    ],
+    "messages_dropped": 0,
+    "minutes": 10.9,
+    "tokens_written": 44868,
+    "tokens_written_median": 2727,
+    "tokens_written_max": 4569
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 3,
+    "by_kind": {
+     "blocked_tool_call": 3
+    },
+    "reasons": {
+     "credential/environment inspection is prohibited": 2,
+     "running an existing database engine is prohibited": 1
+    },
+    "examples": [
+     "cd /workspace && python3 - <<'EOF'\nimport re\nsrc = open('pisql.py').read()\nsrc = re.sub(r\"(-> )(list|dict|set|tuple)\\b(?!\\[)\", lambda m: m.group(1) + {\"list\":\"l",
+     "cd /workspace && python3 -c \"\nimport re\nsrc = open('pisql.py').read()\ndef rep(m):\n    return m.group(1) + {'list':'list[Any]','dict':'dict[Any, Any]','set':'set",
+     "which sqlite3 && sqlite3 --version"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 203,
+     "errors": 16,
+     "minutes": 0.2
+    },
+    "edit": {
+     "calls": 115,
+     "errors": 9,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 83,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 8,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 108.4,
+    "tools": 0.2,
+    "summarizing": 10.9,
+    "startup": 0.0,
+    "lost_at_round_end": 0.5,
+    "total": 120.0,
+    "longest_summary_seconds": 67.0
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 203,
+    "does_this": {
+     "read or search files": 158,
+     "run own engine on SQL": 57,
+     "type-check or build": 41,
+     "probe engine internals": 21,
+     "run own test script": 12,
+     "write SQL test input": 10,
+     "other": 4,
+     "edit source via script": 3,
+     "git": 2
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 104,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 40,
+      "minutes": 0.1
+     },
+     "run own engine on SQL": {
+      "calls": 26,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 20,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 6,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 4,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 3,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 0.5
+   },
+   "file_tools": {
+    "writes": 8,
+    "write_targets": {
+     "pisql.py": 3,
+     "fixgen.py": 1,
+     "tests/t1.sql": 1,
+     "tests/scalar.sql": 1,
+     "tests/tables.sql": 1,
+     "tests/agg.sql": 1
+    },
+    "bytes_written": 186105,
+    "largest_write_bytes": 79898,
+    "edits": 115,
+    "edit_lines_added": 3181,
+    "edit_lines_removed": 2260,
+    "failed_edits": 9,
+    "reads": 83,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 409,
+    "stops": {
+     "toolUse": 409
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 108.4,
+    "reply_seconds_median": 5.7,
+    "reply_seconds_p90": 36.8,
+    "reply_seconds_max": 457.1
+   },
+   "tokens": {
+    "generated": 405749,
+    "reasoning": 263955,
+    "answer_and_tool_calls": 141794,
+    "reasoning_share": 0.651,
+    "read_by_model": 30848092,
+    "read_from_cache": 29557440,
+    "cache_share": 0.958,
+    "conversation_size_median": 75996,
+    "conversation_size_max": 90163,
+    "generated_per_reply_median": 334,
+    "generated_per_reply_max": 29254,
+    "generated_per_minute": 3743
+   },
+   "reasoning": {
+    "median": 161,
+    "p90": 1537,
+    "max": 8193,
+    "replies_at_budget": 7,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "pisql.py",
+    "files": 13,
+    "source_files": 1,
+    "source_lines": 3483,
+    "engine_bytes": 110895,
+    "engine_shape": {
+     "lines": 3483,
+     "blank_or_comment": 414,
+     "functions": 195,
+     "classes": 34,
+     "type_ignores": 0,
+     "any_uses": 195,
+     "casts": 8,
+     "mentions_hash_join": 0,
+     "mentions_index": 25,
+     "share_of_functions_with_return_type": 1.0
+    },
+    "test_files": 9,
+    "test_lines": 300,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "main source": 1,
+     "agent-written tests": 9
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "pisql.py",
+      "kind": "main source",
+      "bytes": 110895,
+      "lines": 3483
+     },
+     {
+      "path": "tests/agg.sql",
+      "kind": "agent-written tests",
+      "bytes": 795,
+      "lines": 20
+     },
+     {
+      "path": "tests/joins.sql",
+      "kind": "agent-written tests",
+      "bytes": 1293,
+      "lines": 24
+     },
+     {
+      "path": "tests/modify.sql",
+      "kind": "agent-written tests",
+      "bytes": 1512,
+      "lines": 50
+     },
+     {
+      "path": "tests/ops.sql",
+      "kind": "agent-written tests",
+      "bytes": 654,
+      "lines": 30
+     },
+     {
+      "path": "tests/scalar.sql",
+      "kind": "agent-written tests",
+      "bytes": 2407,
+      "lines": 118
+     },
+     {
+      "path": "tests/sets.sql",
+      "kind": "agent-written tests",
+      "bytes": 769,
+      "lines": 16
+     },
+     {
+      "path": "tests/subq.sql",
+      "kind": "agent-written tests",
+      "bytes": 688,
+      "lines": 14
+     },
+     {
+      "path": "tests/t1.sql",
+      "kind": "agent-written tests",
+      "bytes": 321,
+      "lines": 8
+     },
+     {
+      "path": "tests/tables.sql",
+      "kind": "agent-written tests",
+      "bytes": 735,
+      "lines": 20
+     }
+    ],
+    "lines_added_by_round": [
+     2658,
+     1277,
+     138
+    ],
+    "lines_removed_by_round": [
+     0,
+     169,
+     121
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-python-typed-r2",
+   "condition": "python-typed",
+   "replicate": 2,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 4,
+    "round_minutes": [
+     45.0,
+     26.9,
+     45.0,
+     3.1
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.7076,
+     0.709,
+     0.8313,
+     0.8313
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.7045,
+     0.7059,
+     0.8216,
+     0.8216
+    ],
+    "hidden_final": 0.8216,
+    "hidden_scripts_passed": 1,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 49717,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 3,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.8717,
+     "failure": "wrong_results",
+     "seconds": 0.03
+    },
+    {
+     "script": "select2.test",
+     "score": 0.831,
+     "failure": "wrong_results",
+     "seconds": 1.17
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "script_timeout",
+     "seconds": 120.17
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.9327,
+     "failure": "wrong_results",
+     "seconds": 0.37
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.9983,
+     "failure": "wrong_results",
+     "seconds": 0.57
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.9401,
+     "failure": "wrong_results",
+     "seconds": 0.39
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.9992,
+     "failure": "wrong_results",
+     "seconds": 0.44
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 1.3
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 3,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 16,
+    "ok": 16,
+    "conversation_tokens_before": [
+     98986,
+     90243,
+     91030,
+     97561,
+     90178,
+     91212,
+     90536,
+     90669,
+     97396,
+     90774,
+     92567,
+     90244,
+     90279,
+     91107,
+     92010,
+     90167
+    ],
+    "messages_dropped": 0,
+    "minutes": 9.8,
+    "tokens_written": 40344,
+    "tokens_written_median": 2533,
+    "tokens_written_max": 4788
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 2,
+    "by_kind": {
+     "blocked_tool_call": 1,
+     "bash_timeout_fired": 1
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 1,
+     "None": 1
+    },
+    "examples": [
+     "cat /workspace/AGENTS.md; echo ---; python3 -c \"import sqlite3\" 2>&1 | head -1; pip list 2>/dev/null | head -30",
+     "cd /workspace && python3 pisql.py test1.sql 2>&1 | head -220; echo \"EXIT: $?\""
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 221,
+     "errors": 12,
+     "minutes": 2.6
+    },
+    "edit": {
+     "calls": 90,
+     "errors": 3,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 34,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 4,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "ls": {
+     "calls": 2,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "grep": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 104.5,
+    "tools": 2.6,
+    "summarizing": 9.8,
+    "startup": 0.0,
+    "lost_at_round_end": 3.1,
+    "total": 120.0,
+    "longest_summary_seconds": 70.4
+   },
+   "unfinished_replies": [
+    {
+     "saved": "2026-09-22T02:25:16.806Z",
+     "stop": "stop",
+     "minutes": 0.3,
+     "generated": 1186,
+     "reasoning_tokens": 615,
+     "visible_text_tokens": 569,
+     "tool_calls": [],
+     "text_head": "All green. The implementation is complete and verified. Summary of what this session delivered:\n\n## Changes to `/workspace/pisql.py`\n\n**1. Affinity-aware (tagge"
+    }
+   ],
+   "shell": {
+    "calls": 221,
+    "does_this": {
+     "read or search files": 197,
+     "run own engine on SQL": 70,
+     "type-check or build": 41,
+     "write SQL test input": 18,
+     "run own test script": 6,
+     "probe engine internals": 4,
+     "other": 4,
+     "git": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 126,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 43,
+      "minutes": 2.4
+     },
+     "type-check or build": {
+      "calls": 41,
+      "minutes": 0.1
+     },
+     "other": {
+      "calls": 4,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 3,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 3,
+      "minutes": 0.0
+     },
+     "write SQL test input": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 1,
+    "slowest_seconds": 120.1
+   },
+   "file_tools": {
+    "writes": 4,
+    "write_targets": {
+     "pisql.py": 3,
+     "test1.sql": 1
+    },
+    "bytes_written": 243490,
+    "largest_write_bytes": 81973,
+    "edits": 90,
+    "edit_lines_added": 2951,
+    "edit_lines_removed": 1879,
+    "failed_edits": 3,
+    "reads": 34,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 350,
+    "stops": {
+     "toolUse": 349,
+     "stop": 1
+    },
+    "with_tool_call_share": 0.997,
+    "prompts_sent": 4,
+    "generation_minutes": 104.5,
+    "reply_seconds_median": 7.1,
+    "reply_seconds_p90": 33.9,
+    "reply_seconds_max": 450.4
+   },
+   "tokens": {
+    "generated": 390661,
+    "reasoning": 241662,
+    "answer_and_tool_calls": 148999,
+    "reasoning_share": 0.619,
+    "read_by_model": 27024516,
+    "read_from_cache": 25738240,
+    "cache_share": 0.952,
+    "conversation_size_median": 78197,
+    "conversation_size_max": 90076,
+    "generated_per_reply_median": 400,
+    "generated_per_reply_max": 28572,
+    "generated_per_minute": 3737
+   },
+   "reasoning": {
+    "median": 168,
+    "p90": 1453,
+    "max": 8192,
+    "replies_at_budget": 10,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "pisql.py",
+    "files": 10,
+    "source_files": 1,
+    "source_lines": 3467,
+    "engine_bytes": 115781,
+    "engine_shape": {
+     "lines": 3467,
+     "blank_or_comment": 357,
+     "functions": 128,
+     "classes": 40,
+     "type_ignores": 0,
+     "any_uses": 8,
+     "casts": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 5,
+     "share_of_functions_with_return_type": 1.0
+    },
+    "test_files": 1,
+    "test_lines": 141,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "other": 5,
+     "main source": 1,
+     "agent-written tests": 1
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "out1.txt",
+      "kind": "other",
+      "bytes": 1863,
+      "lines": 272
+     },
+     {
+      "path": "out_cur.txt",
+      "kind": "other",
+      "bytes": 1874,
+      "lines": 273
+     },
+     {
+      "path": "out_final.txt",
+      "kind": "other",
+      "bytes": 1899,
+      "lines": 274
+     },
+     {
+      "path": "out_new.txt",
+      "kind": "other",
+      "bytes": 1874,
+      "lines": 273
+     },
+     {
+      "path": "out_new2.txt",
+      "kind": "other",
+      "bytes": 1899,
+      "lines": 274
+     },
+     {
+      "path": "pisql.py",
+      "kind": "main source",
+      "bytes": 115781,
+      "lines": 3467
+     },
+     {
+      "path": "test1.sql",
+      "kind": "agent-written tests",
+      "bytes": 5483,
+      "lines": 141
+     }
+    ],
+    "lines_added_by_round": [
+     2602,
+     1248,
+     1437,
+     20
+    ],
+    "lines_removed_by_round": [
+     0,
+     221,
+     105,
+     7
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-python-typed-r3",
+   "condition": "python-typed",
+   "replicate": 3,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.0,
+     0.23,
+     0.4691
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.0,
+     0.3213,
+     0.5273
+    ],
+    "hidden_final": 0.5273,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 33855,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": 1
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.2406,
+     "failure": "wrong_results",
+     "seconds": 0.04
+    },
+    {
+     "script": "select2.test",
+     "score": 0.664,
+     "failure": "wrong_results",
+     "seconds": 1.06
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.24
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.9838,
+     "failure": "wrong_results",
+     "seconds": 0.33
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.09
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.9428,
+     "failure": "wrong_results",
+     "seconds": 0.36
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.992,
+     "failure": "wrong_results",
+     "seconds": 0.36
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.3952,
+     "failure": "wrong_results",
+     "seconds": 1.11
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 14,
+    "ok": 14,
+    "conversation_tokens_before": [
+     114157,
+     90810,
+     91001,
+     90659,
+     94373,
+     94074,
+     90443,
+     91257,
+     94575,
+     92217,
+     90939,
+     93773,
+     91418,
+     90351
+    ],
+    "messages_dropped": 0,
+    "minutes": 10.2,
+    "tokens_written": 41994,
+    "tokens_written_median": 2867,
+    "tokens_written_max": 6025
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 1,
+    "by_kind": {
+     "blocked_tool_call": 1
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 1
+    },
+    "examples": [
+     "which sqlite3; python3 -c \"import sqlite3; print('python sqlite3 available')\" 2>&1; python3 -c \"import sys; print(sys.version)\""
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 241,
+     "errors": 13,
+     "minutes": 1.8
+    },
+    "edit": {
+     "calls": 122,
+     "errors": 8,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 13,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 4,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "grep": {
+     "calls": 3,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "ls": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 107.2,
+    "tools": 1.8,
+    "summarizing": 10.2,
+    "startup": 0.0,
+    "lost_at_round_end": 0.8,
+    "total": 120.0,
+    "longest_summary_seconds": 87.7
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 241,
+    "does_this": {
+     "read or search files": 194,
+     "run own engine on SQL": 48,
+     "type-check or build": 34,
+     "probe engine internals": 28,
+     "write SQL test input": 10,
+     "other": 6,
+     "run own test script": 4,
+     "git": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 148,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 34,
+      "minutes": 0.1
+     },
+     "run own engine on SQL": {
+      "calls": 26,
+      "minutes": 1.1
+     },
+     "probe engine internals": {
+      "calls": 25,
+      "minutes": 0.6
+     },
+     "other": {
+      "calls": 6,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 2,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 63.7
+   },
+   "file_tools": {
+    "writes": 4,
+    "write_targets": {
+     "pisql.py": 3,
+     "todo.md": 1
+    },
+    "bytes_written": 222591,
+    "largest_write_bytes": 81352,
+    "edits": 122,
+    "edit_lines_added": 5002,
+    "edit_lines_removed": 3103,
+    "failed_edits": 8,
+    "reads": 13,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 382,
+    "stops": {
+     "toolUse": 382
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 107.2,
+    "reply_seconds_median": 6.5,
+    "reply_seconds_p90": 31.3,
+    "reply_seconds_max": 481.9
+   },
+   "tokens": {
+    "generated": 402242,
+    "reasoning": 226745,
+    "answer_and_tool_calls": 175497,
+    "reasoning_share": 0.564,
+    "read_by_model": 28702920,
+    "read_from_cache": 27553472,
+    "cache_share": 0.96,
+    "conversation_size_median": 76816,
+    "conversation_size_max": 90110,
+    "generated_per_reply_median": 388,
+    "generated_per_reply_max": 29951,
+    "generated_per_minute": 3754
+   },
+   "reasoning": {
+    "median": 157,
+    "p90": 1263,
+    "max": 8193,
+    "replies_at_budget": 7,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "pisql.py",
+    "files": 7,
+    "source_files": 1,
+    "source_lines": 4359,
+    "engine_bytes": 141215,
+    "engine_shape": {
+     "lines": 4359,
+     "blank_or_comment": 390,
+     "functions": 139,
+     "classes": 43,
+     "type_ignores": 0,
+     "any_uses": 0,
+     "casts": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 7,
+     "share_of_functions_with_return_type": 1.0
+    },
+    "test_files": 2,
+    "test_lines": 72,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "main source": 1,
+     "agent-written tests": 2,
+     "other": 1
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "pisql.py",
+      "kind": "main source",
+      "bytes": 141215,
+      "lines": 4359
+     },
+     {
+      "path": "tests/t5.sql",
+      "kind": "agent-written tests",
+      "bytes": 2102,
+      "lines": 33
+     },
+     {
+      "path": "tests/t6.sql",
+      "kind": "agent-written tests",
+      "bytes": 1531,
+      "lines": 39
+     },
+     {
+      "path": "todo.md",
+      "kind": "other",
+      "bytes": 493,
+      "lines": 9
+     }
+    ],
+    "lines_added_by_round": [
+     2668,
+     1369,
+     615
+    ],
+    "lines_removed_by_round": [
+     0,
+     155,
+     57
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-javascript-r1",
+   "condition": "javascript",
+   "replicate": 1,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.0102,
+     0.6639,
+     0.6436
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.0,
+     0.6507,
+     0.6454
+    ],
+    "hidden_final": 0.6454,
+    "hidden_scripts_passed": 1,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 37586,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 2,
+    "first_working_round": 1
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.7914,
+     "failure": "wrong_results",
+     "seconds": 0.02
+    },
+    {
+     "script": "select2.test",
+     "score": 0.7,
+     "failure": "wrong_results",
+     "seconds": 0.18
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "candidate_crash",
+     "seconds": 14.15
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.6271,
+     "failure": "wrong_results",
+     "seconds": 0.12
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.7121,
+     "failure": "wrong_results",
+     "seconds": 0.15
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.6035,
+     "failure": "wrong_results",
+     "seconds": 0.12
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.7291,
+     "failure": "wrong_results",
+     "seconds": 0.16
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 0.26
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 18,
+    "ok": 18,
+    "conversation_tokens_before": [
+     90463,
+     91274,
+     90154,
+     90739,
+     90397,
+     90525,
+     91521,
+     93180,
+     91218,
+     90336,
+     93037,
+     90506,
+     90637,
+     90680,
+     92258,
+     90837,
+     91797,
+     90343
+    ],
+    "messages_dropped": 0,
+    "minutes": 11.6,
+    "tokens_written": 47620,
+    "tokens_written_median": 2590,
+    "tokens_written_max": 4643
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 3,
+    "by_kind": {
+     "blocked_tool_call": 2,
+     "bash_timeout_fired": 1
+    },
+    "reasons": {
+     "running an existing database engine is prohibited": 2,
+     "None": 1
+    },
+    "examples": [
+     "which sqlite3; echo \"CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO t VALUES (1,'one');\nSELECT * FROM t;\" | sqlite3 -batch -noheader 2>&1 | hea",
+     "cd /workspace && node -e \"\nconst m = require('./src/pisql.js');\nconst e = new m.Engine();\nconst orig = e.runQuery.bind(e);\nlet calls = 0;\ne.runQuery = function(",
+     "cd /workspace && which sqlite3 && sqlite3 --version 2>&1 | head -2"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 230,
+     "errors": 23,
+     "minutes": 5.7
+    },
+    "edit": {
+     "calls": 114,
+     "errors": 7,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 52,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 7,
+     "errors": 1,
+     "minutes": 0.0
+    },
+    "ls": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "grep": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 102.4,
+    "tools": 5.7,
+    "summarizing": 11.6,
+    "startup": 0.0,
+    "lost_at_round_end": 0.3,
+    "total": 120.0,
+    "longest_summary_seconds": 67.4
+   },
+   "unfinished_replies": [
+    {
+     "saved": "2026-09-22T12:13:57.443Z",
+     "stop": "length",
+     "minutes": 8.3,
+     "generated": 32768,
+     "reasoning_tokens": 8191,
+     "visible_text_tokens": 22,
+     "tool_calls": [
+      "write"
+     ],
+     "text_head": "The first draft's query executor is inconsistent. Let me rewrite the file cleanly with a proper architecture."
+    }
+   ],
+   "shell": {
+    "calls": 230,
+    "does_this": {
+     "read or search files": 178,
+     "probe engine internals": 61,
+     "run own engine on SQL": 35,
+     "type-check or build": 27,
+     "write SQL test input": 7,
+     "other": 3,
+     "write source via shell": 3,
+     "run own test script": 3,
+     "git": 1,
+     "edit source via script": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 126,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 49,
+      "minutes": 3.7
+     },
+     "type-check or build": {
+      "calls": 23,
+      "minutes": 1.5
+     },
+     "run own engine on SQL": {
+      "calls": 22,
+      "minutes": 0.5
+     },
+     "other": {
+      "calls": 3,
+      "minutes": 0.0
+     },
+     "write source via shell": {
+      "calls": 3,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 3,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 1,
+    "slowest_seconds": 120.1
+   },
+   "file_tools": {
+    "writes": 7,
+    "write_targets": {
+     "src/pisql.js": 2,
+     "cmp.js": 2,
+     "": 1,
+     "test1.sql": 1,
+     "test2.sql": 1
+    },
+    "bytes_written": 121410,
+    "largest_write_bytes": 94298,
+    "edits": 114,
+    "edit_lines_added": 2174,
+    "edit_lines_removed": 1729,
+    "failed_edits": 7,
+    "reads": 52,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 404,
+    "stops": {
+     "toolUse": 403,
+     "length": 1
+    },
+    "with_tool_call_share": 0.998,
+    "prompts_sent": 3,
+    "generation_minutes": 102.4,
+    "reply_seconds_median": 6.6,
+    "reply_seconds_p90": 29.6,
+    "reply_seconds_max": 496.4
+   },
+   "tokens": {
+    "generated": 379721,
+    "reasoning": 200850,
+    "answer_and_tool_calls": 178871,
+    "reasoning_share": 0.529,
+    "read_by_model": 31334170,
+    "read_from_cache": 29866688,
+    "cache_share": 0.953,
+    "conversation_size_median": 78998,
+    "conversation_size_max": 90134,
+    "generated_per_reply_median": 384,
+    "generated_per_reply_max": 32768,
+    "generated_per_minute": 3709
+   },
+   "reasoning": {
+    "median": 161,
+    "p90": 1198,
+    "max": 8192,
+    "replies_at_budget": 4,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "src/pisql.js",
+    "files": 8,
+    "source_files": 1,
+    "source_lines": 3154,
+    "engine_bytes": 106982,
+    "engine_shape": {
+     "lines": 3154,
+     "blank_or_comment": 261,
+     "functions": 141,
+     "classes": 7,
+     "interfaces_and_types": 1,
+     "any_uses": 0,
+     "ts_ignores": 0,
+     "hand_declared_node_globals": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 3
+    },
+    "test_files": 2,
+    "test_lines": 89,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "helper script": 1,
+     "other": 1,
+     "main source": 1,
+     "agent-written tests": 2
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "cmp.js",
+      "kind": "helper script",
+      "bytes": 3749,
+      "lines": 113
+     },
+     {
+      "path": "out_pisql.txt",
+      "kind": "other",
+      "bytes": 537,
+      "lines": 74
+     },
+     {
+      "path": "src/pisql.js",
+      "kind": "main source",
+      "bytes": 106982,
+      "lines": 3154
+     },
+     {
+      "path": "test1.sql",
+      "kind": "agent-written tests",
+      "bytes": 2125,
+      "lines": 52
+     },
+     {
+      "path": "test2.sql",
+      "kind": "agent-written tests",
+      "bytes": 2217,
+      "lines": 37
+     }
+    ],
+    "lines_added_by_round": [
+     2879,
+     507,
+     215
+    ],
+    "lines_removed_by_round": [
+     0,
+     101,
+     70
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-javascript-r2",
+   "condition": "javascript",
+   "replicate": 2,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.1267,
+     0.8169,
+     0.8169
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.1702,
+     0.8148,
+     0.8148
+    ],
+    "hidden_final": 0.8148,
+    "hidden_scripts_passed": 2,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 47233,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 4,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.9144,
+     "failure": "wrong_results",
+     "seconds": 0.02
+    },
+    {
+     "script": "select2.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 0.21
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "candidate_crash",
+     "seconds": 19.79
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.8752,
+     "failure": "wrong_results",
+     "seconds": 0.11
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.9106,
+     "failure": "wrong_results",
+     "seconds": 0.13
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.9375,
+     "failure": "wrong_results",
+     "seconds": 0.11
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.8809,
+     "failure": "wrong_results",
+     "seconds": 0.12
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 0.28
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 20,
+    "ok": 20,
+    "conversation_tokens_before": [
+     96849,
+     91923,
+     90560,
+     91666,
+     91202,
+     90186,
+     99857,
+     90120,
+     90182,
+     90216,
+     91052,
+     90902,
+     90233,
+     90338,
+     90700,
+     90185,
+     90296,
+     90840,
+     91788,
+     90177
+    ],
+    "messages_dropped": 0,
+    "minutes": 18.2,
+    "tokens_written": 75389,
+    "tokens_written_median": 3565,
+    "tokens_written_max": 7134
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 2,
+    "by_kind": {
+     "blocked_tool_call": 2
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 1,
+     "direct access to visible test files is withheld": 1
+    },
+    "examples": [
+     "python3 -c \"\nimport sqlite3\nc = sqlite3.connect(':memory:')\nprint(c.execute('select 3.0').fetchone())\nprint(c.execute('select 1e20').fetchone())\nprint(repr(c.ex",
+     "ls -la /visible-tests 2>/dev/null | head -20; echo ---; ls /visible-tests/reference 2>/dev/null | head; echo ---; sed -n '60,110p' /workspace/.pi/extensions/exp"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 314,
+     "errors": 34,
+     "minutes": 0.1
+    },
+    "edit": {
+     "calls": 113,
+     "errors": 6,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 8,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 4,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "ls": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 100.3,
+    "tools": 0.1,
+    "summarizing": 18.2,
+    "startup": 0.0,
+    "lost_at_round_end": 1.3,
+    "total": 120.0,
+    "longest_summary_seconds": 104.1
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 314,
+    "does_this": {
+     "read or search files": 235,
+     "run own engine on SQL": 79,
+     "other": 44,
+     "write SQL test input": 31,
+     "type-check or build": 26,
+     "probe engine internals": 5,
+     "write source via shell": 4,
+     "run own test script": 1,
+     "edit source via script": 1,
+     "git": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 178,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 59,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 44,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 23,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 5,
+      "minutes": 0.0
+     },
+     "write source via shell": {
+      "calls": 4,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 0.2
+   },
+   "file_tools": {
+    "writes": 8,
+    "write_targets": {
+     "src/pisql.js": 2,
+     "tests/run.js": 1,
+     "tests/case_06.sql": 1,
+     "tests/case_06.exp": 1,
+     "tests/case_07.sql": 1,
+     "tests/case_07.exp": 1
+    },
+    "bytes_written": 41982,
+    "largest_write_bytes": 19011,
+    "edits": 113,
+    "edit_lines_added": 2806,
+    "edit_lines_removed": 1829,
+    "failed_edits": 6,
+    "reads": 4,
+    "distinct_files_read": 3
+   },
+   "replies": {
+    "count": 438,
+    "stops": {
+     "toolUse": 438
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 100.3,
+    "reply_seconds_median": 6.4,
+    "reply_seconds_p90": 28.1,
+    "reply_seconds_max": 275.5
+   },
+   "tokens": {
+    "generated": 367437,
+    "reasoning": 225682,
+    "answer_and_tool_calls": 141755,
+    "reasoning_share": 0.614,
+    "read_by_model": 34363000,
+    "read_from_cache": 32716352,
+    "cache_share": 0.952,
+    "conversation_size_median": 79688,
+    "conversation_size_max": 90126,
+    "generated_per_reply_median": 364,
+    "generated_per_reply_max": 18408,
+    "generated_per_minute": 3663
+   },
+   "reasoning": {
+    "median": 172,
+    "p90": 977,
+    "max": 8192,
+    "replies_at_budget": 6,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "src/pisql.js",
+    "files": 21,
+    "source_files": 1,
+    "source_lines": 3295,
+    "engine_bytes": 116163,
+    "engine_shape": {
+     "lines": 3295,
+     "blank_or_comment": 305,
+     "functions": 123,
+     "classes": 5,
+     "interfaces_and_types": 0,
+     "any_uses": 0,
+     "ts_ignores": 0,
+     "hand_declared_node_globals": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 10
+    },
+    "test_files": 17,
+    "test_lines": 527,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "main source": 1,
+     "agent-written tests": 17
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "src/pisql.js",
+      "kind": "main source",
+      "bytes": 116163,
+      "lines": 3295
+     },
+     {
+      "path": "tests/case_01.exp",
+      "kind": "agent-written tests",
+      "bytes": 249,
+      "lines": 34
+     },
+     {
+      "path": "tests/case_01.sql",
+      "kind": "agent-written tests",
+      "bytes": 277,
+      "lines": 17
+     },
+     {
+      "path": "tests/case_02.exp",
+      "kind": "agent-written tests",
+      "bytes": 176,
+      "lines": 38
+     },
+     {
+      "path": "tests/case_02.sql",
+      "kind": "agent-written tests",
+      "bytes": 306,
+      "lines": 19
+     },
+     {
+      "path": "tests/case_03.exp",
+      "kind": "agent-written tests",
+      "bytes": 230,
+      "lines": 47
+     },
+     {
+      "path": "tests/case_03.sql",
+      "kind": "agent-written tests",
+      "bytes": 632,
+      "lines": 24
+     },
+     {
+      "path": "tests/case_04.exp",
+      "kind": "agent-written tests",
+      "bytes": 189,
+      "lines": 22
+     },
+     {
+      "path": "tests/case_04.sql",
+      "kind": "agent-written tests",
+      "bytes": 701,
+      "lines": 13
+     },
+     {
+      "path": "tests/case_05.exp",
+      "kind": "agent-written tests",
+      "bytes": 131,
+      "lines": 26
+     },
+     {
+      "path": "tests/case_05.sql",
+      "kind": "agent-written tests",
+      "bytes": 598,
+      "lines": 15
+     },
+     {
+      "path": "tests/case_06.exp",
+      "kind": "agent-written tests",
+      "bytes": 284,
+      "lines": 68
+     },
+     {
+      "path": "tests/case_06.sql",
+      "kind": "agent-written tests",
+      "bytes": 1085,
+      "lines": 20
+     },
+     {
+      "path": "tests/case_07.exp",
+      "kind": "agent-written tests",
+      "bytes": 328,
+      "lines": 54
+     },
+     {
+      "path": "tests/case_07.sql",
+      "kind": "agent-written tests",
+      "bytes": 1157,
+      "lines": 28
+     },
+     {
+      "path": "tests/case_08.exp",
+      "kind": "agent-written tests",
+      "bytes": 532,
+      "lines": 43
+     },
+     {
+      "path": "tests/case_08.sql",
+      "kind": "agent-written tests",
+      "bytes": 1568,
+      "lines": 23
+     },
+     {
+      "path": "tests/run.js",
+      "kind": "agent-written tests",
+      "bytes": 1257,
+      "lines": 36
+     }
+    ],
+    "lines_added_by_round": [
+     2652,
+     942,
+     406
+    ],
+    "lines_removed_by_round": [
+     0,
+     116,
+     62
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-javascript-r3",
+   "condition": "javascript",
+   "replicate": 3,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 4,
+    "round_minutes": [
+     7.8,
+     45.0,
+     45.0,
+     22.2
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.0,
+     0.6379,
+     0.8804,
+     0.8494
+    ],
+    "visible_build_ok": [
+     false,
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.0,
+     0.6239,
+     0.828,
+     0.793
+    ],
+    "hidden_final": 0.793,
+    "hidden_scripts_passed": 1,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 47111,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 5,
+    "first_working_round": 1
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.8075,
+     "failure": "wrong_results",
+     "seconds": 0.02
+    },
+    {
+     "script": "select2.test",
+     "score": 0.869,
+     "failure": "wrong_results",
+     "seconds": 0.16
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0656,
+     "failure": "candidate_crash",
+     "seconds": 44.53
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.6473,
+     "failure": "wrong_results",
+     "seconds": 0.12
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.9998,
+     "failure": "wrong_results",
+     "seconds": 0.16
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.9554,
+     "failure": "wrong_results",
+     "seconds": 0.11
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.9998,
+     "failure": "wrong_results",
+     "seconds": 0.13
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 1.0,
+     "failure": "passed",
+     "seconds": 0.25
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": false,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 3,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 19,
+    "ok": 19,
+    "conversation_tokens_before": [
+     90160,
+     96263,
+     95716,
+     91954,
+     95850,
+     91880,
+     90365,
+     90962,
+     90499,
+     90286,
+     90447,
+     90295,
+     91747,
+     92378,
+     93661,
+     90197,
+     92754,
+     90764,
+     93553
+    ],
+    "messages_dropped": 0,
+    "minutes": 21.2,
+    "tokens_written": 88074,
+    "tokens_written_median": 4248,
+    "tokens_written_max": 9837
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 2,
+    "by_kind": {
+     "blocked_tool_call": 2
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 2
+    },
+    "examples": [
+     "python3 -c \"import sqlite3; print(sqlite3.sqlite_version)\" 2>&1; cat /workspace/TASK.md /workspace/.gitignore 2>/dev/null; ls /workspace/.pi",
+     "which sqlite3; python3 -c \"import sqlite3; print(sqlite3.sqlite_version)\" 2>&1"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 204,
+     "errors": 8,
+     "minutes": 0.1
+    },
+    "edit": {
+     "calls": 79,
+     "errors": 8,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 76,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 1,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 96.4,
+    "tools": 0.1,
+    "summarizing": 21.2,
+    "startup": 0.0,
+    "lost_at_round_end": 2.3,
+    "total": 120.0,
+    "longest_summary_seconds": 141.7
+   },
+   "unfinished_replies": [
+    {
+     "saved": "2026-09-22T20:16:16.034Z",
+     "stop": "length",
+     "minutes": 7.8,
+     "generated": 32768,
+     "reasoning_tokens": 8191,
+     "visible_text_tokens": 24575,
+     "tool_calls": [],
+     "text_head": ";` \u2192 3.5. `SELECT 4/2;` \u2192 2 (integer).\n  - How does SQLite determine exactness? Computes in 128-bit? For 64-bit integers a, b: if a % b == 0 \u2192 integer division,"
+    }
+   ],
+   "shell": {
+    "calls": 204,
+    "does_this": {
+     "read or search files": 176,
+     "run own engine on SQL": 87,
+     "type-check or build": 40,
+     "write SQL test input": 35,
+     "run own test script": 10,
+     "edit source via script": 2,
+     "write source via shell": 1,
+     "git": 1,
+     "other": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 109,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 45,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 37,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 9,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 2,
+      "minutes": 0.0
+     },
+     "write source via shell": {
+      "calls": 1,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 0.5
+   },
+   "file_tools": {
+    "writes": 1,
+    "write_targets": {
+     "src/pisql.js": 1
+    },
+    "bytes_written": 48373,
+    "largest_write_bytes": 48373,
+    "edits": 79,
+    "edit_lines_added": 1571,
+    "edit_lines_removed": 1197,
+    "failed_edits": 8,
+    "reads": 76,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 360,
+    "stops": {
+     "length": 1,
+     "toolUse": 359
+    },
+    "with_tool_call_share": 0.997,
+    "prompts_sent": 4,
+    "generation_minutes": 96.4,
+    "reply_seconds_median": 8.3,
+    "reply_seconds_p90": 28.5,
+    "reply_seconds_max": 465.5
+   },
+   "tokens": {
+    "generated": 353353,
+    "reasoning": 219809,
+    "answer_and_tool_calls": 133544,
+    "reasoning_share": 0.622,
+    "read_by_model": 28847883,
+    "read_from_cache": 27230528,
+    "cache_share": 0.944,
+    "conversation_size_median": 81125,
+    "conversation_size_max": 95243,
+    "generated_per_reply_median": 463,
+    "generated_per_reply_max": 32768,
+    "generated_per_minute": 3667
+   },
+   "reasoning": {
+    "median": 243,
+    "p90": 1324,
+    "max": 8192,
+    "replies_at_budget": 7,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "src/pisql.js",
+    "files": 16,
+    "source_files": 1,
+    "source_lines": 3021,
+    "engine_bytes": 102605,
+    "engine_shape": {
+     "lines": 3021,
+     "blank_or_comment": 296,
+     "functions": 113,
+     "classes": 4,
+     "interfaces_and_types": 0,
+     "any_uses": 0,
+     "ts_ignores": 0,
+     "hand_declared_node_globals": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 4
+    },
+    "test_files": 12,
+    "test_lines": 265,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "main source": 1,
+     "agent-written tests": 12
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "src/pisql.js",
+      "kind": "main source",
+      "bytes": 102605,
+      "lines": 3021
+     },
+     {
+      "path": "test/agg.sql",
+      "kind": "agent-written tests",
+      "bytes": 901,
+      "lines": 18
+     },
+     {
+      "path": "test/cast.sql",
+      "kind": "agent-written tests",
+      "bytes": 869,
+      "lines": 29
+     },
+     {
+      "path": "test/esc.sql",
+      "kind": "agent-written tests",
+      "bytes": 182,
+      "lines": 8
+     },
+     {
+      "path": "test/expr.sql",
+      "kind": "agent-written tests",
+      "bytes": 885,
+      "lines": 26
+     },
+     {
+      "path": "test/final.sql",
+      "kind": "agent-written tests",
+      "bytes": 1613,
+      "lines": 29
+     },
+     {
+      "path": "test/fmt.sql",
+      "kind": "agent-written tests",
+      "bytes": 1192,
+      "lines": 25
+     },
+     {
+      "path": "test/joins.sql",
+      "kind": "agent-written tests",
+      "bytes": 1002,
+      "lines": 20
+     },
+     {
+      "path": "test/misc.sql",
+      "kind": "agent-written tests",
+      "bytes": 728,
+      "lines": 20
+     },
+     {
+      "path": "test/ops.sql",
+      "kind": "agent-written tests",
+      "bytes": 670,
+      "lines": 37
+     },
+     {
+      "path": "test/setops.sql",
+      "kind": "agent-written tests",
+      "bytes": 739,
+      "lines": 21
+     },
+     {
+      "path": "test/sub.sql",
+      "kind": "agent-written tests",
+      "bytes": 1212,
+      "lines": 25
+     },
+     {
+      "path": "test/t1.sql",
+      "kind": "agent-written tests",
+      "bytes": 275,
+      "lines": 7
+     }
+    ],
+    "lines_added_by_round": [
+     0,
+     2904,
+     408,
+     93
+    ],
+    "lines_removed_by_round": [
+     0,
+     0,
+     89,
+     31
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-typescript-r1",
+   "condition": "typescript",
+   "replicate": 1,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "visible_build_ok": [
+     false,
+     false,
+     false
+    ],
+    "hidden_by_snapshot": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "hidden_final": 0.0,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 0,
+    "hidden_checks_total": 0,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": null
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    },
+    {
+     "script": "select2.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.0,
+     "failure": "build_failure",
+     "seconds": 0.0
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": false,
+     "errors": 21,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": false,
+     "errors": 3,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": false,
+     "errors": 3,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 15,
+    "ok": 15,
+    "conversation_tokens_before": [
+     100039,
+     101814,
+     97029,
+     91223,
+     111211,
+     90395,
+     91037,
+     91516,
+     90477,
+     90362,
+     90848,
+     90199,
+     93817,
+     90907,
+     90127
+    ],
+    "messages_dropped": 0,
+    "minutes": 10.0,
+    "tokens_written": 41990,
+    "tokens_written_median": 2269,
+    "tokens_written_max": 5794
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 3,
+    "by_kind": {
+     "blocked_tool_call": 3
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 2,
+     "direct use of an existing C/C++ compiler is prohibited; use the experimental tools": 1
+    },
+    "examples": [
+     "cat /workspace/.gitignore; ls -la /workspace/.pi; tsc --version; python3 -c \"import sqlite3; print(sqlite3.sqlite_version)\"",
+     "tsc --version; node --version; python3 -c \"import sqlite3; print('py-sqlite', sqlite3.sqlite_version)\"",
+     "cat >> /workspace/src/pisql.ts << 'EOF'\n\n// ---------------------------------------------------------------------------\n// Statement splitting\n// --------------"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 144,
+     "errors": 14,
+     "minutes": 0.2
+    },
+    "edit": {
+     "calls": 47,
+     "errors": 5,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 4,
+     "errors": 2,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 2,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 109.2,
+    "tools": 0.2,
+    "summarizing": 10.0,
+    "startup": 0.0,
+    "lost_at_round_end": 0.6,
+    "total": 120.0,
+    "longest_summary_seconds": 83.8
+   },
+   "unfinished_replies": [
+    {
+     "saved": "2026-09-22T10:06:21.286Z",
+     "stop": "length",
+     "minutes": 7.9,
+     "generated": 32768,
+     "reasoning_tokens": 8192,
+     "visible_text_tokens": 1,
+     "tool_calls": [
+      "write"
+     ],
+     "text_head": ""
+    },
+    {
+     "saved": "2026-09-22T10:35:20.929Z",
+     "stop": "length",
+     "minutes": 8.7,
+     "generated": 32768,
+     "reasoning_tokens": 2854,
+     "visible_text_tokens": 23,
+     "tool_calls": [
+      "write"
+     ],
+     "text_head": "The accumulated parts have structural issues. I'll rewrite the entire file now in one clean, correct pass:"
+    }
+   ],
+   "shell": {
+    "calls": 144,
+    "does_this": {
+     "read or search files": 103,
+     "type-check or build": 27,
+     "run own engine on SQL": 24,
+     "write SQL test input": 18,
+     "other": 18,
+     "write source via shell": 11,
+     "edit source via script": 11,
+     "probe engine internals": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 72,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 25,
+      "minutes": 0.2
+     },
+     "other": {
+      "calls": 18,
+      "minutes": 0.0
+     },
+     "write source via shell": {
+      "calls": 11,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 11,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 6,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 0.7
+   },
+   "file_tools": {
+    "writes": 4,
+    "write_targets": {
+     "src/pisql.ts": 3,
+     "": 1
+    },
+    "bytes_written": 108310,
+    "largest_write_bytes": 66180,
+    "edits": 47,
+    "edit_lines_added": 2367,
+    "edit_lines_removed": 1052,
+    "failed_edits": 5,
+    "reads": 2,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 195,
+    "stops": {
+     "toolUse": 193,
+     "length": 2
+    },
+    "with_tool_call_share": 0.99,
+    "prompts_sent": 3,
+    "generation_minutes": 109.2,
+    "reply_seconds_median": 8.8,
+    "reply_seconds_p90": 91.4,
+    "reply_seconds_max": 521.6
+   },
+   "tokens": {
+    "generated": 411597,
+    "reasoning": 173740,
+    "answer_and_tool_calls": 237857,
+    "reasoning_share": 0.422,
+    "read_by_model": 15085438,
+    "read_from_cache": 13880000,
+    "cache_share": 0.92,
+    "conversation_size_median": 80046,
+    "conversation_size_max": 90310,
+    "generated_per_reply_median": 521,
+    "generated_per_reply_max": 32768,
+    "generated_per_minute": 3769
+   },
+   "reasoning": {
+    "median": 240,
+    "p90": 1991,
+    "max": 8192,
+    "replies_at_budget": 10,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "src/pisql.ts",
+    "files": 4,
+    "source_files": 1,
+    "source_lines": 4335,
+    "engine_bytes": 128540,
+    "engine_shape": {
+     "lines": 4335,
+     "blank_or_comment": 181,
+     "functions": 116,
+     "classes": 3,
+     "interfaces_and_types": 18,
+     "any_uses": 3,
+     "ts_ignores": 0,
+     "hand_declared_node_globals": 3,
+     "mentions_hash_join": 0,
+     "mentions_index": 3
+    },
+    "test_files": 0,
+    "test_lines": 0,
+    "by_kind": {
+     "project config": 1,
+     "provided (empty)": 2,
+     "main source": 1
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "src/pisql.ts",
+      "kind": "main source",
+      "bytes": 128540,
+      "lines": 4335
+     }
+    ],
+    "lines_added_by_round": [
+     1909,
+     2395,
+     760
+    ],
+    "lines_removed_by_round": [
+     0,
+     628,
+     101
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-typescript-r2",
+   "condition": "typescript",
+   "replicate": 2,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     43.6,
+     31.4
+    ],
+    "rounds_ended_at_cap": 2,
+    "visible_by_round": [
+     0.3805,
+     0.7609,
+     0.7609
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.3781,
+     0.7636,
+     0.7636
+    ],
+    "hidden_final": 0.7636,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 47612,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.7594,
+     "failure": "wrong_results",
+     "seconds": 0.02
+    },
+    {
+     "script": "select2.test",
+     "score": 0.671,
+     "failure": "wrong_results",
+     "seconds": 0.38
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "candidate_crash",
+     "seconds": 82.11
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.9355,
+     "failure": "wrong_results",
+     "seconds": 0.08
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.9982,
+     "failure": "wrong_results",
+     "seconds": 0.1
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.9547,
+     "failure": "wrong_results",
+     "seconds": 0.08
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.9995,
+     "failure": "wrong_results",
+     "seconds": 0.09
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.7904,
+     "failure": "wrong_results",
+     "seconds": 0.43
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 2
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 18,
+    "ok": 18,
+    "conversation_tokens_before": [
+     96865,
+     93422,
+     90117,
+     92102,
+     90176,
+     90196,
+     90310,
+     90159,
+     90312,
+     90187,
+     91889,
+     90153,
+     90952,
+     96197,
+     90371,
+     90164,
+     91193,
+     91197
+    ],
+    "messages_dropped": 0,
+    "minutes": 16.4,
+    "tokens_written": 68041,
+    "tokens_written_median": 3674,
+    "tokens_written_max": 7917
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 2,
+    "by_kind": {
+     "blocked_tool_call": 2
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 1,
+     "writes are restricted to /workspace": 1
+    },
+    "examples": [
+     "which sqlite3; python3 -c \"import sqlite3; print(sqlite3.sqlite_version)\"",
+     "/tmp/pisql_helpers.ts"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 239,
+     "errors": 17,
+     "minutes": 1.4
+    },
+    "edit": {
+     "calls": 66,
+     "errors": 5,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 34,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 10,
+     "errors": 2,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 102.1,
+    "tools": 1.4,
+    "summarizing": 16.4,
+    "startup": 0.0,
+    "lost_at_round_end": 0.1,
+    "total": 120.0,
+    "longest_summary_seconds": 114.9
+   },
+   "unfinished_replies": [
+    {
+     "saved": "2026-09-22T16:23:08.575Z",
+     "stop": "length",
+     "minutes": 8.5,
+     "generated": 32768,
+     "reasoning_tokens": 8176,
+     "visible_text_tokens": 49,
+     "tool_calls": [
+      "write"
+     ],
+     "text_head": "The second draft still has a number of structural bugs (broken aggregate context, env shadowing, ORDER BY evaluation, empty table product loops, lexer edge case"
+    },
+    {
+     "saved": "2026-09-22T17:30:39.640Z",
+     "stop": "stop",
+     "minutes": 0.3,
+     "generated": 1002,
+     "reasoning_tokens": 343,
+     "visible_text_tokens": 657,
+     "tool_calls": [],
+     "text_head": "PiSQL is complete and fully verified. Summary of this session's work:\n\n**New operators**\n- Bitwise `& | ^ << >>` at correct SQLite precedence (between `<`/`>` a"
+    }
+   ],
+   "shell": {
+    "calls": 239,
+    "does_this": {
+     "read or search files": 211,
+     "run own engine on SQL": 83,
+     "type-check or build": 64,
+     "write SQL test input": 32,
+     "edit source via script": 30,
+     "write source via shell": 5,
+     "other": 5,
+     "probe engine internals": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 116,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 45,
+      "minutes": 0.5
+     },
+     "run own engine on SQL": {
+      "calls": 38,
+      "minutes": 0.4
+     },
+     "edit source via script": {
+      "calls": 29,
+      "minutes": 0.5
+     },
+     "write source via shell": {
+      "calls": 5,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 5,
+      "minutes": 0.0
+     },
+     "probe engine internals": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 12.4
+   },
+   "file_tools": {
+    "writes": 10,
+    "write_targets": {
+     "src/pisql.ts": 3,
+     "": 1,
+     "tsconfig.json": 1,
+     "/tmp/pisql_helpers.ts": 1,
+     ".tmp_helpers.ts": 1,
+     ".tmp_funcs.ts": 1
+    },
+    "bytes_written": 186754,
+    "largest_write_bytes": 84756,
+    "edits": 66,
+    "edit_lines_added": 1082,
+    "edit_lines_removed": 761,
+    "failed_edits": 5,
+    "reads": 34,
+    "distinct_files_read": 2
+   },
+   "replies": {
+    "count": 350,
+    "stops": {
+     "toolUse": 348,
+     "length": 1,
+     "stop": 1
+    },
+    "with_tool_call_share": 0.994,
+    "prompts_sent": 3,
+    "generation_minutes": 102.1,
+    "reply_seconds_median": 6.8,
+    "reply_seconds_p90": 33.5,
+    "reply_seconds_max": 512.1
+   },
+   "tokens": {
+    "generated": 379434,
+    "reasoning": 184025,
+    "answer_and_tool_calls": 195409,
+    "reasoning_share": 0.485,
+    "read_by_model": 27582408,
+    "read_from_cache": 26198720,
+    "cache_share": 0.95,
+    "conversation_size_median": 79873,
+    "conversation_size_max": 90110,
+    "generated_per_reply_median": 399,
+    "generated_per_reply_max": 32768,
+    "generated_per_minute": 3716
+   },
+   "reasoning": {
+    "median": 177,
+    "p90": 1345,
+    "max": 8191,
+    "replies_at_budget": 2,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "src/pisql.ts",
+    "files": 12,
+    "source_files": 1,
+    "source_lines": 3890,
+    "engine_bytes": 120785,
+    "engine_shape": {
+     "lines": 3890,
+     "blank_or_comment": 272,
+     "functions": 130,
+     "classes": 6,
+     "interfaces_and_types": 18,
+     "any_uses": 2,
+     "ts_ignores": 0,
+     "hand_declared_node_globals": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 4
+    },
+    "test_files": 6,
+    "test_lines": 122,
+    "by_kind": {
+     "project config": 2,
+     "provided (empty)": 2,
+     "other": 1,
+     "main source": 1,
+     "agent-written tests": 6
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "README.md",
+      "kind": "other",
+      "bytes": 3287,
+      "lines": 80
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "src/pisql.ts",
+      "kind": "main source",
+      "bytes": 120785,
+      "lines": 3890
+     },
+     {
+      "path": "test/t1.sql",
+      "kind": "agent-written tests",
+      "bytes": 418,
+      "lines": 8
+     },
+     {
+      "path": "test/t2.sql",
+      "kind": "agent-written tests",
+      "bytes": 986,
+      "lines": 21
+     },
+     {
+      "path": "test/t3.sql",
+      "kind": "agent-written tests",
+      "bytes": 1227,
+      "lines": 27
+     },
+     {
+      "path": "test/t4.sql",
+      "kind": "agent-written tests",
+      "bytes": 969,
+      "lines": 25
+     },
+     {
+      "path": "test/t5.sql",
+      "kind": "agent-written tests",
+      "bytes": 838,
+      "lines": 15
+     },
+     {
+      "path": "test/t6.sql",
+      "kind": "agent-written tests",
+      "bytes": 1480,
+      "lines": 26
+     },
+     {
+      "path": "tsconfig.json",
+      "kind": "project config",
+      "bytes": 387,
+      "lines": 16
+     }
+    ],
+    "lines_added_by_round": [
+     2775,
+     1444,
+     183
+    ],
+    "lines_removed_by_round": [
+     0,
+     208,
+     86
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-typescript-r3",
+   "condition": "typescript",
+   "replicate": 3,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.0,
+     0.0908,
+     0.0908
+    ],
+    "visible_build_ok": [
+     false,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.0,
+     0.0853,
+     0.0853
+    ],
+    "hidden_final": 0.0853,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 2834,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": 1
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.4064,
+     "failure": "wrong_results",
+     "seconds": 0.02
+    },
+    {
+     "script": "select2.test",
+     "score": 0.001,
+     "failure": "wrong_results",
+     "seconds": 0.12
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.07
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.0096,
+     "failure": "wrong_results",
+     "seconds": 0.12
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.0031,
+     "failure": "wrong_results",
+     "seconds": 0.15
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.0375,
+     "failure": "wrong_results",
+     "seconds": 0.1
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.0035,
+     "failure": "wrong_results",
+     "seconds": 0.11
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.2216,
+     "failure": "wrong_results",
+     "seconds": 0.18
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": false,
+     "errors": 72,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 20,
+    "ok": 20,
+    "conversation_tokens_before": [
+     92059,
+     90541,
+     91067,
+     90226,
+     90628,
+     90526,
+     90571,
+     90196,
+     90358,
+     91091,
+     90278,
+     90801,
+     90501,
+     91712,
+     90859,
+     91161,
+     90911,
+     91608,
+     90388,
+     90343
+    ],
+    "messages_dropped": 0,
+    "minutes": 26.8,
+    "tokens_written": 111048,
+    "tokens_written_median": 5326,
+    "tokens_written_max": 10174
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 1,
+    "by_kind": {
+     "blocked_tool_call": 1
+    },
+    "reasons": {
+     "delegating to an existing database engine is prohibited": 1
+    },
+    "examples": [
+     "which sqlite3; python3 -c \"import sqlite3; print(sqlite3.sqlite_version)\" 2>/dev/null; node -e \"console.log(process.versions)\" | head -3"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 276,
+     "errors": 13,
+     "minutes": 0.4
+    },
+    "edit": {
+     "calls": 98,
+     "errors": 8,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 28,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 5,
+     "errors": 1,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 92.2,
+    "tools": 0.4,
+    "summarizing": 26.8,
+    "startup": 0.0,
+    "lost_at_round_end": 0.6,
+    "total": 120.0,
+    "longest_summary_seconds": 148.2
+   },
+   "unfinished_replies": [
+    {
+     "saved": "2026-09-22T18:17:47.565Z",
+     "stop": "length",
+     "minutes": 7.9,
+     "generated": 32768,
+     "reasoning_tokens": 8191,
+     "visible_text_tokens": 1,
+     "tool_calls": [
+      "write"
+     ],
+     "text_head": ""
+    }
+   ],
+   "shell": {
+    "calls": 276,
+    "does_this": {
+     "read or search files": 262,
+     "run own engine on SQL": 101,
+     "write SQL test input": 51,
+     "type-check or build": 47,
+     "probe engine internals": 12,
+     "run own test script": 12,
+     "git": 1,
+     "other": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 151,
+      "minutes": 0.0
+     },
+     "run own engine on SQL": {
+      "calls": 56,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 47,
+      "minutes": 0.4
+     },
+     "probe engine internals": {
+      "calls": 11,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 10,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 0.7
+   },
+   "file_tools": {
+    "writes": 5,
+    "write_targets": {
+     "src/pisql.ts": 1,
+     "src_parts/part1.ts": 1,
+     "src_parts/part2.ts": 1,
+     "src_parts/part3.ts": 1,
+     "src_parts/part4.ts": 1
+    },
+    "bytes_written": 74353,
+    "largest_write_bytes": 23405,
+    "edits": 98,
+    "edit_lines_added": 2294,
+    "edit_lines_removed": 1755,
+    "failed_edits": 8,
+    "reads": 28,
+    "distinct_files_read": 3
+   },
+   "replies": {
+    "count": 407,
+    "stops": {
+     "toolUse": 406,
+     "length": 1
+    },
+    "with_tool_call_share": 0.998,
+    "prompts_sent": 3,
+    "generation_minutes": 92.2,
+    "reply_seconds_median": 6.0,
+    "reply_seconds_p90": 23.8,
+    "reply_seconds_max": 471.8
+   },
+   "tokens": {
+    "generated": 337081,
+    "reasoning": 204139,
+    "answer_and_tool_calls": 132942,
+    "reasoning_share": 0.606,
+    "read_by_model": 32648319,
+    "read_from_cache": 30955520,
+    "cache_share": 0.948,
+    "conversation_size_median": 82067,
+    "conversation_size_max": 90232,
+    "generated_per_reply_median": 348,
+    "generated_per_reply_max": 32768,
+    "generated_per_minute": 3657
+   },
+   "reasoning": {
+    "median": 181,
+    "p90": 967,
+    "max": 8193,
+    "replies_at_budget": 7,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "src/pisql.ts",
+    "files": 93,
+    "source_files": 1,
+    "source_lines": 3197,
+    "engine_bytes": 91580,
+    "engine_shape": {
+     "lines": 3197,
+     "blank_or_comment": 231,
+     "functions": 102,
+     "classes": 2,
+     "interfaces_and_types": 17,
+     "any_uses": 0,
+     "ts_ignores": 0,
+     "hand_declared_node_globals": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 11
+    },
+    "test_files": 84,
+    "test_lines": 1718,
+    "by_kind": {
+     "project config": 2,
+     "provided (empty)": 2,
+     "main source": 1,
+     "helper script": 4,
+     "agent-written tests": 84
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "src/pisql.ts",
+      "kind": "main source",
+      "bytes": 91580,
+      "lines": 3197
+     },
+     {
+      "path": "src_parts/part1.ts",
+      "kind": "helper script",
+      "bytes": 14491,
+      "lines": 521
+     },
+     {
+      "path": "src_parts/part2.ts",
+      "kind": "helper script",
+      "bytes": 23496,
+      "lines": 896
+     },
+     {
+      "path": "src_parts/part3.ts",
+      "kind": "helper script",
+      "bytes": 17692,
+      "lines": 632
+     },
+     {
+      "path": "src_parts/part4.ts",
+      "kind": "helper script",
+      "bytes": 18633,
+      "lines": 635
+     },
+     {
+      "path": "tests/dbg.sql",
+      "kind": "agent-written tests",
+      "bytes": 49,
+      "lines": 2
+     },
+     {
+      "path": "tests/dbg10.sql",
+      "kind": "agent-written tests",
+      "bytes": 170,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg11.sql",
+      "kind": "agent-written tests",
+      "bytes": 251,
+      "lines": 8
+     },
+     {
+      "path": "tests/dbg12.sql",
+      "kind": "agent-written tests",
+      "bytes": 136,
+      "lines": 1
+     },
+     {
+      "path": "tests/dbg13.sql",
+      "kind": "agent-written tests",
+      "bytes": 302,
+      "lines": 7
+     },
+     {
+      "path": "tests/dbg14.sql",
+      "kind": "agent-written tests",
+      "bytes": 243,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg15.sql",
+      "kind": "agent-written tests",
+      "bytes": 240,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg16.sql",
+      "kind": "agent-written tests",
+      "bytes": 211,
+      "lines": 7
+     },
+     {
+      "path": "tests/dbg17.sql",
+      "kind": "agent-written tests",
+      "bytes": 309,
+      "lines": 9
+     },
+     {
+      "path": "tests/dbg18.sql",
+      "kind": "agent-written tests",
+      "bytes": 206,
+      "lines": 6
+     },
+     {
+      "path": "tests/dbg19.sql",
+      "kind": "agent-written tests",
+      "bytes": 246,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg2.sql",
+      "kind": "agent-written tests",
+      "bytes": 54,
+      "lines": 2
+     },
+     {
+      "path": "tests/dbg20.sql",
+      "kind": "agent-written tests",
+      "bytes": 306,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg21.sql",
+      "kind": "agent-written tests",
+      "bytes": 180,
+      "lines": 3
+     },
+     {
+      "path": "tests/dbg22.sql",
+      "kind": "agent-written tests",
+      "bytes": 161,
+      "lines": 3
+     },
+     {
+      "path": "tests/dbg23.sql",
+      "kind": "agent-written tests",
+      "bytes": 121,
+      "lines": 4
+     },
+     {
+      "path": "tests/dbg24.sql",
+      "kind": "agent-written tests",
+      "bytes": 191,
+      "lines": 8
+     },
+     {
+      "path": "tests/dbg25.sql",
+      "kind": "agent-written tests",
+      "bytes": 249,
+      "lines": 7
+     },
+     {
+      "path": "tests/dbg26.sql",
+      "kind": "agent-written tests",
+      "bytes": 34,
+      "lines": 2
+     },
+     {
+      "path": "tests/dbg27.sql",
+      "kind": "agent-written tests",
+      "bytes": 23,
+      "lines": 1
+     },
+     {
+      "path": "tests/dbg28.sql",
+      "kind": "agent-written tests",
+      "bytes": 185,
+      "lines": 4
+     },
+     {
+      "path": "tests/dbg29.sql",
+      "kind": "agent-written tests",
+      "bytes": 197,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg3.sql",
+      "kind": "agent-written tests",
+      "bytes": 170,
+      "lines": 3
+     },
+     {
+      "path": "tests/dbg30.sql",
+      "kind": "agent-written tests",
+      "bytes": 336,
+      "lines": 8
+     },
+     {
+      "path": "tests/dbg31.sql",
+      "kind": "agent-written tests",
+      "bytes": 429,
+      "lines": 14
+     },
+     {
+      "path": "tests/dbg32.sql",
+      "kind": "agent-written tests",
+      "bytes": 568,
+      "lines": 15
+     },
+     {
+      "path": "tests/dbg33.sql",
+      "kind": "agent-written tests",
+      "bytes": 201,
+      "lines": 4
+     },
+     {
+      "path": "tests/dbg34.sql",
+      "kind": "agent-written tests",
+      "bytes": 492,
+      "lines": 10
+     },
+     {
+      "path": "tests/dbg35.sql",
+      "kind": "agent-written tests",
+      "bytes": 192,
+      "lines": 6
+     },
+     {
+      "path": "tests/dbg36.sql",
+      "kind": "agent-written tests",
+      "bytes": 122,
+      "lines": 3
+     },
+     {
+      "path": "tests/dbg37.sql",
+      "kind": "agent-written tests",
+      "bytes": 30,
+      "lines": 1
+     },
+     {
+      "path": "tests/dbg38.sql",
+      "kind": "agent-written tests",
+      "bytes": 336,
+      "lines": 9
+     },
+     {
+      "path": "tests/dbg39.sql",
+      "kind": "agent-written tests",
+      "bytes": 299,
+      "lines": 8
+     },
+     {
+      "path": "tests/dbg4.sql",
+      "kind": "agent-written tests",
+      "bytes": 135,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg40.sql",
+      "kind": "agent-written tests",
+      "bytes": 105,
+      "lines": 3
+     },
+     {
+      "path": "tests/dbg41.sql",
+      "kind": "agent-written tests",
+      "bytes": 130,
+      "lines": 4
+     },
+     {
+      "path": "tests/dbg42.sql",
+      "kind": "agent-written tests",
+      "bytes": 275,
+      "lines": 6
+     },
+     {
+      "path": "tests/dbg43.sql",
+      "kind": "agent-written tests",
+      "bytes": 78,
+      "lines": 1
+     },
+     {
+      "path": "tests/dbg44.sql",
+      "kind": "agent-written tests",
+      "bytes": 337,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg5.sql",
+      "kind": "agent-written tests",
+      "bytes": 218,
+      "lines": 5
+     },
+     {
+      "path": "tests/dbg6.sql",
+      "kind": "agent-written tests",
+      "bytes": 162,
+      "lines": 3
+     },
+     {
+      "path": "tests/dbg7.sql",
+      "kind": "agent-written tests",
+      "bytes": 189,
+      "lines": 4
+     },
+     {
+      "path": "tests/dbg8.sql",
+      "kind": "agent-written tests",
+      "bytes": 259,
+      "lines": 6
+     },
+     {
+      "path": "tests/dbg9.sql",
+      "kind": "agent-written tests",
+      "bytes": 211,
+      "lines": 6
+     },
+     {
+      "path": "tests/t01.out",
+      "kind": "agent-written tests",
+      "bytes": 331,
+      "lines": 60
+     },
+     {
+      "path": "tests/t01_types.expect",
+      "kind": "agent-written tests",
+      "bytes": 331,
+      "lines": 60
+     },
+     {
+      "path": "tests/t01_types.out",
+      "kind": "agent-written tests",
+      "bytes": 331,
+      "lines": 60
+     },
+     {
+      "path": "tests/t01_types.sql",
+      "kind": "agent-written tests",
+      "bytes": 510,
+      "lines": 30
+     },
+     {
+      "path": "tests/t02.out",
+      "kind": "agent-written tests",
+      "bytes": 533,
+      "lines": 118
+     },
+     {
+      "path": "tests/t02_order.expect",
+      "kind": "agent-written tests",
+      "bytes": 533,
+      "lines": 118
+     },
+     {
+      "path": "tests/t02_order.out",
+      "kind": "agent-written tests",
+      "bytes": 533,
+      "lines": 118
+     },
+     {
+      "path": "tests/t02_order.sql",
+      "kind": "agent-written tests",
+      "bytes": 1327,
+      "lines": 27
+     },
+     {
+      "path": "tests/t03.out",
+      "kind": "agent-written tests",
+      "bytes": 180,
+      "lines": 33
+     },
+     {
+      "path": "tests/t03_group.expect",
+      "kind": "agent-written tests",
+      "bytes": 180,
+      "lines": 33
+     },
+     {
+      "path": "tests/t03_group.out",
+      "kind": "agent-written tests",
+      "bytes": 180,
+      "lines": 33
+     },
+     {
+      "path": "tests/t03_group.sql",
+      "kind": "agent-written tests",
+      "bytes": 797,
+      "lines": 11
+     },
+     {
+      "path": "tests/t04.out",
+      "kind": "agent-written tests",
+      "bytes": 306,
+      "lines": 78
+     },
+     {
+      "path": "tests/t04_set.expect",
+      "kind": "agent-written tests",
+      "bytes": 291,
+      "lines": 82
+     },
+     {
+      "path": "tests/t04_set.out",
+      "kind": "agent-written tests",
+      "bytes": 291,
+      "lines": 82
+     },
+     {
+      "path": "tests/t04_set.sql",
+      "kind": "agent-written tests",
+      "bytes": 1102,
+      "lines": 25
+     },
+     {
+      "path": "tests/t05_aff.expect",
+      "kind": "agent-written tests",
+      "bytes": 214,
+      "lines": 18
+     },
+     {
+      "path": "tests/t05_aff.out",
+      "kind": "agent-written tests",
+      "bytes": 212,
+      "lines": 18
+     },
+     {
+      "path": "tests/t05_aff.sql",
+      "kind": "agent-written tests",
+      "bytes": 741,
+      "lines": 19
+     },
+     {
+      "path": "tests/t06.out",
+      "kind": "agent-written tests",
+      "bytes": 178,
+      "lines": 27
+     },
+     {
+      "path": "tests/t06_join.expect",
+      "kind": "agent-written tests",
+      "bytes": 178,
+      "lines": 27
+     },
+     {
+      "path": "tests/t06_join.out",
+      "kind": "agent-written tests",
+      "bytes": 178,
+      "lines": 27
+     },
+     {
+      "path": "tests/t06_join.sql",
+      "kind": "agent-written tests",
+      "bytes": 499,
+      "lines": 9
+     },
+     {
+      "path": "tests/t07_adv.expect",
+      "kind": "agent-written tests",
+      "bytes": 257,
+      "lines": 56
+     },
+     {
+      "path": "tests/t07_adv.out",
+      "kind": "agent-written tests",
+      "bytes": 257,
+      "lines": 56
+     },
+     {
+      "path": "tests/t07_adv.sql",
+      "kind": "agent-written tests",
+      "bytes": 1096,
+      "lines": 22
+     },
+     {
+      "path": "tests/t08_edge.expect",
+      "kind": "agent-written tests",
+      "bytes": 197,
+      "lines": 24
+     },
+     {
+      "path": "tests/t08_edge.sql",
+      "kind": "agent-written tests",
+      "bytes": 729,
+      "lines": 14
+     },
+     {
+      "path": "tests/t09_deep.expect",
+      "kind": "agent-written tests",
+      "bytes": 137,
+      "lines": 30
+     },
+     {
+      "path": "tests/t09_deep.sql",
+      "kind": "agent-written tests",
+      "bytes": 1119,
+      "lines": 20
+     },
+     {
+      "path": "tests/t10_misc.expect",
+      "kind": "agent-written tests",
+      "bytes": 311,
+      "lines": 26
+     },
+     {
+      "path": "tests/t10_misc.sql",
+      "kind": "agent-written tests",
+      "bytes": 916,
+      "lines": 22
+     },
+     {
+      "path": "tests/t11_subq.expect",
+      "kind": "agent-written tests",
+      "bytes": 304,
+      "lines": 12
+     },
+     {
+      "path": "tests/t11_subq.sql",
+      "kind": "agent-written tests",
+      "bytes": 597,
+      "lines": 12
+     },
+     {
+      "path": "tests/t12_having.expect",
+      "kind": "agent-written tests",
+      "bytes": 45,
+      "lines": 10
+     },
+     {
+      "path": "tests/t12_having.sql",
+      "kind": "agent-written tests",
+      "bytes": 375,
+      "lines": 7
+     },
+     {
+      "path": "tests/t13_cast_aff.expect",
+      "kind": "agent-written tests",
+      "bytes": 603,
+      "lines": 25
+     },
+     {
+      "path": "tests/t13_cast_aff.sql",
+      "kind": "agent-written tests",
+      "bytes": 1008,
+      "lines": 17
+     },
+     {
+      "path": "tests/t14_default.expect",
+      "kind": "agent-written tests",
+      "bytes": 60,
+      "lines": 8
+     },
+     {
+      "path": "tests/t14_default.sql",
+      "kind": "agent-written tests",
+      "bytes": 425,
+      "lines": 11
+     },
+     {
+      "path": "tsconfig.json",
+      "kind": "project config",
+      "bytes": 287,
+      "lines": 13
+     }
+    ],
+    "lines_added_by_round": [
+     5686,
+     1175,
+     264
+    ],
+    "lines_removed_by_round": [
+     0,
+     146,
+     77
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-rust-r1",
+   "condition": "rust",
+   "replicate": 1,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.0,
+     0.4516,
+     0.4516
+    ],
+    "visible_build_ok": [
+     false,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.0,
+     0.4454,
+     0.4454
+    ],
+    "hidden_final": 0.4454,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 22154,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": 1
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.8717,
+     "failure": "wrong_results",
+     "seconds": 0.0
+    },
+    {
+     "script": "select2.test",
+     "score": 0.549,
+     "failure": "wrong_results",
+     "seconds": 0.31
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "candidate_crash",
+     "seconds": 43.39
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.91,
+     "failure": "wrong_results",
+     "seconds": 0.02
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.019,
+     "failure": "wrong_results",
+     "seconds": 0.06
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.0937,
+     "failure": "wrong_results",
+     "seconds": 0.03
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.1555,
+     "failure": "wrong_results",
+     "seconds": 0.04
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.9641,
+     "failure": "wrong_results",
+     "seconds": 0.18
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": false,
+     "errors": 23,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 22,
+    "ok": 22,
+    "conversation_tokens_before": [
+     98185,
+     98874,
+     91825,
+     90287,
+     94195,
+     90485,
+     90930,
+     91763,
+     90464,
+     90277,
+     96963,
+     91700,
+     92203,
+     92158,
+     96131,
+     91956,
+     98966,
+     95206,
+     91293,
+     90158,
+     91641,
+     90293
+    ],
+    "messages_dropped": 0,
+    "minutes": 19.5,
+    "tokens_written": 81586,
+    "tokens_written_median": 2853,
+    "tokens_written_max": 7799
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 4,
+    "by_kind": {
+     "blocked_tool_call": 4
+    },
+    "reasons": {
+     "running an existing database engine is prohibited": 1,
+     "writes are restricted to /workspace": 3
+    },
+    "examples": [
+     "which sqlite3; sqlite3 --version 2>/dev/null; echo \"---\"; sqlite3 :memory: \"SELECT 7/2; SELECT -7/2; SELECT 5/-2; SELECT -5/-2; SELECT 7%2; SELECT -7%2; SELECT ",
+     "/tmp/pisql_tests/a.sql",
+     "/tmp/pisql_tests/b.sql"
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 138,
+     "errors": 12,
+     "minutes": 2.2
+    },
+    "edit": {
+     "calls": 96,
+     "errors": 10,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 57,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 26,
+     "errors": 7,
+     "minutes": 0.0
+    },
+    "grep": {
+     "calls": 5,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 96.4,
+    "tools": 2.2,
+    "summarizing": 19.5,
+    "startup": 0.0,
+    "lost_at_round_end": 1.9,
+    "total": 120.0,
+    "longest_summary_seconds": 111.7
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 138,
+    "does_this": {
+     "read or search files": 122,
+     "run own engine on SQL": 35,
+     "type-check or build": 30,
+     "run own test script": 6,
+     "write SQL test input": 3,
+     "other": 2,
+     "git": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 85,
+      "minutes": 0.1
+     },
+     "type-check or build": {
+      "calls": 30,
+      "minutes": 0.6
+     },
+     "run own engine on SQL": {
+      "calls": 16,
+      "minutes": 1.0
+     },
+     "run own test script": {
+      "calls": 3,
+      "minutes": 0.6
+     },
+     "other": {
+      "calls": 2,
+      "minutes": 0.0
+     },
+     "write SQL test input": {
+      "calls": 2,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 36.1
+   },
+   "file_tools": {
+    "writes": 26,
+    "write_targets": {
+     "": 4,
+     "src/value.rs": 2,
+     "src/expr.rs": 2,
+     "src/exec.rs": 2,
+     "src/num.rs": 1,
+     "src/real.rs": 1
+    },
+    "bytes_written": 223403,
+    "largest_write_bytes": 48909,
+    "edits": 96,
+    "edit_lines_added": 2313,
+    "edit_lines_removed": 1569,
+    "failed_edits": 10,
+    "reads": 57,
+    "distinct_files_read": 11
+   },
+   "replies": {
+    "count": 308,
+    "stops": {
+     "toolUse": 308
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 96.4,
+    "reply_seconds_median": 6.4,
+    "reply_seconds_p90": 40.3,
+    "reply_seconds_max": 317.7
+   },
+   "tokens": {
+    "generated": 351515,
+    "reasoning": 224297,
+    "answer_and_tool_calls": 127218,
+    "reasoning_share": 0.638,
+    "read_by_model": 23327378,
+    "read_from_cache": 21453120,
+    "cache_share": 0.92,
+    "conversation_size_median": 78371,
+    "conversation_size_max": 93319,
+    "generated_per_reply_median": 350,
+    "generated_per_reply_max": 20330,
+    "generated_per_minute": 3646
+   },
+   "reasoning": {
+    "median": 132,
+    "p90": 1495,
+    "max": 8192,
+    "replies_at_budget": 8,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "target/release/pisql",
+    "files": 32,
+    "source_files": 11,
+    "source_lines": 4922,
+    "engine_bytes": 160125,
+    "engine_shape": {
+     "lines": 4932,
+     "blank_or_comment": 408,
+     "functions": 132,
+     "structs_and_enums": 30,
+     "impls": 9,
+     "unwraps": 11,
+     "unsafe_blocks": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 5
+    },
+    "test_files": 16,
+    "test_lines": 108,
+    "by_kind": {
+     "project config": 3,
+     "provided (empty)": 2,
+     "agent-written tests": 16,
+     "other source": 11
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "Cargo.lock",
+      "kind": "project config",
+      "bytes": 149,
+      "lines": 7
+     },
+     {
+      "path": "Cargo.toml",
+      "kind": "project config",
+      "bytes": 105,
+      "lines": 8
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "sql_tests/a.sql",
+      "kind": "agent-written tests",
+      "bytes": 196,
+      "lines": 5
+     },
+     {
+      "path": "sql_tests/b.sql",
+      "kind": "agent-written tests",
+      "bytes": 141,
+      "lines": 1
+     },
+     {
+      "path": "sql_tests/c.sql",
+      "kind": "agent-written tests",
+      "bytes": 192,
+      "lines": 1
+     },
+     {
+      "path": "sql_tests/d.sql",
+      "kind": "agent-written tests",
+      "bytes": 342,
+      "lines": 9
+     },
+     {
+      "path": "sql_tests/e.sql",
+      "kind": "agent-written tests",
+      "bytes": 501,
+      "lines": 12
+     },
+     {
+      "path": "sql_tests/e2.sql",
+      "kind": "agent-written tests",
+      "bytes": 256,
+      "lines": 8
+     },
+     {
+      "path": "sql_tests/e3.sql",
+      "kind": "agent-written tests",
+      "bytes": 261,
+      "lines": 8
+     },
+     {
+      "path": "sql_tests/e4.sql",
+      "kind": "agent-written tests",
+      "bytes": 274,
+      "lines": 8
+     },
+     {
+      "path": "sql_tests/e5.sql",
+      "kind": "agent-written tests",
+      "bytes": 165,
+      "lines": 5
+     },
+     {
+      "path": "sql_tests/f.sql",
+      "kind": "agent-written tests",
+      "bytes": 259,
+      "lines": 7
+     },
+     {
+      "path": "sql_tests/g.sql",
+      "kind": "agent-written tests",
+      "bytes": 457,
+      "lines": 14
+     },
+     {
+      "path": "sql_tests/h.sql",
+      "kind": "agent-written tests",
+      "bytes": 744,
+      "lines": 10
+     },
+     {
+      "path": "sql_tests/l1.sql",
+      "kind": "agent-written tests",
+      "bytes": 263,
+      "lines": 10
+     },
+     {
+      "path": "sql_tests/l2.sql",
+      "kind": "agent-written tests",
+      "bytes": 33,
+      "lines": 1
+     },
+     {
+      "path": "sql_tests/min.sql",
+      "kind": "agent-written tests",
+      "bytes": 10,
+      "lines": 1
+     },
+     {
+      "path": "sql_tests/q1.sql",
+      "kind": "agent-written tests",
+      "bytes": 256,
+      "lines": 8
+     },
+     {
+      "path": "src/ast.rs",
+      "kind": "other source",
+      "bytes": 2083,
+      "lines": 109
+     },
+     {
+      "path": "src/db.rs",
+      "kind": "other source",
+      "bytes": 11759,
+      "lines": 382
+     },
+     {
+      "path": "src/exec.rs",
+      "kind": "other source",
+      "bytes": 66792,
+      "lines": 1921
+     },
+     {
+      "path": "src/expr.rs",
+      "kind": "other source",
+      "bytes": 6136,
+      "lines": 226
+     },
+     {
+      "path": "src/lexer.rs",
+      "kind": "other source",
+      "bytes": 10434,
+      "lines": 330
+     },
+     {
+      "path": "src/main.rs",
+      "kind": "other source",
+      "bytes": 1729,
+      "lines": 61
+     },
+     {
+      "path": "src/num.rs",
+      "kind": "other source",
+      "bytes": 3177,
+      "lines": 124
+     },
+     {
+      "path": "src/parser.rs",
+      "kind": "other source",
+      "bytes": 47079,
+      "lines": 1401
+     },
+     {
+      "path": "src/real.rs",
+      "kind": "other source",
+      "bytes": 5649,
+      "lines": 170
+     },
+     {
+      "path": "src/tok.rs",
+      "kind": "other source",
+      "bytes": 2253,
+      "lines": 101
+     },
+     {
+      "path": "src/value.rs",
+      "kind": "other source",
+      "bytes": 3034,
+      "lines": 97
+     }
+    ],
+    "lines_added_by_round": [
+     4301,
+     842,
+     90
+    ],
+    "lines_removed_by_round": [
+     0,
+     157,
+     31
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-rust-r2",
+   "condition": "rust",
+   "replicate": 2,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 6,
+    "round_minutes": [
+     45.0,
+     28.5,
+     8.0,
+     7.5,
+     29.8,
+     1.1
+    ],
+    "rounds_ended_at_cap": 2,
+    "visible_by_round": [
+     0.5926,
+     0.6182,
+     0.6182,
+     0.5978,
+     0.5978,
+     0.5978
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.5771,
+     0.6052,
+     0.6052,
+     0.5985,
+     0.5985,
+     0.5985
+    ],
+    "hidden_final": 0.5985,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 39215,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.7059,
+     "failure": "wrong_results",
+     "seconds": 0.0
+    },
+    {
+     "script": "select2.test",
+     "score": 0.194,
+     "failure": "wrong_results",
+     "seconds": 0.31
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "candidate_crash",
+     "seconds": 78.86
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.7419,
+     "failure": "wrong_results",
+     "seconds": 0.32
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.9581,
+     "failure": "wrong_results",
+     "seconds": 0.96
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.7895,
+     "failure": "wrong_results",
+     "seconds": 1.05
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.9974,
+     "failure": "wrong_results",
+     "seconds": 0.91
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.4012,
+     "failure": "wrong_results",
+     "seconds": 10.91
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 3,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 4,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 5,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 15,
+    "ok": 15,
+    "conversation_tokens_before": [
+     100708,
+     90339,
+     90461,
+     96119,
+     90217,
+     90241,
+     90793,
+     90602,
+     90326,
+     91527,
+     90695,
+     91766,
+     91058,
+     90442,
+     90677
+    ],
+    "messages_dropped": 0,
+    "minutes": 11.8,
+    "tokens_written": 48417,
+    "tokens_written_median": 3156,
+    "tokens_written_max": 6517
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 2,
+    "by_kind": {
+     "blocked_tool_call": 2
+    },
+    "reasons": {
+     "running an existing database engine is prohibited": 2
+    },
+    "examples": [
+     "which sqlite3; sqlite3 --version 2>/dev/null; echo \"exit: $?\"",
+     "cd /workspace && python3 - <<'PYEOF'\nimport re\np='src/value.rs'\ns=open(p).read()\nstart=s.index(\"/// SQLite's real output form\")\nend=s.index(\"pub fn format_text\""
+    ]
+   },
+   "tools": {
+    "bash": {
+     "calls": 237,
+     "errors": 10,
+     "minutes": 2.6
+    },
+    "edit": {
+     "calls": 99,
+     "errors": 13,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 78,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 26,
+     "errors": 0,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 105.3,
+    "tools": 2.6,
+    "summarizing": 11.8,
+    "startup": 0.0,
+    "lost_at_round_end": 0.3,
+    "total": 120.0,
+    "longest_summary_seconds": 95.1
+   },
+   "unfinished_replies": [
+    {
+     "saved": "2026-09-21T22:01:02.049Z",
+     "stop": "stop",
+     "minutes": 0.3,
+     "generated": 1250,
+     "reasoning_tokens": 639,
+     "visible_text_tokens": 609,
+     "tool_calls": [],
+     "text_head": "The implementation is complete and fully verified. Final status:\n\n## Summary\n\n**PiSQL** is complete: ~4,000 lines of std-only Rust, building clean with `cargo b"
+    },
+    {
+     "saved": "2026-09-21T22:10:01.706Z",
+     "stop": "stop",
+     "minutes": 0.3,
+     "generated": 1115,
+     "reasoning_tokens": 498,
+     "visible_text_tokens": 615,
+     "tool_calls": [],
+     "text_head": "All green. Final state of this session's work:\n\n## Completed in this continuation\n\n**1. SQL comment support (lexer)** \u2014 was a real gap: `--` line comments and `"
+    },
+    {
+     "saved": "2026-09-21T22:18:29.200Z",
+     "stop": "stop",
+     "minutes": 0.2,
+     "generated": 805,
+     "reasoning_tokens": 267,
+     "visible_text_tokens": 536,
+     "tool_calls": [],
+     "text_head": "All green. Work completed in this continuation:\n\n## Summary\n\n**1. SQL comments (lexer)** \u2014 `--` line comments and `/* */` block comments now tokenize as whitesp"
+    },
+    {
+     "saved": "2026-09-21T22:49:13.910Z",
+     "stop": "stop",
+     "minutes": 0.2,
+     "generated": 915,
+     "reasoning_tokens": 393,
+     "visible_text_tokens": 520,
+     "tool_calls": [],
+     "text_head": "Session complete. Summary of the semantic hardening work done in this round:\n\n**Set-operation correctness (major)**\n- `ORDER BY` after a compound SELECT now app"
+    }
+   ],
+   "shell": {
+    "calls": 237,
+    "does_this": {
+     "read or search files": 213,
+     "run own engine on SQL": 102,
+     "type-check or build": 60,
+     "write SQL test input": 34,
+     "run own test script": 25,
+     "other": 2,
+     "git": 2
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 102,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 60,
+      "minutes": 0.8
+     },
+     "run own engine on SQL": {
+      "calls": 54,
+      "minutes": 1.8
+     },
+     "run own test script": {
+      "calls": 18,
+      "minutes": 0.0
+     },
+     "other": {
+      "calls": 2,
+      "minutes": 0.0
+     },
+     "write SQL test input": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 44.7
+   },
+   "file_tools": {
+    "writes": 26,
+    "write_targets": {
+     "src/ast.rs": 3,
+     "src/parser.rs": 2,
+     "src/engine.rs": 2,
+     "tests/11_setorder.sql": 2,
+     "Cargo.toml": 1,
+     "src/lexer.rs": 1
+    },
+    "bytes_written": 226992,
+    "largest_write_bytes": 53953,
+    "edits": 99,
+    "edit_lines_added": 3011,
+    "edit_lines_removed": 2140,
+    "failed_edits": 13,
+    "reads": 78,
+    "distinct_files_read": 8
+   },
+   "replies": {
+    "count": 442,
+    "stops": {
+     "toolUse": 438,
+     "stop": 4
+    },
+    "with_tool_call_share": 0.991,
+    "prompts_sent": 6,
+    "generation_minutes": 105.3,
+    "reply_seconds_median": 7.0,
+    "reply_seconds_p90": 27.1,
+    "reply_seconds_max": 338.3
+   },
+   "tokens": {
+    "generated": 393951,
+    "reasoning": 238682,
+    "answer_and_tool_calls": 155269,
+    "reasoning_share": 0.606,
+    "read_by_model": 33267317,
+    "read_from_cache": 32051136,
+    "cache_share": 0.963,
+    "conversation_size_median": 75827,
+    "conversation_size_max": 90215,
+    "generated_per_reply_median": 413,
+    "generated_per_reply_max": 22093,
+    "generated_per_minute": 3743
+   },
+   "reasoning": {
+    "median": 208,
+    "p90": 1398,
+    "max": 8192,
+    "replies_at_budget": 4,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "target/release/pisql",
+    "files": 38,
+    "source_files": 6,
+    "source_lines": 4664,
+    "engine_bytes": 148747,
+    "engine_shape": {
+     "lines": 4669,
+     "blank_or_comment": 363,
+     "functions": 124,
+     "structs_and_enums": 30,
+     "impls": 10,
+     "unwraps": 15,
+     "unsafe_blocks": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 11
+    },
+    "test_files": 27,
+    "test_lines": 722,
+    "by_kind": {
+     "project config": 3,
+     "provided (empty)": 2,
+     "other source": 6,
+     "agent-written tests": 27
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "Cargo.lock",
+      "kind": "project config",
+      "bytes": 149,
+      "lines": 7
+     },
+     {
+      "path": "Cargo.toml",
+      "kind": "project config",
+      "bytes": 109,
+      "lines": 9
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "src/ast.rs",
+      "kind": "other source",
+      "bytes": 5679,
+      "lines": 266
+     },
+     {
+      "path": "src/engine.rs",
+      "kind": "other source",
+      "bytes": 79700,
+      "lines": 2392
+     },
+     {
+      "path": "src/lexer.rs",
+      "kind": "other source",
+      "bytes": 12107,
+      "lines": 358
+     },
+     {
+      "path": "src/main.rs",
+      "kind": "other source",
+      "bytes": 2833,
+      "lines": 104
+     },
+     {
+      "path": "src/parser.rs",
+      "kind": "other source",
+      "bytes": 34920,
+      "lines": 1112
+     },
+     {
+      "path": "src/value.rs",
+      "kind": "other source",
+      "bytes": 13508,
+      "lines": 432
+     },
+     {
+      "path": "tests/01_core.expected",
+      "kind": "agent-written tests",
+      "bytes": 437,
+      "lines": 47
+     },
+     {
+      "path": "tests/01_core.sql",
+      "kind": "agent-written tests",
+      "bytes": 1479,
+      "lines": 21
+     },
+     {
+      "path": "tests/02_join.expected",
+      "kind": "agent-written tests",
+      "bytes": 223,
+      "lines": 43
+     },
+     {
+      "path": "tests/02_join.sql",
+      "kind": "agent-written tests",
+      "bytes": 1059,
+      "lines": 19
+     },
+     {
+      "path": "tests/03_sets.expected",
+      "kind": "agent-written tests",
+      "bytes": 180,
+      "lines": 56
+     },
+     {
+      "path": "tests/03_sets.sql",
+      "kind": "agent-written tests",
+      "bytes": 916,
+      "lines": 20
+     },
+     {
+      "path": "tests/04_reals.expected",
+      "kind": "agent-written tests",
+      "bytes": 294,
+      "lines": 46
+     },
+     {
+      "path": "tests/04_reals.sql",
+      "kind": "agent-written tests",
+      "bytes": 419,
+      "lines": 23
+     },
+     {
+      "path": "tests/05_constraints.expected",
+      "kind": "agent-written tests",
+      "bytes": 325,
+      "lines": 45
+     },
+     {
+      "path": "tests/05_constraints.sql",
+      "kind": "agent-written tests",
+      "bytes": 998,
+      "lines": 24
+     },
+     {
+      "path": "tests/06_comments.expected",
+      "kind": "agent-written tests",
+      "bytes": 45,
+      "lines": 12
+     },
+     {
+      "path": "tests/06_comments.sql",
+      "kind": "agent-written tests",
+      "bytes": 256,
+      "lines": 12
+     },
+     {
+      "path": "tests/07_errors.expected",
+      "kind": "agent-written tests",
+      "bytes": 79,
+      "lines": 7
+     },
+     {
+      "path": "tests/07_errors.sql",
+      "kind": "agent-written tests",
+      "bytes": 112,
+      "lines": 6
+     },
+     {
+      "path": "tests/08_advanced.expected",
+      "kind": "agent-written tests",
+      "bytes": 364,
+      "lines": 59
+     },
+     {
+      "path": "tests/08_advanced.sql",
+      "kind": "agent-written tests",
+      "bytes": 1344,
+      "lines": 21
+     },
+     {
+      "path": "tests/09_edges.expected",
+      "kind": "agent-written tests",
+      "bytes": 209,
+      "lines": 19
+     },
+     {
+      "path": "tests/09_edges.sql",
+      "kind": "agent-written tests",
+      "bytes": 476,
+      "lines": 12
+     },
+     {
+      "path": "tests/10_cast.expected",
+      "kind": "agent-written tests",
+      "bytes": 173,
+      "lines": 21
+     },
+     {
+      "path": "tests/10_cast.sql",
+      "kind": "agent-written tests",
+      "bytes": 679,
+      "lines": 11
+     },
+     {
+      "path": "tests/11_setorder.expected",
+      "kind": "agent-written tests",
+      "bytes": 261,
+      "lines": 46
+     },
+     {
+      "path": "tests/11_setorder.sql",
+      "kind": "agent-written tests",
+      "bytes": 1118,
+      "lines": 21
+     },
+     {
+      "path": "tests/12_funcs.expected",
+      "kind": "agent-written tests",
+      "bytes": 309,
+      "lines": 30
+     },
+     {
+      "path": "tests/12_funcs.sql",
+      "kind": "agent-written tests",
+      "bytes": 1093,
+      "lines": 16
+     },
+     {
+      "path": "tests/13_agg.expected",
+      "kind": "agent-written tests",
+      "bytes": 292,
+      "lines": 38
+     },
+     {
+      "path": "tests/13_agg.sql",
+      "kind": "agent-written tests",
+      "bytes": 822,
+      "lines": 18
+     },
+     {
+      "path": "tests/run.sh",
+      "kind": "agent-written tests",
+      "bytes": 714,
+      "lines": 29
+     }
+    ],
+    "lines_added_by_round": [
+     3811,
+     422,
+     800,
+     233,
+     722,
+     0
+    ],
+    "lines_removed_by_round": [
+     0,
+     165,
+     4,
+     16,
+     401,
+     0
+    ]
+   }
+  },
+  {
+   "run": "v17-sql-rust-r3",
+   "condition": "rust",
+   "replicate": 3,
+   "outcome": {
+    "termination": "wall_time_budget",
+    "rounds": 3,
+    "round_minutes": [
+     45.0,
+     45.0,
+     30.0
+    ],
+    "rounds_ended_at_cap": 3,
+    "visible_by_round": [
+     0.2707,
+     0.3879,
+     0.3879
+    ],
+    "visible_build_ok": [
+     true,
+     true,
+     true
+    ],
+    "hidden_by_snapshot": [
+     0.2481,
+     0.3414,
+     0.3414
+    ],
+    "hidden_final": 0.3414,
+    "hidden_scripts_passed": 0,
+    "hidden_scripts_total": 8,
+    "hidden_checks_passed": 23335,
+    "hidden_checks_total": 51939,
+    "visible_scripts_passed_final": 0,
+    "first_working_round": 0
+   },
+   "hidden_scripts": [
+    {
+     "script": "evidence/in1.test",
+     "score": 0.4064,
+     "failure": "wrong_results",
+     "seconds": 0.0
+    },
+    {
+     "script": "select2.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.0
+    },
+    {
+     "script": "select5.test",
+     "score": 0.0,
+     "failure": "candidate_crash",
+     "seconds": 22.76
+    },
+    {
+     "script": "random/expr/slt_good_4.test",
+     "score": 0.8953,
+     "failure": "wrong_results",
+     "seconds": 0.04
+    },
+    {
+     "script": "random/select/slt_good_1.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.1
+    },
+    {
+     "script": "random/aggregates/slt_good_2.test",
+     "score": 0.0,
+     "failure": "wrong_results",
+     "seconds": 0.0
+    },
+    {
+     "script": "random/groupby/slt_good_2.test",
+     "score": 0.9926,
+     "failure": "wrong_results",
+     "seconds": 0.06
+    },
+    {
+     "script": "index/orderby_nosort/10/slt_good_1.test",
+     "score": 0.4371,
+     "failure": "wrong_results",
+     "seconds": 0.16
+    }
+   ],
+   "build_checks": [
+    {
+     "round": 0,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 1,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    },
+    {
+     "round": 2,
+     "build_ok": true,
+     "errors": 0,
+     "audit_findings": 0
+    }
+   ],
+   "summaries": {
+    "count": 17,
+    "ok": 17,
+    "conversation_tokens_before": [
+     94596,
+     99177,
+     91346,
+     90302,
+     91260,
+     91564,
+     91082,
+     91185,
+     91222,
+     90209,
+     90253,
+     90698,
+     91835,
+     90148,
+     91389,
+     90228,
+     91572
+    ],
+    "messages_dropped": 0,
+    "minutes": 17.3,
+    "tokens_written": 71532,
+    "tokens_written_median": 3350,
+    "tokens_written_max": 9224
+   },
+   "repaired_cut_off_replies": 0,
+   "guard": {
+    "events": 0,
+    "by_kind": {},
+    "reasons": {},
+    "examples": []
+   },
+   "tools": {
+    "bash": {
+     "calls": 196,
+     "errors": 14,
+     "minutes": 0.5
+    },
+    "edit": {
+     "calls": 130,
+     "errors": 14,
+     "minutes": 0.0
+    },
+    "read": {
+     "calls": 53,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "write": {
+     "calls": 10,
+     "errors": 0,
+     "minutes": 0.0
+    },
+    "web_search": {
+     "calls": 1,
+     "errors": 1,
+     "minutes": 0.0
+    }
+   },
+   "time": {
+    "model_writing": 100.4,
+    "tools": 0.5,
+    "summarizing": 17.3,
+    "startup": 0.0,
+    "lost_at_round_end": 1.8,
+    "total": 120.0,
+    "longest_summary_seconds": 134.1
+   },
+   "unfinished_replies": [],
+   "shell": {
+    "calls": 196,
+    "does_this": {
+     "read or search files": 190,
+     "run own engine on SQL": 66,
+     "type-check or build": 41,
+     "write SQL test input": 35,
+     "run own test script": 6,
+     "edit source via script": 1,
+     "git": 1
+    },
+    "mainly": {
+     "read or search files": {
+      "calls": 110,
+      "minutes": 0.0
+     },
+     "type-check or build": {
+      "calls": 41,
+      "minutes": 0.5
+     },
+     "run own engine on SQL": {
+      "calls": 38,
+      "minutes": 0.0
+     },
+     "run own test script": {
+      "calls": 6,
+      "minutes": 0.0
+     },
+     "edit source via script": {
+      "calls": 1,
+      "minutes": 0.0
+     }
+    },
+    "ran_120s_or_more": 0,
+    "slowest_seconds": 1.4
+   },
+   "file_tools": {
+    "writes": 10,
+    "write_targets": {
+     "src/val.rs": 2,
+     "src/ast.rs": 2,
+     "src/parse.rs": 2,
+     "src/engine.rs": 2,
+     "src/tok.rs": 1,
+     "src/main.rs": 1
+    },
+    "bytes_written": 164389,
+    "largest_write_bytes": 43553,
+    "edits": 130,
+    "edit_lines_added": 3632,
+    "edit_lines_removed": 2544,
+    "failed_edits": 14,
+    "reads": 53,
+    "distinct_files_read": 7
+   },
+   "replies": {
+    "count": 367,
+    "stops": {
+     "toolUse": 367
+    },
+    "with_tool_call_share": 1.0,
+    "prompts_sent": 3,
+    "generation_minutes": 100.4,
+    "reply_seconds_median": 7.6,
+    "reply_seconds_p90": 34.7,
+    "reply_seconds_max": 267.7
+   },
+   "tokens": {
+    "generated": 372972,
+    "reasoning": 227747,
+    "answer_and_tool_calls": 145225,
+    "reasoning_share": 0.611,
+    "read_by_model": 27807304,
+    "read_from_cache": 26421504,
+    "cache_share": 0.95,
+    "conversation_size_median": 78066,
+    "conversation_size_max": 90150,
+    "generated_per_reply_median": 462,
+    "generated_per_reply_max": 17601,
+    "generated_per_minute": 3715
+   },
+   "reasoning": {
+    "median": 182,
+    "p90": 1595,
+    "max": 8192,
+    "replies_at_budget": 5,
+    "replies_over_budget": 0,
+    "replies_with_no_reasoning": 0
+   },
+   "product": {
+    "entry_file": "target/release/pisql",
+    "files": 11,
+    "source_files": 6,
+    "source_lines": 4321,
+    "engine_bytes": 128392,
+    "engine_shape": {
+     "lines": 4326,
+     "blank_or_comment": 274,
+     "functions": 130,
+     "structs_and_enums": 23,
+     "impls": 4,
+     "unwraps": 14,
+     "unsafe_blocks": 0,
+     "mentions_hash_join": 0,
+     "mentions_index": 15
+    },
+    "test_files": 0,
+    "test_lines": 0,
+    "by_kind": {
+     "project config": 3,
+     "provided (empty)": 2,
+     "other source": 6
+    },
+    "listing": [
+     {
+      "path": ".gitignore",
+      "kind": "project config",
+      "bytes": 113,
+      "lines": 13
+     },
+     {
+      "path": "AGENTS.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "Cargo.lock",
+      "kind": "project config",
+      "bytes": 149,
+      "lines": 7
+     },
+     {
+      "path": "Cargo.toml",
+      "kind": "project config",
+      "bytes": 138,
+      "lines": 11
+     },
+     {
+      "path": "TASK.md",
+      "kind": "provided (empty)",
+      "bytes": 0,
+      "lines": 0
+     },
+     {
+      "path": "src/ast.rs",
+      "kind": "other source",
+      "bytes": 3826,
+      "lines": 171
+     },
+     {
+      "path": "src/engine.rs",
+      "kind": "other source",
+      "bytes": 64384,
+      "lines": 2095
+     },
+     {
+      "path": "src/main.rs",
+      "kind": "other source",
+      "bytes": 714,
+      "lines": 29
+     },
+     {
+      "path": "src/parse.rs",
+      "kind": "other source",
+      "bytes": 29997,
+      "lines": 1068
+     },
+     {
+      "path": "src/tok.rs",
+      "kind": "other source",
+      "bytes": 11965,
+      "lines": 372
+     },
+     {
+      "path": "src/val.rs",
+      "kind": "other source",
+      "bytes": 17506,
+      "lines": 586
+     }
+    ],
+    "lines_added_by_round": [
+     3311,
+     727,
+     516
+    ],
+    "lines_removed_by_round": [
+     0,
+     145,
+     70
+    ]
+   }
+  }
+ ]
+}

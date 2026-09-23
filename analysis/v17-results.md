@@ -113,22 +113,42 @@ noise). The TypeScript contrast is dominated by whether the arm cleared its
 gate at all. Pooling them, or treating one as a replication of the other,
 would be wrong.
 
+*Corrected 2026-09-23 (details in `docs/REPORT_2026-09-23.md` §4):* the gate
+explains `typescript-r1`, which is excluded from the paired contrast. The
+contrast's collapse pair is replicate 3, and `typescript-r3` cleared its gate
+from round 1 on; its 0.085 comes from an engine that prints no block for
+`CREATE TABLE`, `INSERT` or `CREATE INDEX`. Of the four failed TypeScript
+snapshots, three are `typescript-r1`'s, caused by the agent type-checking with
+a shortened command that lacked the Node and ES2022 settings, and one is
+`typescript-r3`'s round 0, caused by a single stray brace from an edit saved
+about a second before the stop.
+
 ### Zeros have four different causes
 
 Every zero in this batch means something different, and all four are
 indistinguishable in the score column alone:
 
 - `python-r3` 0.0000 -- engine ran cleanly every round, exit 0, no crashes,
-  but printed results in the wrong shape for sqllogictest. A presentation
-  failure scored as total failure.
+  but it never read the file named on its command line: it always opened its
+  own six-statement sample `INPUT.sql` from the working folder, so every
+  script received the answers to that sample. It also separated columns with
+  spaces and quoted text. *(Corrected 2026-09-23; earlier text: "printed
+  results in the wrong shape".)*
 - `typescript-r1` 0.0000 -- never compiled. 21 type errors reduced to 3 over
   two rounds, then stalled on three redeclarations of Node globals that
-  `@types/node` already provides.
-- `typescript-r3` 0.0853 -- spent most of its budget reaching a clean build
-  (72 errors, including 25 syntax errors from a truncated write) and had
-  almost none left for correctness.
+  `@types/node` already provides. It declared them because it type-checked
+  with a shortened command without `--types node` or `--lib es2022`.
+- `typescript-r3` 0.0853 -- round 0 failed to build because of one stray brace
+  (all 72 errors; without it the file checks clean). It built from round 1 on,
+  but its engine prints no block for `CREATE TABLE`, `INSERT` or
+  `CREATE INDEX`, so from the first table on every answer is compared with the
+  wrong statement. *(Corrected 2026-09-23; earlier text: "spent most of its
+  budget reaching a clean build (72 errors, including 25 syntax errors from a
+  truncated write)".)*
 - `javascript-r3` round 0 -- its entry file did not exist yet at the first
-  snapshot; it recovered to the batch's best score, 0.8804 visible.
+  snapshot, because its first reply ran to the 32,768-token reply limit while
+  reasoning in plain text and issued no command; it recovered to the batch's
+  best score, 0.8804 visible.
 
 ### What this batch is actually evidence for
 
@@ -138,7 +158,9 @@ indistinguishable in the score column alone:
    careful analysis fixes that.
 3. The build gate, not the type system, dominates the TypeScript result. Any
    future typing contrast should report gate failures separately from scores,
-   or the two are confounded.
+   or the two are confounded. *(Corrected 2026-09-23: this holds for
+   `typescript-r1` only; `typescript-r3`'s low score is an output-rule failure,
+   see above.)*
 
 A fourth replicate would not help. What would: more replicates, a longer
 budget so a run is not scored mid-repair, or an endpoint that separates "did
