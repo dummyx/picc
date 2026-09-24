@@ -251,6 +251,10 @@ table.kv td:first-child { color: var(--muted); white-space: nowrap; }
 
 /* ---------------------------------------------------------------- batches */
 
+.task-section { margin-top: 30px; }
+.task-section > h2 { margin-bottom: 2px; }
+.task-section > h2 a { color: var(--text); }
+.task-section > .sub { margin-top: 0; }
 .batches { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 12px; }
 .batch-card { display: flex; flex-direction: column; gap: 6px; margin: 0; }
 .batch-card .top { display: flex; align-items: baseline; gap: 10px; }

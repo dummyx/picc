@@ -58,6 +58,10 @@ def build_repo(base: Path) -> Path:
     (root / ".env").write_text(f"MODEL_PROVIDER=local\nLOCAL_API_KEY='{SECRET}'\n", encoding="utf-8")
     (root / "docs" / "EXPERIMENT_PLAN_v99.md").write_text("# Experiment plan: v99 (a test batch)\n\nText.\n")
     (root / "docs" / "REPORT_2026-01-01.md").write_text("# Report on v99\n\n- **bold that\n  wraps**\n")
+    (root / "README.md").write_text("# The project\n")
+    (root / "studies" / "sql").mkdir(parents=True)
+    (root / "studies" / "sql" / "README.md").write_text("# SQL engine task\n")
+    (root / "studies" / "sql" / "study.json").write_text("{}\n")
 
     ws = run / "workspace"
     (ws / "tests").mkdir(parents=True)
@@ -294,10 +298,13 @@ class DashboardData(unittest.TestCase):
     def test_paths_that_must_be_refused(self) -> None:
         r = self.results
         for bad in ("../.env", "/etc/passwd", ".env", "runs/v99-sql-python-r1/metadata.json", "docs/../.env",
-                    "runs/../.env.md", "analysis/../../x.md"):
+                    "runs/../.env.md", "analysis/../../x.md", "studies/sql/study.json", "studies/../.env",
+                    "fixtures/README.md"):
             with self.subTest(doc=bad), self.assertRaises(DataError):
                 r.doc(bad)
         self.assertIn("bold that wraps", r.doc("docs/REPORT_2026-01-01.md")["text"].replace("\n  ", " "))
+        self.assertEqual(r.doc("README.md")["text"], "# The project\n")
+        self.assertEqual(r.doc("studies/sql/README.md")["text"], "# SQL engine task\n")
         for bad in ("../x", "..", "", "a/../../b", "-x"):
             with self.subTest(file=bad), self.assertRaises(DataError):
                 r.file(RUN, 1, bad)
@@ -341,6 +348,25 @@ class DashboardData(unittest.TestCase):
         self.assertEqual(b["runs"][RUN]["totals"]["replies"], 4)
         with self.assertRaises(DataError):
             self.results.batch("v1000")
+
+    def test_runs_are_grouped_by_task(self) -> None:
+        task = self.results.summary(RUN)["task"]
+        self.assertEqual(task, "sql-engine-sqllogictest")
+        o = self.results.overview()
+        self.assertEqual([t["id"] for t in o["tasks"]], [task])
+        group = o["tasks"][0]
+        self.assertEqual([c["key"] for c in group["batches"]], ["v99"])
+        self.assertEqual(group["batches"][0]["other_tasks"], [])
+        self.assertEqual(group["doc"], "studies/sql/README.md")
+        self.assertEqual(group["variants"], ["python"])
+        page = self.results.task(task)
+        self.assertEqual([r["id"] for r in page["run_list"]], [RUN])
+        self.assertEqual(page["batches"][0]["key"], "v99")
+        with self.assertRaises(DataError):
+            self.results.task("c-compiler-ch1-99")
+        docs = {g["title"]: [i["path"] for i in g["items"]] for g in self.results.docs()}
+        self.assertEqual(docs["Start here"], ["README.md"])
+        self.assertEqual(docs["Tasks"], ["studies/sql/README.md"])
 
     def test_cache_survives_a_restart_and_notices_changes(self) -> None:
         first = self.results.totals(RUN)
@@ -414,6 +440,11 @@ class DashboardServer(unittest.TestCase):
         status, body = self.get("/api/overview")
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(body)["batches"][0]["key"], "v99")
+        self.assertEqual(json.loads(body)["tasks"][0]["id"], "sql-engine-sqllogictest")
+        status, body = self.get("/api/task/sql-engine-sqllogictest")
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)["run_list"][0]["id"], RUN)
+        self.assertEqual(self.get("/api/task/nope")[0], 404)
         status, body = self.get(f"/api/run/{RUN}")
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(body)["digest"]["totals"]["replies"], 4)

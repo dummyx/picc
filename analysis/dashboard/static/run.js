@@ -25,7 +25,8 @@ export async function runPage(view, id, tab, params, stale, ctx) {
   const T = D.totals;
   const live = S.status === 'running' || S.status === 'scoring';
 
-  view.append(h('div', { class: 'crumbs' }, h('a', { href: '#/' }, 'Batches'), ' › ',
+  view.append(h('div', { class: 'crumbs' }, h('a', { href: '#/' }, 'Tasks'), ' › ',
+    h('a', { href: `#/task/${enc(S.task)}` }, TASK[S.task] || S.task), ' › ',
     h('a', { href: `#/batch/${S.batch}` }, S.batch), ' › ', id));
   view.append(h('div', { class: 'row' }, h('h1', null, runName(S)), statusPill(S),
     S.profile === 'pilot' ? pill('trial run') : null, S.resumed ? pill('resumed after an interruption', 'warn') : null,

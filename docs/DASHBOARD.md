@@ -35,9 +35,16 @@ run whose files change, such as one that is running, is re-read automatically.
 
 ## What is on it
 
-- **Batches**: one card per batch with every run's final score, and a
-  "Running now" section while a batch is going.
-- **A batch**: scores by variant, progress over time, a table of every run
+- **Tasks** (the front page): one section per task (SQL engine, C compiler
+  chapters 1-18, C compiler chapters 1-10), each with a card per batch that
+  ran it, and a "Running now" section while a batch is going. A batch that
+  ran two tasks (v10, v11) appears under each, with only that task's runs.
+  Scores of different tasks are never shown together.
+- **A task**: every run of the task, batch by batch; a table of its batches
+  (dates, variants, runs, middle and best score, plan and report); and a
+  sortable table of all its runs.
+- **A batch**: one section per task it ran, each with scores by variant,
+  progress over time, a table of every run
   (scores, time, replies, tokens, tool calls, failures, blocked commands,
   conversation summaries, code size), the score on each hidden test, where the
   time went, tokens written and read, tool calls, and what each agent left
@@ -61,7 +68,10 @@ run whose files change, such as one that is running, is re-read automatically.
   - *Setup*: the variant, the model and server settings, the budget, the
     agent's settings and everything it was given.
 - **Compare runs**: any runs side by side, over time and number by number.
-- **Reports**: the Markdown write-ups, rendered.
+  Adding a batch adds one task's runs; runs of different tasks can still be
+  picked one by one, and the page then says their scores are not comparable.
+- **Reports**: the Markdown write-ups, rendered, starting with the front page,
+  the document index and each task's own page.
 - **Model server**: whether the inference server is up and every recorded
   launch configuration (secret settings hidden).
 

@@ -315,7 +315,8 @@ export function dotPlot(opts) {
       g.points.forEach((p, i) => {
         if (p.y == null) return;
         const off = n > 1 ? (i - (n - 1) / 2) * Math.min(14, (bw * 0.5) / n) : 0;
-        const c = s('circle', { cx: cx + off, cy: Y(p.y), r: 6, fill: p.hollow ? 'var(--panel)' : g.color, stroke: g.color, 'stroke-width': 2, class: onClick ? 'clicky' : '' });
+        const color = p.color || g.color;
+        const c = s('circle', { cx: cx + off, cy: Y(p.y), r: 6, fill: p.hollow ? 'var(--panel)' : color, stroke: color, 'stroke-width': 2, class: onClick ? 'clicky' : '' });
         c.addEventListener('mousemove', (ev) => showTip(ev, tooltip ? tooltip(p, g) : `${p.label}: ${(y.format || fmt.score)(p.y)}`));
         c.addEventListener('mouseleave', hideTip);
         if (onClick) c.addEventListener('click', () => { hideTip(); onClick(p, g); });

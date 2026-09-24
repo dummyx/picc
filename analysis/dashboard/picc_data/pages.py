@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import statistics
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -14,6 +15,20 @@ from typing import Any
 
 from .classify import describe_call
 from .records import DataError, is_secret_name, iso_ms, read_json, read_locks, read_text
+
+# Each task's own page in the repository.
+TASK_PAGES = {
+    "c-compiler-ch1-10": "studies/c10/README.md",
+    "c-compiler-ch1-18": "studies/c18/README.md",
+    "sql-engine-sqllogictest": "studies/sql/README.md",
+}
+
+
+def moved_paths(root: Path) -> dict[str, str]:
+    """Old -> new locations of study files (studies/moved.json)."""
+    data = read_json(root / "studies" / "moved.json")
+    moves = data.get("moves") if isinstance(data, dict) else None
+    return {k: v for k, v in moves.items() if isinstance(k, str) and isinstance(v, str)} if isinstance(moves, dict) else {}
 
 
 class PagesMixin:
@@ -160,7 +175,7 @@ class PagesMixin:
 
     # ---------------------------------------------------------------- overview and batches
 
-    def overview(self) -> dict[str, Any]:
+    def _all_summaries(self) -> list[dict[str, Any]]:
         locks = read_locks()
         runs = []
         for rid in self.run_ids():
@@ -168,35 +183,108 @@ class PagesMixin:
                 runs.append(self.summary(rid, locks))
             except DataError:
                 continue
+        return runs
+
+    def _card(self, key: str, rs: list[dict[str, Any]]) -> dict[str, Any]:
+        """One batch, or the runs of one task within a batch, as a front-page card."""
+        docs = self.batch_docs(key)
+        starts = [r["started_at"] for r in rs if r["started_at"]]
+        ends = [r["ended_at"] for r in rs if r["ended_at"]]
+        finals = [r for r in rs if isinstance(r["final"], (int, float))]
+        best = max(finals, key=lambda r: r["final"]) if finals else None
+        return {
+            "key": key, "title": docs["title"], "subtitle": docs["subtitle"], "docs": docs,
+            "runs": len(rs), "main": sum(1 for r in rs if r["profile"] == "main"),
+            "pilot": sum(1 for r in rs if r["profile"] == "pilot"),
+            "running": sum(1 for r in rs if r["status"] in ("running", "scoring")),
+            "interrupted": sum(1 for r in rs if r["status"] == "interrupted"),
+            "tasks": sorted({r["task"] for r in rs}),
+            "studies": sorted({r["study"] for r in rs if r["study"]}),
+            "variants": sorted({r["variant"] for r in rs if r["variant"]}),
+            "first_start": min(starts) if starts else None, "last_end": max(ends) if ends else None,
+            "dots": [[r["variant"], r["repeat"], r["final"], r["id"], r["profile"], r["status"]] for r in rs],
+            "best": {"id": best["id"], "score": best["final"]} if best else None,
+            "server": sorted({r["server"] for r in rs if r["server"]}),
+        }
+
+    def _task_group(self, task: str, runs: list[dict[str, Any]], all_tasks_of: dict[str, set[str]]) -> dict[str, Any]:
+        """Every batch that ran `task`, each card holding only that task's runs."""
+        by_batch: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for r in runs:
+            by_batch[r["batch"]].append(r)
+        cards = []
+        for key in sorted(by_batch, key=self.batch_order):
+            card = self._card(key, by_batch[key])
+            card["other_tasks"] = sorted(all_tasks_of[key] - {task})
+            cards.append(card)
+        finals = [r for r in runs if r["profile"] == "main" and isinstance(r["final"], (int, float))]
+        best = max(finals, key=lambda r: r["final"]) if finals else None
+        starts = [r["started_at"] for r in runs if r["started_at"]]
+        return {
+            "id": task, "doc": self._task_doc(task), "batches": cards, "variants": self._variant_order(runs),
+            "runs": len(runs), "main": sum(1 for r in runs if r["profile"] == "main"),
+            "first_start": min(starts) if starts else None, "last_start": max(starts) if starts else None,
+            "best": {"id": best["id"], "score": best["final"], "batch": best["batch"]} if best else None,
+        }
+
+    def _task_doc(self, task: str) -> str | None:
+        page = TASK_PAGES.get(task)
+        return page if page and (self.root / page).is_file() else None
+
+    def _variant_order(self, runs: list[dict[str, Any]]) -> list[str]:
+        """The variants of a set of runs, each study's in the order its study file lists
+        them, studies in the order they were first run."""
+        first: dict[str, str] = {}
+        for r in runs:
+            if r["study"] and (r["started_at"] or "") < first.get(r["study"], "￿"):
+                first[r["study"]] = r["started_at"] or ""
+        order: list[str] = []
+        for sid in sorted(first, key=first.get):
+            one = next(r for r in runs if r["study"] == sid)
+            sm = read_json(self.runs_dir / one["id"] / "study-metadata.json") or {}
+            for v in self.study_order(sm.get("study_path"), sid):
+                if v not in order:
+                    order.append(v)
+        for r in sorted(runs, key=lambda r: r["started_at"] or ""):
+            if r["variant"] and r["variant"] not in order:
+                order.append(r["variant"])
+        return order
+
+    def overview(self) -> dict[str, Any]:
+        runs = self._all_summaries()
         batches: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        by_task: dict[str, list[dict[str, Any]]] = defaultdict(list)
         for r in runs:
             batches[r["batch"]].append(r)
-        cards = []
-        for key in sorted(batches, key=self.batch_order):
-            rs = batches[key]
-            docs = self.batch_docs(key)
-            starts = [r["started_at"] for r in rs if r["started_at"]]
-            ends = [r["ended_at"] for r in rs if r["ended_at"]]
-            finals = [r for r in rs if isinstance(r["final"], (int, float))]
-            best = max(finals, key=lambda r: r["final"]) if finals else None
-            cards.append({
-                "key": key, "title": docs["title"], "subtitle": docs["subtitle"], "docs": docs,
-                "runs": len(rs), "main": sum(1 for r in rs if r["profile"] == "main"),
-                "pilot": sum(1 for r in rs if r["profile"] == "pilot"),
-                "running": sum(1 for r in rs if r["status"] in ("running", "scoring")),
-                "interrupted": sum(1 for r in rs if r["status"] == "interrupted"),
-                "tasks": sorted({r["task"] for r in rs}),
-                "studies": sorted({r["study"] for r in rs if r["study"]}),
-                "variants": sorted({r["variant"] for r in rs if r["variant"]}),
-                "first_start": min(starts) if starts else None, "last_end": max(ends) if ends else None,
-                "dots": [[r["variant"], r["repeat"], r["final"], r["id"], r["profile"], r["status"]] for r in rs],
-                "best": {"id": best["id"], "score": best["final"]} if best else None,
-                "server": sorted({r["server"] for r in rs if r["server"]}),
-            })
+            by_task[r["task"] or "unknown"].append(r)
+        cards = [self._card(key, batches[key]) for key in sorted(batches, key=self.batch_order)]
+        all_tasks_of = {key: {r["task"] or "unknown" for r in rs} for key, rs in batches.items()}
+        tasks = [self._task_group(task, rs, all_tasks_of) for task, rs in by_task.items()]
+        tasks.sort(key=lambda t: t["last_start"] or "", reverse=True)
         live = [r for r in runs if r["status"] in ("running", "scoring")]
-        return {"batches": cards, "live": live, "runs": len(runs), "server": self.server_status(),
+        return {"tasks": tasks, "batches": cards, "live": live, "runs": len(runs), "server": self.server_status(),
                 "warm": dict(self.warm), "tokenizer": self.tokenizer_note(),
                 "generated_at": time.time() * 1000}
+
+    def task(self, task: str) -> dict[str, Any]:
+        """One task across every batch that ran it: its batches, its variants, and every run."""
+        every = self._all_summaries()
+        runs = [r for r in every if (r["task"] or "unknown") == task]
+        if not runs:
+            raise DataError(f"no task called {task!r}")
+        all_tasks_of: dict[str, set[str]] = defaultdict(set)
+        for r in every:
+            all_tasks_of[r["batch"]].add(r["task"] or "unknown")
+        group = self._task_group(task, runs, all_tasks_of)
+        for card in group["batches"]:
+            main = [r["final"] for r in runs if r["batch"] == card["key"] and r["profile"] == "main"
+                    and r["status"] == "finished" and isinstance(r["final"], (int, float))]
+            card["middle"] = statistics.median(main) if main else None
+        keep = ("id", "batch", "study", "variant", "repeat", "profile", "task", "language", "status", "comparable",
+                "end_reason", "started_at", "elapsed_s", "rounds", "final", "visible_final", "scores")
+        group["run_list"] = [{k: r.get(k) for k in keep}
+                             for r in sorted(runs, key=lambda r: (self.batch_order(r["batch"]), r["id"]))]
+        return group
 
     def runs_index(self) -> list[dict[str, Any]]:
         locks = read_locks()
@@ -218,7 +306,8 @@ class PagesMixin:
         if isinstance(summary, dict):
             order = [c.get("id") for c in ((summary.get("study") or {}).get("conditions") or []) if isinstance(c, dict)]
         if not order and study_path:
-            manifest = read_json(self.root / study_path)
+            # Runs made before studies/ was organized by task record the old location.
+            manifest = read_json(self.root / moved_paths(self.root).get(study_path, study_path))
             if isinstance(manifest, dict):
                 order = [c.get("id") for c in manifest.get("conditions") or [] if isinstance(c, dict)]
         return [o for o in order if o]
@@ -270,20 +359,23 @@ class PagesMixin:
     # ---------------------------------------------------------------- documents
 
     DOC_GROUPS = (
-        ("Reports", "docs/REPORT_*.md"),
-        ("Batch results", "analysis/*results*.md"),
-        ("Campaign write-up and analyses", "analysis/*.md"),
-        ("Experiment plans", "docs/EXPERIMENT_PLAN*.md"),
-        ("Study summaries", "runs/study-results/*/summary.md"),
-        ("Other documents", "docs/*.md"),
+        ("Start here", ("README.md", "docs/README.md", "studies/README.md", "analysis/README.md")),
+        ("Tasks", (*TASK_PAGES.values(), "studies/**/README.md")),
+        ("Reports", ("docs/REPORT_*.md",)),
+        ("Batch results", ("analysis/*results*.md",)),
+        ("Campaign write-up and analyses", ("analysis/*.md",)),
+        ("Experiment plans", ("docs/EXPERIMENT_PLAN*.md",)),
+        ("Study summaries", ("runs/study-results/*/summary.md",)),
+        ("Other documents", ("docs/*.md",)),
     )
 
     def docs(self) -> list[dict[str, Any]]:
         seen: set[str] = set()
         groups = []
-        for title, pattern in self.DOC_GROUPS:
+        for title, patterns in self.DOC_GROUPS:
             items = []
-            for p in sorted(self.root.glob(pattern), reverse=title == "Reports"):
+            found = [p for pattern in patterns for p in sorted(self.root.glob(pattern), reverse=title == "Reports")]
+            for p in found:
                 rel = str(p.relative_to(self.root))
                 if rel in seen or not p.is_file():
                     continue
@@ -307,7 +399,7 @@ class PagesMixin:
         rel = self._clean_path(path)
         if not rel.endswith(".md"):
             raise DataError("only Markdown documents can be shown")
-        allowed = (rel.startswith(("docs/", "analysis/", "runs/study-results/"))
+        allowed = (rel == "README.md" or rel.startswith(("docs/", "analysis/", "studies/", "runs/study-results/"))
                    or re.fullmatch(r"runs/[A-Za-z0-9][A-Za-z0-9._-]*/report\.md", rel) is not None)
         if not allowed:
             raise DataError("that document is not available here")

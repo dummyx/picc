@@ -181,6 +181,24 @@ export const TASK = {
   'c-compiler-ch1-18': 'C compiler (chapters 1–18)',
   'sql-engine-sqllogictest': 'SQL engine',
 };
+// What each task asks for, in the words the front page uses.
+export const TASK_INFO = {
+  'sql-engine-sqllogictest': {
+    short: 'SQL engine',
+    builds: 'an in-memory database whose answers must match SQLite’s on a set part of SQL',
+    scored: 'scored on 8 hidden test scripts from SQLite’s own test suite',
+  },
+  'c-compiler-ch1-18': {
+    short: 'C compiler 1–18',
+    builds: 'a C compiler for chapters 1–18 of Writing a C Compiler: more integer types, floating point, pointers, arrays, strings and structures',
+    scored: 'scored on 281 hidden tests from the book’s test suite',
+  },
+  'c-compiler-ch1-10': {
+    short: 'C compiler 1–10',
+    builds: 'a C compiler for chapters 1–10 of Writing a C Compiler (the original task)',
+    scored: 'scored on the hidden part of the book’s test suite, and from v5 also on random programs checked against GCC',
+  },
+};
 export const PROFILE = { main: 'main run', pilot: 'trial run' };
 export const TIME_KINDS = [
   ['model', 'Model writing', 'var(--c-model)'],

@@ -1,7 +1,7 @@
 // Router and the top-level pages: batches, one batch, compare, reports, model server.
 
 import {
-  h, clear, api, forget, fmt, enc, END, TASK, STATUS, PROFILE, TIME_KINDS, CODE_KINDS, variantColors, card, cardHead,
+  h, clear, api, forget, fmt, enc, END, TASK, TASK_INFO, STATUS, PROFILE, TIME_KINDS, CODE_KINDS, variantColors, card, cardHead,
   segmented, table, runName, statusPill, pill, kpi, median, sum, errorBox, heatColor, showTip, hideTip, toolColor,
   tipLines, plural, FAILURE, scoreCell, activityText, END_SHORT,
 } from './util.js';
@@ -36,7 +36,7 @@ async function render() {
   const segs = path.split('/').filter(Boolean).map(decodeURIComponent);
   for (const a of document.querySelectorAll('[data-nav]')) {
     const nav = a.dataset.nav;
-    a.classList.toggle('on', (nav === 'home' && (!segs.length || segs[0] === 'batch' || segs[0] === 'run'))
+    a.classList.toggle('on', (nav === 'home' && (!segs.length || ['batch', 'run', 'task'].includes(segs[0])))
       || nav === segs[0] || (nav === 'docs' && segs[0] === 'doc'));
   }
   clear(main);
@@ -45,13 +45,14 @@ async function render() {
   try {
     const view = h('div');
     if (!segs.length) await home(view, stale);
+    else if (segs[0] === 'task') await taskPage(view, segs[1], stale);
     else if (segs[0] === 'batch') await batchPage(view, segs[1], params, stale);
     else if (segs[0] === 'run') await runPage(view, segs[1], segs[2] || 'overview', params, stale, { onLeave, go });
     else if (segs[0] === 'compare') await comparePage(view, params, stale);
     else if (segs[0] === 'docs') await docsPage(view);
     else if (segs[0] === 'doc') await docPage(view, segs.slice(1).join('/'), params);
     else if (segs[0] === 'server') await serverPage(view);
-    else view.append(h('p', null, 'Nothing here. ', h('a', { href: '#/' }, 'Back to the batches.')));
+    else view.append(h('p', null, 'Nothing here. ', h('a', { href: '#/' }, 'Back to the tasks and batches.')));
     if (stale()) return;
     clear(main);
     main.append(view);
@@ -84,7 +85,7 @@ window.addEventListener('hashchange', render);
     ids = runs.map((r) => r.id);
     const batches = [...new Set(runs.map((r) => r.batch))];
     for (const b of batches) list.append(h('option', { value: b }, 'batch'));
-    for (const r of runs) list.append(h('option', { value: r.id }, `${r.variant || ''} ${r.final != null ? fmt.score(r.final) : ''}`));
+    for (const r of runs) list.append(h('option', { value: r.id }, `${TASK_INFO[r.task]?.short || ''} · ${r.variant || ''} ${r.final != null ? fmt.score(r.final) : ''}`));
   }).catch(() => {});
   const jump = () => {
     const v = find.value.trim();
@@ -107,8 +108,9 @@ window.addEventListener('hashchange', render);
 async function home(view, stale) {
   const data = await api('overview', { fresh: true });
   view.append(h('h1', null, 'Experiment results'));
-  view.append(h('p', { class: 'sub' }, `${plural(data.runs, 'run')} in ${plural(data.batches.length, 'batch', 'batches')}. `,
-    'Scores are the final score on the hidden tests (0 to 1) unless a page says otherwise; corrected re-scores are used where a batch has them.'));
+  view.append(h('p', { class: 'sub' }, `${plural(data.runs, 'run')} of ${plural(data.tasks.length, 'task')}, in ${plural(data.batches.length, 'batch', 'batches')}. `,
+    'Scores are the final score on the hidden tests (0 to 1) unless a page says otherwise; corrected re-scores are used where a batch has them. ',
+    'Scores of different tasks measure different things and are never shown together.'));
   const srv = data.server || {};
   view.append(h('p', { class: 'small muted' }, 'Model server: ',
     srv.running ? h('span', { class: 'good' }, `running (process ${srv.pid})`) : h('span', { class: 'warn' }, 'not running'),
@@ -128,10 +130,26 @@ async function home(view, stale) {
     const t = setInterval(() => { if (!stale()) { forget('overview'); render(); } }, 20000);
     onLeave(() => clearInterval(t));
   }
-  view.append(h('h2', null, 'Batches'));
+  view.append(h('div', { class: 'links' }, h('span', { class: 'muted' }, 'Tasks:'),
+    data.tasks.map((t) => h('a', { href: `#/task/${enc(t.id)}` }, TASK[t.id] || t.id))));
+  for (const t of data.tasks) view.append(taskSection(t));
+}
+
+// One task on the front page: what it is, and its batches with only its runs.
+function taskSection(t) {
+  const info = TASK_INFO[t.id] || {};
+  const colors = variantColors(t.variants);
   const grid = h('div', { class: 'batches' });
-  for (const b of data.batches) grid.append(batchCard(b));
-  view.append(grid);
+  for (const b of t.batches) grid.append(batchCard(b, colors));
+  return h('section', { class: 'task-section' },
+    h('h2', null, h('a', { href: `#/task/${enc(t.id)}` }, TASK[t.id] || t.id)),
+    h('p', { class: 'sub' },
+      info.builds ? `The agent builds ${info.builds}; ${info.scored}. ` : '',
+      `${plural(t.batches.length, 'batch', 'batches')}, ${plural(t.main, 'main run')}`,
+      t.best ? [', best ', h('a', { href: `#/run/${enc(t.best.id)}` }, fmt.score(t.best.score)), ` (${t.best.batch})`] : null, '. ',
+      h('a', { href: `#/task/${enc(t.id)}` }, 'Every run of this task'),
+      t.doc ? [' · ', h('a', { href: `#/doc/${t.doc}` }, 'about this task')] : null),
+    grid);
 }
 
 function liveCard(r) {
@@ -150,11 +168,13 @@ function liveCard(r) {
   return c;
 }
 
-function batchCard(b) {
+// A batch card. On the front page each card holds the runs of one task, and
+// `taskColors` keeps a variant's colour the same across that task's batches.
+function batchCard(b, taskColors) {
   const mainOnly = b.main >= 3;
   const shown = b.dots.filter((d) => !mainOnly || d[4] === 'main');
   const variants = [...new Set(shown.map((d) => d[0]))];
-  const colors = variantColors(variants.length ? variants : b.variants);
+  const colors = taskColors || variantColors(variants.length ? variants : b.variants);
   const groups = variants.map((v) => ({
     name: v, color: colors[v],
     points: shown.filter((d) => d[0] === v).map((d) => ({
@@ -162,16 +182,19 @@ function batchCard(b) {
       label: `${d[3]}\nfinal score ${fmt.score(d[2])}${d[4] !== 'main' ? '\ntrial run' : ''}${d[5] !== 'finished' ? '\n(' + (STATUS[d[5]] || d[5]) + ')' : ''}`,
     })),
   }));
-  const tasks = b.tasks.map((t) => TASK[t] || t).join(' + ');
+  const tasks = b.tasks.length > 1 ? b.tasks.map((t) => TASK[t] || t).join(' + ') + ' · ' : '';
   const docs = b.docs || {};
   return h('section', { class: 'card batch-card' },
     h('div', { class: 'top' },
       h('span', { class: 'key' }, h('a', { href: `#/batch/${b.key}` }, b.key === 'early' || b.key === 'probes' ? b.title : b.key)),
       h('span', { class: 'title' }, b.key === 'early' || b.key === 'probes' ? b.subtitle : (b.subtitle || '')),
       b.running ? pill(`${b.running} running`, 'running') : null),
-    h('div', { class: 'facts' }, `${tasks} · ${plural(b.main, 'main run')}${b.pilot ? ` + ${plural(b.pilot, 'trial run')}` : ''}`,
+    h('div', { class: 'facts' }, `${tasks}${plural(b.main, 'main run')}${b.pilot ? ` + ${plural(b.pilot, 'trial run')}` : ''}`,
       b.interrupted ? ` · ${b.interrupted} stopped early` : '', ` · ${fmt.day(b.first_start)}${b.last_end && fmt.day(b.last_end) !== fmt.day(b.first_start) ? ' → ' + fmt.day(b.last_end) : ''}`,
       b.server.length ? ` · ${b.server.join(', ')}` : ''),
+    b.other_tasks && b.other_tasks.length
+      ? h('div', { class: 'facts small muted' }, 'This batch also ran the ', b.other_tasks.map((t) => TASK[t] || t).join(' and '), ' (under its own task).')
+      : null,
     groups.length ? dotStrip({ groups, onClick: (p) => go('/run/' + enc(p.id)) }) : null,
     h('div', { class: 'row small' },
       h('span', { class: 'muted' }, variants.map((v) => h('span', { class: 'nowrap', style: { marginRight: '10px' } }, h('span', { class: 'dot', style: { background: colors[v] } }), v || '(not recorded)'))),
@@ -184,13 +207,87 @@ function batchCard(b) {
       ...(docs.reports || []).map((r) => h('a', { href: `#/doc/${r}` }, 'Report ' + r.replace(/^.*REPORT_|\.md$/g, '')))));
 }
 
+// ---------------------------------------------------------------- one task, every batch
+
+async function taskPage(view, taskId, stale) {
+  const t = await api(`task/${enc(taskId)}`, { fresh: true });
+  if (stale()) return;
+  const info = TASK_INFO[t.id] || {};
+  const colors = variantColors(t.variants);
+  const oldest = t.batches.slice().sort((a, b) => (a.first_start || '').localeCompare(b.first_start || ''));
+  const trial = t.runs - t.main;
+  view.append(h('div', { class: 'crumbs' }, h('a', { href: '#/' }, 'Tasks'), ' › ', TASK[t.id] || t.id));
+  view.append(h('h1', null, TASK[t.id] || t.id));
+  view.append(h('p', { class: 'sub' },
+    info.builds ? `The agent builds ${info.builds}; ${info.scored}. ` : '',
+    `${plural(t.batches.length, 'batch', 'batches')}, ${plural(t.main, 'main run')}${trial ? ` and ${plural(trial, 'trial run')}` : ''}, `,
+    `${fmt.day(t.first_start)} to ${fmt.day(t.last_start)}.`));
+  view.append(h('div', { class: 'links' },
+    t.doc ? h('a', { href: `#/doc/${t.doc}` }, 'About this task') : null,
+    t.best ? h('a', { href: `#/run/${enc(t.best.id)}` }, `Best main run: ${fmt.score(t.best.score)} (${t.best.batch})`) : null,
+    t.batches[0] ? h('a', { href: `#/compare?runs=${t.run_list.filter((r) => r.batch === t.batches[0].key && r.profile === 'main').map((r) => enc(r.id)).join(',')}` },
+      `Compare the runs of ${t.batches[0].key}`) : null));
+
+  // every run, batch by batch
+  const groups = oldest.map((c) => ({
+    name: c.key, color: 'var(--muted)',
+    points: t.run_list.filter((r) => r.batch === c.key && r.final != null).map((r) => ({
+      y: r.final, id: r.id, color: colors[r.variant], hollow: r.profile !== 'main' || r.status !== 'finished',
+      label: tipLines(r.id, [`${r.variant || '(not recorded)'} · ${PROFILE[r.profile] || r.profile}`, `final score ${fmt.score(r.final)}`,
+        r.status !== 'finished' ? (STATUS[r.status] || r.status) : null, 'click to open the run']),
+    })),
+  }));
+  view.append(h('section', { class: 'card' },
+    ...cardHead('Every run, batch by batch', null,
+      'Each column is one batch, oldest on the left, and each dot is one run, coloured by variant. Hollow dots are trial runs and runs that did not finish normally. The setup changed between batches, so compare runs within a column before comparing columns.'),
+    dotPlot({ groups, medians: false, y: { min: 0, max: 1, label: 'final score' }, tooltip: (p) => p.label, onClick: (p) => go('/run/' + enc(p.id)) }),
+    h('div', { class: 'small', style: { marginTop: '6px' } }, t.variants.map((v) =>
+      h('span', { class: 'nowrap', style: { marginRight: '12px' } }, h('span', { class: 'dot', style: { background: colors[v] } }), v)))));
+
+  // the batches
+  const when = (c) => `${fmt.day(c.first_start)}${c.last_end && fmt.day(c.last_end) !== fmt.day(c.first_start) ? ' → ' + fmt.day(c.last_end) : ''}`;
+  const bcols = [
+    { key: 'key', label: 'Batch', render: (c) => h('a', { href: `#/batch/${c.key}` }, c.key === 'early' || c.key === 'probes' ? c.title : c.key), sort: (c) => oldest.indexOf(c) },
+    { key: 'when', label: 'When', render: when, sort: (c) => c.first_start },
+    { key: 'subtitle', label: 'About', render: (c) => h('span', { class: 'small' }, c.subtitle || '') },
+    { key: 'variants', label: 'Variants', render: (c) => h('span', { class: 'small' }, c.variants.join(', ')) },
+    { key: 'main', label: 'Main runs', num: true },
+    { key: 'pilot', label: 'Trial runs', num: true },
+    { key: 'middle', label: 'Middle', num: true, title: 'middle final score of the main runs that finished normally', render: (c) => fmt.score(c.middle), sort: (c) => c.middle },
+    { key: 'best', label: 'Best', num: true, render: (c) => (c.best ? h('a', { href: `#/run/${enc(c.best.id)}` }, fmt.score(c.best.score)) : '–'), sort: (c) => (c.best ? c.best.score : null) },
+    { key: 'docs', label: 'Read', render: (c) => h('span', { class: 'small links' },
+      c.docs.plan ? h('a', { href: `#/doc/${c.docs.plan}` }, 'plan') : null,
+      c.docs.results ? h('a', { href: `#/doc/${c.docs.results}` }, 'results') : null,
+      ...(c.docs.reports || []).map((r) => h('a', { href: `#/doc/${r}` }, 'report'))) },
+  ];
+  view.append(h('section', { class: 'card' },
+    ...cardHead('Batches', null, 'Only this task’s runs are counted. "Middle" is the middle final score of the batch’s main runs.'),
+    table(bcols, t.batches, { sortKey: 'key', sortDir: -1, onRow: (c) => go('/batch/' + c.key) })));
+
+  // every run
+  const rcols = [
+    { key: 'id', label: 'Run', render: (r) => h('a', { href: `#/run/${enc(r.id)}` }, r.id) },
+    { key: 'batch', label: 'Batch', sort: (r) => oldest.findIndex((c) => c.key === r.batch) },
+    { key: 'variant', label: 'Variant', render: (r) => h('span', { class: 'nowrap' }, h('span', { class: 'dot', style: { background: colors[r.variant] } }), r.variant || '(not recorded)') },
+    { key: 'profile', label: 'Kind', render: (r) => PROFILE[r.profile] || r.profile },
+    { key: 'final', label: 'Final', num: true, render: (r) => scoreCell(r.final, r.scores?.final_frozen), sort: (r) => r.final },
+    { key: 'built', label: 'Last built', num: true, title: 'score of the last saved version that built', render: (r) => fmt.score(r.scores?.last_built), sort: (r) => r.scores?.last_built },
+    { key: 'rounds', label: 'Rounds', num: true },
+    { key: 'elapsed_s', label: 'Time', num: true, render: (r) => fmt.dur(r.elapsed_s) },
+    { key: 'end', label: 'Ended', render: (r) => h('span', { class: 'small nowrap' }, r.status === 'finished' ? (END_SHORT[r.end_reason] || r.end_reason || '') : STATUS[r.status] || r.status), sort: (r) => r.end_reason },
+  ];
+  view.append(h('section', { class: 'card' },
+    ...cardHead('Every run', null, 'Click a column heading to sort.'),
+    table(rcols, t.run_list, { sortKey: 'batch', sortDir: -1, onRow: (r) => go('/run/' + enc(r.id)) })));
+}
+
 // ---------------------------------------------------------------- one batch
 
 async function batchPage(view, key, params, stale) {
   const data = await api(`batch/${enc(key)}`, { fresh: true });
   const runs = data.runs;
   const docs = data.docs;
-  view.append(h('div', { class: 'crumbs' }, h('a', { href: '#/' }, 'Batches'), ' › ', key));
+  view.append(h('div', { class: 'crumbs' }, h('a', { href: '#/' }, 'Tasks'), ' › ', key));
   view.append(h('h1', null, key === 'early' || key === 'probes' ? docs.title : `${key}${docs.subtitle ? ' — ' + docs.subtitle : ''}`));
   const all = Object.values(runs);
   const starts = all.map((r) => r.started_at).filter(Boolean).sort();
@@ -201,7 +298,10 @@ async function batchPage(view, key, params, stale) {
     docs.plan ? h('a', { href: `#/doc/${docs.plan}` }, 'Experiment plan') : null,
     docs.results ? h('a', { href: `#/doc/${docs.results}` }, 'Results write-up') : null,
     ...(docs.reports || []).map((r) => h('a', { href: `#/doc/${r}` }, 'Report ' + r.replace(/^.*REPORT_|\.md$/g, ''))),
-    h('a', { href: `#/compare?runs=${all.filter((r) => r.profile === 'main').map((r) => enc(r.id)).join(',')}` }, 'Compare these runs')));
+    // Several tasks: each task's section has its own comparison link instead.
+    new Set(all.map((r) => r.task)).size === 1
+      ? h('a', { href: `#/compare?runs=${all.filter((r) => r.profile === 'main').map((r) => enc(r.id)).join(',')}` }, 'Compare these runs')
+      : null));
   for (const st of data.studies) {
     if (stale()) return;
     view.append(studySection(st, runs, data.studies.length > 1));
@@ -217,7 +317,10 @@ function studySection(st, runs, several) {
   const colors = variantColors(variants);
   const main = counted.length ? counted : rows;
   if (several || st.id) {
-    sec.append(h('h2', null, `${TASK[st.task] || st.task}`, h('span', { class: 'muted small', style: { fontWeight: 400, marginLeft: '10px' } }, st.id)));
+    sec.append(h('h2', null, h('a', { href: `#/task/${enc(st.task)}`, title: 'every batch of this task' }, TASK[st.task] || st.task),
+      h('span', { class: 'muted small', style: { fontWeight: 400, marginLeft: '10px' } }, st.id),
+      several ? h('a', { class: 'small', style: { fontWeight: 400, marginLeft: '14px' },
+        href: `#/compare?runs=${rows.filter((r) => r.profile === 'main').map((r) => enc(r.id)).join(',')}` }, 'compare these runs') : null));
   }
   const reasoningReady = main.every((r) => r.reasoning && r.reasoning.status === 'ready');
 
@@ -386,14 +489,20 @@ async function comparePage(view, params, stale) {
   const chosen = ids.filter((id) => byId[id]);
   const picker = h('div', { class: 'card' });
   const input = h('input', { class: 'pick', list: 'cmp-list', placeholder: 'Type a run name…', style: { width: '280px' } });
-  const dl = h('datalist', { id: 'cmp-list' }, index.map((r) => h('option', { value: r.id }, `${r.variant} ${fmt.score(r.final)}`)));
+  const dl = h('datalist', { id: 'cmp-list' }, index.map((r) => h('option', { value: r.id }, `${TASK_INFO[r.task]?.short || ''} · ${r.variant} ${fmt.score(r.final)}`)));
   const setRuns = (list) => go('/compare', list.length ? { runs: list.join(',') } : null);
   const add = () => { const v = input.value.trim(); if (byId[v] && !chosen.includes(v)) setRuns([...chosen, v]); };
   input.addEventListener('change', add);
-  const batches = [...new Set(index.map((r) => r.batch))];
-  const batchSel = h('select', { class: 'pick' }, h('option', { value: '' }, 'Add all main runs of a batch…'), batches.map((b) => h('option', { value: b }, b)));
+  // One entry per batch and task, so adding a batch never mixes tasks.
+  const pairs = [];
+  for (const r of index) if (!pairs.some((p) => p.batch === r.batch && p.task === r.task)) pairs.push({ batch: r.batch, task: r.task });
+  const several = (b) => pairs.filter((p) => p.batch === b).length > 1;
+  const batchSel = h('select', { class: 'pick' }, h('option', { value: '' }, 'Add all main runs of a batch…'),
+    pairs.map((p, i) => h('option', { value: String(i) }, several(p.batch) ? `${p.batch} · ${TASK_INFO[p.task]?.short || p.task}` : p.batch)));
   batchSel.addEventListener('change', () => {
-    const add2 = index.filter((r) => r.batch === batchSel.value && r.profile === 'main').map((r) => r.id);
+    const p = pairs[Number(batchSel.value)];
+    if (!p) return;
+    const add2 = index.filter((r) => r.batch === p.batch && r.task === p.task && r.profile === 'main').map((r) => r.id);
     setRuns([...new Set([...chosen, ...add2])]);
   });
   picker.append(h('div', { class: 'row' }, input, dl, h('button', { class: 'btn', onclick: add }, 'Add'), batchSel,
@@ -401,6 +510,11 @@ async function comparePage(view, params, stale) {
   picker.append(h('div', { style: { marginTop: '8px' } }, chosen.length ? chosen.map((id) => h('span', { class: 'chip' }, h('a', { href: `#/run/${enc(id)}` }, id),
     h('button', { title: 'remove', onclick: () => setRuns(chosen.filter((x) => x !== id)) }, '×'))) : h('span', { class: 'muted' }, 'Pick two or more runs, or add a whole batch.')));
   view.append(picker);
+  const tasksChosen = [...new Set(chosen.map((id) => byId[id].task))];
+  if (tasksChosen.length > 1) {
+    view.append(h('div', { class: 'notice' }, 'These runs come from different tasks (',
+      tasksChosen.map((t) => TASK[t] || t).join(', '), '). Their scores measure different things and should not be compared with each other.'));
+  }
   if (!chosen.length) return;
   const details = await Promise.all(chosen.map((id) => api(`run/${enc(id)}`)));
   if (stale()) return;
@@ -409,7 +523,9 @@ async function comparePage(view, params, stale) {
   const vcolors = variantColors(variants);
   const oneEach = variants.length === chosen.length;
   const colorOf = (d, i) => (oneEach ? vcolors[d.summary.variant] : distinct[chosen[i]]);
-  const label = (d) => (new Set(details.map((x) => x.summary.batch)).size > 1 ? `${d.summary.batch} ` : '') + runName(d.summary);
+  const mixedTasks = new Set(details.map((x) => x.summary.task)).size > 1;
+  const label = (d) => (mixedTasks ? `${TASK_INFO[d.summary.task]?.short || d.summary.task} · ` : '')
+    + (new Set(details.map((x) => x.summary.batch)).size > 1 ? `${d.summary.batch} ` : '') + runName(d.summary);
 
   const lines = (title, explain, pick, y, x) => h('section', { class: 'card' }, ...cardHead(title, null, explain), lineChart({
     series: details.map((d, i) => ({ name: label(d), color: colorOf(d, i), points: pick(d), id: d.summary.id })),
@@ -478,7 +594,7 @@ async function comparePage(view, params, stale) {
 async function docsPage(view) {
   const groups = await api('docs', { fresh: true });
   view.append(h('h1', null, 'Reports and documents'));
-  view.append(h('p', { class: 'sub' }, 'The write-ups in docs/ and analysis/, and the study summaries under runs/study-results/.'));
+  view.append(h('p', { class: 'sub' }, 'The project’s front page and each task’s page, the write-ups in docs/ and analysis/, and the study summaries under runs/study-results/.'));
   const grid = h('div', { class: 'grid2' });
   for (const g of groups) {
     if (!g.items.length) continue;

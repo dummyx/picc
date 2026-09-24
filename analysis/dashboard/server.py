@@ -213,6 +213,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(r.runs_index())
         if head == "batch" and len(parts) == 2:
             return self._json(r.batch(parts[1]))
+        if head == "task" and len(parts) == 2:
+            return self._json(r.task(parts[1]))
         if head == "docs" and len(parts) == 1:
             return self._json(r.docs())
         if head == "doc" and len(parts) == 1:
