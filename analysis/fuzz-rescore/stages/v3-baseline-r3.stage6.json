@@ -1,0 +1,54 @@
+{
+  "checked": 100,
+  "skipped": 0,
+  "mismatches": [
+    {
+      "index": 2,
+      "kind": "wrong_behavior",
+      "detail": "expected status 104 stdout ''; got status 108 stdout ''",
+      "source": "int main(void) {\n    int v0 = (~(29 ? 54 : 21));\n    int v1 = ((~v0) + (v0 ? 1 : v0));\n    int result = (((22 ? v1 : 57) + (-5)) + ((v1 ? v0 : 41) ? (~v0) : (v0 / 18)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 6,
+      "kind": "wrong_behavior",
+      "detail": "expected status 7 stdout ''; got status 0 stdout ''",
+      "source": "int main(void) {\n    int v0 = 54;\n    int v1 = ((49 ? 49 : 46) >= (v0 && v0));\n    int result = (((17 || 49) - (30 % 1)) - ((54 ? v1 : 45) ? (v0 - 60) : (v0 ? v1 : v1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 12,
+      "kind": "wrong_behavior",
+      "detail": "expected status 32 stdout ''; got status 37 stdout ''",
+      "source": "int main(void) {\n    int v0 = ((12 + 9) ? (28 || 47) : (43 && 45));\n    int v1 = ((v0 && v0) ? (v0 ? 7 : v0) : 31);\n    int v2 = ((45 % 13) * (9 - 16));\n    int v3 = ((v2 && v2) <= (-v2));\n    int result = (((59 <= 52) - (v3 ? 5 : v1)) - ((v2 || v3) * (-37)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 19,
+      "kind": "wrong_behavior",
+      "detail": "expected status 63 stdout ''; got status 44 stdout ''",
+      "source": "int main(void) {\n    int v0 = (!(5 > 3));\n    int v1 = (~(28 ? 3 : v0));\n    int result = (((v1 ? 43 : v0) + (v1 ? 24 : 59)) + v1);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 38,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    int v0 = ((~60) - (35 ? 43 : 55));\n    int v1 = v0;\n    int result = (!((-v0) || (v0 ? 25 : v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 42,
+      "kind": "wrong_behavior",
+      "detail": "expected status 248 stdout ''; got status 245 stdout ''",
+      "source": "int main(void) {\n    int v0 = (-(19 / 6));\n    int v1 = ((v0 % 10) && (v0 / 19));\n    int result = (((v0 ? v0 : 7) && (22 && v1)) + ((50 - v1) ? (22 ? v0 : v1) : (!37)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 64,
+      "kind": "wrong_behavior",
+      "detail": "expected status 47 stdout ''; got status 8 stdout ''",
+      "source": "int main(void) {\n    int v0 = (~(!40));\n    int v1 = v0;\n    int v2 = ((12 > 37) ? (~26) : (-v0));\n    int v3 = ((45 > 20) ? (~v2) : v1);\n    int result = (((38 != v0) ? 49 : (14 ? 14 : 57)) - ((0 ? v3 : 10) % 8));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 82,
+      "kind": "wrong_behavior",
+      "detail": "expected status 106 stdout ''; got status 68 stdout ''",
+      "source": "int main(void) {\n    int v0 = ((0 && 18) ? (60 || 45) : (0 ? 4 : 55));\n    int result = ((31 * (21 / 6)) + ((v0 ? v0 : 28) * (48 ? v0 : v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    }
+  ]
+}

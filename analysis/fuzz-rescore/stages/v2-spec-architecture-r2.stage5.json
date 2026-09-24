@@ -1,0 +1,42 @@
+{
+  "checked": 100,
+  "skipped": 0,
+  "mismatches": [
+    {
+      "index": 14,
+      "kind": "wrong_behavior",
+      "detail": "expected status 1 stdout ''; got status 0 stdout ''",
+      "source": "int main(void) {\n    int v0 = (26 / 3);\n    int v1 = (v0 - (v0 + v0));\n    int result = (!((!24) < v1));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 20,
+      "kind": "wrong_behavior",
+      "detail": "expected status 1 stdout ''; got status 0 stdout ''",
+      "source": "int main(void) {\n    int v0 = (~(~15));\n    int v1 = ((v0 % 4) >= (-v0));\n    int result = (((v0 / 6) % 7) && ((7 - v0) < (!v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 31,
+      "kind": "wrong_behavior",
+      "detail": "expected status 1 stdout ''; got status 0 stdout ''",
+      "source": "int main(void) {\n    int v0 = ((~48) <= (39 % 3));\n    int v1 = v0;\n    int v2 = ((v0 <= v1) || (!v0));\n    int v3 = ((-7) > (24 != v2));\n    int result = ((7 && (15 && v2)) == ((!v3) || v1));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 36,
+      "kind": "wrong_behavior",
+      "detail": "expected status 244 stdout ''; got status 245 stdout ''",
+      "source": "int main(void) {\n    int v0 = ((21 / 15) + (25 && 23));\n    int v1 = ((v0 && 3) < (!v0));\n    int v2 = (7 / 2);\n    int result = (((-57) > (51 % 17)) - ((59 % 13) * (35 && v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 83,
+      "kind": "wrong_behavior",
+      "detail": "expected status 7 stdout ''; got status 6 stdout ''",
+      "source": "int main(void) {\n    int v0 = ((-5) - (!6));\n    int result = (((53 >= 2) + (-v0)) + ((5 * v0) <= 1));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 90,
+      "kind": "wrong_behavior",
+      "detail": "expected status 250 stdout ''; got status 0 stdout ''",
+      "source": "int main(void) {\n    int v0 = ((21 && 21) + (0 >= 28));\n    int result = (-((35 / 15) >= (-7)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    }
+  ]
+}

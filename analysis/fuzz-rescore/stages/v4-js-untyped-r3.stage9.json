@@ -1,0 +1,12 @@
+{
+  "checked": 100,
+  "skipped": 0,
+  "mismatches": [
+    {
+      "index": 7,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 250 stdout ''",
+      "source": "int f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 4 * p1 + 2 * p2 + 5 * p3 + 4 * p4 + 1 * p5 + 4 * p6 + 4 * p7;\n}\n\nint main(void) {\n    int cf0 = f0((27 > 31), (54 - 34), (!60), 5, 1, (7 || 37), (43 ? 19 : 46), 37);\n    int v0 = (27 <= (27 % 14));\n    int v1 = (-cf0);\n    int result = (-((v1 ? 54 : cf0) && (cf0 + v1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    }
+  ]
+}

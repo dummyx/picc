@@ -1,0 +1,54 @@
+{
+  "checked": 100,
+  "skipped": 0,
+  "mismatches": [
+    {
+      "index": 2,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int g0 = 29;\nint g1 = 39;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 3 * p1 + 5 * p2 + 4 * p3 + 1 * p4 + 5 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 1 * p0 + 4 * p1 + 3 * p2 + 1 * p3 + 5 * p4 + 3 * p5;\n}\n\nint f2(int p0, int p1, int p2) {\n    return 3 * p0 + 2 * p1 + 3 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((59 <= 10), 2, (g0 >= g0), (24 || g0), 27, 40);\n    int cf1 = f1(18, (g0 != g1), (!g0), (cf0 ? 18 : g1), (g0 % 15), 31);\n    int cf2 = f2((g0 < cf1), (-0), (g0 || 58));\n    int v0 = (-(g1 && cf1));\n    int acc = (-20);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = ((~g1) >= ((59 ? acc : 51) * (v0 && cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 10,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int g0 = 48;\n\nint f0(int p0, int p1) {\n    return 1 * p0 + 4 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 5 * p0 + 4 * p1 + 5 * p2 + 3 * p3 + 1 * p4 + 4 * p5;\n}\n\nint f2(int p0) {\n    return 3 * p0;\n}\n\nint main(void) {\n    int cf0 = f0(38, (g0 || g0));\n    int cf1 = f1((11 && 23), 34, 20, (0 % 18), 13, (g0 || 51));\n    int cf2 = f2(36);\n    int v0 = (cf1 < (~36));\n    int v1 = ((g0 * cf2) ? (cf2 ? 42 : cf2) : (g0 != cf0));\n    int v2 = (cf1 ? (~39) : (20 * cf1));\n    int acc = (cf0 || 39);\n    int i = 0;\n    while (i < 8) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (!((33 / 17) - (28 ? cf2 : v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 29,
+      "kind": "wrong_behavior",
+      "detail": "expected status 25 stdout ''; got status 24 stdout ''",
+      "source": "int g0 = 54;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 1 * p1 + 2 * p2 + 3 * p3 + 1 * p4 + 5 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 3 * p0 + 1 * p1 + 3 * p2 + 2 * p3 + 1 * p4 + 1 * p5 + 5 * p6 + 5 * p7;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 4 * p1 + 2 * p2 + 1 * p3 + 3 * p4 + 1 * p5 + 4 * p6;\n}\n\nint main(void) {\n    int cf0 = f0(29, 11, 21, 40, 27, 35);\n    int cf1 = f1(4, 30, 22, (g0 ? 14 : 36), (14 && cf0), (cf0 || 55), (3 == cf0), (17 || 41));\n    int cf2 = f2((30 % 15), (34 >= cf0), 15, 32, (20 <= g0), 34, (35 > 35));\n    int v0 = (~(cf1 <= cf2));\n    int v1 = (!(cf2 > 47));\n    int v2 = ((30 || g0) / 2);\n    int v3 = (cf2 ? (cf2 - 32) : (36 ? 27 : 14));\n    int result = (((g0 % 1) ? (v0 / 17) : 26) - ((v3 - 45) <= (v3 ? cf1 : g0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 40,
+      "kind": "wrong_behavior",
+      "detail": "expected status 1 stdout ''; got status 0 stdout ''",
+      "source": "int g0 = 58;\nint g1 = 5;\n\nint f0(int p0) {\n    return 5 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((55 != g1));\n    int v0 = 24;\n    int result = ((45 == (52 <= 22)) || ((~24) - (g0 ? cf0 : 7)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 58,
+      "kind": "wrong_behavior",
+      "detail": "expected status 1 stdout ''; got status 0 stdout ''",
+      "source": "int g0 = 35;\n\nint f0(int p0, int p1, int p2) {\n    return 1 * p0 + 4 * p1 + 5 * p2;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 1 * p0 + 2 * p1 + 2 * p2 + 5 * p3 + 2 * p4 + 1 * p5;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 4 * p0 + 3 * p1 + 3 * p2 + 2 * p3 + 3 * p4 + 4 * p5 + 4 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((25 / 3), 33, (g0 || g0));\n    int cf1 = f1(16, 32, (22 % 17), (g0 && 23), (30 * 1), 13);\n    int cf2 = f2(20, (43 / 20), 22, (cf0 || 30), (g0 > 17), (39 ? 40 : g0), (32 / 8));\n    int v0 = ((cf0 * g0) <= (cf1 * cf0));\n    int v1 = ((cf0 / 4) || g0);\n    int v2 = cf0;\n    int acc = (52 && 32);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((acc * cf2) || (53 ? v0 : 16)) && ((!45) != (g0 ? v0 : cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 59,
+      "kind": "wrong_behavior",
+      "detail": "expected status 11 stdout ''; got status 140 stdout ''",
+      "source": "int g0 = 50;\nint g1 = 50;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 3 * p1 + 5 * p2 + 3 * p3 + 5 * p4 + 1 * p5 + 4 * p6;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 2 * p1 + 1 * p2 + 3 * p3 + 1 * p4;\n}\n\nint f2(int p0, int p1, int p2, int p3) {\n    return 3 * p0 + 2 * p1 + 2 * p2 + 3 * p3;\n}\n\nint main(void) {\n    int cf0 = f0((g0 % 3), (13 >= 22), (55 <= 47), 18, 18, (g0 ? 22 : g1), 8);\n    int cf1 = f1((g0 || 5), (41 > g1), (g0 >= 8), 16, (11 % 2));\n    int cf2 = f2((15 >= cf0), (cf1 % 20), (17 % 8), 33);\n    int v0 = ((cf1 && cf1) + g1);\n    int v1 = ((26 % 7) ? 56 : (~cf2));\n    int acc = (v1 ? 16 : cf2);\n    int i = 0;\n    while (i < 5) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((v0 ? 49 : v0) < (cf0 ? cf0 : i)) ? (50 - (cf0 ? 39 : 33)) : ((32 - 13) * (52 - 5)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 64,
+      "kind": "wrong_behavior",
+      "detail": "expected status 190 stdout ''; got status 170 stdout ''",
+      "source": "int g0 = 7;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 4 * p0 + 5 * p1 + 5 * p2 + 5 * p3 + 4 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((21 && g0), (g0 ? g0 : g0), (13 < 10), 3, (g0 <= g0));\n    int v0 = g0;\n    int v1 = (g0 - (~40));\n    int acc = (53 ? cf0 : cf0);\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (((47 == 34) && (!37)) - acc);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 82,
+      "kind": "wrong_behavior",
+      "detail": "expected status 124 stdout ''; got status 31 stdout ''",
+      "source": "int g0 = 32;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 5 * p1 + 4 * p2 + 4 * p3 + 4 * p4 + 5 * p5 + 3 * p6 + 2 * p7;\n}\n\nint f1(int p0) {\n    return 2 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((g0 ? 39 : 29), (52 >= 35), (g0 && 31), (52 == 40), (23 - 22), (20 ? 23 : g0), (15 || 6), (g0 / 13));\n    int cf1 = f1((33 && g0));\n    int v0 = 0;\n    int v1 = ((47 >= g0) / 3);\n    int v2 = (19 ? (43 / 4) : 52);\n    int acc = cf1;\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (((~v1) * (13 * cf0)) / 10);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    }
+  ]
+}

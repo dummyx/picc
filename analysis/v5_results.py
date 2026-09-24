@@ -3,8 +3,10 @@
 
 Reads the v5 runs under runs/ and, if present, the bridge re-score of the v3
 finals (produced by rebuilding each v3 final and running the revised study
-evaluator and the in-harness fuzz oracle on it). Writes analysis/v5-results.md,
-analysis/v5-results.json, and a compact analysis/v3-bridge.json. Read-only.
+evaluator and the in-harness fuzz oracle on it; kept in analysis/v3-bridge/).
+Writes analysis/v5-results.md, analysis/v5-results.json, and the v3 entries of
+the compact analysis/v3-bridge.json (its v4 entries were added separately and
+are kept). Read-only otherwise.
 
 Usage:
     python3 analysis/v5_results.py [--bridge-dir DIR]
@@ -14,11 +16,11 @@ import statistics
 from collections import Counter
 from pathlib import Path
 
-REPO = Path("/home/xie/picc")
+REPO = Path(__file__).resolve().parent.parent
 import argparse
 import sys
-BRIDGE = Path("/tmp/claude-1003/-home-xie-picc/8b7aadf0-3d32-4755-86ac-4fecb9f08861/scratchpad/bridge")
 OUT = REPO / "analysis"
+BRIDGE = OUT / "v3-bridge"
 IDS = [f"v5-{cond}-r{rep}" for rep in (1, 2, 3, 4) for cond in ("baseline", "tests-none")]
 THRESHOLD = 0.13
 
@@ -134,7 +136,10 @@ def report_rows() -> list:
         if deltas:
             print(f"  v3 {label}: paired deltas {[round(d, 4) for d in deltas]} median {statistics.median(deltas):+.4f}")
     if v3:
-        compact = {}
+        # The v4 finals' entries were re-scored and added by hand (the v4
+        # typing re-score); keep whatever this script does not compute.
+        existing = OUT / "v3-bridge.json"
+        compact = json.loads(existing.read_text(encoding="utf-8")) if existing.is_file() else {}
         for rid, (old, new, fz) in v3.items():
             stages = None
             fp = BRIDGE / f"{rid}.fuzz.json"

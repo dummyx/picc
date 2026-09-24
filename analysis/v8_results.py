@@ -21,7 +21,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-REPO = Path("/home/xie/picc")
+REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "analysis"
 sys.path.insert(0, str(OUT))
 import dimensions  # noqa: E402

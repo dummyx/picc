@@ -23,9 +23,9 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-REPO = Path("/home/xie/picc")
+REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "analysis"
-RESCORE = Path("/tmp/claude-1003/-home-xie-picc/8b7aadf0-3d32-4755-86ac-4fecb9f08861/scratchpad/v6-rescore")
+RESCORE = OUT / "v6-rescore"
 sys.path.insert(0, str(OUT))
 import dimensions  # noqa: E402  (analysis/dimensions.py: tokens, time, code shape)
 
@@ -202,7 +202,9 @@ def main() -> None:
     compact = {r["run_id"]: {"hidden_frozen": r["hidden"], "hidden_rescored": r["hidden_rescored"], "fuzz_frozen": r["fuzz"],
                              "fuzz_rescored": r["fuzz_rescored"], "fuzz_rescored_stages": r["fuzz_rescored_stages"],
                              "rescore_audit": r["rescore_audit"]} for r in rows}
-    if compact:
+    # Only when the re-score was found: without it every value is null, and the
+    # committed file is what the dashboard and the report read.
+    if any(v["hidden_rescored"] is not None or v["fuzz_rescored"] is not None for v in compact.values()):
         (OUT / "v6-rescore.json").write_text(json.dumps(compact, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 

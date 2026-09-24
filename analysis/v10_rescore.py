@@ -30,16 +30,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "analysis" / "v10-rescore"
+# Today's evaluate_run.py needs today's common.py beside it: an older
+# materialization's common.py lacks what it imports.
 CORRECTED = {
     "evaluator/evaluate.py": "studies/runtime/sql/evaluate.py",
     "evaluator/sqllogictest.py": "studies/runtime/sql/sqllogictest.py",
     "evaluator/candidate_runtime.py": "studies/runtime/candidate_runtime.py",
     "scripts/evaluate_run.py": "scripts/evaluate_run.py",
+    "scripts/common.py": "scripts/common.py",
 }
 COMPILER_CORRECTED = {
     "evaluator/evaluate.py": "studies/runtime/evaluate.py",
     "evaluator/candidate_runtime.py": "studies/runtime/candidate_runtime.py",
     "scripts/evaluate_run.py": "scripts/evaluate_run.py",
+    "scripts/common.py": "scripts/common.py",
 }
 
 

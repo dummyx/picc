@@ -1,0 +1,132 @@
+{
+  "checked": 100,
+  "skipped": 0,
+  "mismatches": [
+    {
+      "index": 0,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 232 stdout ''",
+      "source": "int main(void) {\n    return ((((!((43 % 4) - (30 * 29)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 1,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    return (((((!(24 % 20)) % 16)) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 2,
+      "kind": "wrong_behavior",
+      "detail": "expected status 250 stdout ''; got status 249 stdout ''",
+      "source": "int main(void) {\n    return ((((~((!57) * (!46)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 6,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    return ((((!2)) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 8,
+      "kind": "wrong_behavior",
+      "detail": "expected status 59 stdout ''; got status 58 stdout ''",
+      "source": "int main(void) {\n    return ((((((!24) % 1) - ((!48) + (~58)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 12,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 247 stdout ''",
+      "source": "int main(void) {\n    return ((((!(~28))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 21,
+      "kind": "wrong_behavior",
+      "detail": "expected status 26 stdout ''; got status 25 stdout ''",
+      "source": "int main(void) {\n    return ((((((-48) * 57) - (-(!0)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 31,
+      "kind": "wrong_behavior",
+      "detail": "expected status 100 stdout ''; got status 99 stdout ''",
+      "source": "int main(void) {\n    return ((((-((!38) - (52 + 48)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 40,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 36 stdout ''",
+      "source": "int main(void) {\n    return ((((!((6 % 9) + (31 * 60)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 48,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 236 stdout ''",
+      "source": "int main(void) {\n    return (((((!(26 - 32)) / 16)) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 49,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    return ((((!((41 * 39) / 7))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 50,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 245 stdout ''",
+      "source": "int main(void) {\n    return (((((-(38 - 32)) * ((!45) / 1))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 56,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 120 stdout ''",
+      "source": "int main(void) {\n    return (((((!21) * ((54 * 40) * 14))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 57,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    return (((((!(6 + 13)) % 3)) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 61,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 247 stdout ''",
+      "source": "int main(void) {\n    return ((((!(55 - 56))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 63,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    return ((((!53)) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 64,
+      "kind": "wrong_behavior",
+      "detail": "expected status 1 stdout ''; got status 2 stdout ''",
+      "source": "int main(void) {\n    return ((((-(~(!34)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 70,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    return ((((!((11 % 20) + (15 * 10)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 75,
+      "kind": "wrong_behavior",
+      "detail": "expected status 54 stdout ''; got status 53 stdout ''",
+      "source": "int main(void) {\n    return (((((60 + 0) - ((6 + 0) + (!42)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 82,
+      "kind": "wrong_behavior",
+      "detail": "expected status 0 stdout ''; got status 1 stdout ''",
+      "source": "int main(void) {\n    return ((((!((40 / 19) - (-19)))) % 251) + 251) % 251;\n}\n"
+    },
+    {
+      "index": 95,
+      "kind": "wrong_behavior",
+      "detail": "expected status 1 stdout ''; got status 16 stdout ''",
+      "source": "int main(void) {\n    return ((((!(!(33 * 24)))) % 251) + 251) % 251;\n}\n"
+    }
+  ]
+}

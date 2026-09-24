@@ -1,0 +1,606 @@
+{
+  "checked": 0,
+  "skipped": 0,
+  "mismatches": [
+    {
+      "index": 0,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:98: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:99: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:114: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:134: Error: incorrect register `%rdi' used with `",
+      "source": "int g0 = 8;\nint g1 = 4;\n\nint f0(int p0, int p1) {\n    return 3 * p0 + 5 * p1;\n}\n\nint f1(int p0) {\n    return 2 * p0;\n}\n\nint f2(int p0, int p1) {\n    return 4 * p0 + 3 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((g1 ? 22 : g1), 5);\n    int cf1 = f1((cf0 == g0));\n    int cf2 = f2(13, (1 || 0));\n    int v0 = ((13 ? g1 : g1) * (40 ? 41 : 41));\n    int v1 = cf1;\n    int acc = 33;\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = ((!(60 || cf0)) == (v0 || (-i)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 1,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:149: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:150: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:151: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:152: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 54;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 4 * p1 + 3 * p2 + 4 * p3 + 3 * p4 + 1 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 1 * p0 + 2 * p1 + 5 * p2 + 2 * p3;\n}\n\nint main(void) {\n    int cf0 = f0(0, 27, 28, (52 || g0), (!g0), (!g0));\n    int cf1 = f1(8, (22 && 18), (g0 % 2), (cf0 / 11));\n    int v0 = ((cf1 % 15) / 15);\n    int v1 = ((-19) || (7 ? 57 : cf0));\n    int result = ((g0 ? (4 ? 3 : 13) : (52 < cf1)) + 29);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 2,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:211: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:212: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:213: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:214: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 29;\nint g1 = 39;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 3 * p1 + 5 * p2 + 4 * p3 + 1 * p4 + 5 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 1 * p0 + 4 * p1 + 3 * p2 + 1 * p3 + 5 * p4 + 3 * p5;\n}\n\nint f2(int p0, int p1, int p2) {\n    return 3 * p0 + 2 * p1 + 3 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((59 <= 10), 2, (g0 >= g0), (24 || g0), 27, 40);\n    int cf1 = f1(18, (g0 != g1), (!g0), (cf0 ? 18 : g1), (g0 % 15), 31);\n    int cf2 = f2((g0 < cf1), (-0), (g0 || 58));\n    int v0 = (-(g1 && cf1));\n    int acc = (-20);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = ((~g1) >= ((59 ? acc : 51) * (v0 && cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 3,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:110: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:111: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:112: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:113: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 12;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 5 * p0 + 4 * p1 + 4 * p2 + 5 * p3 + 4 * p4 + 1 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((30 >= g0), (21 / 20), (10 < 29), (33 ? g0 : g0), g0, 19);\n    int v0 = ((28 && 47) ? (18 - cf0) : 50);\n    int v1 = ((g0 || v0) >= (14 / 15));\n    int v2 = ((!60) + (cf0 * 17));\n    int v3 = (19 - (~14));\n    int result = v1;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 4,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:151: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:152: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:153: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:154: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 9;\nint g1 = 57;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 4 * p0 + 3 * p1 + 2 * p2 + 3 * p3;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 3 * p1 + 2 * p2 + 4 * p3 + 1 * p4 + 5 * p5;\n}\n\nint main(void) {\n    int cf0 = f0(5, (g1 != g0), (g1 || 10), (48 < 36));\n    int cf1 = f1((27 >= 58), 40, (cf0 - 23), (5 && g1), (28 ? 4 : 35), 36);\n    int v0 = ((5 ? cf0 : 1) * (13 ? 43 : 33));\n    int v1 = ((~28) || (22 <= cf0));\n    int v2 = ((3 == v1) && (!g0));\n    int acc = (20 ? v2 : v0);\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = (((50 / 19) && (g0 || 46)) == ((cf1 % 19) && i));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 5,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:105: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:106: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:146: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:147: Error: incorrect register `%rsi' used with",
+      "source": "int g0 = 36;\n\nint f0(int p0, int p1) {\n    return 4 * p0 + 1 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 3 * p0 + 2 * p1 + 4 * p2 + 1 * p3;\n}\n\nint main(void) {\n    int cf0 = f0((6 || 8), (g0 != 9));\n    int cf1 = f1(16, (37 >= 2), (32 || 59), (g0 && 28));\n    int v0 = ((cf0 + 45) ? (12 ? 6 : 35) : (cf1 - cf1));\n    int v1 = (~(9 ? 7 : 12));\n    int v2 = (~(cf0 / 19));\n    int result = (((cf1 != g0) && (-42)) < (~(5 ? v1 : 49)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 6,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:61: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:62: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:63: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 57;\nint g1 = 10;\n\nint f0(int p0, int p1, int p2) {\n    return 4 * p0 + 3 * p1 + 4 * p2;\n}\n\nint main(void) {\n    int cf0 = f0(15, (!52), (35 - 0));\n    int v0 = ((6 / 2) ? 30 : (!cf0));\n    int v1 = ((g0 * v0) ? (28 * 30) : (~g0));\n    int result = ((~(cf0 == v0)) % 19);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 7,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:178: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:179: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:180: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 45;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 5 * p0 + 5 * p1 + 1 * p2 + 1 * p3 + 2 * p4 + 4 * p5 + 4 * p6;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 3 * p0 + 2 * p1 + 5 * p2 + 5 * p3 + 3 * p4 + 4 * p5;\n}\n\nint main(void) {\n    int cf0 = f0(38, 12, (g0 >= g0), 10, 25, (10 % 17), (!43));\n    int cf1 = f1((50 && 25), 35, (4 ? 33 : 50), (26 >= cf0), 10, (32 && 59));\n    int v0 = ((51 ? 17 : cf0) % 3);\n    int result = (((13 % 11) * (cf0 - 59)) * ((43 ? 25 : 59) * (24 > cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 8,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:60: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:61: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:62: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 20;\nint g1 = 3;\n\nint f0(int p0, int p1, int p2) {\n    return 3 * p0 + 5 * p1 + 5 * p2;\n}\n\nint main(void) {\n    int cf0 = f0(7, 20, (48 == g0));\n    int v0 = ((g0 < 19) % 16);\n    int v1 = 49;\n    int acc = (60 ? 52 : 5);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = i;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 9,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:178: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:179: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 23;\nint g1 = 35;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 3 * p0 + 3 * p1 + 4 * p2 + 4 * p3 + 3 * p4 + 2 * p5 + 3 * p6 + 4 * p7;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 2 * p0 + 1 * p1 + 3 * p2;\n}\n\nint f2(int p0) {\n    return 2 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((g0 % 5), 21, 38, g0, g0, (30 > 29), 29, 1);\n    int cf1 = f1((38 || g0), 40, 2);\n    int cf2 = f2((40 || g1));\n    int v0 = (40 + (5 - 24));\n    int v1 = ((cf2 % 8) - (~40));\n    int v2 = (-(51 < 55));\n    int acc = (v2 ? g0 : g0);\n    int i = 0;\n    while (i < 4) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (!((g1 ? g1 : v2) && (cf1 < v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 10,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:137: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:138: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:182: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:183: Error: incorrect register `%rsi' used with",
+      "source": "int g0 = 48;\n\nint f0(int p0, int p1) {\n    return 1 * p0 + 4 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 5 * p0 + 4 * p1 + 5 * p2 + 3 * p3 + 1 * p4 + 4 * p5;\n}\n\nint f2(int p0) {\n    return 3 * p0;\n}\n\nint main(void) {\n    int cf0 = f0(38, (g0 || g0));\n    int cf1 = f1((11 && 23), 34, 20, (0 % 18), 13, (g0 || 51));\n    int cf2 = f2(36);\n    int v0 = (cf1 < (~36));\n    int v1 = ((g0 * cf2) ? (cf2 ? 42 : cf2) : (g0 != cf0));\n    int v2 = (cf1 ? (~39) : (20 * cf1));\n    int acc = (cf0 || 39);\n    int i = 0;\n    while (i < 8) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (!((33 / 17) - (28 ? cf2 : v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 11,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:113: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:114: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:115: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:116: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 27;\nint g1 = 8;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 5 * p1 + 2 * p2 + 4 * p3 + 1 * p4 + 1 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((g1 || 43), 14, 33, (g1 || g0), g0, (16 ? 23 : g0));\n    int v0 = ((18 % 6) ? (41 * g0) : (24 == cf0));\n    int v1 = (g1 && (-58));\n    int acc = (v0 == g1);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (~((33 * 54) ? 24 : (47 ? 29 : 53)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 12,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:159: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:160: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:161: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:162: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 3;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 1 * p0 + 1 * p1 + 5 * p2 + 2 * p3 + 1 * p4 + 3 * p5;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 4 * p0 + 2 * p1 + 1 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((55 - 30), (33 ? 39 : 52), (41 < 11), (g0 ? 27 : 32), (7 + g0), (21 ? 12 : 2));\n    int cf1 = f1(13, g0, (14 || cf0));\n    int v0 = g0;\n    int v1 = 26;\n    int acc = (22 && 18);\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = cf1;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 13,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:113: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:114: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:115: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:116: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 45;\nint g1 = 9;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 2 * p0 + 4 * p1 + 5 * p2 + 3 * p3;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 4 * p0 + 5 * p1 + 1 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((6 != 47), (39 / 15), 11, g1);\n    int cf1 = f1(36, (1 / 19), (25 ? g1 : g0));\n    int v0 = (35 % 15);\n    int v1 = ((g0 && 30) || (g1 != 39));\n    int acc = (~58);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (((37 + 3) * (g1 / 20)) ? v0 : (-(29 * cf1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 14,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:85: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:86: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:87: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:88: Error: incorrect register `%rcx' used with `l'",
+      "source": "int g0 = 59;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 1 * p1 + 5 * p2 + 3 * p3 + 1 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((!39), 12, (!g0), 16, (!35));\n    int v0 = cf0;\n    int v1 = (~v0);\n    int v2 = ((cf0 < v1) >= (55 < g0));\n    int result = (((v0 + v2) + (50 && 33)) - (-(~v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 15,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:154: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:155: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:156: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:157: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 45;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 3 * p1 + 3 * p2 + 4 * p3 + 2 * p4;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 1 * p0 + 3 * p1 + 5 * p2 + 3 * p3;\n}\n\nint f2(int p0) {\n    return 1 * p0;\n}\n\nint main(void) {\n    int cf0 = f0(12, (49 / 4), 31, (g0 == 58), 35);\n    int cf1 = f1(30, (g0 / 17), 15, 24);\n    int cf2 = f2(38);\n    int v0 = (~(21 - g0));\n    int v1 = 0;\n    int acc = (7 / 9);\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = ((~v1) + acc);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 16,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:62: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:63: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:159: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:160: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 32;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 5 * p1 + 5 * p2 + 5 * p3;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 1 * p0 + 5 * p1 + 1 * p2 + 4 * p3 + 5 * p4 + 5 * p5 + 2 * p6 + 5 * p7;\n}\n\nint main(void) {\n    int cf0 = f0(18, 19, (g0 % 12), (g0 % 13));\n    int cf1 = f1(21, (cf0 ? 34 : 10), 17, (26 / 5), (0 <= 38), (g0 > g0), 26, (!33));\n    int v0 = (cf0 / 8);\n    int result = (((-31) ? (49 / 3) : (v0 + cf0)) && ((4 == 42) ? g0 : 20));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 17,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:66: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:67: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:68: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 25;\n\nint f0(int p0, int p1, int p2) {\n    return 5 * p0 + 3 * p1 + 1 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((g0 < 52), (18 > 53), 34);\n    int v0 = ((g0 - 44) / 11);\n    int v1 = (~32);\n    int v2 = (!(g0 ? cf0 : g0));\n    int v3 = ((~v2) || (v1 && 32));\n    int result = (((g0 <= g0) % 9) + ((41 + 56) % 16));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 18,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:48: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:49: Error: incorrect register `%rsi' used with `l' suffix\n",
+      "source": "int g0 = 34;\n\nint f0(int p0, int p1) {\n    return 4 * p0 + 5 * p1;\n}\n\nint main(void) {\n    int cf0 = f0(1, (0 % 12));\n    int v0 = ((-54) % 14);\n    int v1 = ((g0 > 3) ? 29 : 45);\n    int v2 = (g0 > (26 ? 55 : g0));\n    int acc = (22 && 41);\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((v0 % 7) ? 29 : (43 || 12)) ? ((15 || v0) <= (39 > v2)) : ((v1 / 8) || (acc >= 1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 19,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:195: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:196: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 48;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 5 * p0 + 2 * p1 + 3 * p2 + 1 * p3 + 3 * p4 + 4 * p5 + 5 * p6 + 4 * p7;\n}\n\nint f1(int p0) {\n    return 3 * p0;\n}\n\nint f2(int p0, int p1, int p2) {\n    return 4 * p0 + 2 * p1 + 2 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((!g0), (!15), 24, (g0 ? 0 : 14), 21, (g0 && 3), 17, (g0 % 7));\n    int cf1 = f1(16);\n    int cf2 = f2((cf0 < cf1), (22 || g0), (37 || cf0));\n    int v0 = ((58 % 2) ? (59 || 36) : (!26));\n    int v1 = ((cf2 > 10) ? (27 - 29) : (25 ? g0 : v0));\n    int v2 = (-(v0 ? cf0 : 29));\n    int v3 = 2;\n    int result = ((~60) && 6);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 20,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:98: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:99: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:214: Error: incorrect",
+      "source": "int g0 = 58;\nint g1 = 18;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 1 * p0 + 5 * p1 + 2 * p2 + 2 * p3 + 3 * p4 + 2 * p5 + 4 * p6 + 5 * p7;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 5 * p0 + 1 * p1 + 5 * p2 + 3 * p3 + 2 * p4 + 5 * p5 + 3 * p6 + 2 * p7;\n}\n\nint main(void) {\n    int cf0 = f0(15, (40 % 9), (g1 < g1), 33, 36, 30, (g1 / 17), (g1 >= 23));\n    int cf1 = f1(32, (58 || g1), 33, 25, (g0 ? g1 : g0), 12, (11 && 44), (35 || 26));\n    int v0 = g1;\n    int v1 = ((4 * 6) >= 0);\n    int v2 = ((40 < cf1) || v0);\n    int acc = (cf0 ? cf1 : 43);\n    int i = 0;\n    while (i < 4) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (g1 >= ((3 >= 35) > (44 - g1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 21,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:44: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:118: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:190: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:191: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eo",
+      "source": "int g0 = 41;\n\nint f0(int p0, int p1) {\n    return 5 * p0 + 5 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 5 * p1 + 3 * p2 + 2 * p3 + 5 * p4 + 4 * p5 + 4 * p6;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 5 * p1 + 1 * p2 + 5 * p3 + 4 * p4 + 2 * p5 + 4 * p6;\n}\n\nint main(void) {\n    int cf0 = f0(14, 28);\n    int cf1 = f1(15, 34, (18 > 39), 2, 19, 5, 22);\n    int cf2 = f2((cf1 % 19), (g0 <= 46), 39, 14, 4, 4, 34);\n    int v0 = (-(6 || 13));\n    int v1 = ((g0 ? cf1 : cf1) * (cf2 > cf2));\n    int v2 = ((cf0 || 10) * (26 ? 16 : 60));\n    int result = (!(!(!v2)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 22,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:86: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:87: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:88: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:102: Error: incorrect register `%rdi' used with `l",
+      "source": "int g0 = 25;\nint g1 = 3;\n\nint f0(int p0, int p1, int p2) {\n    return 4 * p0 + 2 * p1 + 5 * p2;\n}\n\nint f1(int p0) {\n    return 4 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((29 < g1), 18, (g0 > 3));\n    int cf1 = f1((1 / 18));\n    int v0 = ((31 || 60) * (20 - cf0));\n    int v1 = ((v0 ? 53 : g1) ? (16 % 7) : (28 >= g1));\n    int v2 = (cf0 / 11);\n    int result = 21;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 23,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:188: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:189: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 29;\nint g1 = 39;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 1 * p0 + 1 * p1 + 4 * p2 + 1 * p3 + 2 * p4 + 3 * p5 + 4 * p6 + 5 * p7;\n}\n\nint f1(int p0, int p1) {\n    return 3 * p0 + 5 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((g0 && 0), 23, (11 && g1), (4 || 55), (16 ? 11 : 35), 14, (g0 || g0), (42 - g1));\n    int cf1 = f1(g0, (13 != g1));\n    int v0 = ((!36) != (37 >= cf1));\n    int v1 = (~(-g0));\n    int v2 = ((6 == g1) % 15);\n    int acc = 60;\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (33 / 11);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 24,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:100: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:192: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:193: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:194: Error: incorrect register `%rdx' used with `l' suffix\n/tm",
+      "source": "int g0 = 43;\nint g1 = 19;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 2 * p0 + 1 * p1 + 3 * p2 + 3 * p3;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 5 * p0 + 2 * p1 + 1 * p2;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 3 * p0 + 3 * p1 + 1 * p2 + 1 * p3 + 1 * p4 + 3 * p5 + 1 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((10 ? g1 : 33), (!g0), (g0 != 17), 38);\n    int cf1 = f1((cf0 / 6), (g1 && g0), (g1 && 49));\n    int cf2 = f2((44 ? g1 : cf0), 24, 6, (29 / 13), 28, 1, 27);\n    int v0 = ((cf0 != 30) * (19 < cf2));\n    int result = ((~(28 % 9)) % 4);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 25,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:105: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:106: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:135: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:136: Error: incorrect register `%rsi' used with",
+      "source": "int g0 = 3;\n\nint f0(int p0, int p1) {\n    return 4 * p0 + 5 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4) {\n    return 4 * p0 + 4 * p1 + 1 * p2 + 4 * p3 + 1 * p4;\n}\n\nint main(void) {\n    int cf0 = f0(22, (60 ? 37 : 18));\n    int cf1 = f1(35, (g0 % 14), 17, (cf0 != 25), 21);\n    int v0 = ((cf1 % 11) && (cf1 >= cf0));\n    int v1 = (47 % 5);\n    int v2 = (~(cf1 % 3));\n    int v3 = ((27 && 44) * (46 && cf0));\n    int acc = v0;\n    int i = 0;\n    while (i < 5) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = (((12 % 16) ? (30 * 37) : (14 * cf1)) ? ((33 + 52) != 24) : ((v1 + 53) / 12));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 26,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:83: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:84: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:94: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:95: Error: incorrect register `%rsi' used with `l'",
+      "source": "int g0 = 53;\nint g1 = 59;\n\nint f0(int p0, int p1) {\n    return 2 * p0 + 4 * p1;\n}\n\nint f1(int p0, int p1) {\n    return 3 * p0 + 5 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((g1 <= 49), (g1 < 8));\n    int cf1 = f1(0, 28);\n    int v0 = (g0 ? (60 < cf0) : (cf1 || 13));\n    int v1 = (!(46 ? 24 : cf0));\n    int acc = (21 && v0);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = ((38 % 6) ? ((30 % 1) - (12 >= v1)) : g1);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 27,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:62: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:63: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:209: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:210: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 50;\nint g1 = 52;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 3 * p1 + 2 * p2 + 5 * p3;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 4 * p1 + 1 * p2 + 5 * p3 + 1 * p4 + 2 * p5 + 4 * p6 + 5 * p7;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4) {\n    return 1 * p0 + 3 * p1 + 2 * p2 + 1 * p3 + 2 * p4;\n}\n\nint main(void) {\n    int cf0 = f0(0, (g0 >= g0), 10, 36);\n    int cf1 = f1((55 || g0), (g0 && g0), (!cf0), 33, (!g0), (cf0 != 53), 31, 9);\n    int cf2 = f2((5 % 8), 40, 20, 18, 26);\n    int v0 = (~(g1 * 33));\n    int v1 = ((59 ? cf0 : cf0) ? (g0 && v0) : (cf1 == cf0));\n    int v2 = (10 - (!v0));\n    int v3 = (~v1);\n    int result = ((~cf2) || (!(g0 || g1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 28,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:200: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:201: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 22;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 5 * p0 + 1 * p1 + 3 * p2 + 4 * p3 + 2 * p4 + 3 * p5 + 1 * p6 + 3 * p7;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 5 * p0 + 2 * p1 + 4 * p2;\n}\n\nint f2(int p0) {\n    return 5 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((14 && 55), (36 >= g0), g0, (1 ? 39 : g0), 18, g0, (g0 - g0), (g0 ? g0 : 60));\n    int cf1 = f1(g0, (54 ? 21 : 27), 4);\n    int cf2 = f2(40);\n    int v0 = (35 ? (!g0) : g0);\n    int result = cf2;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 29,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:80: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:81: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:163: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:243: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:244:",
+      "source": "int g0 = 54;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 1 * p1 + 2 * p2 + 3 * p3 + 1 * p4 + 5 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 3 * p0 + 1 * p1 + 3 * p2 + 2 * p3 + 1 * p4 + 1 * p5 + 5 * p6 + 5 * p7;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 4 * p1 + 2 * p2 + 1 * p3 + 3 * p4 + 1 * p5 + 4 * p6;\n}\n\nint main(void) {\n    int cf0 = f0(29, 11, 21, 40, 27, 35);\n    int cf1 = f1(4, 30, 22, (g0 ? 14 : 36), (14 && cf0), (cf0 || 55), (3 == cf0), (17 || 41));\n    int cf2 = f2((30 % 15), (34 >= cf0), 15, 32, (20 <= g0), 34, (35 > 35));\n    int v0 = (~(cf1 <= cf2));\n    int v1 = (!(cf2 > 47));\n    int v2 = ((30 || g0) / 2);\n    int v3 = (cf2 ? (cf2 - 32) : (36 ? 27 : 14));\n    int result = (((g0 % 1) ? (v0 / 17) : 26) - ((v3 - 45) <= (v3 ? cf1 : g0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 30,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:201: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:202: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:203: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:204: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 48;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 3 * p1 + 3 * p2 + 3 * p3 + 5 * p4;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 3 * p1 + 5 * p2 + 3 * p3 + 4 * p4;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 3 * p0 + 1 * p1 + 5 * p2 + 3 * p3 + 4 * p4 + 4 * p5;\n}\n\nint main(void) {\n    int cf0 = f0(28, 37, 37, 3, (g0 - g0));\n    int cf1 = f1(19, (g0 > cf0), (52 && cf0), (11 ? 24 : 18), 21);\n    int cf2 = f2(21, (cf0 <= 37), (!cf0), 20, (cf1 ? 29 : 7), (12 && 26));\n    int v0 = ((cf0 / 6) > cf2);\n    int v1 = (39 || (cf1 <= v0));\n    int v2 = (!v0);\n    int result = (((!25) >= (14 || cf2)) || ((v0 && 20) - 1));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 31,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:127: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:137: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:138: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:177: Error: incorrect register `%rdi' used with",
+      "source": "int g0 = 54;\n\nint f0(int p0) {\n    return 1 * p0;\n}\n\nint f1(int p0, int p1) {\n    return 3 * p0 + 3 * p1;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 3 * p1 + 5 * p2 + 1 * p3 + 2 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((37 && 51));\n    int cf1 = f1(6, 37);\n    int cf2 = f2((9 > cf0), cf0, (cf0 <= 50), 4, (5 && 17));\n    int v0 = ((cf2 + 50) * (10 && 56));\n    int v1 = ((45 > 16) / 10);\n    int result = (-((4 ? v0 : g0) < 2));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 32,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:190: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:191: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:192: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:193: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 5;\nint g1 = 54;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 5 * p0 + 1 * p1 + 1 * p2 + 1 * p3 + 4 * p4 + 4 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 5 * p0 + 3 * p1 + 1 * p2 + 3 * p3 + 3 * p4 + 3 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((g1 ? g0 : g0), (24 / 4), (4 <= g0), (g0 + 10), (g1 && g1), (g0 ? 3 : 15));\n    int cf1 = f1((g0 - g0), (cf0 || g1), (34 == cf0), (56 / 19), 35, 0);\n    int v0 = ((cf1 || 59) / 14);\n    int v1 = ((v0 >= 45) / 7);\n    int result = (!((22 ? cf0 : 36) ? (26 && 59) : (5 ? 12 : g1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 33,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:94: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:95: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:112: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:113: Error: incorrect register `%rsi' used with `",
+      "source": "int g0 = 8;\nint g1 = 6;\n\nint f0(int p0, int p1) {\n    return 2 * p0 + 1 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 4 * p1 + 4 * p2 + 4 * p3;\n}\n\nint main(void) {\n    int cf0 = f0(7, (29 / 9));\n    int cf1 = f1(35, (!20), 40, 36);\n    int v0 = ((g0 || g0) >= (-g0));\n    int v1 = ((cf0 == 39) - (26 && v0));\n    int v2 = (~(v1 || 58));\n    int v3 = ((35 * v2) / 5);\n    int result = (!(32 != (v3 && 56)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 34,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:154: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:155: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:156: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:157: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 12;\nint g1 = 6;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 4 * p0 + 1 * p1 + 5 * p2 + 5 * p3;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4) {\n    return 1 * p0 + 3 * p1 + 4 * p2 + 3 * p3 + 2 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((32 ? g1 : 50), (2 || 43), (g1 ? 7 : g1), (53 && 9));\n    int cf1 = f1((g1 || cf0), (g1 || 45), (26 % 1), (g0 / 9), (g0 ? 37 : 50));\n    int v0 = (-(18 - 3));\n    int result = (cf1 ? (~(41 ? g1 : g1)) : (0 > (10 || cf1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 35,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:48: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:49: Error: incorrect register `%rsi' used with `l' suffix\n",
+      "source": "int g0 = 21;\n\nint f0(int p0, int p1) {\n    return 3 * p0 + 2 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((30 < 49), 38);\n    int v0 = (-(cf0 - cf0));\n    int v1 = ((cf0 * v0) ? (g0 && v0) : (16 || v0));\n    int v2 = 57;\n    int v3 = ((48 - cf0) * 5);\n    int acc = (v1 < v3);\n    int i = 0;\n    while (i < 4) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((5 % 9) ? v3 : g0) || ((i ? 50 : 57) < 56));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 36,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:150: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:151: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 38;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 3 * p1 + 3 * p2 + 2 * p3 + 2 * p4 + 5 * p5 + 2 * p6 + 1 * p7;\n}\n\nint main(void) {\n    int cf0 = f0(9, (41 ? g0 : 20), (g0 / 20), (41 - 39), (56 && g0), 14, (40 && 36), (g0 % 5));\n    int v0 = ((cf0 ? 28 : 41) ? cf0 : (cf0 ? g0 : 24));\n    int v1 = ((!30) - (25 ? cf0 : cf0));\n    int v2 = ((v1 + 28) || (cf0 || 33));\n    int result = ((g0 <= (-cf0)) || 58);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 37,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:71: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:72: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:88: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:89: Error: incorrect register `%rsi' used with `l'",
+      "source": "int g0 = 39;\nint g1 = 27;\n\nint f0(int p0, int p1) {\n    return 5 * p0 + 5 * p1;\n}\n\nint f1(int p0, int p1) {\n    return 3 * p0 + 5 * p1;\n}\n\nint main(void) {\n    int cf0 = f0(0, 9);\n    int cf1 = f1(5, (1 % 13));\n    int v0 = (-(g0 ? cf0 : 49));\n    int v1 = ((g1 != g0) * (cf0 + g1));\n    int v2 = (~(v1 / 5));\n    int result = ((v2 ? 41 : (v2 <= v0)) / 4);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 38,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:102: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:132: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:133: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:134: Error: incorrect register `%rdx' used with",
+      "source": "int g0 = 52;\nint g1 = 11;\n\nint f0(int p0) {\n    return 5 * p0;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 3 * p0 + 4 * p1 + 3 * p2 + 2 * p3 + 5 * p4 + 5 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((21 / 12));\n    int cf1 = f1(g1, 12, (!40), (35 >= g1), 15, (!19));\n    int v0 = ((g0 % 14) - cf0);\n    int result = (23 * (~(g1 <= 18)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 39,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:100: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:101: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:190: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:191: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25e",
+      "source": "int g0 = 53;\n\nint f0(int p0, int p1, int p2) {\n    return 2 * p0 + 4 * p1 + 4 * p2;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 2 * p0 + 4 * p1 + 5 * p2 + 4 * p3;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 5 * p0 + 5 * p1 + 3 * p2 + 5 * p3 + 5 * p4 + 2 * p5 + 3 * p6 + 2 * p7;\n}\n\nint main(void) {\n    int cf0 = f0((g0 % 4), 12, 24);\n    int cf1 = f1((g0 - g0), 25, 36, (g0 - g0));\n    int cf2 = f2((cf1 && 48), 16, (43 && 59), 10, (21 && 6), (g0 / 12), (42 || 14), 7);\n    int v0 = cf1;\n    int v1 = cf0;\n    int v2 = ((11 + 2) >= (cf1 ? v1 : v0));\n    int result = (((2 ? 38 : cf1) * (~g0)) || 33);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 40,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:38: Error: incorrect register `%rdi' used with `l' suffix\n",
+      "source": "int g0 = 58;\nint g1 = 5;\n\nint f0(int p0) {\n    return 5 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((55 != g1));\n    int v0 = 24;\n    int result = ((45 == (52 <= 22)) || ((~24) - (g0 ? cf0 : 7)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 41,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:55: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:56: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:135: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:154: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 44;\n\nint f0(int p0) {\n    return 3 * p0;\n}\n\nint f1(int p0) {\n    return 2 * p0;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 1 * p0 + 5 * p1 + 2 * p2 + 3 * p3 + 2 * p4 + 2 * p5 + 2 * p6 + 2 * p7;\n}\n\nint main(void) {\n    int cf0 = f0(7);\n    int cf1 = f1((6 && 8));\n    int cf2 = f2((g0 / 10), (0 * 21), (51 && 1), 19, (g0 > 48), 20, (34 ? 0 : 4), (16 < 45));\n    int v0 = 23;\n    int acc = (56 == cf1);\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (((v0 || 2) ? (cf0 / 16) : (10 < 22)) ? i : ((0 > 31) && (30 || cf2)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 42,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:120: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:121: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:122: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:123: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 44;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 1 * p1 + 2 * p2 + 3 * p3 + 5 * p4;\n}\n\nint f1(int p0) {\n    return 2 * p0;\n}\n\nint main(void) {\n    int cf0 = f0(6, (g0 - g0), (g0 ? 28 : g0), (1 % 11), (48 ? 20 : 27));\n    int cf1 = f1(10);\n    int v0 = (g0 && (52 / 14));\n    int v1 = ((40 - 26) == (58 * cf0));\n    int acc = (26 < cf1);\n    int i = 0;\n    while (i < 5) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = ((37 || (32 ? 12 : cf0)) && cf1);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 43,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:55: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:132: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:148: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:197: Error: incorrect register `%rdi' used with `l' suffix\n/tmp",
+      "source": "int g0 = 18;\n\nint f0(int p0) {\n    return 5 * p0;\n}\n\nint f1(int p0) {\n    return 2 * p0;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 5 * p0 + 5 * p1 + 2 * p2 + 5 * p3 + 1 * p4 + 3 * p5 + 3 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((g0 % 10));\n    int cf1 = f1((52 ? 19 : 37));\n    int cf2 = f2((cf1 || 32), (cf1 / 4), (!56), 16, (g0 && g0), 17, 32);\n    int v0 = 33;\n    int v1 = ((g0 - 21) ? (cf1 / 9) : (g0 ? 17 : 9));\n    int v2 = (~(cf0 % 15));\n    int v3 = ((52 - cf2) - (6 * g0));\n    int acc = v3;\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = ((47 > (-cf1)) - ((9 + 25) % 4));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 44,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:141: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:142: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 58;\nint g1 = 6;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 1 * p0 + 5 * p1 + 1 * p2 + 5 * p3 + 1 * p4 + 4 * p5 + 2 * p6 + 5 * p7;\n}\n\nint main(void) {\n    int cf0 = f0((g1 - g1), (19 && 59), (g1 && g0), 21, (g0 - 38), 5, 26, (14 / 14));\n    int v0 = (-(10 / 10));\n    int v1 = (~(g1 != 23));\n    int acc = 6;\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = 7;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 45,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:96: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:97: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:126: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:127: Error: incorrect register `%rsi' used with `",
+      "source": "int g0 = 26;\n\nint f0(int p0, int p1) {\n    return 2 * p0 + 3 * p1;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 4 * p0 + 4 * p1 + 4 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((55 % 11), (g0 || 9));\n    int cf1 = f1((14 && g0), 39, (cf0 >= 44));\n    int v0 = ((cf1 % 7) ? (cf1 * cf0) : (23 ? cf1 : cf1));\n    int v1 = ((g0 * 37) || 57);\n    int v2 = ((27 ? cf1 : v0) || (g0 * v1));\n    int result = ((~v1) * (!(-13)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 46,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:35: Error: incorrect register `%rdi' used with `l' suffix\n",
+      "source": "int g0 = 40;\n\nint f0(int p0) {\n    return 3 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((!35));\n    int v0 = ((g0 ? 24 : g0) / 5);\n    int v1 = ((~19) ? (v0 * 19) : (cf0 > cf0));\n    int v2 = (~(47 ? 60 : cf0));\n    int acc = (37 && 22);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (((-50) && (v1 > 2)) / 7);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 47,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:63: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:64: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:65: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 52;\n\nint f0(int p0, int p1, int p2) {\n    return 4 * p0 + 4 * p1 + 4 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((g0 < g0), 35, (!60));\n    int v0 = ((g0 < 24) <= (cf0 || 2));\n    int v1 = ((v0 ? 22 : 48) <= 14);\n    int v2 = 4;\n    int v3 = ((g0 || v0) % 17);\n    int acc = (49 - v0);\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (v3 && ((~34) - (55 && i)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 48,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:98: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:99: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:100: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:120: Error: incorrect register `%rdi' used with `",
+      "source": "int g0 = 39;\nint g1 = 58;\n\nint f0(int p0, int p1, int p2) {\n    return 5 * p0 + 2 * p1 + 5 * p2;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 3 * p0 + 1 * p1 + 3 * p2;\n}\n\nint main(void) {\n    int cf0 = f0(40, 11, (g1 >= g1));\n    int cf1 = f1(0, (1 ? 38 : 25), 17);\n    int v0 = ((cf1 == cf0) ? (30 + 6) : 20);\n    int acc = (45 > 44);\n    int i = 0;\n    while (i < 5) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (((21 == cf0) ? 5 : (v0 > g0)) - ((cf1 % 2) != (15 >= 55)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 49,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:80: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:202: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:203: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:204: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 23;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 2 * p0 + 1 * p1 + 4 * p2 + 5 * p3 + 4 * p4 + 4 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 3 * p0 + 3 * p1 + 2 * p2 + 3 * p3 + 2 * p4 + 2 * p5 + 5 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((g0 ? g0 : g0), (11 / 15), (42 || 28), 32, (g0 && g0), (2 && 32));\n    int cf1 = f1(3, (36 || cf0), (40 ? 39 : 52), (16 == 34), (44 < 4), (cf0 ? 3 : cf0), (27 + 3));\n    int v0 = ((cf0 % 20) ? (54 >= cf1) : (57 * 55));\n    int v1 = ((55 <= cf0) ? (-v0) : (v0 && g0));\n    int result = (18 ? (-(v0 <= v1)) : 35);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 50,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:127: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:128: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 27;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 1 * p0 + 5 * p1 + 4 * p2 + 5 * p3 + 4 * p4 + 1 * p5 + 1 * p6 + 3 * p7;\n}\n\nint main(void) {\n    int cf0 = f0((!19), (g0 % 5), 21, (12 % 8), 24, 0, 9, (35 - 14));\n    int v0 = (cf0 && 56);\n    int acc = 28;\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = (((33 >= 11) - (g0 == v0)) ? ((g0 % 8) * (!45)) : ((-39) || 40));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 51,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:108: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:109: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:110: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:111: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 0;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 4 * p0 + 1 * p1 + 5 * p2 + 4 * p3 + 4 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((10 || 38), (g0 && g0), 7, (g0 == 32), (57 == g0));\n    int v0 = ((cf0 >= 20) ? (cf0 || cf0) : (cf0 != cf0));\n    int v1 = ((10 <= v0) - (46 != g0));\n    int v2 = ((13 % 1) % 10);\n    int acc = (6 + 23);\n    int i = 0;\n    while (i < 4) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = 58;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 52,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:54: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:55: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:56: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 28;\nint g1 = 22;\n\nint f0(int p0, int p1, int p2) {\n    return 3 * p0 + 1 * p1 + 3 * p2;\n}\n\nint main(void) {\n    int cf0 = f0(34, 28, g1);\n    int v0 = g1;\n    int result = ((56 / 17) ? ((35 + 14) ? 17 : (!g0)) : ((g0 <= g0) % 5));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 53,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:76: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:77: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:78: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:79: Error: incorrect register `%rcx' used with `l'",
+      "source": "int g0 = 34;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 1 * p0 + 4 * p1 + 2 * p2 + 5 * p3;\n}\n\nint main(void) {\n    int cf0 = f0((34 == g0), 31, 1, (g0 > g0));\n    int v0 = ((53 - cf0) ? (cf0 ? cf0 : 26) : (36 || cf0));\n    int result = ((-(v0 / 15)) || ((42 < g0) ? (50 ? 15 : 49) : (60 - cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 54,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:75: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:76: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:77: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:78: Error: incorrect register `%rcx' used with `l'",
+      "source": "int g0 = 23;\nint g1 = 8;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 4 * p1 + 1 * p2 + 4 * p3;\n}\n\nint main(void) {\n    int cf0 = f0(6, (g0 > 12), 29, (54 / 15));\n    int v0 = (-(!28));\n    int v1 = ((44 || g1) && (g0 ? 43 : g0));\n    int v2 = (-(v0 || 7));\n    int v3 = ((5 ? 35 : v2) >= (0 || v2));\n    int acc = (39 && v3);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = (((g1 && 3) >= g1) + ((49 && 39) % 17));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 55,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:141: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:142: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 22;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 3 * p0 + 3 * p1 + 3 * p2 + 3 * p3 + 2 * p4 + 1 * p5 + 5 * p6 + 4 * p7;\n}\n\nint main(void) {\n    int cf0 = f0((58 % 16), (g0 >= 10), (g0 - 14), (g0 - g0), (g0 ? g0 : 42), 6, (2 >= g0), 24);\n    int v0 = ((g0 % 19) <= (g0 > 47));\n    int v1 = ((35 - v0) - (59 && 34));\n    int v2 = ((g0 * 9) || g0);\n    int v3 = (-(34 >= v2));\n    int acc = (~44);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (((26 == 24) / 13) ? (-(18 * 53)) : ((v0 * 3) - (!acc)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 56,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:105: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:106: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:107: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:108: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 37;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 3 * p1 + 5 * p2 + 1 * p3 + 2 * p4 + 2 * p5;\n}\n\nint main(void) {\n    int cf0 = f0(32, 22, (29 ? g0 : g0), 32, (43 >= g0), (5 % 11));\n    int v0 = ((g0 * cf0) || (cf0 / 10));\n    int v1 = ((4 || 14) && (g0 <= g0));\n    int result = (((v0 ? 52 : 18) + (28 - 22)) / 11);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 57,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:76: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:77: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:78: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 24;\nint g1 = 60;\n\nint f0(int p0, int p1, int p2) {\n    return 4 * p0 + 4 * p1 + 5 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((31 != 33), (7 < 31), (28 || g1));\n    int v0 = ((11 / 1) >= g0);\n    int v1 = ((!g1) == (5 - v0));\n    int v2 = (35 / 16);\n    int v3 = ((12 > g0) ? (v2 < 25) : (v1 * 21));\n    int acc = (16 - 25);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = (((~6) || (24 || 35)) + ((v2 + 43) / 9));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 58,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:118: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:208: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:209: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:210: Error: incorrect register `%rdx' used with `l' suffix\n/tm",
+      "source": "int g0 = 35;\n\nint f0(int p0, int p1, int p2) {\n    return 1 * p0 + 4 * p1 + 5 * p2;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 1 * p0 + 2 * p1 + 2 * p2 + 5 * p3 + 2 * p4 + 1 * p5;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 4 * p0 + 3 * p1 + 3 * p2 + 2 * p3 + 3 * p4 + 4 * p5 + 4 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((25 / 3), 33, (g0 || g0));\n    int cf1 = f1(16, 32, (22 % 17), (g0 && 23), (30 * 1), 13);\n    int cf2 = f2(20, (43 / 20), 22, (cf0 || 30), (g0 > 17), (39 ? 40 : g0), (32 / 8));\n    int v0 = ((cf0 * g0) <= (cf1 * cf0));\n    int v1 = ((cf0 / 4) || g0);\n    int v2 = cf0;\n    int acc = (52 && 32);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((acc * cf2) || (53 ? v0 : 16)) && ((!45) != (g0 ? v0 : cf0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 59,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:226: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:227: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:228: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 50;\nint g1 = 50;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 3 * p1 + 5 * p2 + 3 * p3 + 5 * p4 + 1 * p5 + 4 * p6;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 2 * p1 + 1 * p2 + 3 * p3 + 1 * p4;\n}\n\nint f2(int p0, int p1, int p2, int p3) {\n    return 3 * p0 + 2 * p1 + 2 * p2 + 3 * p3;\n}\n\nint main(void) {\n    int cf0 = f0((g0 % 3), (13 >= 22), (55 <= 47), 18, 18, (g0 ? 22 : g1), 8);\n    int cf1 = f1((g0 || 5), (41 > g1), (g0 >= 8), 16, (11 % 2));\n    int cf2 = f2((15 >= cf0), (cf1 % 20), (17 % 8), 33);\n    int v0 = ((cf1 && cf1) + g1);\n    int v1 = ((26 % 7) ? 56 : (~cf2));\n    int acc = (v1 ? 16 : cf2);\n    int i = 0;\n    while (i < 5) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((v0 ? 49 : v0) < (cf0 ? cf0 : i)) ? (50 - (cf0 ? 39 : 33)) : ((32 - 13) * (52 - 5)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 60,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:54: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:55: Error: incorrect register `%rsi' used with `l' suffix\n",
+      "source": "int g0 = 23;\n\nint f0(int p0, int p1) {\n    return 2 * p0 + 2 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((g0 / 11), (9 ? g0 : 33));\n    int v0 = (-(10 || g0));\n    int v1 = ((53 / 16) && (44 == g0));\n    int v2 = (~(cf0 ? g0 : 33));\n    int acc = (v0 || v0);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (!27);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 61,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:80: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:195: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:196: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:197: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 46;\nint g1 = 41;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 4 * p1 + 2 * p2 + 5 * p3 + 1 * p4 + 2 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 1 * p1 + 3 * p2 + 3 * p3 + 1 * p4 + 4 * p5 + 2 * p6;\n}\n\nint f2(int p0) {\n    return 5 * p0;\n}\n\nint main(void) {\n    int cf0 = f0(39, 24, 20, (3 || g1), (39 / 6), 23);\n    int cf1 = f1(25, (g1 % 19), 31, (47 <= 49), (16 % 20), (30 > 46), 29);\n    int cf2 = f2(9);\n    int v0 = ((g1 >= 26) && g0);\n    int v1 = ((g0 && cf2) || (51 && 24));\n    int v2 = (~(43 / 1));\n    int result = ((-(23 && 41)) + ((!cf0) + (51 != g0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 62,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:35: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:132: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:176: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:177: Error: incorrect register `%rsi' used with `l' suffix\n/tmp",
+      "source": "int g0 = 11;\nint g1 = 30;\n\nint f0(int p0) {\n    return 5 * p0;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 1 * p0 + 4 * p1 + 4 * p2 + 2 * p3 + 3 * p4 + 5 * p5 + 4 * p6;\n}\n\nint f2(int p0) {\n    return 1 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((g0 % 8));\n    int cf1 = f1(29, 29, (7 ? 10 : g0), (g0 ? g0 : cf0), (60 < 30), (!28), 15);\n    int cf2 = f2((58 % 14));\n    int v0 = ((g0 * 16) == (24 > cf0));\n    int result = (((~15) / 9) % 4);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 63,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:196: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:197: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:198: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 6;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 3 * p0 + 4 * p1 + 2 * p2 + 4 * p3 + 5 * p4 + 3 * p5 + 1 * p6;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 2 * p0 + 1 * p1 + 2 * p2 + 4 * p3 + 5 * p4 + 3 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((42 - g0), (g0 + g0), (54 <= 19), (38 && 21), (47 % 17), 0, (!g0));\n    int cf1 = f1(38, 28, 21, (25 >= 3), (cf0 <= g0), (cf0 >= cf0));\n    int v0 = (-(31 % 2));\n    int v1 = ((4 + g0) || (15 || cf0));\n    int v2 = ((16 / 11) / 3);\n    int v3 = 31;\n    int acc = (19 + v3);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (((33 || cf1) ? (17 < 42) : (58 ? 15 : 41)) + ((8 ? v1 : g0) && (v1 != 14)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 64,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:105: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:106: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:107: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:108: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 7;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 4 * p0 + 5 * p1 + 5 * p2 + 5 * p3 + 4 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((21 && g0), (g0 ? g0 : g0), (13 < 10), 3, (g0 <= g0));\n    int v0 = g0;\n    int v1 = (g0 - (~40));\n    int acc = (53 ? cf0 : cf0);\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (((47 == 34) && (!37)) - acc);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 65,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:62: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:144: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:145: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:146: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 45;\nint g1 = 14;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 4 * p1 + 2 * p2 + 3 * p3;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 5 * p0 + 1 * p1 + 1 * p2 + 4 * p3 + 2 * p4 + 5 * p5 + 1 * p6;\n}\n\nint main(void) {\n    int cf0 = f0(22, 9, (g0 != g0), 26);\n    int cf1 = f1(15, (g0 && g0), 26, (15 ? 25 : g0), (25 / 9), 35, 24);\n    int v0 = g1;\n    int v1 = (!cf1);\n    int v2 = ((14 * g1) && (54 || cf0));\n    int v3 = ((~g0) ? 11 : (25 <= v1));\n    int acc = (v3 <= 55);\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (-((!49) / 2));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 66,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:164: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:165: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:191: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:192: Error: incorrect register `%rsi' used with",
+      "source": "int g0 = 53;\n\nint f0(int p0, int p1) {\n    return 1 * p0 + 3 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4) {\n    return 4 * p0 + 2 * p1 + 3 * p2 + 5 * p3 + 2 * p4;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4) {\n    return 3 * p0 + 2 * p1 + 3 * p2 + 1 * p3 + 4 * p4;\n}\n\nint main(void) {\n    int cf0 = f0(24, (34 || 23));\n    int cf1 = f1((!g0), (g0 != 50), 37, 27, 36);\n    int cf2 = f2((47 || 57), (cf1 && 38), (27 && g0), (cf0 >= cf1), 24);\n    int v0 = (g0 ? (9 * 53) : (cf0 % 6));\n    int acc = (~cf2);\n    int i = 0;\n    while (i < 3) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = (((16 / 14) / 17) ? (~(14 ? cf0 : g0)) : ((40 > v0) < 36));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 67,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:113: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:114: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:115: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:116: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 35;\nint g1 = 4;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 4 * p1 + 4 * p2 + 2 * p3 + 2 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((g1 ? g1 : 8), (17 ? g0 : 7), (46 % 6), (g1 ? 18 : 54), (g0 && 10));\n    int v0 = 4;\n    int v1 = v0;\n    int result = (((~v0) / 18) + (~(40 || 17)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 68,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:109: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:110: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:111: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:112: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 46;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 1 * p1 + 3 * p2 + 5 * p3;\n}\n\nint f1(int p0, int p1) {\n    return 4 * p0 + 3 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((g0 || 50), 38, (g0 >= 5), 39);\n    int cf1 = f1((26 <= 15), (g0 >= cf0));\n    int v0 = ((56 != 5) != (cf0 ? 13 : cf0));\n    int acc = cf0;\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (-((2 && cf1) ? (51 == cf1) : (cf1 ? cf0 : cf1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 69,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:53: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:141: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:142: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:143: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 37;\n\nint f0(int p0, int p1, int p2) {\n    return 1 * p0 + 1 * p1 + 4 * p2;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 5 * p0 + 1 * p1 + 3 * p2 + 1 * p3 + 2 * p4 + 1 * p5 + 4 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((44 ? g0 : 39), 18, (g0 % 16));\n    int cf1 = f1((54 <= 36), (cf0 >= 35), (34 && 46), (cf0 - cf0), 40, 38, (g0 - g0));\n    int v0 = cf0;\n    int acc = (g0 && 24);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((cf0 == 5) != (56 || i)) ? (~(11 % 5)) : (-(acc || i)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 70,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:71: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:72: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:182: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:183: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 12;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 2 * p0 + 3 * p1 + 5 * p2 + 2 * p3 + 4 * p4;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 3 * p0 + 1 * p1 + 4 * p2 + 1 * p3 + 2 * p4 + 2 * p5 + 1 * p6 + 3 * p7;\n}\n\nint main(void) {\n    int cf0 = f0(29, (43 == 49), 0, (10 ? 11 : g0), (43 && g0));\n    int cf1 = f1(27, (cf0 ? 23 : cf0), 5, (g0 - g0), (cf0 >= 21), 31, 40, (!17));\n    int v0 = ((cf0 % 16) ? (-9) : (37 ? 1 : 43));\n    int v1 = cf1;\n    int result = ((!(25 || 59)) != ((v0 + 52) / 11));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 71,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:76: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:77: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:78: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:79: Error: incorrect register `%rcx' used with `l'",
+      "source": "int g0 = 59;\n\nint f0(int p0, int p1, int p2, int p3) {\n    return 4 * p0 + 3 * p1 + 3 * p2 + 4 * p3;\n}\n\nint main(void) {\n    int cf0 = f0(24, (g0 <= 31), 5, (g0 <= 58));\n    int v0 = ((~g0) ? (cf0 || 22) : (cf0 < 9));\n    int v1 = ((v0 > 12) ? (50 * v0) : g0);\n    int v2 = (!(-cf0));\n    int v3 = ((10 / 3) != (18 - 23));\n    int result = (((19 >= 11) / 18) ? ((v3 ? 46 : 27) ? (39 >= v1) : (v0 != 15)) : (36 || (v2 - v1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 72,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:71: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:72: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:73: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 4;\n\nint f0(int p0, int p1, int p2) {\n    return 3 * p0 + 3 * p1 + 4 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((g0 ? 26 : 51), 31, (g0 && g0));\n    int v0 = (!46);\n    int v1 = (2 >= (g0 && v0));\n    int acc = 21;\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (~((!11) ? (v0 >= i) : (26 * 15)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 73,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:173: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:174: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 27;\nint g1 = 45;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 1 * p0 + 4 * p1 + 3 * p2 + 3 * p3 + 1 * p4 + 2 * p5 + 4 * p6 + 5 * p7;\n}\n\nint f1(int p0, int p1) {\n    return 1 * p0 + 3 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((26 > 60), (g1 ? g0 : g1), (17 ? 38 : g0), 30, (g1 && 20), (g0 >= 53), 28, 37);\n    int cf1 = f1((g0 % 17), 32);\n    int v0 = ((cf1 ? cf0 : 6) * 6);\n    int acc = (!26);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = ((acc && cf0) || ((cf1 ? cf0 : cf0) / 1));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 74,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:204: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:205: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 16;\nint g1 = 42;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 2 * p0 + 1 * p1 + 4 * p2 + 2 * p3 + 3 * p4 + 5 * p5 + 2 * p6 + 4 * p7;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 2 * p1 + 5 * p2 + 3 * p3;\n}\n\nint main(void) {\n    int cf0 = f0((17 / 4), (g0 <= 50), (29 && 13), (g1 - g1), 18, (g0 ? 5 : 2), (23 || g0), (13 ? g0 : 5));\n    int cf1 = f1(37, 18, (39 && cf0), (!g0));\n    int v0 = ((g1 || g1) && (g1 == 15));\n    int v1 = ((44 / 7) ? (53 ? 48 : 14) : (53 && 18));\n    int v2 = ((-57) / 2);\n    int result = (((v0 % 18) <= (30 ? 15 : cf0)) ? ((40 + v0) != (-v1)) : v0);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 75,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:47: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:48: Error: incorrect register `%rsi' used with `l' suffix\n",
+      "source": "int g0 = 39;\n\nint f0(int p0, int p1) {\n    return 3 * p0 + 3 * p1;\n}\n\nint main(void) {\n    int cf0 = f0(40, (57 / 15));\n    int v0 = (!(5 * 52));\n    int v1 = ((37 % 15) ? (v0 && g0) : (cf0 ? 23 : 10));\n    int v2 = ((v1 - 20) * (v0 ? 29 : 31));\n    int acc = (52 / 18);\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((-acc) / 18) + ((g0 < 4) - 60));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 76,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:204: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:205: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:206: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:207: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 39;\nint g1 = 9;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 2 * p1 + 5 * p2 + 1 * p3 + 1 * p4;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 3 * p0 + 1 * p1 + 5 * p2 + 5 * p3 + 4 * p4 + 1 * p5;\n}\n\nint f2(int p0, int p1, int p2) {\n    return 3 * p0 + 4 * p1 + 3 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((g1 || 25), (!g1), (g0 >= 19), 18, (41 < 43));\n    int cf1 = f1(7, (48 % 15), (12 == cf0), (g0 / 16), (0 < g1), (g0 / 5));\n    int cf2 = f2(2, 15, (41 - g1));\n    int v0 = (-(cf0 <= 0));\n    int v1 = ((cf2 * 32) != (51 || 48));\n    int acc = (cf0 ? 37 : 41);\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = 56;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 77,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:222: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:223: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:224: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 26;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 3 * p0 + 3 * p1 + 2 * p2 + 1 * p3 + 4 * p4 + 3 * p5 + 2 * p6;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 2 * p0 + 5 * p1 + 4 * p2;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 3 * p0 + 4 * p1 + 1 * p2 + 2 * p3 + 3 * p4 + 5 * p5;\n}\n\nint main(void) {\n    int cf0 = f0(1, 9, (g0 / 10), (g0 < 15), 13, (g0 || 17), g0);\n    int cf1 = f1((cf0 || 26), (g0 ? 34 : cf0), (cf0 * 0));\n    int cf2 = f2(18, 30, (g0 && 42), (60 < 39), 4, (49 % 17));\n    int v0 = ((21 - 47) ? 2 : (58 / 4));\n    int v1 = ((g0 ? 35 : 10) == (55 % 8));\n    int v2 = ((25 || 56) ? (~27) : (cf2 || 28));\n    int result = (!((v1 || 29) + (v1 ? v0 : cf2)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 78,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:44: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:189: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:190: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:237: Error: incorrect register `%rdi' used with `l' suffix\n/tmp",
+      "source": "int g0 = 39;\nint g1 = 26;\n\nint f0(int p0, int p1) {\n    return 3 * p0 + 4 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 5 * p0 + 2 * p1 + 4 * p2 + 2 * p3 + 3 * p4 + 4 * p5 + 2 * p6;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 2 * p1 + 3 * p2 + 4 * p3 + 5 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((g0 || g0), (36 ? g0 : g0));\n    int cf1 = f1(13, 10, g1, (31 && g1), (43 || 31), (7 < g0), 0);\n    int cf2 = f2(32, g1, (33 || 11), 26, 37);\n    int v0 = ((cf1 < 23) ? (48 ? cf0 : 15) : (g0 <= 57));\n    int v1 = ((v0 || 50) ? (cf0 <= v0) : (2 - 34));\n    int v2 = ((38 * cf0) <= (16 <= v1));\n    int acc = (38 % 10);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((45 ? 60 : v0) + (9 % 3)) * ((36 ? 10 : v2) ? (v0 > 4) : (i + 8)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 79,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:126: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:127: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:128: Error: incorrect register `%rdx' used with `l' suffix\n/tmp",
+      "source": "int g0 = 43;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 5 * p0 + 4 * p1 + 3 * p2 + 2 * p3 + 2 * p4 + 2 * p5 + 2 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((g0 <= g0), 12, (36 % 2), 37, (g0 % 7), 31, (54 && g0));\n    int v0 = 38;\n    int v1 = ((21 <= 9) % 4);\n    int acc = g0;\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (((3 >= 14) || (10 != v0)) + ((48 * 38) > (39 + 23)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 80,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:112: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:113: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:114: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:146: Error: incorrect register `%rdi' used with",
+      "source": "int g0 = 23;\nint g1 = 26;\n\nint f0(int p0, int p1, int p2) {\n    return 3 * p0 + 3 * p1 + 2 * p2;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 4 * p0 + 2 * p1 + 3 * p2;\n}\n\nint main(void) {\n    int cf0 = f0((54 && g0), 37, (g1 && 30));\n    int cf1 = f1((21 && g1), (57 % 11), (!58));\n    int v0 = ((cf1 ? 14 : cf1) ? (27 <= cf1) : (g0 / 6));\n    int v1 = ((-2) % 2);\n    int result = ((g1 != (31 ? g1 : v1)) ? ((11 - v1) + 25) : (~(6 < cf1)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 81,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:114: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:115: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:116: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:117: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 5;\nint g1 = 46;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 2 * p0 + 2 * p1 + 5 * p2 + 3 * p3 + 4 * p4 + 3 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((g0 / 7), 22, (40 || 32), (60 ? 12 : g0), (54 % 8), 28);\n    int v0 = ((cf0 && g1) % 14);\n    int v1 = (g1 ? (3 ? v0 : g1) : (v0 > 31));\n    int v2 = ((cf0 || 18) ? (36 % 1) : (22 ? 43 : v0));\n    int result = 35;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 82,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:183: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:184: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 32;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 5 * p1 + 4 * p2 + 4 * p3 + 4 * p4 + 5 * p5 + 3 * p6 + 2 * p7;\n}\n\nint f1(int p0) {\n    return 2 * p0;\n}\n\nint main(void) {\n    int cf0 = f0((g0 ? 39 : 29), (52 >= 35), (g0 && 31), (52 == 40), (23 - 22), (20 ? 23 : g0), (15 || 6), (g0 / 13));\n    int cf1 = f1((33 && g0));\n    int v0 = 0;\n    int v1 = ((47 >= g0) / 3);\n    int v2 = (19 ? (43 / 4) : 52);\n    int acc = cf1;\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (((~v1) * (13 * cf0)) / 10);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 83,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:95: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:96: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:123: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:124: Error: incorrect register `%rsi' used with `",
+      "source": "int g0 = 15;\n\nint f0(int p0, int p1) {\n    return 3 * p0 + 2 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3) {\n    return 1 * p0 + 1 * p1 + 3 * p2 + 3 * p3;\n}\n\nint main(void) {\n    int cf0 = f0((g0 >= g0), 9);\n    int cf1 = f1((!g0), 2, (34 - 2), (g0 != 32));\n    int v0 = ((54 >= 32) && (51 % 7));\n    int v1 = cf1;\n    int v2 = ((3 % 11) == (v0 > cf0));\n    int result = (((v1 + cf1) == (58 ? g0 : v0)) <= ((30 * 36) / 20));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 84,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:71: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:72: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:154: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:155: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:267: Error: incorre",
+      "source": "int g0 = 26;\nint g1 = 13;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 1 * p0 + 1 * p1 + 2 * p2 + 3 * p3 + 4 * p4;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 3 * p0 + 5 * p1 + 1 * p2 + 2 * p3 + 2 * p4 + 3 * p5 + 2 * p6 + 4 * p7;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 2 * p1 + 4 * p2 + 2 * p3 + 2 * p4 + 2 * p5 + 5 * p6 + 2 * p7;\n}\n\nint main(void) {\n    int cf0 = f0((15 <= 11), (36 && 57), (!g0), g0, (1 % 20));\n    int cf1 = f1((g1 ? g1 : cf0), 16, 9, (56 ? g1 : 22), (g1 ? 26 : g0), 17, 18, 25);\n    int cf2 = f2(30, 38, (8 + 9), (g1 >= 47), (g1 != 34), (5 >= 4), (cf0 && cf0), (36 - 4));\n    int v0 = 7;\n    int v1 = ((cf2 - 38) < (cf0 && 51));\n    int v2 = ((~v1) % 17);\n    int v3 = ((~g1) % 2);\n    int acc = (!49);\n    int i = 0;\n    while (i < 6) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((7 == v0) + (34 == 56)) ? ((-31) * (6 + 8)) : ((12 > 19) || (45 >= 17)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 85,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:215: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:216: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:217: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:218: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 22;\nint g1 = 12;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 5 * p0 + 5 * p1 + 4 * p2 + 2 * p3 + 5 * p4 + 2 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 2 * p0 + 3 * p1 + 1 * p2 + 1 * p3 + 2 * p4 + 2 * p5;\n}\n\nint f2(int p0, int p1, int p2) {\n    return 2 * p0 + 2 * p1 + 5 * p2;\n}\n\nint main(void) {\n    int cf0 = f0(24, (g1 || 25), 32, (15 + g0), (g1 / 1), (g1 ? g0 : 19));\n    int cf1 = f1(8, (!g1), 18, (g0 ? 7 : cf0), 16, (10 ? 22 : g1));\n    int cf2 = f2((cf1 ? g1 : 38), (25 != cf0), 26);\n    int v0 = ((60 + cf2) ? (g0 % 13) : (43 % 6));\n    int result = (((g1 ? 7 : 23) - (cf2 || 25)) || ((v0 ? 31 : 15) * (g0 + v0)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 86,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:44: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:126: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:127: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:168: Error: incorrect register `%rdi' used with `l' suffix\n/tmp",
+      "source": "int g0 = 3;\n\nint f0(int p0, int p1) {\n    return 2 * p0 + 1 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 2 * p0 + 5 * p1 + 4 * p2 + 5 * p3 + 1 * p4 + 2 * p5 + 2 * p6;\n}\n\nint main(void) {\n    int cf0 = f0(9, (12 || 19));\n    int cf1 = f1((20 * 0), (cf0 % 13), (16 != g0), 36, 16, (g0 * g0), 10);\n    int v0 = ((60 % 3) ? (g0 > g0) : (g0 - 23));\n    int v1 = (!(g0 ? g0 : v0));\n    int v2 = ((!cf0) * 18);\n    int result = (53 == ((43 && v2) <= (!3)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 87,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:64: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:65: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:66: Error: incorrect register `%rdx' used with `l' suffix\n",
+      "source": "int g0 = 38;\nint g1 = 9;\n\nint f0(int p0, int p1, int p2) {\n    return 1 * p0 + 3 * p1 + 5 * p2;\n}\n\nint main(void) {\n    int cf0 = f0(2, (31 || 1), 14);\n    int v0 = ((!56) || (46 - 48));\n    int v1 = ((21 + 35) > (cf0 != 23));\n    int result = 22;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 88,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:115: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:116: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:117: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:118: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 37;\nint g1 = 41;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 5 * p0 + 2 * p1 + 2 * p2 + 5 * p3 + 3 * p4 + 3 * p5;\n}\n\nint main(void) {\n    int cf0 = f0((g1 / 3), (g0 / 4), 17, (12 ? g0 : 6), (g0 == 44), (47 > g1));\n    int v0 = ((g1 + g0) ? 56 : (cf0 && 43));\n    int v1 = (!(cf0 || 21));\n    int result = (((34 > cf0) ? (49 - v0) : (2 != v0)) != cf0);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 89,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:101: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:102: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:103: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:104: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 23;\nint g1 = 60;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 5 * p1 + 4 * p2 + 1 * p3 + 2 * p4 + 5 * p5;\n}\n\nint main(void) {\n    int cf0 = f0(31, 25, 9, (g1 || 0), 39, (g1 / 10));\n    int v0 = ((g1 < 19) ? (g0 || g0) : (17 && g1));\n    int result = v0;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 90,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:15: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:16: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:127: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:250: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:251:",
+      "source": "int g0 = 4;\nint g1 = 39;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 5 * p1 + 2 * p2 + 4 * p3 + 4 * p4 + 4 * p5 + 5 * p6 + 4 * p7;\n}\n\nint f1(int p0, int p1) {\n    return 2 * p0 + 3 * p1;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 2 * p0 + 4 * p1 + 2 * p2 + 3 * p3 + 2 * p4 + 2 * p5 + 2 * p6;\n}\n\nint main(void) {\n    int cf0 = f0((37 % 17), (g0 >= g0), g1, 36, g0, (55 && 46), (g0 ? g0 : g1), (9 && g0));\n    int cf1 = f1((42 ? g0 : 1), (30 && 9));\n    int cf2 = f2((13 || 17), (7 % 15), (cf1 < 55), 34, (cf1 / 7), (g0 % 13), (cf0 > cf0));\n    int v0 = ((g0 / 20) == (cf1 > 25));\n    int v1 = ((cf1 ? g0 : 15) + (cf2 == cf0));\n    int v2 = (~(7 <= cf1));\n    int acc = (cf2 % 3);\n    int i = 0;\n    while (i < 8) {\n        acc = acc + 2;\n        i = i + 1;\n    }\n    int result = (((cf2 >= cf0) + cf0) || ((59 ? 40 : cf0) + 56));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 91,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:182: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:183: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:184: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:185: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 17;\nint g1 = 46;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 3 * p0 + 2 * p1 + 2 * p2 + 5 * p3 + 4 * p4 + 4 * p5;\n}\n\nint f1(int p0, int p1, int p2) {\n    return 5 * p0 + 1 * p1 + 3 * p2;\n}\n\nint f2(int p0, int p1, int p2, int p3) {\n    return 5 * p0 + 3 * p1 + 5 * p2 + 4 * p3;\n}\n\nint main(void) {\n    int cf0 = f0(5, 4, (g0 ? 19 : 48), 6, 10, (g1 - 7));\n    int cf1 = f1((cf0 && 56), 28, 1);\n    int cf2 = f2((8 && 45), 5, (29 - g0), (!cf0));\n    int v0 = ((cf2 * cf0) && (2 || cf0));\n    int acc = (v0 / 10);\n    int i = 0;\n    while (i < 5) {\n        acc = acc + 3;\n        i = i + 1;\n    }\n    int result = (-(36 / 6));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 92,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:44: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:45: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:127: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:209: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:210:",
+      "source": "int g0 = 23;\n\nint f0(int p0, int p1) {\n    return 4 * p0 + 5 * p1;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 5 * p0 + 1 * p1 + 5 * p2 + 5 * p3 + 4 * p4 + 1 * p5 + 4 * p6 + 4 * p7;\n}\n\nint f2(int p0, int p1, int p2, int p3, int p4, int p5, int p6) {\n    return 4 * p0 + 2 * p1 + 1 * p2 + 1 * p3 + 4 * p4 + 2 * p5 + 1 * p6;\n}\n\nint main(void) {\n    int cf0 = f0(16, (38 && 26));\n    int cf1 = f1((27 % 8), (cf0 && 52), (cf0 ? g0 : 26), (60 % 4), 5, 4, 25, (g0 && 31));\n    int cf2 = f2(14, (cf0 ? 34 : 10), (cf1 >= g0), (cf1 && 42), 0, (g0 && 2), (cf0 % 17));\n    int v0 = ((cf0 ? 9 : 5) || (cf1 && 15));\n    int v1 = (~35);\n    int acc = (!v0);\n    int i = 0;\n    while (i < 7) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (12 ? ((16 / 4) && cf2) : ((!44) || (cf0 - 37)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 93,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:71: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:72: Error: operand size mismatch for `mov'\n/tmp/picc-fuzz-25eovpwa/case.s:171: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:172: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eov",
+      "source": "int g0 = 54;\nint g1 = 54;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 5 * p1 + 5 * p2 + 2 * p3 + 4 * p4;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7) {\n    return 4 * p0 + 1 * p1 + 1 * p2 + 1 * p3 + 4 * p4 + 1 * p5 + 5 * p6 + 1 * p7;\n}\n\nint main(void) {\n    int cf0 = f0(24, 5, 8, (24 >= 6), (g1 % 20));\n    int cf1 = f1(0, 18, 7, 23, 35, 8, (3 == cf0), 16);\n    int v0 = ((10 % 14) <= (cf1 ? 2 : 51));\n    int result = ((!(g1 && g1)) && (7 * (28 || 3)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 94,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:98: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:99: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:100: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:101: Error: incorrect register `%rcx' used with `",
+      "source": "int g0 = 42;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 3 * p1 + 1 * p2 + 4 * p3 + 5 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((g0 < 15), (8 <= 36), (5 || g0), 29, 26);\n    int v0 = ((27 / 18) / 4);\n    int v1 = v0;\n    int v2 = (-(!36));\n    int v3 = (v1 % 6);\n    int acc = (v0 || 51);\n    int i = 0;\n    while (i < 1) {\n        acc = acc + 4;\n        i = i + 1;\n    }\n    int result = (((27 ? v2 : 50) < (~v1)) * (acc * (53 >= 24)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 95,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:148: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:149: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:150: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:151: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 48;\nint g1 = 17;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 4 * p0 + 4 * p1 + 5 * p2 + 3 * p3 + 4 * p4 + 4 * p5;\n}\n\nint f1(int p0, int p1) {\n    return 1 * p0 + 1 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((19 || 55), (g1 ? g1 : 11), 9, g1, (g1 <= 24), (g0 || g1));\n    int cf1 = f1((g1 ? 37 : 22), (g0 - g0));\n    int v0 = ((g1 + g1) % 19);\n    int result = (-(51 ? (g1 % 11) : (cf0 || 49)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 96,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:51: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:52: Error: incorrect register `%rsi' used with `l' suffix\n",
+      "source": "int g0 = 4;\nint g1 = 33;\n\nint f0(int p0, int p1) {\n    return 2 * p0 + 5 * p1;\n}\n\nint main(void) {\n    int cf0 = f0((g0 < g1), (!g1));\n    int v0 = (~(cf0 ? g1 : cf0));\n    int result = g0;\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 97,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:98: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:99: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:100: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:101: Error: incorrect register `%rcx' used with `",
+      "source": "int g0 = 8;\nint g1 = 5;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 4 * p0 + 2 * p1 + 1 * p2 + 5 * p3 + 2 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((g1 ? 3 : g1), (g1 || g1), 15, 27, (39 / 17));\n    int v0 = (-(53 ? cf0 : 32));\n    int v1 = ((v0 % 16) <= (~45));\n    int v2 = 33;\n    int result = (((14 % 19) ? 30 : (~v0)) && ((26 % 7) >= (!60)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 98,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:179: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:180: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:181: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:182: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 12;\nint g1 = 4;\n\nint f0(int p0, int p1, int p2, int p3, int p4, int p5) {\n    return 2 * p0 + 1 * p1 + 2 * p2 + 4 * p3 + 5 * p4 + 2 * p5;\n}\n\nint f1(int p0, int p1, int p2, int p3, int p4) {\n    return 1 * p0 + 3 * p1 + 1 * p2 + 4 * p3 + 1 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((!33), (52 >= 50), (9 >= 57), (19 == g1), (35 != 59), (g1 && 51));\n    int cf1 = f1((50 && cf0), 2, (0 || cf0), (!9), (g1 || g0));\n    int v0 = ((g1 % 14) ? (g0 + 49) : 32);\n    int v1 = ((cf0 / 10) && (17 || cf0));\n    int acc = (cf1 && 7);\n    int i = 0;\n    while (i < 2) {\n        acc = acc + 1;\n        i = i + 1;\n    }\n    int result = ((acc != g1) / 12);\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    },
+    {
+      "index": 99,
+      "kind": "assembly_or_link_failure",
+      "detail": "/tmp/picc-fuzz-25eovpwa/case.s: Assembler messages:\n/tmp/picc-fuzz-25eovpwa/case.s:102: Error: incorrect register `%rdi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:103: Error: incorrect register `%rsi' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:104: Error: incorrect register `%rdx' used with `l' suffix\n/tmp/picc-fuzz-25eovpwa/case.s:105: Error: incorrect register `%rcx' used with",
+      "source": "int g0 = 59;\n\nint f0(int p0, int p1, int p2, int p3, int p4) {\n    return 5 * p0 + 4 * p1 + 4 * p2 + 3 * p3 + 1 * p4;\n}\n\nint main(void) {\n    int cf0 = f0((16 && g0), (g0 && g0), 30, 10, (40 <= g0));\n    int v0 = ((g0 * 49) || (51 % 1));\n    int v1 = ((g0 > g0) / 15);\n    int acc = (~v0);\n    int i = 0;\n    while (i < 4) {\n        acc = acc + 5;\n        i = i + 1;\n    }\n    int result = (((26 < 20) == (acc > v1)) + (56 <= (51 % 14)));\n    int norm = ((result % 251) + 251) % 251;\n    return norm;\n}\n"
+    }
+  ]
+}

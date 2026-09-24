@@ -1,0 +1,221 @@
+{
+  "build": {
+    "args": [
+      "cargo",
+      "build",
+      "--release",
+      "--offline"
+    ],
+    "elapsed_seconds": 0.009102636948227882,
+    "returncode": 0,
+    "stderr": "warning: unreachable expression\n   --> src/lexer.rs:191:21\n    |\n71  |             return Err(format!(\"line {}: {}\", line, $msg))\n    |             ---------------------------------------------- any code following this expression is unreachable\n...\n191 |                     return err!(\"unterminated character literal\");\n    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n    |\n    = note: `#[warn(unreachable_code)]` on by default\n\nwarning: unreachable expression\n   --> src/lexer.rs:236:17\n    |\n71  |             return Err(format!(\"line {}: {}\", line, $msg))\n    |             ---------------------------------------------- any code following this expression is unreachable\n...\n236 |                 return err!(\"unterminated character literal\");\n    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unreachable expression\n\nwarning: unused variable: `line`\n   --> src/codegen.rs:531:31\n    |\n531 |             Stmt::Return { e, line } => match e {\n    |                               ^^^^ help: try ignoring the field: `line: _`\n    |\n    = note: `#[warn(unused_variables)]` on by default\n\nwarning: value assigned to `v` is never read\n   --> src/lexer.rs:187:21\n    |\n187 |             let mut v: i32 = 0;\n    |                     ^\n    |\n    = help: maybe it is overwritten before being read?\n    = note: `#[warn(unused_assignments)]` on by default\n\nwarning: variable does not need to be mutable\n   --> src/lexer.rs:258:17\n    |\n258 |             let mut base: u32;\n    |                 ----^^^^\n    |                 |\n    |                 help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` on by default\n\nwarning: field `line` is never read\n  --> src/ast.rs:16:9\n   |\n12 |     GVar {\n   |     ---- field in this variant\n...\n16 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Item` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n   = note: `#[warn(dead_code)]` on by default\n\nwarning: field `line` is never read\n  --> src/ast.rs:22:9\n   |\n18 |     FProto {\n   |     ------ field in this variant\n...\n22 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Item` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n  --> src/ast.rs:29:9\n   |\n24 |     FDef {\n   |     ---- field in this variant\n...\n29 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Item` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n  --> src/ast.rs:52:9\n   |\n50 |     Expr {\n   |     ---- field in this variant\n51 |         e: Expr,\n52 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Stmt` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n  --> src/ast.rs:55:9\n   |\n54 |     Null {\n   |     ---- field in this variant\n55 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Stmt` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n  --> src/ast.rs:59:9\n   |\n57 |     Block {\n   |     ----- field in this variant\n58 |         items: Vec<BlockItem>,\n59 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Stmt` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n  --> src/ast.rs:65:9\n   |\n61 |     If {\n   |     -- field in this variant\n...\n65 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Stmt` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n  --> src/ast.rs:70:9\n   |\n67 |     While {\n   |     ----- field in this variant\n...\n70 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Stmt` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n  --> src/ast.rs:75:9\n   |\n72 |     DoWhile {\n   |     ------- field in this variant\n...\n75 |         line: u32,\n   |         ^^^^\n   |\n   = note: `Stmt` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:125:9\n    |\n123 |     Int {\n    |     --- field in this variant\n124 |         value: u64,\n125 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:143:9\n    |\n141 |     Neg {\n    |     --- field in this variant\n142 |         e: Box<Expr>,\n143 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:147:9\n    |\n145 |     Not {\n    |     --- field in this variant\n146 |         e: Box<Expr>,\n147 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:151:9\n    |\n149 |     LNot {\n    |     ---- field in this variant\n150 |         e: Box<Expr>,\n151 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:157:9\n    |\n153 |     Bin {\n    |     --- field in this variant\n...\n157 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:162:9\n    |\n159 |     AndAnd {\n    |     ------ field in this variant\n...\n162 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:167:9\n    |\n164 |     OrOr {\n    |     ---- field in this variant\n...\n167 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:173:9\n    |\n169 |     Cond {\n    |     ---- field in this variant\n...\n173 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: field `line` is never read\n   --> src/ast.rs:178:9\n    |\n175 |     Comma {\n    |     ----- field in this variant\n...\n178 |         line: u32,\n    |         ^^^^\n    |\n    = note: `Expr` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis\n\nwarning: `picc` (bin \"picc\") generated 23 warnings (run `cargo fix --bin \"picc\"` to apply 1 suggestion)\n    Finished `release` profile [optimized] target(s) in 0.00s\n",
+    "stdout": "",
+    "timed_out": false
+  },
+  "candidate": {
+    "adapter_sha256": "69aa13ffba00fff0a147a83c36b5fbdceceddd46c41ae89e6bf928c154578588",
+    "artifact": "/workspace/target/release/picc",
+    "framework": "standard-library",
+    "language": "rust"
+  },
+  "elapsed_seconds": 20.262037754058838,
+  "policy": {
+    "build_timeout_seconds": 900,
+    "compile_timeout_seconds": 10,
+    "deadline_seconds": 5400,
+    "max_stage": 10,
+    "min_evaluated_for_stage": 20,
+    "programs_per_stage": 100,
+    "reference_build": [
+      "/usr/bin/gcc",
+      "-std=c17",
+      "-O0",
+      "-w"
+    ],
+    "run_timeout_seconds": 3,
+    "seed_base": 20260830
+  },
+  "schema_version": 1,
+  "source_audit": {
+    "advisory_findings": [],
+    "blocking": false,
+    "blocking_findings": [],
+    "findings": [],
+    "passed": true,
+    "source_extensions": [
+      ".rs"
+    ],
+    "source_files_scanned": 5
+  },
+  "stages": {
+    "1": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260831,
+      "skipped": 0,
+      "stage": 1,
+      "status": "complete"
+    },
+    "10": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260840,
+      "skipped": 0,
+      "stage": 10,
+      "status": "complete"
+    },
+    "2": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260832,
+      "skipped": 0,
+      "stage": 2,
+      "status": "complete"
+    },
+    "3": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260833,
+      "skipped": 0,
+      "stage": 3,
+      "status": "complete"
+    },
+    "4": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260834,
+      "skipped": 0,
+      "stage": 4,
+      "status": "complete"
+    },
+    "5": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260835,
+      "skipped": 0,
+      "stage": 5,
+      "status": "complete"
+    },
+    "6": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260836,
+      "skipped": 0,
+      "stage": 6,
+      "status": "complete"
+    },
+    "7": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260837,
+      "skipped": 0,
+      "stage": 7,
+      "status": "complete"
+    },
+    "8": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260838,
+      "skipped": 0,
+      "stage": 8,
+      "status": "complete"
+    },
+    "9": {
+      "deadline_hit": false,
+      "evaluated": 100,
+      "generated": 100,
+      "mismatch_kinds": {},
+      "mismatches": 0,
+      "pass_rate": 1.0,
+      "passed": 100,
+      "samples": [],
+      "seed": 20260839,
+      "skipped": 0,
+      "stage": 9,
+      "status": "complete"
+    }
+  },
+  "summary": {
+    "audit_blocking": false,
+    "audit_ok": true,
+    "build_ok": true,
+    "deadline_hit": false,
+    "evaluated_total": 1000,
+    "fuzz_macro": 1.0,
+    "max_stage": 10,
+    "mismatch_kinds": {},
+    "mismatches_total": 0,
+    "passed_total": 1000,
+    "programs_per_stage": 100,
+    "skipped_total": 0,
+    "stage_pass_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "stages_complete": 10
+  },
+  "timestamp": "2026-09-10T13:20:19Z",
+  "workspace": "/workspace"
+}
