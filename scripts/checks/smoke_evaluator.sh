@@ -81,10 +81,10 @@ else:
 PY
 }
 
-run_study_evaluator rust studies/assets/candidates/rust-std.json fixtures/mock-picc pass
-run_study_evaluator typescript studies/assets/candidates/typescript-strict.json fixtures/mock-picc-ts pass
-run_study_evaluator javascript studies/assets/candidates/javascript-node.json fixtures/mock-picc-js pass
-run_study_evaluator typescript-gate studies/assets/candidates/typescript-strict.json fixtures/mock-picc-ts type-error
+run_study_evaluator rust studies/shared/candidates/rust-std.json fixtures/mock-picc pass
+run_study_evaluator typescript studies/c10/candidates/typescript-strict.json fixtures/mock-picc-ts pass
+run_study_evaluator javascript studies/c10/candidates/javascript-node.json fixtures/mock-picc-js pass
+run_study_evaluator typescript-gate studies/c10/candidates/typescript-strict.json fixtures/mock-picc-ts type-error
 
 # The fuzz oracle through the same frozen runtime: the JavaScript mock accepts
 # every stage-1 program (`return N;`) and rejects the stage-2 programs that use
@@ -95,7 +95,7 @@ rm -rf "$work"
 mkdir -p "$work/eval" "$work/artifacts"
 cp -R "$ROOT/fixtures/mock-picc-js/." "$work/workspace"
 cp "$ROOT/studies/runtime/evaluate.py" "$ROOT/studies/runtime/candidate_runtime.py" "$ROOT/studies/runtime/fuzz_generator.py" "$ROOT/studies/runtime/fuzz_evaluate.py" "$work/eval/"
-cp "$ROOT/studies/assets/candidates/javascript-node.json" "$work/eval/candidate.json"
+cp "$ROOT/studies/c10/candidates/javascript-node.json" "$work/eval/candidate.json"
 docker run --rm --init \
   --platform "$DOCKER_PLATFORM" \
   --read-only \

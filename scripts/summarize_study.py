@@ -773,10 +773,41 @@ def excluded_run(run_dir: Path, reason: str) -> tuple[None, str]:
     return None, f"{run_dir.name}: excluded from primary analysis: {reason}"
 
 
+def moved_paths() -> dict[str, str]:
+    """Old -> new locations of study files that moved after runs used them
+    (`studies/moved.json`); empty when nothing has moved."""
+    path = REPO_ROOT / "studies" / "moved.json"
+    if not path.is_file():
+        return {}
+    moves = load_object(path).get("moves")
+    if not isinstance(moves, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in moves.items()):
+        raise SummaryError(f"{path}: `moves` must map old paths to new paths")
+    return moves
+
+
+def relocated(value: Any, moves: Mapping[str, str]) -> Any:
+    """A frozen condition with each moved file's old location replaced by its
+    new one, so a run made before a move still matches the current study file.
+    Only whole path values change (or paths inside a moved folder); text that
+    merely mentions a path, such as a condition's description, does not."""
+    if isinstance(value, dict):
+        return {key: relocated(item, moves) for key, item in value.items()}
+    if isinstance(value, list):
+        return [relocated(item, moves) for item in value]
+    if isinstance(value, str):
+        if value in moves:
+            return moves[value]
+        for old, new in moves.items():
+            if value.startswith(old + "/"):
+                return new + value[len(old):]
+    return value
+
+
 def collect_run(
     run_dir: Path,
     expected_study: str,
     expected_conditions: dict[str, dict[str, Any]],
+    moves: Mapping[str, str] | None = None,
 ) -> tuple[dict[str, Any] | None, str | None]:
     sidecar_path = run_dir / "study-metadata.json"
     if not sidecar_path.is_file():
@@ -795,7 +826,7 @@ def collect_run(
     current_condition = expected_conditions.get(condition_id)
     if current_condition is None:
         return excluded_run(run_dir, f"condition {condition_id!r} is absent from the current study manifest")
-    if condition != current_condition:
+    if relocated(condition, moves or {}) != current_condition:
         return excluded_run(run_dir, "frozen condition does not match the current resolved condition")
 
     metadata_path = run_dir / "metadata.json"
@@ -1174,6 +1205,7 @@ def main() -> int:
     if not study_id:
         raise SummaryError("Study has no id")
     conditions = current_conditions(study)
+    moves = moved_paths()
     output = (args.output or (REPO_ROOT / "runs" / "study-results" / study_id)).resolve()
 
     rows: list[dict[str, Any]] = []
@@ -1183,7 +1215,7 @@ def main() -> int:
         for run_dir in sorted(runs_root.iterdir()):
             if not run_dir.is_dir() or run_dir.name.startswith(".") or run_dir.name == "study-results":
                 continue
-            row, warning = collect_run(run_dir, study_id, conditions)
+            row, warning = collect_run(run_dir, study_id, conditions, moves)
             if row is not None:
                 rows.append(row)
             if warning:

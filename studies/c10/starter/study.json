@@ -8,12 +8,12 @@
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
-      "agents": "studies/assets/prompts/agents-baseline.md",
-      "initial": "studies/assets/prompts/initial.txt",
-      "continuation": "studies/assets/prompts/continue.txt"
+      "agents": "studies/c10/prompts/agents-baseline.md",
+      "initial": "studies/c10/prompts/initial.txt",
+      "continuation": "studies/c10/prompts/continue.txt"
     },
     "specification": {
-      "path": "studies/assets/specs/behavioral.md",
+      "path": "studies/c10/specs/behavioral.md",
       "delivery": "task_file",
       "provenance": {
         "method": "human-edited",
@@ -39,7 +39,7 @@
       }
     },
     "candidate": {
-      "adapter": "studies/assets/candidates/rust-std.json",
+      "adapter": "studies/shared/candidates/rust-std.json",
       "language": "rust",
       "framework": "standard-library",
       "scaffold": null
@@ -65,9 +65,9 @@
       "factor": "prompt",
       "description": "Reduce explicit workflow instructions in the context and request prompts while retaining the full behavioral specification, continuation testing advice, and experiment-tool guidance.",
       "prompt": {
-        "agents": "studies/assets/prompts/agents-workflow-reduced.md",
-        "initial": "studies/assets/prompts/initial-workflow-reduced.txt",
-        "continuation": "studies/assets/prompts/continue-workflow-reduced.txt"
+        "agents": "studies/c10/prompts/agents-workflow-reduced.md",
+        "initial": "studies/c10/prompts/initial-workflow-reduced.txt",
+        "continuation": "studies/c10/prompts/continue-workflow-reduced.txt"
       }
     },
     {
@@ -75,7 +75,7 @@
       "factor": "specification",
       "description": "Replace the detailed behavioral specification with a concise product brief of the same feature scope.",
       "specification": {
-        "path": "studies/assets/specs/brief.md",
+        "path": "studies/c10/specs/brief.md",
         "provenance": {
           "method": "human-edited",
           "creator": "study-author",
@@ -90,7 +90,7 @@
       "factor": "specification",
       "description": "Provide the full baseline behavioral specification plus prescribed lexer/parser/sema/IR/codegen boundaries and invariants. Differs from baseline only by the added architecture sections.",
       "specification": {
-        "path": "studies/assets/specs/architecture.md",
+        "path": "studies/c10/specs/architecture.md",
         "provenance": {
           "method": "human-edited",
           "creator": "study-author",
@@ -147,7 +147,7 @@
       "factor": "candidate",
       "description": "Use Python 3 and the standard library rather than Rust, with the same external compiler contract and tests.",
       "candidate": {
-        "adapter": "studies/assets/candidates/python-stdlib.json",
+        "adapter": "studies/c10/candidates/python-stdlib.json",
         "language": "python",
         "framework": "standard-library",
         "scaffold": null
@@ -158,10 +158,10 @@
       "factor": "candidate",
       "description": "Start from a buildable Rust lexer/parser/sema/IR/codegen scaffold instead of an empty repository.",
       "candidate": {
-        "adapter": "studies/assets/candidates/rust-scaffold.json",
+        "adapter": "studies/c10/candidates/rust-scaffold.json",
         "language": "rust",
         "framework": "provided-pipeline-scaffold",
-        "scaffold": "studies/assets/scaffolds/rust-pipeline"
+        "scaffold": "studies/c10/scaffolds/rust-pipeline"
       }
     },
     {

@@ -7,9 +7,9 @@
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
-      "agents": "studies/minimal/agents.md",
-      "initial": "studies/minimal/initial.txt",
-      "continuation": "studies/minimal/continue.txt",
+      "agents": "studies/shared/minimal-protocol/agents.md",
+      "initial": "studies/shared/minimal-protocol/initial.txt",
+      "continuation": "studies/shared/minimal-protocol/continue.txt",
       "experiment_tools": false
     },
     "specification": {
@@ -39,7 +39,7 @@
       }
     },
     "candidate": {
-      "adapter": "studies/assets/candidates/sql/rust-std.json",
+      "adapter": "studies/sql/candidates/rust-std.json",
       "language": "rust",
       "framework": "standard-library",
       "scaffold": null
@@ -82,7 +82,7 @@
       "factor": "candidate",
       "description": "Plain Python 3, standard library only; type checkers withheld by the guard; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/sql/python-untyped.json",
+        "adapter": "studies/sql/candidates/python-untyped.json",
         "language": "python",
         "framework": "dynamic-typing",
         "scaffold": null
@@ -93,7 +93,7 @@
       "factor": "candidate",
       "description": "Python 3 under `mypy --strict` as the build gate; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/sql/python-typed.json",
+        "adapter": "studies/sql/candidates/python-typed.json",
         "language": "python",
         "framework": "strict-static-typing",
         "scaffold": null
@@ -104,7 +104,7 @@
       "factor": "candidate",
       "description": "JavaScript on Node, `node --check` as the build gate; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/sql/javascript-node.json",
+        "adapter": "studies/sql/candidates/javascript-node.json",
         "language": "javascript",
         "framework": "dynamic-typing",
         "scaffold": null
@@ -115,7 +115,7 @@
       "factor": "candidate",
       "description": "TypeScript under `tsc --strict --noEmitOnError` as the build gate; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/sql/typescript-strict.json",
+        "adapter": "studies/sql/candidates/typescript-strict.json",
         "language": "typescript",
         "framework": "strict-static-typing",
         "scaffold": null

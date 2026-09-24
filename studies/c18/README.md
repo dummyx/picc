@@ -1,10 +1,14 @@
-# Chapters 1-18 C compiler task (`picc-c18-minimal-v1`)
+# Chapters 1-18 C compiler task
 
 A second, separate compiler task: the core of *Writing a C Compiler*
 chapters 1-18 (integer types, unsigned, doubles, pointers, arrays,
 characters and strings, `void`/`sizeof`, structures). The chapters 1-10 task
-(`data/partitions`, `studies/minimal`, `studies/starter`, ...) is unchanged;
+(`data/partitions`, `studies/c10/`) is unchanged;
 this task has its own split, seed, prompt, and study id.
+
+The study file is [study.json](study.json). The task was run in the v10
+batch as `picc-c18-minimal-v1` (and in one v11 trial run as `-v2`); the
+current id, `picc-c18-minimal-v3`, has not been run.
 
 ## What the agent gets
 
@@ -12,17 +16,18 @@ The minimal protocol: an empty product repository, the short behavioral
 contract in [task.md](task.md) as the only initial message (language, build
 and invocation commands substituted from the adapter), blank `AGENTS.md` and
 `TASK.md`, `Continue.` as the continuation, Pi's built-in tools, no benchmark
-tests, scores, reference implementation, or status tool. The contract is the
-same text for every language condition; it names behaviour only, not
-architecture, and prohibits delegation to an existing compiler.
+tests, scores, reference implementation, or status tool. The rule checker and
+the two repair extensions (`pi/extensions/`) are loaded as in every run. The
+contract is the same text for every language condition; it names behaviour
+only, not architecture, and prohibits delegation to an existing compiler.
 
 Conditions (`study.json`, one-factor-at-a-time on `candidate`):
 
 | Condition | Candidate adapter | Build gate |
 |---|---|---|
-| `rust` (baseline) | `studies/assets/candidates/rust-std.json` | `cargo build --release --offline` |
-| `python` | `studies/assets/candidates/python-untyped.json` | `python3 -m py_compile`; type checkers withheld by the guard |
-| `python-typed` | `studies/assets/candidates/python-typed.json` | `mypy --strict` (pinned in image 0.5) must pass; `# type: ignore` is an advisory audit finding |
+| `rust` (baseline) | `studies/shared/candidates/rust-std.json` (shared with the chapters 1-10 task) | `cargo build --release --offline` |
+| `python` | [`candidates/python-untyped.json`](candidates/python-untyped.json) | `python3 -m py_compile`; type checkers withheld by the guard |
+| `python-typed` | [`candidates/python-typed.json`](candidates/python-typed.json) | `mypy --strict` (pinned in image 0.5) must pass; `# type: ignore` is an advisory audit finding |
 
 The entry contract is the existing PiCC one: `<entry> INPUT.c -o OUTPUT.s`. The two Python arms differ only in the build gate and the guard; the contract text is identical apart from the language line and build command.
 
@@ -30,7 +35,7 @@ The entry contract is the existing PiCC one: `<entry> INPUT.c -o OUTPUT.s`. The 
 
 Upstream corpus `nlsandler/writing-a-c-compiler-tests` at the same pinned
 revision as the chapters 1-10 task (`TEST_REF`), split by
-`scripts/split_tests.py --scope core-with-fixtures --max-stage 18` with seed
+`scripts/test_sets/split_tests.py --scope core-with-fixtures --max-stage 18` with seed
 `C18_SPLIT_SEED=20260916` and the usual 70/30 family-grouped,
 stage-and-validity-stratified policy. The exact selection is committed in
 [selection.json](selection.json) (949 tests: 668 visible, 281 hidden) and
@@ -84,10 +89,10 @@ this metric (as on the chapters 1-10 task); see the smoke results below.
 make tests-c18                                     # fetch + split + check against selection.json
 make study-validate STUDY=studies/c18/study.json
 make study-materialize STUDY=studies/c18/study.json CONDITION=rust RUN_ID=inspect-c18
-make study-run STUDY=studies/c18/study.json CONDITION=rust PROFILE=main RUN_ID=c18-rust-r1 REPLICATE=1
-make study-hidden-all RUN_ID=c18-rust-r1
-make study-report RUN_ID=c18-rust-r1
-make study-summary STUDY=studies/c18/study.json    # -> runs/study-results/picc-c18-minimal-v1/
+make study-run STUDY=studies/c18/study.json CONDITION=rust PROFILE=main RUN_ID=v18-c18-rust-r1 REPLICATE=1
+make study-hidden-all RUN_ID=v18-c18-rust-r1
+make study-report RUN_ID=v18-c18-rust-r1
+make study-summary STUDY=studies/c18/study.json    # -> runs/study-results/picc-c18-minimal-v3/
 make tasks-smoke                                   # evaluator smoke in the pinned image (Docker)
 ```
 

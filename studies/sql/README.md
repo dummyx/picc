@@ -1,30 +1,39 @@
-# SQL query engine task (`picc-sql-minimal-v1`)
+# SQL engine task
 
 PiSQL: an in-memory SQL engine whose behaviour must match SQLite on an
-explicitly documented subset, evaluated with sqllogictest scripts. Runner,
-adapters, snapshots, logging, budgets, and reporting are the existing
-harness; only the evaluator runtime (`studies/runtime/sql/`) and the task
-block of the study manifest are new.
+explicitly documented subset, evaluated with sqllogictest scripts. It uses the
+same harness as the compiler tasks (rounds, saved versions, budgets, reports);
+only its scorer (`studies/runtime/sql/`) and the `task` block of its study
+file are its own.
+
+The study file is [study.json](study.json). Its current id,
+`picc-sql-minimal-v7`, is the v17 batch; the task was also run in v10–v16
+under ids v1–v6 ([studies/README.md](../README.md) lists which).
 
 ## What the agent gets
 
 The minimal protocol: an empty product repository, the short behavioral
 contract in [task.md](task.md) as the only initial message, blank
 `AGENTS.md`/`TASK.md`, `Continue.` as the continuation, Pi's built-in tools,
-no benchmark tests, scores, or reference. The contract defines the product
-interface, the value rendering, and the SQL subset (SQLite semantics); it
-names no architecture and prohibits existing database engines, including
-SQLite bindings and Node's `node:sqlite`. The same text is used for every
-language condition.
+no benchmark tests, scores, or reference. The rule checker and the two repair
+extensions (`pi/extensions/`) are loaded as in every run. The contract
+defines the product interface, the value rendering, and the SQL subset
+(SQLite semantics); it names no architecture and prohibits existing database
+engines, including SQLite bindings and Node's `node:sqlite`. The same text is
+used for every language condition.
 
 Conditions (`study.json`, one-factor-at-a-time on `candidate`), adapters
-under `studies/assets/candidates/sql/`:
+under [`candidates/`](candidates/):
 
 | Condition | Candidate adapter | Build gate |
 |---|---|---|
-| `rust` (baseline) | `studies/assets/candidates/sql/rust-std.json` | `cargo build --release --offline` |
-| `python` | `studies/assets/candidates/sql/python-untyped.json` | `python3 -m py_compile`; type checkers withheld by the guard |
-| `python-typed` | `studies/assets/candidates/sql/python-typed.json` | `mypy --strict` (pinned in image 0.5) must pass; `# type: ignore` is an advisory audit finding |
+| `rust` (baseline) | `rust-std.json` | `cargo build --release --offline` |
+| `python` | `python-untyped.json` | `python3 -m py_compile`; type checkers withheld by the guard |
+| `python-typed` | `python-typed.json` | `mypy --strict` (pinned in image 0.5) must pass; `# type: ignore` is an advisory audit finding |
+| `javascript` (added for v17) | `javascript-node.json` | `node --check src/pisql.js`; the TypeScript compiler withheld by the guard |
+| `typescript` (added for v17) | `typescript-strict.json` | `tsc --strict --noEmitOnError`, run as `node dist/pisql.js` |
+
+(`python-stdlib.json` in the same folder is used only by the unit tests.)
 
 The adapters add task prohibitions: the guard blocks `sqlite3` invocations
 and imports of SQLite modules in agent shell commands; the source audit
@@ -107,10 +116,10 @@ per-script `score` field. No fuzz oracle exists for this task.
 make tests-sql                                     # sparse fetch + partitions + check against selection-record.json
 make study-validate STUDY=studies/sql/study.json
 make study-materialize STUDY=studies/sql/study.json CONDITION=rust RUN_ID=inspect-sql
-make study-run STUDY=studies/sql/study.json CONDITION=rust PROFILE=main RUN_ID=sql-rust-r1 REPLICATE=1
-make study-hidden-all RUN_ID=sql-rust-r1
-make study-report RUN_ID=sql-rust-r1
-make study-summary STUDY=studies/sql/study.json    # -> runs/study-results/picc-sql-minimal-v1/
+make study-run STUDY=studies/sql/study.json CONDITION=rust PROFILE=main RUN_ID=v18-sql-rust-r1 REPLICATE=1
+make study-hidden-all RUN_ID=v18-sql-rust-r1
+make study-report RUN_ID=v18-sql-rust-r1
+make study-summary STUDY=studies/sql/study.json    # -> runs/study-results/picc-sql-minimal-v7/
 make tasks-smoke                                   # evaluator smoke in the pinned image (Docker)
 ```
 

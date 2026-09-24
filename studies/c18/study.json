@@ -7,9 +7,9 @@
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
-      "agents": "studies/minimal/agents.md",
-      "initial": "studies/minimal/initial.txt",
-      "continuation": "studies/minimal/continue.txt",
+      "agents": "studies/shared/minimal-protocol/agents.md",
+      "initial": "studies/shared/minimal-protocol/initial.txt",
+      "continuation": "studies/shared/minimal-protocol/continue.txt",
       "experiment_tools": false
     },
     "specification": {
@@ -39,7 +39,7 @@
       }
     },
     "candidate": {
-      "adapter": "studies/assets/candidates/rust-std.json",
+      "adapter": "studies/shared/candidates/rust-std.json",
       "language": "rust",
       "framework": "standard-library",
       "scaffold": null
@@ -79,7 +79,7 @@
       "factor": "candidate",
       "description": "Plain Python 3, standard library only; type checkers withheld by the guard; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/python-untyped.json",
+        "adapter": "studies/c18/candidates/python-untyped.json",
         "language": "python",
         "framework": "dynamic-typing",
         "scaffold": null
@@ -90,7 +90,7 @@
       "factor": "candidate",
       "description": "Python 3 under `mypy --strict` as the build gate; same contract.",
       "candidate": {
-        "adapter": "studies/assets/candidates/python-typed.json",
+        "adapter": "studies/c18/candidates/python-typed.json",
         "language": "python",
         "framework": "strict-static-typing",
         "scaffold": null

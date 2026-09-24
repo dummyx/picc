@@ -13,7 +13,7 @@ from test_study import ROOT, study, write_partition
 
 class MinimalStudyTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.path = ROOT / "studies" / "minimal" / "study.json"
+        self.path = ROOT / "studies" / "c10" / "minimal" / "study.json"
         self.payload, conditions = study.load_study(self.path)
         self.assertEqual([row["id"] for row in conditions], ["minimal"])
         self.condition = conditions[0]

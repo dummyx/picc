@@ -53,7 +53,7 @@ def write_partition(root: Path, partition: str) -> Path:
 
 class StudyManifestTests(unittest.TestCase):
     def test_starter_manifest_is_valid_and_unique(self) -> None:
-        payload, conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        payload, conditions = study.load_study(ROOT / "studies" / "c10" / "starter" / "study.json")
         self.assertEqual(payload["id"], "picc-essential-v1")
         self.assertEqual(len(conditions), 12)
         self.assertEqual(len({row["id"] for row in conditions}), len(conditions))
@@ -86,7 +86,7 @@ class StudyManifestTests(unittest.TestCase):
 
 class ScheduleTests(unittest.TestCase):
     def test_schedule_is_deterministic_with_stable_run_ids(self) -> None:
-        study_path = Path("studies/starter/study.json")
+        study_path = Path("studies/c10/starter/study.json")
         with tempfile.TemporaryDirectory(prefix="picc-study-schedule-") as temporary:
             payloads = []
             for filename in ("first.json", "second.json"):
@@ -163,7 +163,7 @@ class MaterializationTests(unittest.TestCase):
         shutil.rmtree(self.withheld, ignore_errors=True)
 
     def condition_with_test_partitions(self, condition_id: str):
-        payload, conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        payload, conditions = study.load_study(ROOT / "studies" / "c10" / "starter" / "study.json")
         condition = next(row for row in conditions if row["id"] == condition_id)
         condition = study.deep_merge(
             condition,
@@ -179,7 +179,7 @@ class MaterializationTests(unittest.TestCase):
     def test_materialization_freezes_condition_and_renders_extensions(self) -> None:
         payload, condition = self.condition_with_test_partitions("reference-oracle")
         root = study.materialize(
-            ROOT / "studies" / "starter" / "study.json",
+            ROOT / "studies" / "c10" / "starter" / "study.json",
             payload,
             condition,
             self.materialization_id,
@@ -234,7 +234,7 @@ process.exit(failed ? 1 : 0);
     def test_tests_none_physically_withholds_agent_visible_test_files(self) -> None:
         payload, condition = self.condition_with_test_partitions("tests-none")
         root = study.materialize(
-            ROOT / "studies" / "starter" / "study.json",
+            ROOT / "studies" / "c10" / "starter" / "study.json",
             payload,
             condition,
             self.withheld_id,
@@ -315,7 +315,7 @@ pathlib.Path(args[2]).write_text(f'.globl main\\nmain:\\n  movl ${value}, %eax\\
                     "--manifest",
                     str(manifest_path),
                     "--candidate-config",
-                    str(ROOT / "studies" / "assets" / "candidates" / "python-stdlib.json"),
+                    str(ROOT / "studies" / "c10" / "candidates" / "python-stdlib.json"),
                     "--max-stage",
                     "1",
                     "--cache-dir",
@@ -340,7 +340,7 @@ class PushedFeedbackTests(unittest.TestCase):
     """tests.push_interval_minutes: validated, rendered into the tools extension and the prompt."""
 
     def conditions(self):
-        payload, conditions = study.load_study(ROOT / "studies" / "tests" / "study.json")
+        payload, conditions = study.load_study(ROOT / "studies" / "c10" / "tests" / "study.json")
         return payload, {row["id"]: row for row in conditions}
 
     def test_manifest_declares_the_pushed_condition(self) -> None:
@@ -367,7 +367,7 @@ class PushedFeedbackTests(unittest.TestCase):
     def test_materialization_renders_the_interval_and_the_guidance(self) -> None:
         payload, by_id = self.conditions()
         run_id = f"test-pushed-{uuid.uuid4().hex[:8]}"
-        root = study.materialize(ROOT / "studies" / "tests" / "study.json", payload, by_id["tests-pushed"], run_id)
+        root = study.materialize(ROOT / "studies" / "c10" / "tests" / "study.json", payload, by_id["tests-pushed"], run_id)
         self.addCleanup(shutil.rmtree, root, True)
         tools = (root / "pi" / "extensions" / "experiment-tools.ts").read_text(encoding="utf-8")
         self.assertIn("const PUSH_INTERVAL_MINUTES = 10 as number;", tools)
@@ -375,7 +375,7 @@ class PushedFeedbackTests(unittest.TestCase):
         self.assertIn('deliverAs: "steer"', tools)
         agents = (root / "prompts" / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("about every 10 minutes", agents)
-        baseline_root = study.materialize(ROOT / "studies" / "tests" / "study.json", payload, by_id["baseline"], run_id + "-b")
+        baseline_root = study.materialize(ROOT / "studies" / "c10" / "tests" / "study.json", payload, by_id["baseline"], run_id + "-b")
         self.addCleanup(shutil.rmtree, baseline_root, True)
         self.assertIn("const PUSH_INTERVAL_MINUTES = 0 as number;", (baseline_root / "pi" / "extensions" / "experiment-tools.ts").read_text(encoding="utf-8"))
         self.assertNotIn("about every", (baseline_root / "prompts" / "AGENTS.md").read_text(encoding="utf-8"))
@@ -385,11 +385,11 @@ class TestsStudyManifestTests(unittest.TestCase):
     """The tests manifest (versioned per batch): the starter's baseline and tests-none, nothing else changed."""
 
     def test_manifest_matches_the_starter_conditions(self) -> None:
-        payload, conditions = study.load_study(ROOT / "studies" / "tests" / "study.json")
+        payload, conditions = study.load_study(ROOT / "studies" / "c10" / "tests" / "study.json")
         self.assertRegex(payload["id"], r"^picc-tests-v\d+$")
         self.assertEqual(payload["baseline_condition"], "baseline")
         self.assertEqual([row["id"] for row in conditions], ["baseline", "tests-none", "tests-pushed"])
-        _, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        _, starter_conditions = study.load_study(ROOT / "studies" / "c10" / "starter" / "study.json")
         starter = {row["id"]: row for row in starter_conditions}
         by_id = {row["id"]: row for row in conditions}
         for name in ("baseline", "tests-none"):
@@ -404,7 +404,7 @@ class TestsStudyManifestTests(unittest.TestCase):
 class TypesStudyTests(unittest.TestCase):
     """The static-typing study: TypeScript under tsc --strict versus plain JavaScript."""
 
-    STUDY = ROOT / "studies" / "types" / "study.json"
+    STUDY = ROOT / "studies" / "c10" / "types" / "study.json"
 
     def setUp(self) -> None:
         self.partition_root = ROOT / "data" / ".study-types-test-partitions"
@@ -439,7 +439,7 @@ class TypesStudyTests(unittest.TestCase):
         self.assertRegex(payload["id"], r"^picc-types-v\d+$")
         self.assertEqual(payload["baseline_condition"], "js-untyped")
         self.assertEqual([row["id"] for row in conditions], ["js-untyped", "ts-strict"])
-        starter, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        starter, starter_conditions = study.load_study(ROOT / "studies" / "c10" / "starter" / "study.json")
         baseline = next(row for row in starter_conditions if row["id"] == "baseline")
         for row in conditions:
             self.assertEqual(row["factor"], "baseline" if row["id"] == "js-untyped" else "candidate")
@@ -532,7 +532,7 @@ class TypesStudyTests(unittest.TestCase):
                     "--workspace", str(workspace),
                     "--tests-root", str(tests),
                     "--manifest", str(manifest_path),
-                    "--candidate-config", str(ROOT / "studies" / "assets" / "candidates" / "javascript-node.json"),
+                    "--candidate-config", str(ROOT / "studies" / "c10" / "candidates" / "javascript-node.json"),
                     "--max-stage", "1",
                     "--cache-dir", str(temp / "cache"),
                     "--output", str(output),
@@ -556,7 +556,7 @@ if __name__ == "__main__":
 class SpecTestsStudyManifestTests(unittest.TestCase):
     """The specification x tests manifest: a full 2x2 crossing of the starter's spec and tests factors."""
 
-    STUDY = ROOT / "studies" / "spectests" / "study.json"
+    STUDY = ROOT / "studies" / "c10" / "spectests" / "study.json"
 
     def test_manifest_is_a_full_crossing_of_the_two_factors(self) -> None:
         payload, conditions = study.load_study(self.STUDY)
@@ -568,7 +568,7 @@ class SpecTestsStudyManifestTests(unittest.TestCase):
             [row["id"] for row in conditions],
             ["baseline", "spec-minimal", "tests-none", "spec-minimal-tests-none"],
         )
-        _, starter_conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        _, starter_conditions = study.load_study(ROOT / "studies" / "c10" / "starter" / "study.json")
         starter = {row["id"]: row for row in starter_conditions}
         by_id = {row["id"]: row for row in conditions}
         self.assertEqual(by_id["baseline"], starter["baseline"])
@@ -583,13 +583,13 @@ class SpecTestsStudyManifestTests(unittest.TestCase):
                 self.assertEqual(row[block], starter["baseline"][block], f"{row['id']}.{block}")
 
     def test_minimal_specification_is_interface_and_feature_list_only(self) -> None:
-        text = (ROOT / "studies" / "assets" / "specs" / "minimal.md").read_text(encoding="utf-8")
+        text = (ROOT / "studies" / "c10" / "specs" / "minimal.md").read_text(encoding="utf-8")
         for variable in ("{{LANGUAGE}}", "{{BUILD_COMMAND}}", "{{ENTRY_COMMAND}}", "{{DEPENDENCY_POLICY}}"):
             self.assertIn(variable, text)
         self.assertEqual(len([line for line in text.splitlines() if re.match(r"^\d+\. ", line)]), 10)
         for behavioral_detail in ("precedence", "associativ", "System V", "short-circuit", "Sandler", "Writing a C Compiler"):
             self.assertNotIn(behavioral_detail, text)
-        full = (ROOT / "studies" / "assets" / "specs" / "behavioral.md").read_text(encoding="utf-8")
+        full = (ROOT / "studies" / "c10" / "specs" / "behavioral.md").read_text(encoding="utf-8")
         self.assertLess(len(text.split()), len(full.split()) / 3)
 
 
@@ -597,7 +597,7 @@ class FactorialDesignValidationTests(unittest.TestCase):
     """validate_design accepts a full crossing and rejects partial or inconsistent ones."""
 
     def load(self) -> tuple[dict, list[dict]]:
-        return study.load_study(ROOT / "studies" / "spectests" / "study.json")
+        return study.load_study(ROOT / "studies" / "c10" / "spectests" / "study.json")
 
     def write(self, payload: dict) -> Path:
         directory = Path(tempfile.mkdtemp(prefix="factorial-", dir=ROOT / "studies"))
@@ -607,7 +607,7 @@ class FactorialDesignValidationTests(unittest.TestCase):
         return path
 
     def raw(self) -> dict:
-        return json.loads((ROOT / "studies" / "spectests" / "study.json").read_text(encoding="utf-8"))
+        return json.loads((ROOT / "studies" / "c10" / "spectests" / "study.json").read_text(encoding="utf-8"))
 
     def test_accepts_the_full_crossing(self) -> None:
         payload, conditions = self.load()
@@ -631,7 +631,7 @@ class FactorialDesignValidationTests(unittest.TestCase):
         raw = self.raw()
         for row in raw["conditions"]:
             if row["id"] == "spec-minimal-tests-none":
-                row["specification"] = {"path": "studies/assets/specs/brief.md"}
+                row["specification"] = {"path": "studies/c10/specs/brief.md"}
         with self.assertRaisesRegex(study.StudyError, "must equal the 'spec-minimal' overlay"):
             study.load_study(self.write(raw))
 

@@ -16,10 +16,10 @@ class TaskBlockValidationTests(unittest.TestCase):
         self.condition = copy.deepcopy(conditions[0])
 
     def test_default_task_is_the_original_compiler_task(self) -> None:
-        _, conditions = study.load_study(ROOT / "studies" / "minimal" / "study.json")
+        _, conditions = study.load_study(ROOT / "studies" / "c10" / "minimal" / "study.json")
         self.assertNotIn("task", conditions[0])
         self.assertEqual(study.condition_task(conditions[0]), study.DEFAULT_TASK)
-        _, starter = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        _, starter = study.load_study(ROOT / "studies" / "c10" / "starter" / "study.json")
         self.assertTrue(all(study.condition_task(row)["max_stage"] == 10 for row in starter))
 
     def test_rejects_bad_runtime_stage_and_parameters(self) -> None:

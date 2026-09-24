@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 # Settings for the targets below; override on the command line, e.g.
 #   make study-run STUDY=studies/sql/study.json CONDITION=python PROFILE=main RUN_ID=v18-sql-python-r1 REPLICATE=1
-STUDY ?= studies/starter/study.json
+STUDY ?= studies/c10/starter/study.json
 CONDITION ?= baseline
 PROFILE ?= pilot
 REPLICATES ?= 3
@@ -125,7 +125,7 @@ experiment:
 
 # --- One study step at a time -------------------------------------------------
 # What `make experiment` does, as separate steps. Every run is made from a
-# study manifest (studies/*/study.json); see studies/README.md.
+# study file (studies/<task>/.../study.json); see studies/README.md.
 
 study-validate:     # check a manifest and list its conditions
 	python3 scripts/study.py validate --study "$(STUDY)"

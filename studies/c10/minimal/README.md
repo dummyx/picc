@@ -22,7 +22,11 @@ The experiment tools extension is omitted entirely, including its tool
 descriptions, prompt guidelines, pushed feedback, and event hooks. The access
 guard and configured bash timeout remain. Guard failures can return access
 restriction messages. Pi's built-in system prompt, built-in tool descriptions,
-and normal session compaction remain; this condition minimizes added experiment
+and session compaction remain, and so do the two repair extensions every run
+carries (`pi/extensions/compaction-bound.ts` keeps a compaction request within
+the context window; `truncation-repair.ts` replaces a reply cut off at the
+output cap, with a note that it was cut off); they change the conversation
+only when one of those happens. This condition minimizes added experiment
 instructions, not the coding agent's own instructions.
 
 The outer harness still enforces the configured time/round limits, snapshots the
@@ -35,15 +39,15 @@ experiment-tools extension events, including its compaction logging, are absent.
 From the repository root:
 
 ```bash
-make study-validate STUDY=studies/minimal/study.json
-make study-materialize STUDY=studies/minimal/study.json CONDITION=minimal RUN_ID=inspect-minimal
+make study-validate STUDY=studies/c10/minimal/study.json
+make study-materialize STUDY=studies/c10/minimal/study.json CONDITION=minimal RUN_ID=inspect-minimal
 ```
 
 Inspect `runs/.study-materializations/inspect-minimal/prompts/INITIAL.txt` before
 running. The materialization is a frozen copy; it does not start a model session.
 
 ```bash
-make study-run STUDY=studies/minimal/study.json CONDITION=minimal PROFILE=main RUN_ID=minimal-main-r1 REPLICATE=1
+make study-run STUDY=studies/c10/minimal/study.json CONDITION=minimal PROFILE=main RUN_ID=minimal-main-r1 REPLICATE=1
 make study-hidden-all RUN_ID=minimal-main-r1
 make study-report RUN_ID=minimal-main-r1
 ```
@@ -53,9 +57,9 @@ frozen for each run. This is a separate study (`picc-minimal-v1`): specification
 detail, prompting, and feedback all differ from the starter baseline, so their
 comparison cannot isolate the effect of workflow instructions alone.
 
-The `spec-minimal` condition of `studies/spectests/study.json` is different
+The `spec-minimal` condition of `studies/c10/spectests/study.json` is different
 again: it keeps the starter workflow, prompts, and experiment tools and
-reduces only the specification document (`studies/assets/specs/minimal.md`).
+reduces only the specification document (`studies/c10/specs/minimal.md`).
 
 The starter's former `prompt-minimal` condition is now named `workflow-reduced`.
 Its full specification and feedback tools remain. Historical run IDs and

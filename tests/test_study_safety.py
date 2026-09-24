@@ -219,7 +219,7 @@ class FrozenExecutionEnvironmentTests(unittest.TestCase):
 class ConditionValidationSafetyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.study_payload, conditions = study.load_study(ROOT / "studies" / "starter" / "study.json")
+        cls.study_payload, conditions = study.load_study(ROOT / "studies" / "c10" / "starter" / "study.json")
         cls.baseline = next(condition for condition in conditions if condition["id"] == "baseline")
 
     def test_rejects_invalid_budget_values(self) -> None:
@@ -281,7 +281,7 @@ class ScheduleRunIdTests(unittest.TestCase):
         for replicate in (0, -1):
             with self.subTest(replicate=replicate):
                 args = argparse.Namespace(
-                    study=ROOT / "studies" / "starter" / "study.json",
+                    study=ROOT / "studies" / "c10" / "starter" / "study.json",
                     replicate=replicate,
                 )
                 with self.assertRaisesRegex(study.StudyError, "--replicate"):

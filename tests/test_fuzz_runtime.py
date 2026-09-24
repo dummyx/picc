@@ -74,7 +74,7 @@ class FuzzEvaluateTests(unittest.TestCase):
             workspace = Path(temporary) / "workspace"
             shutil.copytree(ROOT / "fixtures" / "mock-picc-js", workspace)
             full = self.run_scorer(
-                workspace, ROOT / "studies" / "assets" / "candidates" / "javascript-node.json", 2, ["--count", "12"]
+                workspace, ROOT / "studies" / "c10" / "candidates" / "javascript-node.json", 2, ["--count", "12"]
             )
         summary = full["summary"]
         self.assertTrue(summary["build_ok"] and summary["audit_ok"])
@@ -94,7 +94,7 @@ class FuzzEvaluateTests(unittest.TestCase):
             (workspace / "src").mkdir(parents=True)
             (workspace / "src" / "picc.js").write_text('require("child_process");\n', encoding="utf-8")
             full = self.run_scorer(
-                workspace, ROOT / "studies" / "assets" / "candidates" / "javascript-node.json", 3, ["--count", "5"]
+                workspace, ROOT / "studies" / "c10" / "candidates" / "javascript-node.json", 3, ["--count", "5"]
             )
             self.assertTrue(full["summary"]["audit_blocking"])
             self.assertEqual(full["summary"]["fuzz_macro"], 0.0)
@@ -105,7 +105,7 @@ class FuzzEvaluateTests(unittest.TestCase):
                 return
             full = self.run_scorer(
                 workspace,
-                ROOT / "studies" / "assets" / "candidates" / "javascript-node.json",
+                ROOT / "studies" / "c10" / "candidates" / "javascript-node.json",
                 3,
                 ["--count", "5", "--deadline-seconds", "0"],
             )

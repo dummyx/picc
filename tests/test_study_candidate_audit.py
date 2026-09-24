@@ -446,7 +446,7 @@ class PythonAuditScopeTests(unittest.TestCase):
     closure, not every .py file in the workspace."""
 
     ROOT = Path(__file__).resolve().parent.parent
-    ADAPTER = "studies/assets/candidates/sql/python-untyped.json"
+    ADAPTER = "studies/sql/candidates/python-untyped.json"
 
     def audit(self, files: dict[str, str], adapter: dict | None = None) -> dict:
         if adapter is None:

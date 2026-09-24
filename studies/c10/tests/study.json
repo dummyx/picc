@@ -8,12 +8,12 @@
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
-      "agents": "studies/assets/prompts/agents-baseline.md",
-      "initial": "studies/assets/prompts/initial.txt",
-      "continuation": "studies/assets/prompts/continue.txt"
+      "agents": "studies/c10/prompts/agents-baseline.md",
+      "initial": "studies/c10/prompts/initial.txt",
+      "continuation": "studies/c10/prompts/continue.txt"
     },
     "specification": {
-      "path": "studies/assets/specs/behavioral.md",
+      "path": "studies/c10/specs/behavioral.md",
       "delivery": "task_file",
       "provenance": {
         "method": "human-edited",
@@ -39,7 +39,7 @@
       }
     },
     "candidate": {
-      "adapter": "studies/assets/candidates/rust-std.json",
+      "adapter": "studies/shared/candidates/rust-std.json",
       "language": "rust",
       "framework": "standard-library",
       "scaffold": null

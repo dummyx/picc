@@ -12,12 +12,12 @@
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
-      "agents": "studies/assets/prompts/agents-baseline.md",
-      "initial": "studies/assets/prompts/initial.txt",
-      "continuation": "studies/assets/prompts/continue.txt"
+      "agents": "studies/c10/prompts/agents-baseline.md",
+      "initial": "studies/c10/prompts/initial.txt",
+      "continuation": "studies/c10/prompts/continue.txt"
     },
     "specification": {
-      "path": "studies/assets/specs/behavioral.md",
+      "path": "studies/c10/specs/behavioral.md",
       "delivery": "task_file",
       "provenance": {
         "method": "human-edited",
@@ -43,7 +43,7 @@
       }
     },
     "candidate": {
-      "adapter": "studies/assets/candidates/rust-std.json",
+      "adapter": "studies/shared/candidates/rust-std.json",
       "language": "rust",
       "framework": "standard-library",
       "scaffold": null
@@ -69,7 +69,7 @@
       "factor": "specification",
       "description": "Replace the behavioral specification with a minimal one: product interface, output contract, and a one-line-per-stage feature list, with no behavioral detail.",
       "specification": {
-        "path": "studies/assets/specs/minimal.md",
+        "path": "studies/c10/specs/minimal.md",
         "provenance": {
           "method": "human-edited",
           "creator": "study-author",
@@ -93,7 +93,7 @@
       "factor": "specification+tests",
       "description": "Minimal specification and no visible tests: the agent has only the interface, the feature list, and its own knowledge of C.",
       "specification": {
-        "path": "studies/assets/specs/minimal.md",
+        "path": "studies/c10/specs/minimal.md",
         "provenance": {
           "method": "human-edited",
           "creator": "study-author",

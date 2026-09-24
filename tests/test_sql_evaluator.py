@@ -151,7 +151,7 @@ class SqlEvaluatorTests(unittest.TestCase):
         sys.path.insert(0, str(ROOT / "studies" / "runtime"))
         import candidate_runtime  # noqa: E402
 
-        adapters = ROOT / "studies" / "assets" / "candidates" / "sql"
+        adapters = ROOT / "studies" / "sql" / "candidates"
         with tempfile.TemporaryDirectory() as temporary:
             workspace = Path(temporary)
             (workspace / "pisql.py").write_text("import sqlite3\nprint(sqlite3.sqlite_version)\n", encoding="utf-8")
