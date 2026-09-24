@@ -22,7 +22,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis" / "dashboard"))
 
-import picc_data  # noqa: E402
 import server  # noqa: E402
 from picc_data import DataError, Results, file_kind, shell_kinds, why_failed  # noqa: E402
 
@@ -425,7 +424,8 @@ class DashboardServer(unittest.TestCase):
         self.assertEqual(self.get("/api/overview", host="evil.example")[0], 403)
         self.assertEqual(self.get("/api/overview", host=f"evil.example:{self.port}")[0], 403)
         self.assertEqual(self.get("/api/overview", host=f"127.0.0.1:{self.port}")[0], 200)
-        for path in ("/static/../picc_data.py", "/static/%2e%2e/picc_data.py", "/static/../../../.env", "/.env",
+        for path in ("/static/../server.py", "/static/%2e%2e/server.py", "/static/../picc_data/records.py",
+                     "/static/../../../.env", "/.env",
                      "/api/doc?path=../.env", f"/api/run/{RUN}/file?path=../../metadata.json"):
             with self.subTest(path=path):
                 status, body = self.get(path)

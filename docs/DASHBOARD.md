@@ -70,8 +70,12 @@ run whose files change, such as one that is running, is re-read automatically.
 The same records, measured the same way, as `analysis/v17_internals.py` and
 `docs/REPORT_2026-09-23.md`; for the 15 v17 runs every total matches that
 report. Scores re-computed after a batch (`analysis/v<N>-rescore/`,
-`analysis/v6-rescore.json`) replace the values recorded during the run and are
-marked with `*`.
+`analysis/v6-rescore.json`) replace the values recorded during the run, and
+are marked with `*`, only for the runs the batch's correction applies to, as
+the batch's results script uses them: for v9, two of the twelve re-scored runs
+(`analysis/README.md`). The last version that built is chosen by the study
+summary's rule: the last saved version whose hidden scoring built with no
+blocking rule finding.
 
 Thinking tokens are not in the run records (they are recorded as 0), so they
 are counted from the streamed reasoning with the model's own tokenizer. That
@@ -82,6 +86,12 @@ A tool call's time is the time from the reply being saved to its result being
 saved. Commands cut off by the 120-second limit measure 120.1 seconds this way,
 which is how the method was checked.
 
-The code is in `analysis/dashboard/` (`picc_data.py` reads the records,
-`server.py` serves them, `static/` is the page); `tests/test_dashboard.py`
-checks it against a small made-up run whose timings are known exactly.
+The code is in `analysis/dashboard/`: `server.py` serves the page in
+`static/`, and `picc_data/` reads the records, one module per kind of
+question (`runs.py` for runs, batches and scores; `timeline.py` for where the
+time went; `conversation.py` for the conversation and reasoning tokens;
+`workspace.py` for the files; `testresults.py` for per-test results;
+`pages.py` for setup, overview, batch, document and model-server pages;
+`warm.py` for the background warm-up; `records.py` and `classify.py` for the
+shared readers and plain-language labels). `tests/test_dashboard.py` checks
+it against a small made-up run whose timings are known exactly.
