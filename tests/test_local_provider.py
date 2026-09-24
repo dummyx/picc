@@ -152,18 +152,44 @@ class ModelsJsonGenerationTests(unittest.TestCase):
 
 
 class ControlFileTests(unittest.TestCase):
+    """copy_control_files freezes the materialization's prompts, Pi settings and extensions."""
+
+    def materialization(self, base: Path) -> Path:
+        root = base / "materialization"
+        (root / "prompts").mkdir(parents=True)
+        for name in ("AGENTS.md", "TASK.md", "INITIAL.txt", "CONTINUE.txt"):
+            (root / "prompts" / name).write_text(f"{name}\n", encoding="utf-8")
+        (root / "pi" / "extensions").mkdir(parents=True)
+        (root / "pi" / "settings.json").write_text("{}\n", encoding="utf-8")
+        (root / "pi" / "extensions" / "experiment-guard.ts").write_text("export {};\n", encoding="utf-8")
+        return root
+
     def test_local_run_control_includes_models_json(self) -> None:
         with tempfile.TemporaryDirectory(prefix="picc-local-control-") as temporary:
-            control = runner.copy_control_files(Path(temporary) / "run", local_config())
+            with mock.patch.object(runner, "REPO_ROOT", self.materialization(Path(temporary))):
+                control = runner.copy_control_files(Path(temporary) / "run", local_config())
             payload = json.loads((control / "pi" / "models.json").read_text(encoding="utf-8"))
             self.assertEqual(payload["providers"]["local"]["models"][0]["id"], LOCAL_MODEL_ID)
+            self.assertEqual((control / "INITIAL.txt").read_text(encoding="utf-8"), "INITIAL.txt\n")
+            self.assertTrue((control / "pi" / "extensions" / "experiment-guard.ts").is_file())
 
     def test_hosted_run_control_has_no_models_json(self) -> None:
         with tempfile.TemporaryDirectory(prefix="picc-hosted-control-") as temporary:
-            control = runner.copy_control_files(
-                Path(temporary) / "run", {"MODEL_PROVIDER": "zai", "MODEL_ID": "example/hosted-model"}
-            )
+            with mock.patch.object(runner, "REPO_ROOT", self.materialization(Path(temporary))):
+                control = runner.copy_control_files(
+                    Path(temporary) / "run", {"MODEL_PROVIDER": "zai", "MODEL_ID": "example/hosted-model"}
+                )
             self.assertFalse((control / "pi" / "models.json").exists())
+
+    def test_the_repository_itself_is_refused(self) -> None:
+        # The per-run scripts read prompts and the scorer from the tree they
+        # sit in; only a materialization has the right ones.
+        with self.assertRaisesRegex(common.ExperimentError, "study materialization"):
+            common.require_materialization(REPO_ROOT, "run_experiment.py")
+        with tempfile.TemporaryDirectory(prefix="picc-materialized-") as temporary:
+            root = self.materialization(Path(temporary))
+            (root / common.MATERIALIZATION_RECORD).write_text("{}\n", encoding="utf-8")
+            common.require_materialization(root, "run_experiment.py")
 
 
 class FrozenResumeConfigTests(unittest.TestCase):

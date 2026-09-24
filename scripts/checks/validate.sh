@@ -1,29 +1,32 @@
 #!/usr/bin/env bash
+# Everything that can be checked without Docker or the model server: Python
+# and shell syntax, the unit tests, the pinned settings, and that the three
+# tasks' test splits are deterministic and match the committed selections.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
-python3 -m py_compile scripts/*.py evaluator/evaluate.py studies/runtime/evaluate.py studies/runtime/candidate_runtime.py studies/runtime/sql/evaluate.py studies/runtime/sql/sqllogictest.py fixtures/mock-pisql-*/pisql.py
+python3 -m py_compile scripts/*.py scripts/*/*.py analysis/*.py analysis/dashboard/*.py analysis/dashboard/picc_data/*.py studies/runtime/evaluate.py studies/runtime/candidate_runtime.py studies/runtime/sql/evaluate.py studies/runtime/sql/sqllogictest.py fixtures/mock-pisql-*/pisql.py
 python3 -m unittest discover -s tests -p 'test_*.py' -v
-for script in scripts/*.sh; do
+for script in scripts/*.sh scripts/*/*.sh docker/build.sh; do
   bash -n "$script"
 done
 python3 -m json.tool pi/settings.json >/dev/null
 if command -v node >/dev/null 2>&1 && node -e 'require.resolve("typescript")' >/dev/null 2>&1; then
-  node scripts/check_typescript.js
+  node scripts/checks/check_typescript.js
 else
-  echo "TypeScript syntax check skipped locally (Node + TypeScript not found); make auth-check validates runtime extension loading in the pinned image."
+  echo "TypeScript syntax check skipped locally (Node + TypeScript not found); make extensions-smoke runs it in the pinned image."
 fi
 
 rm -rf data/smoke-partitions data/smoke-partitions-repeat
-python3 scripts/split_tests.py \
+python3 scripts/test_sets/split_tests.py \
   --source fixtures/smoke \
   --output data/smoke-partitions \
   --seed 20260810 \
   --visible-fraction 0.70 \
   --max-stage 3 \
   --source-revision local-smoke >/dev/null
-python3 scripts/split_tests.py \
+python3 scripts/test_sets/split_tests.py \
   --source fixtures/smoke \
   --output data/smoke-partitions-repeat \
   --seed 20260810 \
@@ -67,7 +70,7 @@ rm -rf data/smoke-partitions-repeat
 # deterministically and record every evaluator-side fixture.
 rm -rf data/smoke-partitions-c18 data/smoke-partitions-c18-repeat
 for out in data/smoke-partitions-c18 data/smoke-partitions-c18-repeat; do
-  python3 scripts/split_tests.py \
+  python3 scripts/test_sets/split_tests.py \
     --source fixtures/smoke-c18 \
     --output "$out" \
     --seed 20260916 \
@@ -84,7 +87,7 @@ rm -rf data/smoke-partitions-c18-repeat
 # script must reproduce under the host SQLite.
 rm -rf data/smoke-partitions-sql data/smoke-partitions-sql-repeat
 for out in data/smoke-partitions-sql data/smoke-partitions-sql-repeat; do
-  python3 scripts/select_sqllogictest.py \
+  python3 scripts/test_sets/select_sqllogictest.py \
     --source fixtures/smoke-sql \
     --selection fixtures/smoke-sql/selection.json \
     --output "$out" \
@@ -107,8 +110,8 @@ PY2
 
 # Pinned task selections, when the partitions have been fetched.
 if [[ -f data/partitions-c18/visible/manifest.json ]]; then
-  python3 scripts/pin_selection.py --check --record studies/c18/selection.json --partitions data/partitions-c18
+  python3 scripts/test_sets/pin_selection.py --check --record studies/c18/selection.json --partitions data/partitions-c18
 fi
 if [[ -f data/partitions-sql/visible/manifest.json ]]; then
-  python3 scripts/pin_selection.py --check --record studies/sql/selection-record.json --partitions data/partitions-sql
+  python3 scripts/test_sets/pin_selection.py --check --record studies/sql/selection-record.json --partitions data/partitions-sql
 fi

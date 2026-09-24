@@ -1,5 +1,5 @@
 // Drives pi/extensions/compaction-bound.ts against synthetic conversations.
-// Run by scripts/smoke_compaction.sh inside the pinned image, where
+// Run by scripts/checks/smoke_extensions.sh inside the pinned image, where
 // @earendil-works/pi-coding-agent resolves.
 import assert from "node:assert/strict";
 import { serializeConversation, convertToLlm } from "@earendil-works/pi-coding-agent";

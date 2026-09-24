@@ -8,9 +8,9 @@
 # gets its own virtualenv, outside the harness import path, and is pinned in
 # config/sglang.env rather than in any requirements file the harness reads.
 #
-#   scripts/install_sglang.sh [--upgrade]
+#   scripts/model_server/install_sglang.sh [--upgrade]
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT/config/sglang.env"
 VENV="$ROOT/${SGLANG_VENV:-.venv-sglang}"
 
@@ -90,7 +90,7 @@ uv pip install --python "$VENV/bin/python" \
 # the toolkit here comes from pip, which puts libraries in lib/ and ships
 # only versioned sonames. Without these links the server compiles its
 # kernels and then dies at the link step with "cannot find -lcudart".
-"$VENV/bin/python" "$ROOT/scripts/link_cuda_dev.py" "$VENV"
+"$VENV/bin/python" "$ROOT/scripts/model_server/link_cuda_dev.py" "$VENV"
 
 "$VENV/bin/python" - <<'PY'
 import sglang, torch

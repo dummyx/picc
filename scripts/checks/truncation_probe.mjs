@@ -1,5 +1,5 @@
 // Drives pi/extensions/truncation-repair.ts against synthetic replies.
-// Run by scripts/smoke_extensions.sh inside the pinned image.
+// Run by scripts/checks/smoke_extensions.sh inside the pinned image.
 import assert from "node:assert/strict";
 import { needsRepair, repairedContent } from "./truncation-repair.ts";
 

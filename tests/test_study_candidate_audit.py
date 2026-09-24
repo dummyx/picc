@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from tests.test_study_evaluator import evaluator
+from test_study_evaluator import evaluator
 
 
 class CandidateIsolationTests(unittest.TestCase):

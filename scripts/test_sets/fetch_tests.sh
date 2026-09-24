@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
 # shellcheck disable=SC1091
 source "$ROOT/config/defaults.env"
@@ -10,10 +10,10 @@ if [[ -f "$ROOT/.env" ]]; then
 fi
 set +a
 
-resolved="$("$ROOT/scripts/ensure_upstream_tests.sh" | tail -n 1)"
+resolved="$("$ROOT/scripts/test_sets/ensure_upstream_tests.sh" | tail -n 1)"
 SOURCE_DIR="$ROOT/data/upstream/writing-a-c-compiler-tests"
 
-python3 "$ROOT/scripts/split_tests.py" \
+python3 "$ROOT/scripts/test_sets/split_tests.py" \
   --source "$SOURCE_DIR" \
   --output "$ROOT/data/partitions" \
   --seed "$SPLIT_SEED" \

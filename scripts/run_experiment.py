@@ -14,17 +14,16 @@ import subprocess
 import sys
 import tempfile
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from common import (
-    require_context_budget,
     LEGACY_KEY_RENAMES,
     ExperimentError,
     REPO_ROOT,
     api_key_for,
     append_jsonl,
+    as_text,
     atomic_write_json,
     base_container_args,
     config_float,
@@ -33,17 +32,22 @@ from common import (
     docker_mount,
     docker_pi_config_mounts,
     docker_secret_env,
+    evaluation_command,
     harness_lock,
     host_metadata,
     is_local_provider,
+    is_secret_key,
     load_config,
     local_model_metadata,
     read_jsonl,
+    require_context_budget,
+    require_materialization,
     require_model_id,
     require_model_provider,
     resolve_local_provider,
     run,
     sanitize_run_id,
+    utc_now,
     write_local_models_json,
 )
 
@@ -55,11 +59,6 @@ RESUMABLE_TERMINATION_REASONS = frozenset({"pi_process_failure", "round_timeout"
 # reaching the ceiling records an unevaluatable round instead of aborting
 # the run. Post-hoc evaluation has its own, larger ceiling.
 VISIBLE_EVAL_TIMEOUT_SECONDS = 3600
-
-
-
-def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
 
 
 def parse_args() -> argparse.Namespace:
@@ -340,34 +339,16 @@ def _run_visible_evaluation_in_workspace(
     output_host = artifacts / "evaluations" / f"visible-round-{round_number:03d}.json"
     output_host.parent.mkdir(parents=True, exist_ok=True)
     container_name = f"picc-veval-{os.getpid()}-{round_number:03d}"
-    command = base_container_args(config, name=container_name, role="evaluation")
-    command += docker_mount(workspace, "/workspace")
-    command += docker_mount(visible_tests, "/tests", readonly=True)
-    command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
-    command += docker_mount(artifacts, "/run-artifacts")
-    command += [
-        "-e",
-        "CARGO_NET_OFFLINE=true",
-        "--workdir",
-        "/workspace",
-        config["EXPERIMENT_IMAGE"],
-        "python3",
-        "/opt/picc-eval/evaluate.py",
-        "--workspace",
-        "/workspace",
-        "--tests-root",
-        "/tests",
-        "--manifest",
-        "/tests/manifest.json",
-        "--max-stage",
-        str(max_stage),
-        "--output",
-        f"/run-artifacts/evaluations/{output_host.name}",
-        "--summary-json",
-    ]
-    def captured(value: Any) -> str:
-        return value if isinstance(value, str) else (value or b"").decode("utf-8", errors="replace")
-
+    command = evaluation_command(
+        config,
+        container_name=container_name,
+        workspace=workspace,
+        tests=visible_tests,
+        evaluator=evaluator,
+        artifacts=artifacts,
+        output_name=output_host.name,
+        max_stage=max_stage,
+    )
     try:
         result = subprocess.run(
             command, check=False, capture_output=True, text=True, timeout=VISIBLE_EVAL_TIMEOUT_SECONDS
@@ -381,10 +362,10 @@ def _run_visible_evaluation_in_workspace(
             "the snapshot is recorded as unevaluatable for this round"
         )
         (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stdout.log").write_text(
-            captured(error.stdout), encoding="utf-8"
+            as_text(error.stdout), encoding="utf-8"
         )
         (artifacts / "evaluations" / f"visible-round-{round_number:03d}.stderr.log").write_text(
-            note + "\n" + captured(error.stderr), encoding="utf-8"
+            note + "\n" + as_text(error.stderr), encoding="utf-8"
         )
         return {
             "score": 0.0,
@@ -1053,11 +1034,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
         last_visible: dict[str, Any] | None = None
         perfect_first_round: int | None = None
 
-        nonsecret_config = {
-            key: value
-            for key, value in config.items()
-            if "KEY" not in key.upper() and "TOKEN" not in key.upper() and "SECRET" not in key.upper()
-        }
+        nonsecret_config = {key: value for key, value in config.items() if not is_secret_key(key)}
         current_attempt = {
             "index": 0,
             "kind": "initial",
@@ -1350,6 +1327,7 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
 
 def main() -> int:
     args = parse_args()
+    require_materialization(REPO_ROOT, "run_experiment.py")
     run_id = sanitize_run_id(args.run_id)
     run_dir = REPO_ROOT / "runs" / run_id
     current_config = load_config()

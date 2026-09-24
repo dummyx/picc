@@ -12,10 +12,10 @@
 # experiment runs against. --served-model-name keeps the model's public id in
 # run metadata even though the path on disk is local.
 #
-#   scripts/fetch_model.sh [--revision SHA] [--force]
-#   scripts/fetch_model.sh --verify      check what is on disk, download nothing
+#   scripts/model_server/fetch_model.sh [--revision SHA] [--force]
+#   scripts/model_server/fetch_model.sh --verify      check what is on disk, download nothing
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT/config/sglang.env"
 
 revision="${SGLANG_MODEL_REVISION:-}"

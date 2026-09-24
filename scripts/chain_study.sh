@@ -51,8 +51,8 @@ for slot in "${slots[@]}"; do
     if [[ "${PICC_RECOVER_SERVER:-0}" == "1" && "${recovered:-0}" == "0" ]]; then
       recovered=1
       say "slot $sequence $run_id: preflight failed; relaunching the pinned server once"
-      "$ROOT/scripts/sglang_server.sh" stop >>"$log" 2>&1 || true
-      if "$ROOT/scripts/sglang_server.sh" start 1800 >>"$log" 2>&1 \
+      "$ROOT/scripts/model_server/sglang_server.sh" stop >>"$log" 2>&1 || true
+      if "$ROOT/scripts/model_server/sglang_server.sh" start 1800 >>"$log" 2>&1 \
          && (cd "$ROOT" && make preflight >>"$log" 2>&1); then
         say "slot $sequence $run_id: server recovered, continuing"
       else

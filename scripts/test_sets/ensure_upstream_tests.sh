@@ -2,7 +2,7 @@
 # Ensure data/upstream/writing-a-c-compiler-tests is checked out at TEST_REF.
 # Shared by fetch_tests.sh (chapters 1-10 split) and fetch_tests_c18.sh.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
 # shellcheck disable=SC1091
 source "$ROOT/config/defaults.env"

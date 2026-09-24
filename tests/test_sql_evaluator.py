@@ -18,7 +18,7 @@ def build_smoke_partitions(root: Path) -> Path:
     output = root / "partitions"
     subprocess.run(
         [
-            sys.executable, str(ROOT / "scripts" / "select_sqllogictest.py"),
+            sys.executable, str(ROOT / "scripts" / "test_sets" / "select_sqllogictest.py"),
             "--source", str(SMOKE), "--selection", str(SMOKE / "selection.json"),
             "--output", str(output), "--seed", "20260916", "--visible-fraction", "0.7",
             "--source-revision", "local-smoke",

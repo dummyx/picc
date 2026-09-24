@@ -61,7 +61,7 @@ say() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*"; }
 [[ -n "$prefix" ]] || die "--prefix is required (run ids are built from it)"
 if ((single)) && [[ -z "$condition" ]]; then die "--single needs --condition"; fi
 
-server="$ROOT/scripts/sglang_server.sh"
+server="$ROOT/scripts/model_server/sglang_server.sh"
 
 if ((dry_run)); then
   say "server configuration:"

@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tests.test_study_evaluator import evaluator
+from test_study_evaluator import evaluator
 
 
 class CandidateArtifactSafetyTests(unittest.TestCase):

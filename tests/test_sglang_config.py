@@ -34,7 +34,7 @@ def parse_env(path: Path) -> dict[str, str]:
 def emitted_config() -> dict[str, str]:
     """The YAML the launcher hands to `sglang serve`, as a flat dict."""
     result = subprocess.run(
-        [str(ROOT / "scripts" / "sglang_server.sh"), "config"],
+        [str(ROOT / "scripts" / "model_server" / "sglang_server.sh"), "config"],
         capture_output=True, text=True, check=True,
     )
     values: dict[str, str] = {}
@@ -96,7 +96,7 @@ class LauncherOutputTests(unittest.TestCase):
 
     def test_the_api_key_is_never_printed(self) -> None:
         result = subprocess.run(
-            [str(ROOT / "scripts" / "sglang_server.sh"), "config"],
+            [str(ROOT / "scripts" / "model_server" / "sglang_server.sh"), "config"],
             capture_output=True, text=True, check=True,
         )
         env_file = ROOT / ".env"
@@ -216,7 +216,7 @@ class ReproducibleInstallTests(unittest.TestCase):
 
     def setUp(self) -> None:
         self.env = parse_env(ROOT / "config" / "sglang.env")
-        self.installer = (ROOT / "scripts" / "install_sglang.sh").read_text(encoding="utf-8")
+        self.installer = (ROOT / "scripts" / "model_server" / "install_sglang.sh").read_text(encoding="utf-8")
 
     def test_the_release_is_pinned(self) -> None:
         self.assertRegex(self.env.get("SGLANG_VERSION", ""), r"^\d+\.\d+\.\d+")
@@ -253,7 +253,7 @@ class SecretHygieneTests(unittest.TestCase):
     """SGLang prints its server_args, api_key included, at startup."""
 
     def setUp(self) -> None:
-        self.launcher = (ROOT / "scripts" / "sglang_server.sh").read_text(encoding="utf-8")
+        self.launcher = (ROOT / "scripts" / "model_server" / "sglang_server.sh").read_text(encoding="utf-8")
 
     def test_the_log_is_private_and_scrubbed(self) -> None:
         self.assertIn('install -m 600 /dev/null "$dir/server.log"', self.launcher)

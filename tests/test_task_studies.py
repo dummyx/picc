@@ -6,7 +6,6 @@ import re
 import shutil
 import unittest
 import uuid
-from pathlib import Path
 
 from test_study import ROOT, study
 
@@ -153,7 +152,6 @@ class TaskStudyManifestTests(unittest.TestCase):
 
 class SummaryScoreTests(unittest.TestCase):
     def test_fractional_script_scores_are_recomputed(self) -> None:
-        import importlib.util
         import sys
 
         sys.path.insert(0, str(ROOT / "scripts"))

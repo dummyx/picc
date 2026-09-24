@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Materialize and run controlled PiCC factor-study conditions.
+"""Validate, schedule, materialize and run the conditions of a study.
 
-This layer is deliberately additive.  It copies the currently checked-out,
-hardened single-run harness into a condition-specific materialization, overlays
-only the selected prompts/spec/tests/candidate adapter/reference policy, and
-then delegates execution, resume, evaluation, and per-run reporting to the
-existing scripts.
+A study manifest (studies/*/study.json) lists conditions that differ from a
+baseline in one respect. For each run, `materialize` copies the harness
+(config, docker, scripts, pi, VERSION) into runs/.study-materializations/<run-id>/
+and adds what the condition decides: the rendered prompts and specification,
+the task's scorer and candidate adapter under evaluator/, the test partitions,
+and the rendered agent extensions. `run`, `resume`, `evaluate` and `report`
+then execute that frozen copy's scripts, never the repository's, so a later
+change to the repository cannot alter a run that already exists.
 """
 
 from __future__ import annotations
@@ -21,17 +24,21 @@ import random
 import shutil
 import subprocess
 import sys
-import uuid
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
 
 from common import (
+    LEGACY_KEY_RENAMES,
+    MATERIALIZATION_RECORD,
+    PROVIDER_KEY_NAMES,
+    SECRET_MARKERS,
     ExperimentError,
     REPO_ROOT,
     atomic_write_json,
+    deep_merge,
     load_config,
     sanitize_run_id,
+    utc_now,
 )
 
 SCHEMA_VERSION = 1
@@ -41,7 +48,9 @@ VALID_DELIVERIES = {"task_file", "initial_prompt", "initial_prompt_only", "works
 VALID_TEST_ACCESS = {"none", "tool", "files"}
 VALID_FEEDBACK = {"none", "aggregate", "failures", "detailed"}
 VALID_REFERENCE_MODES = {"none", "oracle", "source"}
-RUNTIME_COPY_DIRS = ("config", "docker", "scripts", "pi", "prompts", "evaluator")
+# Copied from the repository into every materialization. prompts/ and
+# evaluator/ are created there and filled from the condition.
+RUNTIME_COPY_DIRS = ("config", "docker", "scripts", "pi")
 # Task runtimes: which studies/runtime files become the materialized
 # evaluator/. Every task shares candidate_runtime.py (build, audit, process
 # control); the C task adds the fuzz oracle, the SQL task its script reader.
@@ -62,17 +71,23 @@ TASK_RUNTIMES: dict[str, dict[str, str]] = {
 DEFAULT_TASK: dict[str, Any] = {"id": "c-compiler-ch1-10", "runtime": "c-compiler", "max_stage": 10, "parameters": {}}
 FIXTURE_KINDS = {"c", "assembly", "header"}
 RUNTIME_COPY_FILES = ("VERSION",)
-SECRET_MARKERS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL")
 RUN_ID_MAX_LENGTH = 96
 SIDECAR_ONLY_FIELDS = frozenset({"materialization_root", "frozen_at"})
+# A condition's `budget` overrides, and the configuration keys they set.
+BUDGET_KEYS = {
+    "pilot_hours": "PILOT_HOURS",
+    "pilot_rounds": "PILOT_ROUNDS",
+    "pilot_round_timeout_minutes": "PILOT_ROUND_TIMEOUT_MINUTES",
+    "pilot_max_stage": "PILOT_MAX_STAGE",
+    "main_hours": "MAIN_HOURS",
+    "main_rounds": "MAIN_ROUNDS",
+    "main_round_timeout_minutes": "MAIN_ROUND_TIMEOUT_MINUTES",
+    "main_max_stage": "MAIN_MAX_STAGE",
+}
 
 
 class StudyError(ExperimentError):
     """A malformed study or condition materialization."""
-
-
-def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
 
 
 def load_json_object(path: Path) -> dict[str, Any]:
@@ -85,15 +100,6 @@ def load_json_object(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise StudyError(f"Expected a JSON object: {path}")
     return value
-
-
-def deep_merge(base: Any, overlay: Any) -> Any:
-    if isinstance(base, dict) and isinstance(overlay, dict):
-        result = copy.deepcopy(base)
-        for key, value in overlay.items():
-            result[key] = deep_merge(result[key], value) if key in result else copy.deepcopy(value)
-        return result
-    return copy.deepcopy(overlay)
 
 
 def require_string(value: Any, field: str, *, allow_empty: bool = False) -> str:
@@ -399,17 +405,7 @@ def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None
     budget = condition.get("budget", {})
     if not isinstance(budget, dict):
         raise StudyError(f"{condition_id}.budget must be an object")
-    allowed_budget = {
-        "pilot_hours",
-        "pilot_rounds",
-        "pilot_round_timeout_minutes",
-        "pilot_max_stage",
-        "main_hours",
-        "main_rounds",
-        "main_round_timeout_minutes",
-        "main_max_stage",
-    }
-    unknown_budget = set(budget) - allowed_budget
+    unknown_budget = set(budget) - set(BUDGET_KEYS)
     if unknown_budget:
         raise StudyError(f"{condition_id}: unknown budget keys: {sorted(unknown_budget)}")
     for key, value in budget.items():
@@ -808,18 +804,8 @@ def effective_config_overrides(condition: dict[str, Any]) -> dict[str, str]:
         if any(marker in key.upper() for marker in SECRET_MARKERS):
             raise StudyError(f"Secret environment override {key} is prohibited")
         overrides[key] = str(value).lower() if isinstance(value, bool) else str(value)
-    budget_map = {
-        "pilot_hours": "PILOT_HOURS",
-        "pilot_rounds": "PILOT_ROUNDS",
-        "pilot_round_timeout_minutes": "PILOT_ROUND_TIMEOUT_MINUTES",
-        "pilot_max_stage": "PILOT_MAX_STAGE",
-        "main_hours": "MAIN_HOURS",
-        "main_rounds": "MAIN_ROUNDS",
-        "main_round_timeout_minutes": "MAIN_ROUND_TIMEOUT_MINUTES",
-        "main_max_stage": "MAIN_MAX_STAGE",
-    }
     for key, value in condition.get("budget", {}).items():
-        overrides[budget_map[key]] = str(value)
+        overrides[BUDGET_KEYS[key]] = str(value)
     return overrides
 
 
@@ -915,6 +901,7 @@ def _materialize_direct(
         for name in ("agents", "initial", "continuation")
     }
     prompt_dir = materialization_root / "prompts"
+    prompt_dir.mkdir()
     agents = render_template(prompt_sources["agents"].read_text(encoding="utf-8"), variables, str(prompt_sources["agents"]))
     initial_variables = dict(variables)
     initial_variables["INITIAL_SPEC_BLOCK"] = (
@@ -925,27 +912,25 @@ def _materialize_direct(
         prompt_sources["continuation"].read_text(encoding="utf-8"), variables, str(prompt_sources["continuation"])
     )
     if delivery == "task_file":
-        task = rendered_spec
+        task_text = rendered_spec
     elif delivery == "initial_prompt":
-        task = (
+        task_text = (
             "# PiCC task pointer\n\nThe full, controlling task specification was supplied in the initial request. "
             "Continue implementing that specification. The harness intentionally does not duplicate it here.\n"
         )
     elif delivery == "initial_prompt_only":
-        task = ""
+        task_text = ""
     else:
-        task = "# PiCC task pointer\n\nRead and implement the controlling specification in `SPEC.md`.\n"
+        task_text = "# PiCC task pointer\n\nRead and implement the controlling specification in `SPEC.md`.\n"
 
     (prompt_dir / "AGENTS.md").write_text(agents.rstrip() + "\n", encoding="utf-8")
     (prompt_dir / "INITIAL.txt").write_text(initial.rstrip() + "\n", encoding="utf-8")
     (prompt_dir / "CONTINUE.txt").write_text(continuation.rstrip() + "\n", encoding="utf-8")
-    (prompt_dir / "TASK.md").write_text(task.rstrip() + "\n", encoding="utf-8")
+    (prompt_dir / "TASK.md").write_text(task_text.rstrip() + "\n", encoding="utf-8")
 
     evaluator_dir = materialization_root / "evaluator"
+    evaluator_dir.mkdir()
     task = condition_task(condition)
-    for name in ("evaluate.py", "fuzz_generator.py", "fuzz_evaluate.py", "candidate_runtime.py", "sqllogictest.py", "task.json"):
-        # The plain-harness evaluator is replaced wholesale by the task runtime.
-        (evaluator_dir / name).unlink(missing_ok=True)
     for target_name, source_name in TASK_RUNTIMES[task["runtime"]].items():
         shutil.copy2(REPO_ROOT / "studies" / "runtime" / source_name, evaluator_dir / target_name)
     atomic_write_json(evaluator_dir / "task.json", task)
@@ -1064,7 +1049,7 @@ def _materialize_direct(
             "hidden_test_count": len(load_json_object(partitions_root / "hidden" / "manifest.json").get("tests", [])),
         },
     }
-    atomic_write_json(materialization_root / "study-materialization.json", resolved_payload)
+    atomic_write_json(materialization_root / MATERIALIZATION_RECORD, resolved_payload)
     return materialization_root
 
 
@@ -1111,7 +1096,7 @@ def materialize(
 
 
 def safe_environment(materialization_root: Path) -> dict[str, str]:
-    record = load_json_object(materialization_root / "study-materialization.json")
+    record = load_json_object(materialization_root / MATERIALIZATION_RECORD)
     raw_frozen = record.get("effective_config")
     if not isinstance(raw_frozen, dict):
         raise StudyError("Study materialization has no frozen effective_config")
@@ -1126,19 +1111,14 @@ def safe_environment(materialization_root: Path) -> dict[str, str]:
             raise StudyError(f"Frozen effective_config must not contain secret key {key}")
         frozen[key] = value
 
-    stale = sorted(set(frozen) & {"ZAI_PROVIDER", "ZAI_MODEL", "ZAI_THINKING"})
+    stale = sorted(set(frozen) & set(LEGACY_KEY_RENAMES))
     if stale:
         raise StudyError(
             "Study materialization predates the MODEL_* configuration rename and "
             "cannot be executed by this harness revision: " + ", ".join(stale)
         )
     provider = (frozen.get("MODEL_PROVIDER", "") or "").strip()
-    secret_by_provider = {
-        "zai": "ZAI_API_KEY",
-        "zai-coding-cn": "ZAI_CODING_CN_API_KEY",
-        "local": "LOCAL_API_KEY",
-    }
-    if provider not in secret_by_provider:
+    if provider not in PROVIDER_KEY_NAMES:
         raise StudyError(
             f"Frozen materialization declares no usable provider: {provider!r}"
             if not provider
@@ -1146,25 +1126,16 @@ def safe_environment(materialization_root: Path) -> dict[str, str]:
         )
 
     current = load_config()
-    secret_name = secret_by_provider[provider]
+    secret_name = PROVIDER_KEY_NAMES[provider]
     secret_value = current.get(secret_name)
     env = dict(os.environ)
     for key in list(env):
         if key in frozen or any(marker in key.upper() for marker in SECRET_MARKERS):
             env.pop(key, None)
-    scrubbed = (
-        "MODEL_PROVIDER",
-        "MODEL_ID",
-        "MODEL_THINKING",
-        # Legacy names: the materialized runner refuses them, so host drift
-        # using the old spelling must not reach the frozen execution.
-        "ZAI_PROVIDER",
-        "ZAI_MODEL",
-        "ZAI_THINKING",
-        "ZAI_API_KEY",
-        "ZAI_CODING_CN_API_KEY",
-        "LOCAL_API_KEY",
-    )
+    # Host settings that would override the frozen ones. The pre-rename names
+    # are included: the materialized runner refuses them, so host drift using
+    # the old spelling must not reach the frozen execution.
+    scrubbed = ("MODEL_PROVIDER", "MODEL_ID", "MODEL_THINKING", *LEGACY_KEY_RENAMES, *PROVIDER_KEY_NAMES.values())
     for key in scrubbed:
         env.pop(key, None)
     env.update(frozen)
@@ -1177,7 +1148,7 @@ def freeze_run_study_metadata(run_id: str, materialization_root: Path) -> None:
     run_dir = REPO_ROOT / "runs" / run_id
     if not run_dir.is_dir():
         return
-    payload = load_json_object(materialization_root / "study-materialization.json")
+    payload = load_json_object(materialization_root / MATERIALIZATION_RECORD)
     payload["materialization_root"] = str(materialization_root.relative_to(REPO_ROOT))
     payload["frozen_at"] = utc_now()
     atomic_write_json(run_dir / "study-metadata.json", payload)
@@ -1185,7 +1156,7 @@ def freeze_run_study_metadata(run_id: str, materialization_root: Path) -> None:
     if control.exists():
         shutil.rmtree(control)
     control.mkdir(parents=True)
-    shutil.copy2(materialization_root / "study-materialization.json", control / "materialization.json")
+    shutil.copy2(materialization_root / MATERIALIZATION_RECORD, control / "materialization.json")
     shutil.copytree(materialization_root / "prompts", control / "prompts")
     shutil.copy2(materialization_root / "evaluator" / "candidate.json", control / "candidate.json")
     shutil.copy2(materialization_root / "evaluator" / "task.json", control / "task.json")
@@ -1240,7 +1211,7 @@ def study_for_run(run_id: str) -> tuple[Path, dict[str, Any]]:
         "study materializations directory",
     )
     root = resolve_contained_path(materializations_root, logical_root, "study materialization")
-    logical_record = logical_root / "study-materialization.json"
+    logical_record = logical_root / MATERIALIZATION_RECORD
     if logical_record.is_symlink():
         raise StudyError(f"Study materialization record must not be a symlink: {logical_record}")
     record_path = resolve_contained_path(root, logical_record, "study materialization record")

@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(ROOT / "scripts" / "test_sets"))
 import split_tests  # noqa: E402
 
 EVALUATOR = ROOT / "studies" / "runtime" / "evaluate.py"
@@ -55,7 +55,7 @@ class FixtureEvaluationTests(unittest.TestCase):
         partitions = cls.root / "partitions"
         subprocess.run(
             [
-                sys.executable, str(ROOT / "scripts" / "split_tests.py"), "--source", str(SMOKE), "--output", str(partitions),
+                sys.executable, str(ROOT / "scripts" / "test_sets" / "split_tests.py"), "--source", str(SMOKE), "--output", str(partitions),
                 "--seed", "20260916", "--visible-fraction", "0.7", "--max-stage", "18", "--scope", "core-with-fixtures",
                 "--source-revision", "local-smoke",
             ],

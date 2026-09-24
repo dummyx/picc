@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""Aggregate completed PiCC factor-study runs using objective measurements."""
+"""Aggregate completed PiCC factor-study runs using objective measurements.
+
+Every run of a study whose frozen records check out (main profile, finished
+without interruption, frozen condition equal to the current manifest's,
+hidden scores for every saved version, reports consistent with the ledgers)
+becomes one row; everything else is listed with the reason it was left out.
+"""
 
 from __future__ import annotations
 
 import argparse
-import copy
 import csv
 import json
 import math
@@ -12,7 +17,9 @@ import statistics
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
+
+from common import USAGE_FIELDS, deep_merge, guard_metrics
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKIP_PARTS = {".git", ".pi", "target", "node_modules", "__pycache__", ".pytest_cache"}
@@ -32,15 +39,6 @@ def require_nonempty_string(value: Any, field: str) -> str:
     if not isinstance(value, str) or not value:
         raise SummaryError(f"{field} must be a nonempty string")
     return value
-
-
-def deep_merge(base: Any, overlay: Any) -> Any:
-    if isinstance(base, dict) and isinstance(overlay, dict):
-        result = copy.deepcopy(base)
-        for key, value in overlay.items():
-            result[key] = deep_merge(result[key], value) if key in result else copy.deepcopy(value)
-        return result
-    return copy.deepcopy(overlay)
 
 
 def current_conditions(study: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -176,13 +174,6 @@ def pi_event_metrics(events_dir: Path) -> tuple[dict[str, int], dict[str, int]]:
     assistant_messages = 0
     tool_calls = 0
     usage: Counter[str] = Counter()
-    aliases = {
-        "input": ("input", "inputTokens", "prompt_tokens"),
-        "output": ("output", "outputTokens", "completion_tokens"),
-        "cache_read": ("cacheRead", "cache_read", "cache_read_input_tokens"),
-        "cache_write": ("cacheWrite", "cache_write", "cache_creation_input_tokens"),
-        "total": ("totalTokens", "total_tokens"),
-    }
     for path in sorted(events_dir.glob("round-*.jsonl")):
         for event in read_jsonl(path):
             if event.get("type") == "tool_execution_start":
@@ -194,7 +185,7 @@ def pi_event_metrics(events_dir: Path) -> tuple[dict[str, int], dict[str, int]]:
                     message_usage = message.get("usage") or {}
                     if not isinstance(message_usage, dict):
                         message_usage = {}
-                    for target, names in aliases.items():
+                    for target, names in USAGE_FIELDS.items():
                         for name in names:
                             if name in message_usage:
                                 value = numeric(message_usage[name]) or 0.0
@@ -204,17 +195,9 @@ def pi_event_metrics(events_dir: Path) -> tuple[dict[str, int], dict[str, int]]:
 
 
 def guard_event_metrics(path: Path) -> dict[str, Any]:
-    """Same computation as `summarize_run.collect_guard`: blocked calls (rows
-    from before the bash default timeout carry no `event` field and are blocks)
-    plus the commands the default timeout cut off."""
-    rows = read_jsonl(path)
-    blocked = [row for row in rows if row.get("event", "blocked_tool_call") == "blocked_tool_call"]
-    return {
-        "blocked_calls": len(blocked),
-        "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in blocked)),
-        "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in blocked)),
-        "bash_timeouts_fired": sum(1 for row in rows if row.get("event") == "bash_timeout_fired"),
-    }
+    """The guard metrics of `summarize_run.collect_guard`, read with this
+    module's stricter ledger reader."""
+    return guard_metrics(read_jsonl(path))
 
 
 def guard_report_is_stale(report_guard: Mapping[str, Any], guard: Mapping[str, Any]) -> bool:

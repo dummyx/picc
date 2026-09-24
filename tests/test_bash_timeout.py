@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import re
 import sys
 import tempfile
 import unittest
@@ -37,18 +36,17 @@ class PinnedPackageTests(unittest.TestCase):
         # --legacy-peer-deps: without it npm nests a second, floating copy of Pi
         # (446 MB) inside the package, which the extension does not even use.
         self.assertRegex(dockerfile, r'npm install -g --ignore-scripts --legacy-peer-deps "\$\{BASH_TIMEOUT_PACKAGE\}@\$\{BASH_TIMEOUT_PACKAGE_VERSION\}"')
-        build = (REPO_ROOT / "scripts" / "build_image.sh").read_text(encoding="utf-8")
+        build = (REPO_ROOT / "docker" / "build.sh").read_text(encoding="utf-8")
         self.assertIn("BASH_TIMEOUT_PACKAGE_VERSION=$BASH_TIMEOUT_PACKAGE_VERSION", build)
         settings = json.loads((REPO_ROOT / "pi" / "settings.json").read_text(encoding="utf-8"))
         self.assertEqual(settings["packages"], [f"/usr/local/lib/node_modules/{PACKAGE}"])
 
-    def test_guards_record_cut_offs_and_do_not_set_timeouts_themselves(self) -> None:
-        for relative in ("pi/extensions/experiment-guard.ts", "studies/runtime/experiment-guard.ts.in"):
-            text = (REPO_ROOT / relative).read_text(encoding="utf-8")
-            self.assertIn('pi.on("tool_result"', text, relative)
-            self.assertIn('"bash_timeout_fired"', text, relative)
-            self.assertNotRegex(text, r"input\.timeout\s*=", relative)
-            self.assertNotIn("PICC_BASH_TIMEOUT_SECONDS", text, relative)
+    def test_guard_records_cut_offs_and_does_not_set_timeouts_itself(self) -> None:
+        text = (REPO_ROOT / "studies" / "runtime" / "experiment-guard.ts.in").read_text(encoding="utf-8")
+        self.assertIn('pi.on("tool_result"', text)
+        self.assertIn('"bash_timeout_fired"', text)
+        self.assertNotRegex(text, r"input\.timeout\s*=")
+        self.assertNotIn("PICC_BASH_TIMEOUT_SECONDS", text)
 
 
 class GuardLedgerMetricsTests(unittest.TestCase):

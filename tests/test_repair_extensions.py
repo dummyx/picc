@@ -12,7 +12,7 @@ next reply is then cut off 64.7% of the time against a 5.8% base rate, which is
 how a run stops producing for the rest of its budget.
 
 Both extensions' own logic is exercised in the pinned image by
-scripts/smoke_extensions.sh; these tests cover the wiring around them.
+scripts/checks/smoke_extensions.sh; these tests cover the wiring around them.
 """
 import json
 import shutil

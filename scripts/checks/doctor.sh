@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 fail=0
 for command in docker git python3 make; do
@@ -55,7 +55,7 @@ if [[ -f "$ROOT/config/sglang.env" ]]; then
   if [[ -f "$model_dir/config.json" ]]; then
     echo "checkpoint   $model_dir"
   else
-    echo "checkpoint   absent (scripts/fetch_model.sh)"
+    echo "checkpoint   absent (scripts/model_server/fetch_model.sh)"
   fi
   if command -v nvidia-smi >/dev/null 2>&1; then
     echo "gpu          $(nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null | head -1)"

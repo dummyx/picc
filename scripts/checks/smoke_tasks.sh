@@ -8,7 +8,7 @@
 #     and constant-output candidates must fail as documented.
 # Needs Docker and the pinned image; `make validate` builds the smoke partitions.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
 # shellcheck disable=SC1091
 source "$ROOT/config/defaults.env"
@@ -19,7 +19,7 @@ fi
 set +a
 
 if [[ ! -f "$ROOT/data/smoke-partitions-sql/visible/manifest.json" || ! -f "$ROOT/data/smoke-partitions-c18/visible/manifest.json" ]]; then
-  "$ROOT/scripts/validate.sh"
+  "$ROOT/scripts/checks/validate.sh"
 fi
 
 tmp="$(mktemp -d)"

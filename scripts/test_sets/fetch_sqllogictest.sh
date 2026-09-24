@@ -4,7 +4,7 @@
 # task partitions under data/partitions-sql, and check them against the
 # committed selection record.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
 # shellcheck disable=SC1091
 source "$ROOT/config/defaults.env"
@@ -72,7 +72,7 @@ if [[ -f "$SOURCE_DIR/COPYRIGHT.md" ]]; then
   cp "$SOURCE_DIR/COPYRIGHT.md" "$ROOT/data/UPSTREAM_SQLLOGICTEST_COPYRIGHT.md"
 fi
 
-python3 "$ROOT/scripts/select_sqllogictest.py" \
+python3 "$ROOT/scripts/test_sets/select_sqllogictest.py" \
   --source "$SOURCE_DIR" \
   --selection "$SELECTION" \
   --output "$ROOT/data/partitions-sql" \
@@ -82,8 +82,8 @@ python3 "$ROOT/scripts/select_sqllogictest.py" \
   --verify-sqlite
 
 if [[ "${WRITE_SELECTION:-0}" == "1" ]]; then
-  python3 "$ROOT/scripts/pin_selection.py" --write --record "$ROOT/studies/sql/selection-record.json" --partitions "$ROOT/data/partitions-sql"
+  python3 "$ROOT/scripts/test_sets/pin_selection.py" --write --record "$ROOT/studies/sql/selection-record.json" --partitions "$ROOT/data/partitions-sql"
 fi
-python3 "$ROOT/scripts/pin_selection.py" --check --record "$ROOT/studies/sql/selection-record.json" --partitions "$ROOT/data/partitions-sql"
+python3 "$ROOT/scripts/test_sets/pin_selection.py" --check --record "$ROOT/studies/sql/selection-record.json" --partitions "$ROOT/data/partitions-sql"
 git -C "$SOURCE_DIR" show -s --format='%H%n%cI%n%s' > "$ROOT/data/upstream-sqllogictest-revision.txt"
 echo "Prepared SQL task partitions at data/partitions-sql from $resolved"

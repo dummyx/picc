@@ -72,6 +72,8 @@ class ResumeFixture:
         self._build_manifests()
         self._build_artifacts()
         self._build_metadata()
+        # The fixture root stands in for a study materialization.
+        write_json(self.root / "study-materialization.json", {"run_id": RUN_ID})
 
     def __enter__(self) -> "ResumeFixture":
         return self

@@ -21,7 +21,8 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "studies" / "runtime" / "sql"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "studies" / "runtime" / "sql"))
 import sqllogictest as slt  # noqa: E402
 from common import ExperimentError, atomic_write_json  # noqa: E402
 from split_tests import TestCase, split_cases  # noqa: E402

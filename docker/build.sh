@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Build the pinned experiment image (make image). Every version comes from
+# config/defaults.env. The build context is this directory alone: the
+# Dockerfile copies nothing in, and the repository root would send runs/
+# (many GB), the SGLang virtualenv and .env to the Docker daemon.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 set -a
@@ -23,6 +27,6 @@ docker build \
   --build-arg "MYPY_VERSION=$MYPY_VERSION" \
   --tag "$EXPERIMENT_IMAGE" \
   --file "$ROOT/docker/Dockerfile" \
-  "$ROOT"
+  "$ROOT/docker"
 
 docker image inspect "$EXPERIMENT_IMAGE" --format 'built {{.Id}}'

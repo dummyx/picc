@@ -5,14 +5,23 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import sys
-from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from common import ExperimentError, REPO_ROOT, atomic_write_json, harness_lock, read_jsonl, sanitize_run_id
+from common import (
+    USAGE_FIELDS,
+    ExperimentError,
+    REPO_ROOT,
+    atomic_write_json,
+    guard_metrics,
+    harness_lock,
+    read_jsonl,
+    require_materialization,
+    sanitize_run_id,
+    utc_now,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -47,14 +56,7 @@ def collect_events(events_dir: Path) -> dict[str, Any]:
                 message = event.get("message", {})
                 if message.get("role") == "assistant":
                     message_usage = message.get("usage") or {}
-                    aliases = {
-                        "input": ("input", "inputTokens", "prompt_tokens"),
-                        "output": ("output", "outputTokens", "completion_tokens"),
-                        "cache_read": ("cacheRead", "cache_read", "cache_read_input_tokens"),
-                        "cache_write": ("cacheWrite", "cache_write", "cache_creation_input_tokens"),
-                        "total": ("totalTokens", "total_tokens"),
-                    }
-                    for target, names in aliases.items():
+                    for target, names in USAGE_FIELDS.items():
                         for name in names:
                             if name in message_usage:
                                 usage[target] += int(numeric(message_usage[name]))
@@ -78,18 +80,7 @@ def collect_extension_events(path: Path) -> dict[str, Any]:
 
 
 def collect_guard(path: Path) -> dict[str, Any]:
-    """Guard ledger metrics: blocked calls (rows from before the bash default
-    timeout carry no `event` field and are blocks) and the commands the default
-    timeout cut off. `summarize_study.guard_event_metrics` must compute exactly
-    the same."""
-    rows = read_jsonl(path)
-    blocked = [row for row in rows if row.get("event", "blocked_tool_call") == "blocked_tool_call"]
-    return {
-        "blocked_calls": len(blocked),
-        "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in blocked)),
-        "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in blocked)),
-        "bash_timeouts_fired": sum(1 for row in rows if row.get("event") == "bash_timeout_fired"),
-    }
+    return guard_metrics(read_jsonl(path))
 
 
 def trajectory(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -292,7 +283,7 @@ def summarize_locked(run_id: str, run_dir: Path) -> int:
     hidden_trajectory = trajectory(hidden_rows)
     report: dict[str, Any] = {
         "schema_version": 1,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": utc_now(),
         "metadata": metadata,
         "resume": {
             "resume_count": resume_count,
@@ -320,6 +311,7 @@ def summarize_locked(run_id: str, run_dir: Path) -> int:
 
 def main() -> int:
     args = parse_args()
+    require_materialization(REPO_ROOT, "summarize_run.py")
     run_id = sanitize_run_id(args.run_id)
     run_dir = REPO_ROOT / "runs" / run_id
     if not run_dir.is_dir():

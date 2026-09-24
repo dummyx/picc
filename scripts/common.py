@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Shared helpers for the PiCC experiment starter."""
+"""Helpers shared by the harness scripts: configuration, files, Docker, the model endpoint."""
 
 from __future__ import annotations
 
 import contextlib
+import copy
 import fcntl
 import json
 import os
@@ -11,14 +12,50 @@ import platform
 import re
 import subprocess
 import tempfile
+from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator, Mapping, Sequence
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+# The record scripts/study.py writes at the root of every materialization
+# (runs/.study-materializations/<run-id>/).
+MATERIALIZATION_RECORD = "study-materialization.json"
+
+# A configuration key containing any of these names a secret. Secrets are never
+# frozen into metadata, materializations or reports.
+SECRET_MARKERS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL")
+
 
 class ExperimentError(RuntimeError):
     """A user-actionable experiment setup or execution error."""
+
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def is_secret_key(key: str) -> bool:
+    return any(marker in key.upper() for marker in SECRET_MARKERS)
+
+
+def require_materialization(root: Path, script: str) -> None:
+    """Refuse to run a per-run script from the repository itself.
+
+    run_experiment.py, evaluate_run.py and summarize_run.py use the prompts,
+    scorer and test partitions of the tree they sit in (`root`), and only a
+    study materialization holds the right ones for a run. Run from the
+    repository, a re-evaluation would score the run against the wrong tests
+    and overwrite its score ledgers. scripts/study.py runs them from the
+    materialization.
+    """
+    if not (root / MATERIALIZATION_RECORD).is_file():
+        raise ExperimentError(
+            f"{script} runs inside a study materialization, not from the repository. "
+            "Use `make study-run`, `make study-resume`, `make study-hidden-all` or "
+            "`make study-report` (see studies/README.md)."
+        )
 
 
 @contextlib.contextmanager
@@ -85,17 +122,20 @@ def load_config() -> dict[str, str]:
     reject_legacy_keys(".env", overrides)
     reject_legacy_keys("the process environment", os.environ)
     config.update(overrides)
-    for key in set(config) | {
-        "ZAI_API_KEY",
-        "ZAI_CODING_CN_API_KEY",
-        "MODEL_PROVIDER",
-        "MODEL_ID",
-        "MODEL_THINKING",
-        "LOCAL_API_KEY",
-    }:
+    for key in set(config) | {"MODEL_PROVIDER", "MODEL_ID", "MODEL_THINKING", *PROVIDER_KEY_NAMES.values()}:
         if key in os.environ:
             config[key] = os.environ[key]
     return config
+
+
+def deep_merge(base: Any, overlay: Any) -> Any:
+    """`overlay` merged into a copy of `base`, recursively for nested objects."""
+    if isinstance(base, dict) and isinstance(overlay, dict):
+        result = copy.deepcopy(base)
+        for key, value in overlay.items():
+            result[key] = deep_merge(result[key], value) if key in result else copy.deepcopy(value)
+        return result
+    return copy.deepcopy(overlay)
 
 
 def context_budget_problems(config: Mapping[str, str], compaction: Mapping[str, Any] | None = None) -> list[str]:
@@ -224,6 +264,32 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+# Token counts in a Pi assistant message's `usage`, under the names different
+# providers use; the first name present is counted.
+USAGE_FIELDS = {
+    "input": ("input", "inputTokens", "prompt_tokens"),
+    "output": ("output", "outputTokens", "completion_tokens"),
+    "cache_read": ("cacheRead", "cache_read", "cache_read_input_tokens"),
+    "cache_write": ("cacheWrite", "cache_write", "cache_creation_input_tokens"),
+    "total": ("totalTokens", "total_tokens"),
+}
+
+
+def guard_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """What the guard ledger (artifacts/guard.jsonl) records: the tool calls it
+    blocked, and the bash commands the default timeout cut off. Rows written
+    before the bash default timeout existed carry no `event` field; every one
+    of them is a block. The per-run report and the study summary both count
+    through here, so the summary's staleness check compares like with like."""
+    blocked = [row for row in rows if row.get("event", "blocked_tool_call") == "blocked_tool_call"]
+    return {
+        "blocked_calls": len(blocked),
+        "reasons": dict(Counter(str(row.get("reason", "unknown")) for row in blocked)),
+        "tools": dict(Counter(str(row.get("toolName", "unknown")) for row in blocked)),
+        "bash_timeouts_fired": sum(1 for row in rows if row.get("event") == "bash_timeout_fired"),
+    }
+
+
 def run(
     args: Sequence[str],
     *,
@@ -289,7 +355,13 @@ LOCAL_SUPPORTED_APIS = (
 PI_THINKING_LEVELS = ("minimal", "low", "medium", "high", "xhigh", "max")
 
 
-SUPPORTED_PROVIDERS = ("zai", "zai-coding-cn", LOCAL_PROVIDER)
+# The configuration key holding each supported provider's API key.
+PROVIDER_KEY_NAMES = {
+    "zai": "ZAI_API_KEY",
+    "zai-coding-cn": "ZAI_CODING_CN_API_KEY",
+    LOCAL_PROVIDER: "LOCAL_API_KEY",
+}
+SUPPORTED_PROVIDERS = tuple(PROVIDER_KEY_NAMES)
 
 
 def require_model_provider(config: Mapping[str, str]) -> str:
@@ -403,16 +475,12 @@ def base_container_args(
 
 def api_key_for(config: Mapping[str, str]) -> tuple[str, str]:
     provider = require_model_provider(config)
-    if provider == "zai-coding-cn":
-        variable = "ZAI_CODING_CN_API_KEY"
-    elif provider == "zai":
-        variable = "ZAI_API_KEY"
-    else:
+    variable = PROVIDER_KEY_NAMES[provider]
+    value = config.get(variable, "").strip()
+    if provider == LOCAL_PROVIDER:
         # Keyless local servers still need a non-empty value: the generated
         # models.json resolves "$LOCAL_API_KEY" from the container environment.
-        value = config.get("LOCAL_API_KEY", "").strip()
-        return "LOCAL_API_KEY", value or LOCAL_API_KEY_PLACEHOLDER
-    value = config.get(variable, "").strip()
+        return variable, value or LOCAL_API_KEY_PLACEHOLDER
     if not value:
         raise ExperimentError(f"{variable} is empty. Copy .env.example to .env and set the key.")
     return variable, value
@@ -608,6 +676,56 @@ def docker_mount(source: Path, target: str, readonly: bool = False) -> list[str]
     if readonly:
         spec += ",readonly"
     return ["--mount", spec]
+
+
+def evaluation_command(
+    config: Mapping[str, str],
+    *,
+    container_name: str,
+    workspace: Path,
+    tests: Path,
+    evaluator: Path,
+    artifacts: Path,
+    output_name: str,
+    max_stage: int,
+) -> list[str]:
+    """The container that scores one checked-out snapshot on one test partition.
+
+    The scorer is whatever the run's evaluator/ holds (the task runtime copied
+    in by scripts/study.py); it reads candidate.json and task.json next to
+    itself. The full result lands in artifacts/evaluations/<output_name>.
+    """
+    command = base_container_args(dict(config), name=container_name, role="evaluation")
+    command += docker_mount(workspace, "/workspace")
+    command += docker_mount(tests, "/tests", readonly=True)
+    command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
+    command += docker_mount(artifacts, "/run-artifacts")
+    command += [
+        "-e",
+        "CARGO_NET_OFFLINE=true",
+        "--workdir",
+        "/workspace",
+        config["EXPERIMENT_IMAGE"],
+        "python3",
+        "/opt/picc-eval/evaluate.py",
+        "--workspace",
+        "/workspace",
+        "--tests-root",
+        "/tests",
+        "--manifest",
+        "/tests/manifest.json",
+        "--max-stage",
+        str(max_stage),
+        "--output",
+        f"/run-artifacts/evaluations/{output_name}",
+        "--summary-json",
+    ]
+    return command
+
+
+def as_text(value: Any) -> str:
+    """Captured process output, which a timeout hands back as bytes or None."""
+    return value if isinstance(value, str) else (value or b"").decode("utf-8", errors="replace")
 
 
 def docker_pi_config_mounts(config_dir: Path, target: str) -> list[str]:

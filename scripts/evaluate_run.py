@@ -16,13 +16,16 @@ from common import (
     ExperimentError,
     REPO_ROOT,
     append_jsonl,
+    as_text,
     atomic_write_json,
     base_container_args,
     docker_image_id,
     docker_mount,
+    evaluation_command,
     harness_lock,
     load_config,
     read_jsonl,
+    require_materialization,
     sanitize_run_id,
 )
 
@@ -97,34 +100,16 @@ def evaluate_snapshot(
 ) -> tuple[int, str, str, Path]:
     output_path = artifacts / "evaluations" / output_name
     container_name = f"picc-peval-{os.getpid()}-{output_name.removesuffix('.json')}"
-    command = base_container_args(config, name=container_name, role="evaluation")
-    command += docker_mount(workspace, "/workspace")
-    command += docker_mount(tests, "/tests", readonly=True)
-    command += docker_mount(evaluator, "/opt/picc-eval", readonly=True)
-    command += docker_mount(artifacts, "/run-artifacts")
-    command += [
-        "-e",
-        "CARGO_NET_OFFLINE=true",
-        "--workdir",
-        "/workspace",
-        config["EXPERIMENT_IMAGE"],
-        "python3",
-        "/opt/picc-eval/evaluate.py",
-        "--workspace",
-        "/workspace",
-        "--tests-root",
-        "/tests",
-        "--manifest",
-        "/tests/manifest.json",
-        "--max-stage",
-        str(max_stage),
-        "--output",
-        f"/run-artifacts/evaluations/{output_name}",
-        "--summary-json",
-    ]
-    def captured(value: Any) -> str:
-        return value if isinstance(value, str) else (value or b"").decode("utf-8", errors="replace")
-
+    command = evaluation_command(
+        config,
+        container_name=container_name,
+        workspace=workspace,
+        tests=tests,
+        evaluator=evaluator,
+        artifacts=artifacts,
+        output_name=output_name,
+        max_stage=max_stage,
+    )
     try:
         result = subprocess.run(
             command, check=False, capture_output=True, text=True, timeout=SNAPSHOT_EVAL_TIMEOUT_SECONDS
@@ -134,7 +119,7 @@ def evaluate_snapshot(
         # then report a failed evaluation so remaining snapshots still run.
         subprocess.run(["docker", "kill", container_name], check=False, capture_output=True, text=True)
         note = f"snapshot evaluation exceeded {SNAPSHOT_EVAL_TIMEOUT_SECONDS}s and was killed"
-        return 124, captured(error.stdout), note + "\n" + captured(error.stderr), output_path
+        return 124, as_text(error.stdout), note + "\n" + as_text(error.stderr), output_path
     return result.returncode, result.stdout, result.stderr, output_path
 
 
@@ -182,17 +167,13 @@ def fuzz_snapshot(
         f"/run-artifacts/evaluations/{output_name}",
         "--summary-json",
     ]
-
-    def captured(value: Any) -> str:
-        return value if isinstance(value, str) else (value or b"").decode("utf-8", errors="replace")
-
     ceiling = max(SNAPSHOT_EVAL_TIMEOUT_SECONDS, policy["deadline_seconds"] + FUZZ_TIMEOUT_SLACK_SECONDS)
     try:
         result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=ceiling)
     except subprocess.TimeoutExpired as error:
         subprocess.run(["docker", "kill", container_name], check=False, capture_output=True, text=True)
         note = f"fuzz evaluation exceeded {ceiling}s and was killed"
-        return 124, captured(error.stdout), note + "\n" + captured(error.stderr), output_path
+        return 124, as_text(error.stdout), note + "\n" + as_text(error.stderr), output_path
     return result.returncode, result.stdout, result.stderr, output_path
 
 
@@ -478,6 +459,7 @@ def fuzz_final_snapshot(
 
 def main() -> int:
     args = parse_args()
+    require_materialization(REPO_ROOT, "evaluate_run.py")
     run_id = sanitize_run_id(args.run_id)
     run_dir = REPO_ROOT / "runs" / run_id
     if not run_dir.is_dir():

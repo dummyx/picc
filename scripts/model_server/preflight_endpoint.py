@@ -23,7 +23,7 @@ served model or the usable context does not match the frozen configuration,
 3 the endpoint is unreachable or does not identify itself.
 
 Usage:
-    python3 scripts/preflight_endpoint.py [--record runs/preflight.json]
+    python3 scripts/model_server/preflight_endpoint.py [--record runs/preflight.json]
 """
 
 from __future__ import annotations
@@ -37,7 +37,9 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from common import (
+# common.py sits one directory up, with the harness scripts.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common import (  # noqa: E402
     ExperimentError,
     api_key_for,
     atomic_write_json,

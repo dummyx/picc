@@ -16,7 +16,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import ExperimentError, atomic_write_json  # noqa: E402
 
 SCHEMA_VERSION = 1

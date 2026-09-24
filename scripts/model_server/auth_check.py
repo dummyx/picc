@@ -10,7 +10,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-from common import (
+# common.py sits one directory up, with the harness scripts.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common import (  # noqa: E402
     ExperimentError,
     REPO_ROOT,
     api_key_for,

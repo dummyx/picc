@@ -15,16 +15,18 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import os
 import re
 import shutil
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-from common import ExperimentError, atomic_write_json
+# common.py sits one directory up, with the harness scripts.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common import ExperimentError, atomic_write_json  # noqa: E402
 
 STAGE_PATTERN = re.compile(r"(?:chapter|stage)_(\d+)$")
 EXCLUDED_COMPONENTS = {"extra_credit", "libraries", "helper_libs"}

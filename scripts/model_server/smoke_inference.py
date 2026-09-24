@@ -20,7 +20,7 @@ It also reports the usable context and, when the server was launched with
 --enable-strict-thinking, checks that a per-request thinking budget is
 actually enforced.
 
-Usage: python3 scripts/smoke_inference.py [--verbose]
+Usage: python3 scripts/model_server/smoke_inference.py [--verbose]
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from common import (  # noqa: E402
     ExperimentError,
