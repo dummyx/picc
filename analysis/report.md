@@ -1,5 +1,10 @@
 # PiCC: what changes the compiler a coding agent builds
 
+> This write-up grew one section per batch, and its opening summary covers
+> the chapters 1-10 compiler (v2-v9). The two later tasks are in §16 (v10),
+> §17 (v11-v14), §18 (v15), §19 (v16) and §20 (v17). Every batch is indexed,
+> with what it compared and found, in [docs/README.md](../docs/README.md).
+
 Eight batches, 71 planned in advance main runs, one model building a C compiler
 from an empty repository under a fixed budget. Prompts, specifications, test
 access, test feedback, and static typing were each varied one at a time; the
@@ -1851,7 +1856,10 @@ server is started, not to this repository, and it is the operator's call.
 
 ### 17.9 Retained artifacts
 
-`runs/v11-sql-*` (four runs) and `runs/v12-sql-*` (five runs) are kept as
+`runs/v11-sql-*` (five runs: four finished, and `v11-sql-python-r2`, stopped
+after its first round when the batch was stopped) and `runs/v12-sql-*` (the
+four finished runs; the fifth was stopped in its first round and its records
+were not kept) are kept as
 evidence of the failure and excluded from every summary: their manifests
 (`picc-sql-minimal-v2`, `-v3`) are not the manifests of any completed batch.
 `analysis/turn-shape.json` holds the profile table.
@@ -1948,3 +1956,57 @@ data shows 12.4% of typed replies above 32768 against 1.5% of untyped. The
 aggregate averaged away the asymmetry that mattered. The conclusion — that the
 cap should not move — survives for the reason in 18.5 rather than the reason
 given at the time.
+
+## 19. The v16 batch: a cap on thinking for the typed arm
+
+Plan and results in `docs/EXPERIMENT_PLAN_v16.md`; the first batch served by
+SGLang (configuration 3 in `docs/INFERENCE_SGLANG.md`). Two main runs of
+`python-typed` on the SQL engine task: `v16-sql-python-typed-r1` with an
+8,192-token thinking budget enforced by the server, and a control,
+`v16nb-sql-python-typed-r9`, on the same server with no budget.
+
+| | r1, budget 8192 | control, no budget |
+|---|---|---|
+| rounds | 3 | 7 |
+| writes and edits | 99 | 101 |
+| replies cut off | 0 | 5 (1.7%) |
+| hidden score, final snapshot | 0.8139 | 0.7852 |
+
+Both built a working engine, where all three v15 typed runs produced nothing.
+The budget is therefore not necessary for a working engine on this serving
+stack; it does remove the failure it targets (no reply thought through the
+whole output cap, no dead rounds, a first non-zero score in round 0 rather
+than round 6). One run per side cannot support a score difference (0.029).
+Why v15's typed runs never recovered while the control did is not known: the
+serving stack differs, the strict-thinking filter was on, and it may be
+chance. v17 kept the budget, as a guard against wasted rounds rather than as
+what makes the typed condition possible.
+
+## 20. The v17 batch: five languages on the SQL engine
+
+Plan `docs/EXPERIMENT_PLAN_v17.md`; full report for the project owner
+`docs/REPORT_2026-09-23.md`; scores `analysis/v17-results.md`
+(`analysis/v17_results.py`); every other measurement
+`analysis/v17-internals.json` (`analysis/v17_internals.py`). Fifteen runs,
+`picc-sql-minimal-v7`: `rust`, `python`, `python-typed`, `javascript` and
+`typescript`, three each, two hours of agent time each, 2026-09-21 14:29 to
+09-22 22:09 UTC.
+
+- **The harness held.** Every run used its full two hours; 5,762 replies,
+  none lost to a server error, and all 259 conversation summaries succeeded.
+- **Scores.** Best 0.851 (`python-r2`). The middle run per language:
+  JavaScript 0.793, Python 0.755, typed Python 0.527, Rust 0.445, TypeScript
+  0.085. One hidden script, joining 4 to 64 tables, beat every engine, so
+  0.875 was the highest score reachable.
+- **The spread within each language is bigger than the differences between
+  languages**, so whether strict type checking helps or hurts is still
+  unanswered.
+- **The low scores are single all-or-nothing mistakes**, not weak engines:
+  `python-r3` never read its input file, `typescript-r1` checked itself with a
+  shortened command that never matched the real one, `typescript-r3` printed
+  nothing for `CREATE TABLE` and `INSERT` so every later answer was misaligned,
+  and `python-typed-r1` and `rust-r3` crash on one expression and, printing
+  only at the end, lose the whole script.
+- **Where the time went.** About 85% of the two hours was the model writing
+  replies, 13% summarizing the conversation, and about 1% the agent's
+  commands running.

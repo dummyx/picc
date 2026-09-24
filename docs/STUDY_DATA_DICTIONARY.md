@@ -1,7 +1,8 @@
-# Controlled-study data dictionary
+# Study data dictionary
 
-This document covers the additive study layer. Existing per-run files remain
-defined in `docs/DATA_DICTIONARY.md`.
+The study files, and what the study layer adds to a run and produces from
+runs. The files every run leaves are in [DATA_DICTIONARY.md](DATA_DICTIONARY.md);
+the list of studies and tasks is in [studies/README.md](../studies/README.md).
 
 ## Study manifest
 
@@ -42,6 +43,9 @@ Each resolved condition contains:
 - `access`: `none`, `tool`, or `files`;
 - `feedback`: `none`, `aggregate`, `failures`, or `detailed`;
 - `visible_subset_fraction` and `subset_seed`;
+- `push_interval_minutes` (default 0): when positive, the harness runs the
+  visible tests about that often and sends the report to the agent unasked
+  (the v8 `tests-pushed` condition);
 - optional `visible_partition` and `hidden_partition` paths;
 - `provenance` fields analogous to specification provenance.
 
@@ -63,6 +67,15 @@ Optional scalar environment overrides and per-profile budget overrides. They are
 frozen in the materialized `config/defaults.env`. Do not use them casually in a
 one-factor condition because they change compute or tooling.
 
+### `task`
+
+Optional `{id, runtime, max_stage, parameters}`; absent means the chapters 1-10
+compiler (`c-compiler-ch1-10`, runtime `c-compiler`, 10 stages). `runtime` is
+`c-compiler` or `sql-engine` and selects the scorer files copied into the
+materialized `evaluator/`; the budget's `*_max_stage` may not exceed
+`max_stage`. The SQL task's `parameters` pin `sqlite_version` and
+`script_timeout_seconds`. See "Task studies" below.
+
 ## Candidate adapter
 
 `candidate.json` defines:
@@ -72,9 +85,11 @@ one-factor condition because they change compute or tooling.
 - `run.command`, with `{artifact}`, `{input}`, `{output}`, and `{workspace}`
   placeholders;
 - `source_extensions` used for artifact measurement/audit;
-- audit allowlists/patterns; source audit covers Rust, Python, and
-  JavaScript/TypeScript files, including test paths, and rejects symlinks.
-  `audit.roots` restricts the per-file scan to the compiler's own source
+- audit allowlists/patterns; the source audit scans the submitted program
+  and rejects symlinks and binaries. For Rust it covers the Cargo package's
+  `src/` plus files pulled in by path; for Python, since v10 Amendment 2, the
+  entry module (the adapter's build artifact) and its import closure.
+  `audit.roots` restricts the per-file scan to the program's own source
   tree (the Node adapters use `src`), and `audit.entry` names the entry
   module whose relative import closure is scanned even when it leaves the
   roots, so agent-authored test drivers elsewhere in the workspace are not
@@ -99,12 +114,16 @@ loading) or advisory (environment inspection, `@ts-nocheck`/`@ts-ignore`/
 not gate scoring. For JavaScript/TypeScript the blocking text and import checks
 run on comment-stripped code so that a comment cannot zero a run.
 
-The evaluator requires the same external PiCC contract for every adapter.
+Every adapter of a task implements the same product contract.
 
 ## Fuzz oracle ledger
 
-`runs/<run-id>/artifacts/fuzz-scores.jsonl` holds exactly one row, written by
-the hidden post-hoc evaluation for the final snapshot: `partition` (`fuzz`),
+Chapters 1-10 task only. `runs/<run-id>/artifacts/fuzz-scores.jsonl`, written
+by the hidden post-hoc evaluation, holds one row for the final snapshot
+(`role: final`) and, since v8, a second row (`role: last_buildable`, output
+`fuzz-last-buildable.json`) when the last buildable snapshot is not the final
+one; ledgers from before v8 have one row and no `role`. Each row has
+`partition` (`fuzz`), `role`,
 `round`, `git_commit`, `git_tree`, `docker_image`, `elapsed_seconds`, the frozen
 `policy` (`programs_per_stage`, `seed_base`, `run_timeout_seconds`,
 `compile_timeout_seconds`, `deadline_seconds`), a `summary` (`fuzz_macro`,
@@ -136,10 +155,14 @@ Local runs record `model.serving_revision` as operator-managed.
 
 ## `runs/.study-materializations/<run-id>/`
 
-Condition-specific copy of the current harness. It contains rendered prompts,
-condition-aware extensions, generic evaluator, fuzz-oracle runtime, adapter, visible subset,
-constant hidden partition, optional scaffold/reference, and effective nonsecret
-configuration.
+Condition-specific copy of the current harness (`config/`, `docker/`,
+`scripts/`, `pi/`, `VERSION`). It adds rendered prompts (`prompts/`),
+condition-aware extensions, the task's scorer with the adapter and
+`task.json` (`evaluator/`; the fuzz oracle only for the chapters 1-10 task),
+the visible subset, the constant hidden partition, the agent-visible folder,
+an optional scaffold/reference, and the effective nonsecret configuration
+appended to `config/defaults.env`. The per-run scripts refuse to run anywhere
+but inside such a copy.
 
 `study-materialization.json` records:
 
@@ -174,8 +197,12 @@ Compact immutable review set:
   `test_visible_unavailable`;
 - `reference_oracle_start`, `reference_oracle_end`,
   `reference_oracle_unavailable`, and limit events;
-- compaction/provider events inherited from the base extension;
-- `study_scaffold_applied`.
+- `session_before_compact`, `session_compact` and `provider_response_error`;
+- pushed-report events (`test_pushed_start`, `test_pushed_end`,
+  `test_pushed_error`);
+- `study_scaffold_applied`;
+- the repair extensions' events, which every condition logs (listed in
+  [DATA_DICTIONARY.md](DATA_DICTIONARY.md)).
 
 Oracle source programs and observations are retained under
 `artifacts/oracle-queries/`. Their count is tracked in `oracle-count.json`.
@@ -199,7 +226,8 @@ Duplicate eligible `(condition_id, replicate)` records stop aggregation.
 Before inclusion, the reporter checks runtime model/image/configuration and
 every hidden snapshot's Git commit and tree. The hidden report, score ledger, full evaluator files, and
 frozen manifest selection must agree for every round. Passed/failed totals and
-macro/micro scores are recomputed from per-test boolean results. Raw Pi-event
+macro/micro scores are recomputed from the per-test results (booleans, or the
+SQL scorer's fractional per-script `score`). Raw Pi-event
 usage and guard ledgers must also reproduce the report. Shared model, image, version, or test-count drift across the batch stops
 aggregation.
 
@@ -225,5 +253,5 @@ Added 2026-09-16; absent from earlier runs.
 - Partition manifest rows (`data/partitions-sql`): `validity` is always `valid`; `script` holds record counts and, when built with `--verify-sqlite`, `host_sqlite_version` and `host_reference_disagreements`.
 - SQL evaluator output (`evaluations/*.json`): `task` (`sqlite_version`, `script_timeout_seconds`); per test row `score` (share of scored records passed), `records` (`total`, `passed`, `failed`, `executed`, `setup_failures`, `blocks`, `reference_disagreements`), `failures` (first eight failing records with line numbers), `failure_type` in `script_timeout`, `candidate_crash`, `malformed_output`, `wrong_results`, `no_scored_records`, `build_failure`, `source_audit_failure`; `summary.records_total` / `records_passed`; `summary.stages.<n>.valid.score` is the mean script score.
 - `summarize_study.py` uses a row's `score` when present (fractional) and `passed` otherwise.
-- Selection records: `studies/c18/selection.json`, `studies/sql/selection-record.json` (`scripts/pin_selection.py`).
+- Selection records: `studies/c18/selection.json`, `studies/sql/selection-record.json` (`scripts/test_sets/pin_selection.py`).
 

@@ -1,17 +1,22 @@
-# Essential PiCC factor-study protocol
+# Study protocol: variants, batches and analysis
 
 ## Objective
 
 Measure how information and implementation substrate change a coding agent's
-ability to construct PiCC. The primary outcomes are hidden behavioral
+ability to build a task's program: the chapters 1-10 or chapters 1-18 C
+compiler, or the SQL engine. The primary outcomes are hidden behavioral
 correctness, completion probability, elapsed active time, and model-reported
 token use. Secondary outcomes describe the development trajectory and resulting
 artifact.
 
-This is an extension of the existing Pi reproduction harness, not a new
-benchmark. The original single-run path remains untouched. Each study condition
-is materialized into a private copy of the current harness so that prompt,
-specification, test, adapter, and reference artifacts are frozen.
+Every run is one condition of one study. Each condition is materialized into a
+private copy of the current harness so that prompt, specification, test,
+adapter, and reference artifacts are frozen. The rules every run follows are in
+[EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md); the studies, their ids and the
+tasks are listed in [studies/README.md](../studies/README.md). The sections on
+prompt, specification, test and reference factors below were written for the
+chapters 1-10 starter study; the task studies use the minimal protocol and vary
+the language (see "Tasks and languages").
 
 ## Research questions
 
@@ -48,6 +53,31 @@ The harness still evaluates each Git snapshot on visible tests outside the
 model context. Conditions determine whether and how the model can access those
 tests. Hidden scores are never returned to the model.
 
+## Tasks and languages
+
+A condition's `task` block selects the task: `c-compiler-ch1-10` (the default
+when a condition has none), `c-compiler-ch1-18` (`studies/c18/`) or
+`sql-engine-sqllogictest` (`studies/sql/`). The task fixes the scorer copied
+into the materialization, the number of stages, and the test partitions; the
+task studies pin their selections (`studies/c18/selection.json`,
+`studies/sql/selection-record.json`). Scores are never pooled across tasks.
+
+The two task studies use the minimal protocol of `studies/c10/minimal` (its prompts are in `studies/shared/minimal-protocol/`): an empty
+repository, one short behavioural contract as the only initial message, blank
+`AGENTS.md`/`TASK.md`, `Continue.` as the continuation, built-in tools only, no
+tests, scores or reference exposed. Their conditions vary only the candidate:
+
+- `rust` (baseline): `cargo build --release --offline`.
+- `python`: plain Python; `mypy` and other type checkers are withheld by the
+  guard.
+- `python-typed`: `mypy --strict` must pass as the build gate (pinned in image
+  0.5); a snapshot that does not type-check has no program and scores 0.
+- `javascript` and `typescript` (SQL only, from v17): plain JavaScript with
+  `tsc` withheld, and TypeScript under `tsc --strict --noEmitOnError`.
+
+The contract text is identical across a study's conditions apart from the
+language line and the build and run commands substituted from the adapter.
+
 ## Experimental factors
 
 ### Prompt
@@ -60,13 +90,13 @@ reduced workflow prompting. Historical runs retain their original labels.
 
 ### Minimal task-specific input
 
-`studies/minimal/study.json` defines the separate `picc-minimal-v1` study with one
+`studies/c10/minimal/study.json` defines the separate `picc-minimal-v1` study with one
 `minimal` condition. The initial request contains only a short compiler scope,
 interface, and experiment constraints. `AGENTS.md` and `TASK.md` are blank;
 continuation is `Continue.`. Only Pi's built-in tools are enabled, with no
 experiment tools extension, benchmark feedback, oracle, status tool, or scaffold.
 The standard Pi system prompt, session behavior, access guard, outer budgets,
-and evaluator remain. See `studies/minimal/README.md` for the full input inventory
+and evaluator remain. See `studies/c10/minimal/README.md` for the full input inventory
 and logging limitations.
 
 This setup changes specification detail, prompting, and feedback together. Its
@@ -103,7 +133,7 @@ analyzed as external-validity blocks. Language changes affect syntax,
 toolchain speed, available abstractions, and source-size metrics simultaneously;
 therefore they are not interchangeable with a prompt ablation.
 
-### Static typing (`studies/types/study.json`, study `picc-types-v1`)
+### Static typing (`studies/c10/types/study.json`: `picc-types-v1` in v4, `picc-types-v2` in v7)
 
 A second one-factor manifest holds every non-candidate block at the starter
 baseline and contrasts two candidate adapters on the same Node.js 24 runtime:
@@ -178,8 +208,10 @@ not a bit-reproducible seed.
 
 ### 4. Post-hoc evaluation
 
-For every run (`study-hidden-all` also scores the final snapshot with the fuzz
-oracle and writes `artifacts/fuzz-scores.jsonl`):
+For every run (on the chapters 1-10 task, `study-hidden-all` also scores the
+final snapshot with the fuzz oracle and writes `artifacts/fuzz-scores.jsonl`;
+the chapters 1-18 study sets `FUZZ_STAGE_PROGRAMS=0` and the SQL task has no
+fuzz oracle):
 
 ```bash
 make study-hidden-all RUN_ID=<id>
@@ -254,8 +286,14 @@ from the final one. A experiment plan names which snapshot rule is primary.
    (`analysis/report.md` §9), so both are reported and planned in advance
    thresholds apply to each.
 3. Hidden-score area under active-time trajectory.
-4. Completion: hidden macro score at or above 0.95 with successful build and
-   source audit.
+4. Completion: hidden macro score at or above the study's
+   `completion_threshold` (0.95 in every current study) with successful build
+   and source audit.
+
+On the SQL task the corpus score is the mean over stages of the mean
+per-script score, a script's score being its share of scored records passed
+(`studies/sql/README.md`); there is no fuzz oracle. On the chapters 1-18 task
+the fuzz oracle is disabled, so the corpus macro is the single primary oracle.
 
 Report finish rate and time-to-completion among completed runs. Do not replace
 unfinished runs with the time limit in analyses that assume observed completion
@@ -298,8 +336,9 @@ condition summary.
 Every hidden trajectory must cover every frozen snapshot in round order. The
 snapshot ledger, hidden score ledger, report, and full evaluator output must
 agree on the Git commit and tree, elapsed time, frozen test selection,
-and per-test identities. Aggregate scores are recomputed from per-test boolean
-results before inclusion. A complete one-snapshot early stop remains an outcome;
+and per-test identities. Aggregate scores are recomputed from per-test results
+before inclusion (pass/fail for the compilers, per-script fractional scores for
+the SQL engine). A complete one-snapshot early stop remains an outcome;
 its origin-anchored trapezoid AUC is `score / 2` rather than being dropped from
 condition medians.
 
@@ -319,9 +358,13 @@ without editing the frozen copy. Re-score from a scratch copy instead:
    the real `runs/` directory, so an evaluator run inside an unmodified copy
    overwrites the frozen ledgers (this happened once, in v9; the ledgers were
    restored from a backup). Point the copy at a copy of the run directory.
-3. Drop the corrected `scripts/evaluate_run.py` and
-   `evaluator/evaluate.py` into the copy and run the evaluator from there
-   with the run's recorded effective configuration in the environment.
+3. Drop the corrected scorer files into the copy's `evaluator/` (the task
+   runtime from `studies/runtime/`), and today's `scripts/evaluate_run.py`
+   together with `scripts/common.py` into its `scripts/` (the two go
+   together: an older copy's `common.py` lacks what today's
+   `evaluate_run.py` imports). Run the evaluator from there with the run's
+   recorded effective configuration in the environment.
+   `analysis/v10_rescore.py` does all of this for the v10 runs.
 4. Keep the outputs under `analysis/vN-rescore/<run>/`. The frozen ledgers
    in `runs/` are never modified; the corrected ledgers are primary only for
    the runs the amendment names, and the report says which.
@@ -340,7 +383,7 @@ language/scaffold variants into a prompt/spec treatment estimate.
 
 A factorial manifest (`design: "factorial"`, `factors: [...]`) is limited to
 interactions justified by the one-factor batches; the first is specification
-detail x test access (`studies/spectests/study.json`). The validator requires a
+detail x test access (`studies/c10/spectests/study.json`). The validator requires a
 full crossing, and each combined cell must reuse the single-factor overlays it
 combines. Each cell is still paired with its replicate's baseline; main effects
 and the interaction are planned in advance per batch and computed by the batch's
@@ -402,8 +445,9 @@ simulator that depends on the candidate by path) is developer tooling (v9
 Amendment 2; until v9 every manifest in the workspace was scanned). Until v6 this
 paragraph said the opposite for Rust ("treat that result as an outcome") while
 the Node audit had already been scoped after the v4 incident; v6 Amendment 2
-records the conflict and its resolution. Python candidates are still scanned
-workspace-wide.
+records the conflict and its resolution. Python candidates were scanned
+workspace-wide until v10 Amendment 2; since then the audit covers the entry
+module's import closure, as for JavaScript/TypeScript.
 
 Treat bypass attempts as protocol violations and report them. A stronger later
 study should move tests/reference compilation into a separate service and mount

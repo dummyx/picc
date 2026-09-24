@@ -1,167 +1,180 @@
-# Fixed experiment protocol
+# The fixed rules of one run
 
-## Research question
+Every run follows these rules, whatever its task or condition. What a
+condition may change (prompt, specification, test access, language,
+reference, budget) is in [STUDY_PROTOCOL.md](STUDY_PROTOCOL.md) and
+[studies/README.md](../studies/README.md); what a run records is in
+[DATA_DICTIONARY.md](DATA_DICTIONARY.md).
 
-Under a fixed wall-clock and interaction budget, how much of the specified C
-subset can a single Pi coding-agent session using the operator-declared model
-implement from an empty Rust repository without human steering?
+## A run
 
-## Unit of observation
+One run is one attempt by one agent: a fresh, empty Git repository and a
+fresh Pi session, working on one condition of one study, with no human
+input. Continuing a partly built workspace is not a new run. Runs of the
+same condition use identical settings but are not identical: the model
+samples at random, and no seed is fixed.
 
-One complete run is one stochastic model–harness trajectory. It starts from a
-fresh empty Git repository and a fresh Pi session. Reusing a partially developed
-workspace is not a new independent run.
+A run executes from its condition's frozen copy of the harness
+(`runs/.study-materializations/<run-id>/`, built by `scripts/study.py`),
+never from the repository, so changing the repository cannot change a run
+that exists.
 
-## Conditions
+## What is fixed for every run
 
-The starter has one condition:
+- **The agent.** Pi 0.85.1 (`PI_VERSION`), one persistent session, started
+  with `pi --mode json`; every later round continues the same session.
+- **The model.** Declared in `.env` as `MODEL_PROVIDER` and `MODEL_ID`, with
+  no default: an empty value stops the harness rather than guessing. The
+  campaign uses a local model (`MODEL_PROVIDER=local`, served by SGLang
+  since v16 and by llama.cpp before; [INFERENCE_SGLANG.md](INFERENCE_SGLANG.md)).
+  The client side of the endpoint (address, context window, output cap,
+  sampling settings, thinking budget) is frozen into the run's
+  `control/pi/models.json` and `metadata.json`. v17, for example, froze
+  `RadixArk/Qwen3.8-27B-NVFP4`, thinking level `high`, a 131,072-token
+  context window, a 32,768-token output cap and an 8,192-token thinking
+  budget. A different model is a different experiment and is never pooled.
+- **The container.** The pinned image `EXPERIMENT_IMAGE`
+  (`picc-experiment:0.5`, built by `make image`), recorded by its image ID;
+  a resume or a scoring pass refuses an image whose ID changed. The agent
+  runs with no added privileges, a read-only root, and limits on CPU (8),
+  memory (16 GB) and processes; scoring containers get 8 GB.
+- **The agent's tools.** Pi's `read`, `bash`, `edit`, `write`, `grep`,
+  `find` and `ls`, plus `test_visible`, `experiment_status` and
+  `reference_oracle` where the condition gives them. No skills or prompt
+  templates. A bash command the agent starts without its own time limit is
+  stopped after 120 seconds (the pinned `@cad0p/pi-bash-timeout` package,
+  loaded through `pi/settings.json`).
+- **The extensions loaded into Pi** (`pi/extensions/` in the run's copy):
+  - `experiment-guard.ts`, the rule checker. It blocks downloads, running an
+    existing compiler or database engine, reading credentials or the
+    harness's own records, editing `AGENTS.md`, `TASK.md` or `SPEC.md`, and
+    writing outside `/workspace`, and logs each block to
+    `artifacts/guard.jsonl`. It is an audit layer, not a sandbox.
+  - `experiment-tools.ts` and `study-setup.ts`, when the condition has
+    experiment tools or a starting scaffold.
+  - `compaction-bound.ts` and `truncation-repair.ts`, in every run. The
+    first keeps a conversation summary request within the context window
+    (Pi's own summary sent whole thinking and whole file bodies and could
+    outgrow it, which killed sessions in v10–v14). The second replaces a
+    reply that hit the output cap while still thinking, and so contains
+    nothing, with the start of its thinking and a note that it was cut off
+    (left in place, such a reply made the next one far likelier to be cut
+    off too). A run whose first round did not load both stops at once.
 
-- Pi `0.85.1`;
-- the provider declared in `MODEL_PROVIDER` (`zai`, `zai-coding-cn`, or `local`);
-- the model declared in `MODEL_ID`;
-- thinking setting `max`;
-- stock Pi compaction with explicitly frozen settings;
-- project-local test and guard extensions, plus the pinned
-  `@cad0p/pi-bash-timeout` package (bash commands default to a 120 s timeout
-  when the agent sets none);
-- one agent;
-- no human steering;
-- no web or source retrieval through agent tools;
-- standard-library-only Rust implementation.
+## The task
 
-Provider and model have no defaults: both are declared before the run, frozen,
-and recorded. Changing either — including selecting the optional local endpoint
-(`MODEL_PROVIDER=local`, see README) — keeps the same harness and budgets but is
-a different model condition. Runs under a different declaration must be labeled
-and analyzed separately.
+The condition's prompts and specification describe the task; the product
+interface is fixed per task:
 
-## Task
+| Task | The agent's program is run as |
+|---|---|
+| C compiler (chapters 1–10 and 1–18) | `<program> INPUT.c -o OUTPUT.s`, writing x86-64 assembly |
+| SQL engine | `<program> INPUT.sql`, printing each statement's result |
 
-PiCC accepts one C source file and emits x86-64 assembly:
+The exact command comes from the condition's language settings
+(each task's `candidates/` folder under `studies/`). A C test is handed to the agent's compiler
+after the C preprocessor (`gcc -E -P -C -nostdinc`), as the test suite's own
+driver does.
 
-```text
-target/release/picc INPUT.c -o OUTPUT.s
-```
+## Rounds, time and stopping
 
-The required stages are fixed in `prompts/TASK.md`. No optimization is required.
+A round is one Pi invocation. Round 0 gets the first message (`INITIAL.txt`);
+every later round gets the same continuation message (`CONTINUE.txt`).
+After each round the harness commits the whole workspace to its own Git
+history (a saved version) and scores that version on the visible tests; the
+agent sees the result only if its condition allows. Scoring time is not
+charged to the agent (since v11).
 
-## Feedback
+Budgets come from `config/defaults.env`, overridden by `.env` and by the
+condition's `budget` block, and are frozen per run in `metadata.json`. The
+`pilot` profile is a short trial that never counts. Recent `main` runs had 2
+hours of agent time, at most 30 rounds, at most 45 minutes per round, and
+the task's full stage range.
 
-The agent sees the visible partition and compact `test_visible` outcomes. It
-never sees hidden tests, hidden scores, or hidden failure diagnostics during a
-run.
+A run stops at the first of:
 
-The outer harness evaluates each round's immutable Git snapshot on visible
-tests. Hidden evaluation happens only after the run. Every test is handed to
-the candidate after the C preprocessor (`gcc -E -P -C -nostdinc`), as the
-upstream suite's driver does; the reference compile uses the original file.
+| Reason recorded | When |
+|---|---|
+| `wall_time_budget` | the agent's time is used up |
+| `max_rounds` | the rounds are used up |
+| `visible_complete_after_review` | the visible score reached 1.0 and the one review round that follows is done |
+| `round_timeout` | two rounds in a row (`MAX_CONSECUTIVE_ROUND_TIMEOUTS`) hit the round time limit without changing the workspace; a round that hit the limit while still changing files is work, not a stall (since v11) |
+| `context_overflow` | two rounds in a row (`MAX_CONSECUTIVE_DEAD_ROUNDS`) in which Pi's summary failed and the agent did nothing |
+| `pi_process_failure` | Pi exited with an error |
+| `human_abort`, `harness_exception` | an operator interrupted, or the harness failed |
 
-## Budgets
+## Scoring
 
-### Pilot
+After the run, every saved version is scored on the hidden tests
+(`make study-hidden-all`), in a separate container with the scorer frozen
+into the run's copy (`evaluator/`). The hidden tests are never mounted into
+the agent's container.
 
-- 2 wall-clock hours;
-- at most 6 Pi invocations;
-- at most 45 minutes for one invocation;
-- Stages 1–6.
+- **C compiler tasks.** A valid test program is compiled by the agent's
+  compiler, linked by GCC, and run; its exit status and output must match
+  GCC's own build of the program. An invalid test program must be rejected:
+  a nonzero exit status, an error message, and no assembly file. Per stage,
+  the pass rates of
+  valid and invalid programs are averaged separately and then together;
+  the score is the mean over stages, so a compiler that rejects everything
+  cannot score well on the invalid programs alone.
+- **Random programs (chapters 1–10 only).** The final saved version, and the
+  last one that built if that is different, are also checked on 100
+  generated programs per stage against GCC (`FUZZ_*` settings).
+- **SQL engine.** Each hidden test script is run whole; its score is the
+  share of its checked records the engine gets right, compared by the rules
+  of SQLite's own test runner. A stage's score is the mean of its scripts;
+  the score is the mean over stages. The expected answers come from the
+  pinned SQLite 3.40.1, and the scorer refuses any other version.
+- **Source rules.** Before scoring, the agent's program is checked against
+  its language's rules (no third-party packages, no calls to an existing
+  compiler or database engine, no links or binaries). A blocking finding
+  scores that version 0; an advisory one is reported and does not.
+- **Last version that built.** Since v8 every batch also reports the last
+  saved version whose hidden scoring built with no blocking finding, so
+  that a run cut off halfway through a rewrite is not judged only by its
+  broken last version.
 
-Pilot results are infrastructure/feasibility evidence and are excluded from the
-main descriptive summary.
+## Continuing a run that stopped (resume)
 
-### Main
+`make study-resume RUN_ID=...` continues a run, from its frozen copy, only
+when all of these hold:
 
-- 12 wall-clock hours;
-- at most 30 Pi invocations;
-- at most 60 minutes for one invocation;
-- Stages 1–10.
+- it stopped with `round_timeout` or `pi_process_failure`, and has time and
+  rounds left;
+- it has not been scored on hidden tests or reported yet;
+- its frozen model and settings still agree with its metadata, and the
+  image ID is unchanged;
+- its round and saved-version records are complete and in sequence, and
+  the next round's files do not exist yet;
+- it has exactly one Pi session, and its workspace is clean and at the last
+  saved version;
+- no container or harness process for the run is active.
 
-The first reached limit terminates the run. Full visible success receives at
-most one additional fixed continuation round for review.
+A resumed run continues the same session with the unchanged continuation
+message and the next round number; time and rounds already used are not
+given back, and time while nothing ran is not charged. It records every
+attempt in `metadata.json` and `artifacts/resume-events.jsonl`, and sets
+`protocol_comparable` to false: it is reported separately and never counted
+as one of a batch's runs.
 
-An audited resume does not reset either budget. A timed-out or failed Pi
-invocation remains a consumed round, and the next invocation receives the next
-sequential round number. Remaining time is the frozen total minus cumulative
-active harness time from all execution attempts. Time while no harness process
-is running is not charged. This recovery accounting is recorded for diagnosis,
-but a resumed trajectory is not comparable with an uninterrupted protocol run.
+## Interventions and exclusions
 
-## Primary outcome
+No one intervenes in a run once it starts: no messages to the agent, no
+workspace edits, no prompt changes. Any intervention makes the run
+noncomparable and is recorded. A run may be excluded only by a rule written
+in the batch's plan before the batch, such as a demonstrable harness defect
+before the first model reply. Model errors, bad plans, programs that do not
+build and ordinary slowdowns are results, not reasons to exclude.
 
-Final hidden macro-score:
+## What is recorded before a batch
 
-1. compute a valid-program pass rate and invalid-program pass rate per stage;
-2. average the available validity classes within the stage;
-3. average equally across included stages.
-
-## Secondary outcomes
-
-- final hidden micro pass rate;
-- highest stage reaching a pre-declared threshold;
-- visible–hidden gap;
-- score-versus-time area under the curve when all snapshots are evaluated;
-- buildable snapshot fraction;
-- regressions between rounds;
-- Rust LOC and churn, as descriptive—not success—metrics;
-- Pi model calls, reported token usage, tool calls, retries, and compactions;
-- blocked guard events and bash commands cut by the default timeout;
-- run-to-run variability.
-
-## Repetitions
-
-Use at least three main runs. The harness does not pin a sampling seed and Pi
-exposes none for the supported providers, so repetitions use unique IDs and
-identical configuration but are not seeded deterministic trials.
-
-Report every run individually, then median and range. Never select only the best
-run.
-
-## Allowed interventions
-
-No intervention is permitted after a main run starts. Infrastructure restarts,
-prompt changes, manually supplied hints, workspace edits, or quota top-ups make
-the trajectory noncomparable and must be recorded.
-
-The harness provides `make resume RUN_ID=...` for audited recovery. Resume is
-allowed only when a completed run ended in `round_timeout` or
-`pi_process_failure` and both frozen budgets still have capacity. It continues
-the same named Pi session with the unchanged continuation prompt. It is not a
-new run, does not erase the original outcome, and sets `protocol_comparable` to
-false. A resumed main trajectory must be analyzed separately rather than
-included among the planned in advance independent repetitions.
-
-Resume is refused unless all of the following still hold:
-
-- the stored model and non-secret configuration agree with metadata, and the
-  frozen Docker tag still resolves to the recorded immutable image ID;
-- round and snapshot ledgers are complete, paired, and sequential, and the next
-  round's output paths are unused;
-- exactly one valid named Pi session exists;
-- the workspace is clean and its Git HEAD and tree match the latest snapshot;
-- no Pi container or other harness process for the run is active;
-- no post-hoc visible or hidden evaluation or report has been generated.
-
-The harness appends resume start/finish audit events and records both the new
-execution attempt and the operator intervention in `metadata.json`. Hidden
-evaluation remains post-hoc: once postprocessing begins, that run cannot be
-resumed.
-
-A run may be excluded only under a planned in advance rule, such as failure before
-any successful provider response due to a demonstrable harness defect. Model
-errors, bad plans, generated build failures, and ordinary provider throttling
-are outcomes, not exclusion reasons.
-
-## Freeze checklist
-
-Record before main runs:
-
-- starter repository Git commit;
-- Docker image name and immutable image ID;
-- Pi version;
-- Rust version;
-- frozen prompts, settings, and extensions;
-- visible and hidden manifests;
-- upstream test revision;
-- effective `.env` overrides, excluding secrets;
-- the served model alias, path, and server build (`make preflight` records these);
-- host and Docker platform;
-- run IDs and planned number of repetitions.
+The batch's plan (`docs/EXPERIMENT_PLAN_v<N>.md`), committed before the
+first run, names the repository commit, the study file and id, the
+conditions, the number of runs, the budgets, what will be measured, and the
+rules for exclusions. Every run records the rest itself: the effective
+configuration except secrets, the model and endpoint settings, the image ID,
+the Pi version, the host, and the test manifests
+([DATA_DICTIONARY.md](DATA_DICTIONARY.md)). `make preflight` checks, before
+any run, that the served model and its usable context match the frozen
+settings.

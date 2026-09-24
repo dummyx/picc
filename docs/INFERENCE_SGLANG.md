@@ -17,7 +17,7 @@ process that serves the model the harness talks to over HTTP. It therefore
 lives in its own virtualenv, outside the harness import path.
 
 ```bash
-make sglang-install      # -> scripts/install_sglang.sh -> .venv-sglang/
+make sglang-install      # -> scripts/model_server/install_sglang.sh -> .venv-sglang/
 ```
 
 `uv` is used rather than `pip`, for a specific reason: this host's
@@ -30,7 +30,7 @@ CUDA 13 builds of torch and flashinfer.
 ### Four things this host needed before SGLang would start
 
 None of these are in SGLang's install guide, and each one fails at a different
-point with an error that does not name the cause. `scripts/install_sglang.sh`
+point with an error that does not name the cause. `scripts/model_server/install_sglang.sh`
 handles all four; this is the record of why.
 
 1. **A Python with headers.** `/usr/bin/python3.12` here is a stripped build:
@@ -42,7 +42,7 @@ handles all four; this is the record of why.
 
 2. **`ninja` on PATH.** SGLang JIT-compiles kernels and shells out to `ninja`
    by name. It is installed in the venv, but the venv is invoked by absolute
-   path rather than activated, so `scripts/sglang_server.sh` prepends
+   path rather than activated, so `scripts/model_server/sglang_server.sh` prepends
    `$VENV/bin` and the CUDA `bin` directory to PATH before launching.
 
 3. **CUDA development symlinks.** The JIT links with
@@ -50,7 +50,7 @@ handles all four; this is the record of why.
    out. The pip packages put libraries in `lib/` and ship only versioned
    sonames, because the unversioned development symlinks belong to a `-dev`
    package with no pip equivalent. Without them the kernels compile and then
-   fail to link. `scripts/link_cuda_dev.py` adds `lib64 -> lib` and the
+   fail to link. `scripts/model_server/link_cuda_dev.py` adds `lib64 -> lib` and the
    unversioned `.so` links inside the venv, idempotently.
 
 4. **A self-consistent CUDA toolchain.** This is the one worth knowing about.
@@ -87,7 +87,7 @@ Installed and verified 2026-09-21:
 | torch | 2.13.0+cu130 |
 | CUDA (torch) | 13.0 |
 | uv | 0.12.17 |
-| Python | 3.12.3 |
+| Python | 3.12.14 in the venv (uv-managed; the system Python is 3.12.3) |
 | GPU | NVIDIA GeForce RTX 5090, 32607 MiB |
 | Driver | 580.173.02 |
 | Compute capability | sm_120 (Blackwell) |
@@ -127,7 +127,7 @@ scales are used for the FP8 KV pool.
 ### Fetching it
 
 ```bash
-scripts/fetch_model.sh       # pins the revision, then downloads with resume
+scripts/model_server/fetch_model.sh   # pins the revision, then downloads with resume
 ```
 
 Not `hf download`: on this host the `hf` CLI hangs with no bytes moving and no
@@ -151,7 +151,7 @@ directory, `--served-model-name` carries the public model id into run metadata.
 ## 3. Serving configuration
 
 All of it is in `config/sglang.env`, which is the single source of truth.
-`scripts/sglang_server.sh` renders it into a YAML config file and launches
+`scripts/model_server/sglang_server.sh` renders it into a YAML config file and launches
 `sglang serve --config <file>`.
 
 Launching from a YAML file rather than a command line is deliberate:
@@ -178,7 +178,7 @@ at 93.93–94.92%.
 
 | Flag | Value | Why |
 |---|---|---|
-| `--mem-fraction-static` | `0.9` | the no-speculation operating point for this card |
+| `--mem-fraction-static` | `0.9` | the no-speculation operating point for this card. **Served at `0.85`**, with `--max-mamba-cache-size 16`: at `0.9` graph capture ran out of memory (section 4, configurations 1 and 2) |
 | `--attention-backend` | `flashinfer` | SM120 requires it; `trtllm_mha` is SM100-only |
 | `--kv-cache-dtype` | `fp8_e4m3` | ~2x KV savings using the checkpoint's own scales |
 | `--max-running-requests` | `1` | the validated single-stream envelope — and exactly what this harness needs, since it runs one Pi session |
@@ -302,7 +302,7 @@ included.** Every launch record written before this was noticed held the key
 in a world-readable `server.log` -- the one file someone attaches when asking
 for help.
 
-What is in place now: the log is created 0600; `scripts/sglang_server.sh`
+What is in place now: the log is created 0600; `scripts/model_server/sglang_server.sh`
 overwrites the key in place with a same-length mask once the server is ready,
 again on `stop`, and on a failed start; and the existing records were scrubbed
 the same way. Same length and same inode are deliberate: the server holds the
@@ -326,8 +326,7 @@ versions and GPU, and `server.log`.
 |---|---|---|---|
 | 0 | through 2026-09-20 | **llama.cpp** `llama-server`, `unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL` (snapshot `4ca72078`), n_ctx 131072, port 4545, sampling `temperature=1.0 top_p=0.95 top_k=20 min_p=0` | Ran batches v10–v15. Two harness defects found and fixed (compaction overflow, truncation compounding). Left unexplained: the strict-typing condition produced nothing, with 62% of replies cut off mid-reasoning; raising the output cap from 32768 to 65536 did not help. Retired in favour of SGLang. |
 | 1 | 2026-09-21 | SGLang 0.5.20, `RadixArk/Qwen3.8-27B-NVFP4` rev `319f741c`, **`--mem-fraction-static 0.9`**, no `--max-mamba-cache-size` | **Failed.** Weights 20.14 GB, GDN state pool 45 slots / 3.23 GB, KV 125,335 tokens, leaving 3.10 GB. CUDA graph capture then died with `CUDA error: out of memory`, surfaced as a PyTorch internal assert about `markCaptureEnd`. The 45-slot state pool is sized for a concurrency this server never sees. |
-| 2 | 2026-09-21 | As above with **`--mem-fraction-static 0.85`** and **`--max-mamba-cache-size 16`** | **Serving.** State pool 1.20 GB, **KV 147,731 tokens**, 4.64 GB free, graph capture completed. Verified: `make preflight` verified, `make inference-smoke` all checks passed (tool calls parsed into `tool_calls`, reasoning separated into `reasoning_content`, `finish_reason` present), `make auth-check` returned AUTH_OK through the pinned image. This is the current configuration. |
-
+| 2 | 2026-09-21 | As above with **`--mem-fraction-static 0.85`** and **`--max-mamba-cache-size 16`** | **Serving.** State pool 1.20 GB, **KV 147,731 tokens**, 4.64 GB free, graph capture completed. Verified: `make preflight` verified, `make inference-smoke` all checks passed (tool calls parsed into `tool_calls`, reasoning separated into `reasoning_content`, `finish_reason` present), `make auth-check` returned AUTH_OK through the pinned image. This was the current configuration until #3. |
 | 3 | 2026-09-21 08:18Z | As #2 plus **`--enable-strict-thinking`**, with the harness sending `thinking_budget: 8192` | **Serving.** Enforcement verified by measurement (above). Ran `v16-sql-python-typed-r1`: 99 writes, 0.0% cut off, hidden 0.8139, where all three v15 typed runs scored 0.0. Token arithmetic shows the budget bound on 4 of 437 replies -- the three whole-file writes and one planning reply. Also ran the budget control `v16nb-sql-python-typed-r9` on this same server with no budget sent. |
 | 4 | 2026-09-21 14:26Z | As #3 plus **`--enable-cache-report`**, server logging in UTC, API key rotated | **Serving.** Ready in 40 s (kernel cache warm); pools identical to #2/#3 (KV 147,731 tokens, 4.64 GB free). Reporting-only changes: run records now carry real prefix-cache hits instead of `cacheRead: 0`. Launched by `make experiment`, which verified the endpoint and measured the thinking budget as enforced before the first run. The new key occurs 0 times in this launch's log (1 masked occurrence), so the launcher's scrub works on a real launch. Serves the v17 batch. |
 
