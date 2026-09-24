@@ -12,7 +12,8 @@ PREFIX ?= batch
 
 .PHONY: doctor validate image tests tests-c18 tests-sql tasks-smoke extensions-smoke smoke-tests evaluator-smoke setup auth-check preflight pilot main resume visible hidden hidden-all report \
 	study-validate study-list study-schedule study-materialize study-run study-resume study-visible study-hidden study-hidden-all study-report study-summary clean-runs \
-	sglang-install sglang-lock model-verify sglang-config inference-smoke sglang-serve sglang-start sglang-stop sglang-status sglang-logs sglang-pin experiment
+	sglang-install sglang-lock model-verify sglang-config inference-smoke sglang-serve sglang-start sglang-stop sglang-status sglang-logs sglang-pin experiment \
+	dashboard dashboard-start dashboard-stop dashboard-status
 
 doctor:
 	./scripts/doctor.sh
@@ -167,3 +168,25 @@ inference-smoke:
 experiment:
 	./scripts/start_experiment.sh --study "$(STUDY)" --prefix "$(PREFIX)" \
 		--replicates "$(REPLICATES)" --profile "$(PROFILE)"
+
+# --- Results dashboard -------------------------------------------------------
+# A read-only web page over runs/ and the write-ups: batches, runs, the agent's
+# conversation, the files it wrote, test results, comparisons and reports.
+# It listens on this machine only (http://localhost:$(DASHBOARD_PORT)); from
+# another computer, forward the port over SSH. The SGLang venv's Python is used
+# when present because counting reasoning tokens needs its `tokenizers`
+# package; everything else is standard library. See docs/DASHBOARD.md.
+DASHBOARD_PORT ?= 8765
+DASHBOARD_PYTHON := $(if $(wildcard .venv-sglang/bin/python),.venv-sglang/bin/python,python3)
+
+dashboard:
+	$(DASHBOARD_PYTHON) analysis/dashboard/server.py --port "$(DASHBOARD_PORT)"
+
+dashboard-start:
+	$(DASHBOARD_PYTHON) analysis/dashboard/server.py --port "$(DASHBOARD_PORT)" --background
+
+dashboard-stop:
+	python3 analysis/dashboard/server.py --stop
+
+dashboard-status:
+	python3 analysis/dashboard/server.py --status
