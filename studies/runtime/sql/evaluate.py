@@ -58,6 +58,7 @@ from candidate_runtime import (  # noqa: E402
     select_tests,
     source_audit,
     truncate,
+    truncate_middle,
 )
 
 DEFAULT_SCRIPT_TIMEOUT_SECONDS = 120
@@ -208,7 +209,7 @@ def run_script(
     if result.returncode != 0 and not result.timed_out:
         detail_parts.append(f"exit status {result.returncode}")
     if result.stderr.strip():
-        detail_parts.append(truncate(result.stderr.strip(), 500))
+        detail_parts.append(truncate_middle(result.stderr.strip(), 500))
     if failures:
         detail_parts.append("; ".join(f"line {f['line']}: {f['detail']}" for f in failures[:3]))
     return ScriptResult(
@@ -357,7 +358,7 @@ def main() -> int:
         detail = (
             truncate(json.dumps(audit["blocking_findings"][:10], sort_keys=True), 2000)
             if audit["blocking"]
-            else truncate(
+            else truncate_middle(
                 (build_result.stderr or build_result.stdout) if build_result else "candidate artifact or build command missing",
                 2000,
             )

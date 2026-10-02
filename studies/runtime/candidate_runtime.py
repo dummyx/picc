@@ -232,6 +232,21 @@ def truncate(value: str, limit: int = 8000) -> str:
     return value[:limit] + f"\n... [truncated {len(value) - limit} characters]"
 
 
+def truncate_middle(value: str, limit: int = 8000) -> str:
+    """Shorten a program's error output from the middle. The line that says
+    what went wrong ends a Python or Node traceback and starts a Rust panic or
+    a compiler's error list, so both ends are kept. (Keeping only the start
+    lost python-typed-r1's `TypeError` line in v17.)"""
+    if len(value) <= limit:
+        return value
+    head = limit // 3
+    return (
+        value[:head]
+        + f"\n... [truncated {len(value) - limit} characters] ...\n"
+        + value[len(value) - (limit - head):]
+    )
+
+
 def atomic_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
@@ -303,7 +318,7 @@ def run_command(
         args=list(args),
         returncode=process.returncode if process.returncode is not None else 128,
         stdout=(stdout or "")[:MAX_CAPTURE_BYTES],
-        stderr=(stderr or "")[:MAX_CAPTURE_BYTES],
+        stderr=truncate_middle(stderr or "", MAX_CAPTURE_BYTES),
         elapsed_seconds=time.monotonic() - started,
         timed_out=timed_out,
     )

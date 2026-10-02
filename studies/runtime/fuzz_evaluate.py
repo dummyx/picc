@@ -72,7 +72,7 @@ def parse_args() -> argparse.Namespace:
 
 def failure_detail(result: corpus.CommandResult) -> str:
     text = (result.stderr or result.stdout or "").strip()
-    return corpus.truncate(text, 300) if text else f"exit status {result.returncode}"
+    return corpus.truncate_middle(text, 300) if text else f"exit status {result.returncode}"
 
 
 def fuzz_stage(

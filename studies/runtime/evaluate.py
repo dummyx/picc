@@ -77,6 +77,7 @@ from candidate_runtime import (  # noqa: E402
     strip_js_comments,
     subprocess_environment,
     truncate,
+    truncate_middle,
 )
 
 @dataclass
@@ -346,9 +347,9 @@ def evaluate_valid(
         if compile_result.timed_out:
             return TestResult(str(test["id"]), int(test["stage"]), "valid", False, "compiler_timeout", None, compile_result.elapsed_seconds, 0.0, compile_result.returncode)
         if compile_result.returncode < 0:
-            return TestResult(str(test["id"]), int(test["stage"]), "valid", False, "compiler_crash", truncate(compile_result.stderr, 1000), compile_result.elapsed_seconds, 0.0, compile_result.returncode)
+            return TestResult(str(test["id"]), int(test["stage"]), "valid", False, "compiler_crash", truncate_middle(compile_result.stderr, 1000), compile_result.elapsed_seconds, 0.0, compile_result.returncode)
         if compile_result.returncode != 0:
-            return TestResult(str(test["id"]), int(test["stage"]), "valid", False, "unexpected_reject", truncate(compile_result.stderr, 1000), compile_result.elapsed_seconds, 0.0, compile_result.returncode)
+            return TestResult(str(test["id"]), int(test["stage"]), "valid", False, "unexpected_reject", truncate_middle(compile_result.stderr, 1000), compile_result.elapsed_seconds, 0.0, compile_result.returncode)
         if not assembly.exists() or assembly.stat().st_size == 0:
             return TestResult(str(test["id"]), int(test["stage"]), "valid", False, "missing_assembly", None, compile_result.elapsed_seconds, 0.0, compile_result.returncode)
 
@@ -439,7 +440,7 @@ def evaluate_invalid(
             "invalid",
             passed,
             failure,
-            None if passed else truncate(result.stderr, 1000),
+            None if passed else truncate_middle(result.stderr, 1000),
             result.elapsed_seconds,
             0.0,
             result.returncode,
@@ -576,7 +577,7 @@ def main() -> int:
         detail = (
             truncate(json.dumps(audit["blocking_findings"][:10], sort_keys=True), 2000)
             if audit["blocking"]
-            else truncate(
+            else truncate_middle(
                 (build_result.stderr or build_result.stdout) if build_result else "candidate artifact or build command missing",
                 2000,
             )

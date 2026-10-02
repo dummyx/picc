@@ -147,6 +147,39 @@ class SqlEvaluatorTests(unittest.TestCase):
         self.assertEqual({row["failure_type"] for row in payload["tests"]}, {"script_timeout"})
         self.assertEqual(payload["summary"]["score"], 0.0)
 
+    def test_crash_detail_keeps_the_line_that_names_the_error(self) -> None:
+        # The v17 shape: a Python engine that dies part-way with a traceback
+        # far longer than the detail kept per script. The error line is the
+        # traceback's last; keeping only the start of it lost that line.
+        workspace = self.root / "ws-crash"
+        shutil.copytree(ROOT / "fixtures" / "mock-pisql-sqlite", workspace)
+        (workspace / "pisql.py").write_text(
+            "def evaluate_expression_at_depth(depth, value):\n"
+            "    if depth == 0:\n"
+            "        return value * 2\n"
+            "    return evaluate_expression_at_depth(depth - 1, value)\n"
+            "print('ok 0', flush=True)\n"
+            "evaluate_expression_at_depth(40, None)\n",
+            encoding="utf-8",
+        )
+        task = self.root / "task-crash.json"
+        task.write_text(json.dumps({"runtime": "sql-engine", "parameters": {"script_timeout_seconds": 60}}), encoding="utf-8")
+        output = self.root / "crash.json"
+        subprocess.run(
+            [
+                sys.executable, str(EVALUATOR), "--workspace", str(workspace),
+                "--tests-root", str(self.all_scripts), "--manifest", str(self.all_scripts / "manifest.json"),
+                "--candidate-config", str(workspace / "candidate.json"), "--task-config", str(task),
+                "--output", str(output), "--summary-json",
+            ],
+            capture_output=True, text=True, cwd=ROOT,
+        )
+        payload = json.loads(output.read_text())
+        for row in payload["tests"]:
+            self.assertIn("Traceback (most recent call last)", row["detail"])
+            self.assertIn("TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'", row["detail"])
+            self.assertIn("[truncated", row["detail"])
+
     def test_real_sql_adapters_prohibit_database_engines(self) -> None:
         sys.path.insert(0, str(ROOT / "studies" / "runtime"))
         import candidate_runtime  # noqa: E402
