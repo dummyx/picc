@@ -1283,11 +1283,26 @@ def command_schedule(args: argparse.Namespace) -> int:
     if args.replicates < 1:
         raise StudyError("--replicates must be at least 1")
     study, conditions = load_study(args.study)
+    # A batch may run some of a study's conditions (the SQL study lists five
+    # languages; a batch on three of them schedules three). The order is the
+    # full study's order with the others left out, so a condition keeps its
+    # place relative to the rest whichever subset is run.
+    selected: list[str] | None = None
+    if args.conditions is not None:
+        selected = [name.strip() for name in args.conditions.split(",") if name.strip()]
+        unknown = sorted(set(selected) - {condition["id"] for condition in conditions})
+        if not selected or unknown:
+            raise StudyError(
+                "--conditions names no condition" if not selected
+                else f"--conditions names conditions the study does not have: {', '.join(unknown)}"
+            )
     rows: list[dict[str, Any]] = []
     sequence = 0
     for replicate in range(1, args.replicates + 1):
         ordered = [condition["id"] for condition in conditions]
         random.Random(int(study.get("seed", 0)) + replicate).shuffle(ordered)
+        if selected is not None:
+            ordered = [condition_id for condition_id in ordered if condition_id in selected]
         for condition_id in ordered:
             sequence += 1
             run_id = schedule_run_id(study["id"], args.profile, replicate, condition_id)
@@ -1312,6 +1327,8 @@ def command_schedule(args: argparse.Namespace) -> int:
         "profile": args.profile,
         "rows": rows,
     }
+    if selected is not None:
+        payload["conditions"] = [condition["id"] for condition in conditions if condition["id"] in selected]
     if args.output:
         atomic_write_json(args.output.resolve(), payload)
         print(args.output.resolve())
@@ -1436,6 +1453,7 @@ def build_parser() -> argparse.ArgumentParser:
     study_arg(schedule)
     schedule.add_argument("--replicates", type=int, default=3)
     schedule.add_argument("--profile", choices=["pilot", "main"], default="main")
+    schedule.add_argument("--conditions", help="comma-separated subset of the study's conditions (default: all)")
     schedule.add_argument("--output", type=Path)
     schedule.set_defaults(func=command_schedule)
 

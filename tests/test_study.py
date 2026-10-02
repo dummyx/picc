@@ -143,6 +143,29 @@ class ScheduleTests(unittest.TestCase):
             self.assertIn(f"RUN_ID={expected_run_id}", row["command"])
             self.assertIn(f"REPLICATE={replicate}", row["command"])
 
+    def schedule(self, *extra: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "study.py"), "schedule",
+             "--study", "studies/sql/study.json", "--replicates", "3", *extra],
+            cwd=ROOT, check=False, capture_output=True, text=True,
+        )
+
+    def test_a_subset_keeps_the_full_schedule_order(self) -> None:
+        def cells(result: subprocess.CompletedProcess[str]) -> list[tuple[str, str]]:
+            self.assertEqual(result.returncode, 0, result.stderr)
+            return [(line.split("\t")[1], line.split("\t")[2]) for line in result.stdout.splitlines()[1:]]
+
+        wanted = {"rust", "python", "python-typed"}
+        everything = cells(self.schedule())
+        subset = cells(self.schedule("--conditions", "rust,python,python-typed"))
+        self.assertEqual(len(subset), 9)
+        self.assertEqual(subset, [cell for cell in everything if cell[1] in wanted])
+
+    def test_a_subset_naming_an_unknown_condition_is_refused(self) -> None:
+        result = self.schedule("--conditions", "rust,cobol")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("cobol", result.stderr + result.stdout)
+
 
 class MaterializationTests(unittest.TestCase):
     def setUp(self) -> None:

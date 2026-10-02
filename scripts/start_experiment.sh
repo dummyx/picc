@@ -21,6 +21,7 @@
 #   --prefix NAME       run-id prefix; ids are <prefix>-<condition>-r<n>
 #   --replicates N      replicates per condition (default 3)
 #   --profile NAME      pilot | main (default main)
+#   --conditions A,B    schedule only these conditions of the study (default all)
 #   --condition NAME    with --single, the one condition to run
 #   --single            run one condition once instead of a schedule
 #   --replicate N       with --single, the replicate number (default 1). Use a
@@ -33,7 +34,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-study=""; prefix=""; replicates=3; profile=main; condition=""; replicate=1
+study=""; prefix=""; replicates=3; profile=main; condition=""; replicate=1; conditions=""
 single=0; no_server=0; stop_after=0; dry_run=0
 
 while (($#)); do
@@ -43,12 +44,13 @@ while (($#)); do
     --replicates)  replicates="$2"; shift 2 ;;
     --profile)     profile="$2"; shift 2 ;;
     --condition)   condition="$2"; shift 2 ;;
+    --conditions)  conditions="$2"; shift 2 ;;
     --replicate)   replicate="$2"; shift 2 ;;
     --single)      single=1; shift ;;
     --no-server)   no_server=1; shift ;;
     --stop-after)  stop_after=1; shift ;;
     --dry-run)     dry_run=1; shift ;;
-    -h|--help)     sed -n '2,32p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)     sed -n '2,33p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -69,7 +71,7 @@ if ((dry_run)); then
   if ((single)); then
     say "would run one $condition at profile=$profile as $prefix-$condition-r$replicate"
   else
-    say "would schedule $replicates replicate(s) per condition from $study at profile=$profile,"
+    say "would schedule $replicates replicate(s) per condition${conditions:+ ($conditions)} from $study at profile=$profile,"
     say "then chain them with run ids $prefix-<condition>-r<n>"
   fi
   exit 0
@@ -125,9 +127,10 @@ if ((single)); then
 else
   schedule="$ROOT/runs/$prefix-schedule.json"
   mkdir -p "$ROOT/runs"
-  say "scheduling $replicates replicate(s) per condition into ${schedule#"$ROOT"/}"
+  say "scheduling $replicates replicate(s) per condition${conditions:+ ($conditions)} into ${schedule#"$ROOT"/}"
   (cd "$ROOT" && python3 scripts/study.py schedule --study "$study" \
-      --replicates "$replicates" --profile "$profile" --output "$schedule" >/dev/null)
+      --replicates "$replicates" --profile "$profile" ${conditions:+--conditions "$conditions"} \
+      --output "$schedule" >/dev/null)
   say "running chain; progress in runs/$prefix-chain.log"
   # Let the chain bring the server back once if it dies between runs. Same
   # config/sglang.env, so the serving configuration does not change; it is

@@ -10,6 +10,8 @@ PREFIX ?= batch
 RUN_ID ?= picc-$(shell date -u +%Y%m%d-%H%M%S)
 REPLICATE ?=
 REPLICATE_ARG := $(if $(REPLICATE),--replicate $(REPLICATE),)
+CONDITIONS ?=
+CONDITIONS_ARG := $(if $(CONDITIONS),--conditions $(CONDITIONS),)
 
 .PHONY: setup doctor image tests tests-c18 tests-sql \
 	validate evaluator-smoke tasks-smoke extensions-smoke \
@@ -119,9 +121,10 @@ auth-check:
 # and runs every scheduled run with its hidden scoring and report, unattended.
 # Run ids are <PREFIX>-<condition>-r<n>.
 #   make experiment STUDY=studies/sql/study.json PREFIX=v18 REPLICATES=3 PROFILE=main
+# CONDITIONS=rust,python runs only those conditions of the study.
 experiment:
 	./scripts/start_experiment.sh --study "$(STUDY)" --prefix "$(PREFIX)" \
-		--replicates "$(REPLICATES)" --profile "$(PROFILE)"
+		--replicates "$(REPLICATES)" --profile "$(PROFILE)" $(CONDITIONS_ARG)
 
 # --- One study step at a time -------------------------------------------------
 # What `make experiment` does, as separate steps. Every run is made from a
@@ -134,7 +137,7 @@ study-list:
 	python3 scripts/study.py list --study "$(STUDY)"
 
 study-schedule:     # a fixed, shuffled run order for REPLICATES repetitions
-	python3 scripts/study.py schedule --study "$(STUDY)" --replicates "$(REPLICATES)" --profile "$(PROFILE)"
+	python3 scripts/study.py schedule --study "$(STUDY)" --replicates "$(REPLICATES)" --profile "$(PROFILE)" $(CONDITIONS_ARG)
 
 study-materialize:  # build a condition's frozen copy without running the agent
 	python3 scripts/study.py materialize --study "$(STUDY)" --condition "$(CONDITION)" --run-id "$(RUN_ID)"
