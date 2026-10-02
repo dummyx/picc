@@ -7,8 +7,8 @@ only its scorer (`studies/runtime/sql/`) and the `task` block of its study
 file are its own.
 
 The study file is [study.json](study.json). Its current id,
-`picc-sql-minimal-v7`, is the v17 batch; the task was also run in v10–v16
-under ids v1–v6 ([studies/README.md](../README.md) lists which).
+`picc-sql-minimal-v8`, is the v18 batch; the task was also run in v10–v17
+under ids v1–v7 ([studies/README.md](../README.md) lists which).
 
 ## What the agent gets
 
@@ -119,7 +119,7 @@ make study-materialize STUDY=studies/sql/study.json CONDITION=rust RUN_ID=inspec
 make study-run STUDY=studies/sql/study.json CONDITION=rust PROFILE=main RUN_ID=v18-sql-rust-r1 REPLICATE=1
 make study-hidden-all RUN_ID=v18-sql-rust-r1
 make study-report RUN_ID=v18-sql-rust-r1
-make study-summary STUDY=studies/sql/study.json    # -> runs/study-results/picc-sql-minimal-v7/
+make study-summary STUDY=studies/sql/study.json    # -> runs/study-results/picc-sql-minimal-v8/
 make tasks-smoke                                   # evaluator smoke in the pinned image (Docker)
 ```
 

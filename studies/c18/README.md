@@ -8,7 +8,7 @@ this task has its own split, seed, prompt, and study id.
 
 The study file is [study.json](study.json). The task was run in the v10
 batch as `picc-c18-minimal-v1` (and in one v11 trial run as `-v2`); the
-current id, `picc-c18-minimal-v3`, has not been run.
+current id, `picc-c18-minimal-v4`, is the v18 batch (`-v3` was never run).
 
 ## What the agent gets
 
@@ -92,7 +92,7 @@ make study-materialize STUDY=studies/c18/study.json CONDITION=rust RUN_ID=inspec
 make study-run STUDY=studies/c18/study.json CONDITION=rust PROFILE=main RUN_ID=v18-c18-rust-r1 REPLICATE=1
 make study-hidden-all RUN_ID=v18-c18-rust-r1
 make study-report RUN_ID=v18-c18-rust-r1
-make study-summary STUDY=studies/c18/study.json    # -> runs/study-results/picc-c18-minimal-v3/
+make study-summary STUDY=studies/c18/study.json    # -> runs/study-results/picc-c18-minimal-v4/
 make tasks-smoke                                   # evaluator smoke in the pinned image (Docker)
 ```
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "id": "picc-sql-minimal-v7",
-  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol, one condition per implementation language. This id (v7) is the v17 batch; the ids of earlier SQL batches are listed in studies/README.md.",
+  "id": "picc-sql-minimal-v8",
+  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol, one condition per implementation language. This id (v8) is the v18 batch; the ids of earlier SQL batches are listed in studies/README.md.",
   "baseline_condition": "rust",
   "seed": 20260920,
   "completion_threshold": 0.95,
