@@ -49,7 +49,13 @@ that exists.
     existing compiler or database engine, reading credentials or the
     harness's own records, editing `AGENTS.md`, `TASK.md` or `SPEC.md`, and
     writing outside `/workspace`, and logs each block to
-    `artifacts/guard.jsonl`. It is an audit layer, not a sandbox.
+    `artifacts/guard.jsonl`. Rules about which commands run read the command
+    as the shell will run it, on every line of it, and leave out quoted text
+    and here-documents handed to other programs (code being written to a
+    file); rules about text anywhere, such as a URL or an import of a
+    database module, read all of it. Until v18 every rule read the whole
+    text and only its first line counted as a command. It is an audit layer,
+    not a sandbox.
   - `experiment-tools.ts` and `study-setup.ts`, when the condition has
     experiment tools or a starting scaffold.
   - `compaction-bound.ts` and `truncation-repair.ts`, in every run. The
