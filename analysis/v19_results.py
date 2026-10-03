@@ -131,6 +131,10 @@ def contract_failures(run_id: str) -> int | None:
     count = 0
     for test in json.loads(output.read_text(encoding="utf-8")).get("tests") or []:
         detail = str(test.get("detail") or "")
+        # A script the engine ran out of time on also has no blocks; that is
+        # speed, not the contract.
+        if test.get("failure_type") == "script_timeout":
+            continue
         if test.get("failure_type") == "malformed_output" or "no output block" in detail:
             count += 1
     return count
