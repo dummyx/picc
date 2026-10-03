@@ -76,6 +76,33 @@ descriptive at this size.
 Run ids `v19-sql-<condition>-r<n>` then `v19-c18-<condition>-r<n>`, launched
 by `runs/v19-chain.sh` the way v18 was. About 40 hours.
 
+## Amendment 1, 2026-10-03 19:14Z: where the commands run
+
+Found after run 7 of 18 (`v19-sql-rust-r3`) had put its crate in
+`/workspace/pisql/`: `cargo build --release --offline` runs in `/workspace`
+and found no `Cargo.toml`, so every snapshot scored 0 while the engine itself
+was being built normally (4,836 lines of Rust). Nothing in the specification
+said where the build and run commands execute. The same gap exists for the
+compiler task. One sentence was added to both specifications before run 8 was
+set up: "Both commands are run from `/workspace` itself, so the project root
+is `/workspace`, not a subdirectory of it, and the paths they name are
+relative to `/workspace`." Harness commit `3569f27`.
+
+How this is handled, decided before any run 8 data:
+
+- Runs 1-7 ran without the sentence; runs 8-18 run with it. Runs 1-6 all
+  placed their files at the root, so the sentence could not have changed what
+  they built; `v19-sql-rust-r3` is reported as it is, 0, with this cause.
+- The study ids do not change (the condition objects are unchanged; only the
+  specification text grew by one sentence), so the summary includes both
+  groups. `analysis/v19_results.py` marks each run with whether its frozen
+  specification carries the sentence, and the write-up reports the Rust arm
+  both with and without `rust-r3`.
+- The decision rule is unchanged. Whether to pool the two groups is a
+  judgement the report must make openly; the alternative, stopping and
+  discarding six good runs (14 hours) to restart with the sentence, was not
+  taken because the sentence cannot have affected those six.
+
 ## Analysis
 
 `make study-summary STUDY=studies/sql/study.json`,

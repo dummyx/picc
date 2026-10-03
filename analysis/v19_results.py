@@ -140,6 +140,15 @@ def contract_failures(run_id: str) -> int | None:
     return count
 
 
+def has_workdir_rule(run_id: str) -> bool | None:
+    """Whether the run's frozen specification carries Amendment 1's sentence
+    (where the build and run commands execute)."""
+    path = ROOT / "runs" / run_id / "control" / "INITIAL.txt"
+    if not path.is_file():
+        return None
+    return "run from `/workspace` itself" in path.read_text(encoding="utf-8")
+
+
 def blocked_by_reason(run_id: str) -> Counter[str]:
     path = ROOT / "runs" / run_id / "artifacts" / "guard.jsonl"
     reasons: Counter[str] = Counter()
@@ -166,8 +175,8 @@ def report(study_id: str, label: str, study_path: str) -> None:
         return
     compiler = "c18" in study_id
     by_cell = {(row["condition_id"], int(row["replicate"])): row for row in rows}
-    print("| language | rep | hidden | last buildable | working | contract failures | replies | writes | cut off | stream errors | broken compactions | ended by |")
-    print("|---|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|---|")
+    print("| language | rep | hidden | last buildable | working | contract failures | workdir rule | replies | writes | cut off | stream errors | broken compactions | ended by |")
+    print("|---|---:|---:|---:|---|---:|---|---:|---:|---:|---:|---:|---|")
     table: dict[tuple[str, int], dict[str, object]] = {}
     invalid: list[str] = []
     blocks: Counter[str] = Counter()
@@ -184,7 +193,8 @@ def report(study_id: str, label: str, study_path: str) -> None:
             replies = shape.get("replies", 0)
             print(f"| {condition} | {replicate} | "
                   + " | ".join("—" if v is None else f"{v:.4f}" for v in (hidden, buildable))
-                  + f" | {'yes' if working else 'no'} | {'—' if compiler else contract_failures(run_id)} | {replies} | {shape.get('writes', 0)}"
+                  + f" | {'yes' if working else 'no'} | {'—' if compiler else contract_failures(run_id)}"
+                  + f" | {'yes' if has_workdir_rule(run_id) else 'no'} | {replies} | {shape.get('writes', 0)}"
                   + f" | {pct(shape.get('cut_off', 0), replies)} | {pct(shape.get('stream_errors', 0), replies)}"
                   + f" | {shape.get('broken_compactions', 0)} | {row.get('termination_reason', '')} |")
             if shape.get("stream_errors", 0) or shape.get("broken_compactions", 0):
