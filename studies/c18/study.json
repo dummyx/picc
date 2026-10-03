@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "id": "picc-c18-minimal-v4",
-  "description": "Chapters 1-18 C compiler under the minimal protocol, one condition per implementation language. This id (v4) is the v18 batch; v1 was the v10 batch (studies/README.md lists every id).",
+  "id": "picc-c18-minimal-v5",
+  "description": "Chapters 1-18 C compiler under the minimal protocol, one condition per implementation language. This id (v5) is the v19 batch (the contract with a worked example); v4 was the stopped v18 batch, which never reached this task; v1 was the v10 batch (studies/README.md lists every id).",
   "baseline_condition": "rust",
   "seed": 20260919,
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
-      "agents": "studies/shared/minimal-protocol/agents.md",
+      "agents": "studies/shared/minimal-protocol/agents-spec.md",
       "initial": "studies/shared/minimal-protocol/initial.txt",
       "continuation": "studies/shared/minimal-protocol/continue.txt",
       "experiment_tools": false
@@ -18,8 +18,8 @@
       "provenance": {
         "method": "llm-generated-human-reviewed",
         "creator": "Claude Fable 5.1 (Claude Code) with the harness maintainer",
-        "source": "short behavioral contract condensed from the task's pinned test selection; same text for every language condition",
-        "artifact_family": "picc-c18-minimal-v1",
+        "source": "short behavioral contract condensed from the task's pinned test selection, with one valid and one invalid example program and the rule that the only input is the named file and the only output the named file (added for v19); same text for every language condition",
+        "artifact_family": "picc-c18-minimal-v2",
         "reviewed_by": null
       }
     },

@@ -27,7 +27,24 @@ conflicting, or incomplete-type uses), exit nonzero, report diagnostics on
 stderr, and leave no usable assembly file. Assembly and linking are handled
 externally.
 
-Work in `/workspace`, offline. Do not access harness internals or modify
-experiment-control files. The compiler must implement the translation itself,
+PiCC is started as `{{ENTRY_COMMAND}}`: it reads that one source file, writes
+the assembly to the named output path only (never to standard output), and
+reads nothing from standard input. For example, with `INPUT.c` containing
+
+    int main(void) { return 2 + 3; }
+
+it must write to `OUTPUT.s` x86-64 assembly for a `main` that returns 5 and
+exit 0; assembled and linked, the program then exits with status 5. With
+`INPUT.c` containing
+
+    int main(void) { return 2 + ; }
+
+it must exit nonzero, print a diagnostic on standard error, and leave no
+`OUTPUT.s`.
+
+Work in `/workspace`, offline. The repository is scored exactly as it stands
+when a fixed time budget ends (two hours for a full run), in whatever state it
+is in, so keep the compiler building and behaving correctly at all times. Do
+not access harness internals or modify experiment-control files. The compiler must implement the translation itself,
 without existing compiler/interpreter implementations, subprocesses, or
 hard-coded test answers.

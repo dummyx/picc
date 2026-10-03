@@ -7,15 +7,20 @@ only its scorer (`studies/runtime/sql/`) and the `task` block of its study
 file are its own.
 
 The study file is [study.json](study.json). Its current id,
-`picc-sql-minimal-v8`, is the v18 batch; the task was also run in v10–v17
-under ids v1–v7 ([studies/README.md](../README.md) lists which).
+`picc-sql-minimal-v9`, is the v19 batch; the task was also run in v10–v18
+under ids v1–v8 ([studies/README.md](../README.md) lists which).
 
 ## What the agent gets
 
-The minimal protocol: an empty product repository, the short behavioral
-contract in [task.md](task.md) as the only initial message, blank
-`AGENTS.md`/`TASK.md`, `Continue.` as the continuation, Pi's built-in tools,
-no benchmark tests, scores, or reference. The rule checker and the two repair
+The minimal protocol: an empty product repository, the behavioral contract
+in [task.md](task.md) as the only initial message and, since v19, as
+`AGENTS.md` too (Pi sends `AGENTS.md` with every request, so the contract
+outlives the conversation summaries; before v19 `AGENTS.md` was blank), a
+blank `TASK.md`, `Continue.` as the continuation, Pi's built-in tools, no
+benchmark tests, scores, or reference. Since v19 the contract also carries a
+worked input/output example, the rule that the only input is the named file,
+and the deadline rule (v18 was stopped after three of six runs lost
+everything to the output contract; `docs/EXPERIMENT_PLAN_v19.md`). The rule checker and the two repair
 extensions (`pi/extensions/`) are loaded as in every run. The contract
 defines the product interface, the value rendering, and the SQL subset
 (SQLite semantics); it names no architecture and prohibits existing database
@@ -119,7 +124,7 @@ make study-materialize STUDY=studies/sql/study.json CONDITION=rust RUN_ID=inspec
 make study-run STUDY=studies/sql/study.json CONDITION=rust PROFILE=main RUN_ID=v18-sql-rust-r1 REPLICATE=1
 make study-hidden-all RUN_ID=v18-sql-rust-r1
 make study-report RUN_ID=v18-sql-rust-r1
-make study-summary STUDY=studies/sql/study.json    # -> runs/study-results/picc-sql-minimal-v8/
+make study-summary STUDY=studies/sql/study.json    # -> runs/study-results/picc-sql-minimal-v9/
 make tasks-smoke                                   # evaluator smoke in the pinned image (Docker)
 ```
 

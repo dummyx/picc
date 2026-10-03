@@ -43,8 +43,8 @@ fetch scripts refuse a split that differs from the committed selection.
 | [`c10/tests/study.json`](c10/tests/study.json) | C compiler, ch. 1-10 | `baseline`, `tests-none`, `tests-pushed` | `picc-tests-v2`: v5; `-v3`: v6; `-v4`: v8 |
 | [`c10/spectests/study.json`](c10/spectests/study.json) | C compiler, ch. 1-10 | `baseline`, `spec-minimal`, `tests-none`, `spec-minimal-tests-none` (every combination of two changes) | `picc-spectests-v1`: v9 |
 | [`c10/minimal/study.json`](c10/minimal/README.md) | C compiler, ch. 1-10 | `minimal` | `picc-minimal-v1`: never used in a batch |
-| [`c18/study.json`](c18/README.md) | C compiler, ch. 1-18 | `rust` (baseline), `python`, `python-typed` | `picc-c18-minimal-v1`: v10; `-v2`: a v11 trial run; `-v3`: never run; `-v4`: v18, current |
-| [`sql/study.json`](sql/README.md) | SQL engine | `rust` (baseline), `python`, `python-typed`, `javascript`, `typescript` | `picc-sql-minimal-v1`: v10; `-v2`: v11; `-v3`: v12, v13 and the probe runs; `-v4`: v14; `-v5`: v15; `-v6`: v16; `-v7`: v17; `-v8`: v18, current (run on `rust`, `python`, `python-typed`) |
+| [`c18/study.json`](c18/README.md) | C compiler, ch. 1-18 | `rust` (baseline), `python`, `python-typed` | `picc-c18-minimal-v1`: v10; `-v2`: a v11 trial run; `-v3`: never run; `-v4`: v18 (stopped before this task); `-v5`: v19, current |
+| [`sql/study.json`](sql/README.md) | SQL engine | `rust` (baseline), `python`, `python-typed`, `javascript`, `typescript` | `picc-sql-minimal-v1`: v10; `-v2`: v11; `-v3`: v12, v13 and the probe runs; `-v4`: v14; `-v5`: v15; `-v6`: v16; `-v7`: v17; `-v8`: v18, stopped after 6 runs; `-v9`: v19, current (run on `rust`, `python`, `python-typed`) |
 
 **Why the id changes.** `make study-summary` includes a run only if the run's
 study id is the file's current id *and* the condition frozen into the run

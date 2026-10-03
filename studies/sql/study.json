@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "id": "picc-sql-minimal-v8",
-  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol, one condition per implementation language. This id (v8) is the v18 batch; the ids of earlier SQL batches are listed in studies/README.md.",
+  "id": "picc-sql-minimal-v9",
+  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol, one condition per implementation language. This id (v9) is the v19 batch (the contract with a worked example); v8 was the stopped v18 batch; the ids of earlier SQL batches are listed in studies/README.md.",
   "baseline_condition": "rust",
   "seed": 20260920,
   "completion_threshold": 0.95,
   "defaults": {
     "prompt": {
-      "agents": "studies/shared/minimal-protocol/agents.md",
+      "agents": "studies/shared/minimal-protocol/agents-spec.md",
       "initial": "studies/shared/minimal-protocol/initial.txt",
       "continuation": "studies/shared/minimal-protocol/continue.txt",
       "experiment_tools": false
@@ -18,8 +18,8 @@
       "provenance": {
         "method": "llm-generated-human-reviewed",
         "creator": "Claude Fable 5.1 (Claude Code) with the harness maintainer",
-        "source": "short behavioral contract condensed from the task's pinned test selection; same text for every language condition",
-        "artifact_family": "picc-sql-minimal-v1",
+        "source": "short behavioral contract condensed from the task's pinned test selection, with one worked input/output example and the rule that the only input is the named file (added for v19 after 3 of 6 v18 runs scored 0 on the output contract); same text for every language condition",
+        "artifact_family": "picc-sql-minimal-v2",
         "reviewed_by": null
       }
     },

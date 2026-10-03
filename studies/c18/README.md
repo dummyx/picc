@@ -8,15 +8,20 @@ this task has its own split, seed, prompt, and study id.
 
 The study file is [study.json](study.json). The task was run in the v10
 batch as `picc-c18-minimal-v1` (and in one v11 trial run as `-v2`); the
-current id, `picc-c18-minimal-v4`, is the v18 batch (`-v3` was never run).
+current id, `picc-c18-minimal-v5`, is the v19 batch (`-v3` was never run; `-v4` was the stopped v18 batch, which never reached this task).
 
 ## What the agent gets
 
-The minimal protocol: an empty product repository, the short behavioral
-contract in [task.md](task.md) as the only initial message (language, build
-and invocation commands substituted from the adapter), blank `AGENTS.md` and
-`TASK.md`, `Continue.` as the continuation, Pi's built-in tools, no benchmark
-tests, scores, reference implementation, or status tool. The rule checker and
+The minimal protocol: an empty product repository, the behavioral contract
+in [task.md](task.md) as the only initial message (language, build and
+invocation commands substituted from the adapter) and, since v19, as
+`AGENTS.md` too (Pi sends `AGENTS.md` with every request, so the contract
+outlives the conversation summaries; before v19 `AGENTS.md` was blank), a
+blank `TASK.md`, `Continue.` as the continuation, Pi's built-in tools, no
+benchmark tests, scores, reference implementation, or status tool. Since v19
+the contract also carries one valid and one invalid example program, the rule
+that the only input is the named file and the only output the named file, and
+the deadline rule (`docs/EXPERIMENT_PLAN_v19.md`). The rule checker and
 the two repair extensions (`pi/extensions/`) are loaded as in every run. The
 contract is the same text for every language condition; it names behaviour
 only, not architecture, and prohibits delegation to an existing compiler.
@@ -92,7 +97,7 @@ make study-materialize STUDY=studies/c18/study.json CONDITION=rust RUN_ID=inspec
 make study-run STUDY=studies/c18/study.json CONDITION=rust PROFILE=main RUN_ID=v18-c18-rust-r1 REPLICATE=1
 make study-hidden-all RUN_ID=v18-c18-rust-r1
 make study-report RUN_ID=v18-c18-rust-r1
-make study-summary STUDY=studies/c18/study.json    # -> runs/study-results/picc-c18-minimal-v4/
+make study-summary STUDY=studies/c18/study.json    # -> runs/study-results/picc-c18-minimal-v5/
 make tasks-smoke                                   # evaluator smoke in the pinned image (Docker)
 ```
 
