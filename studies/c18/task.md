@@ -1,5 +1,7 @@
 Implement PiCC in {{LANGUAGE}} using only the standard library.
-Build with `{{BUILD_COMMAND}}`; invoke as `{{ENTRY_COMMAND}}`.
+Build with `{{BUILD_COMMAND}}`; invoke as `{{ENTRY_COMMAND}}`. Both commands
+are run from `/workspace` itself, so the project root is `/workspace`, not a
+subdirectory of it, and the paths they name are relative to `/workspace`.
 
 PiCC compiles one preprocessed C translation unit (no preprocessor
 directives remain) with C17 semantics for x86-64 Linux. Support: the types

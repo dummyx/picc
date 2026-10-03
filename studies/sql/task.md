@@ -1,5 +1,7 @@
 Implement PiSQL in {{LANGUAGE}} using only the standard library.
-Build with `{{BUILD_COMMAND}}`; invoke as `{{ENTRY_COMMAND}}`.
+Build with `{{BUILD_COMMAND}}`; invoke as `{{ENTRY_COMMAND}}`. Both commands
+are run from `/workspace` itself, so the project root is `/workspace`, not a
+subdirectory of it, and the paths they name are relative to `/workspace`.
 
 PiSQL is an in-memory SQL engine whose observable behaviour matches SQLite
 on the subset below. The input file holds SQL statements, each terminated by
