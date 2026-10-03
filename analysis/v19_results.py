@@ -133,7 +133,7 @@ def contract_failures(run_id: str) -> int | None:
         detail = str(test.get("detail") or "")
         # A script the engine ran out of time or memory on also has no blocks;
         # that is speed or size, not the contract.
-        if test.get("failure_type") == "script_timeout" or (test.get("returncode") or 0) < 0:
+        if test.get("failure_type") == "script_timeout" or (test.get("compiler_returncode") or 0) < 0:
             continue
         if test.get("failure_type") == "malformed_output" or "no output block" in detail:
             count += 1
