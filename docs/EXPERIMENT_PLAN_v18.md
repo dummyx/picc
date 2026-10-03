@@ -2,6 +2,19 @@
 
 Written before the first run. Harness commit: `80ec10b`.
 
+**Stopped 2026-10-03 04:19Z after 6 of 18 runs** (all SQL: `python-typed-r1`
+0.837, `rust-r1` 0.771, `python-r1` 0.595, `python-r2` 0.069, `rust-r2` 0.000,
+`python-typed-r2` 0.000; the seventh, `rust-r3`, was killed one hour in).
+Three of the six lost everything to the output contract rather than to SQL:
+`rust-r2` reads standard input and ignores the named file, `python-typed-r2`
+prints rows as `1|x` with no `ok N` line, `python-r2` prints a value where the
+`ok N` line goes. The harness held (no reply cut off, no stream error, no failed
+summary in 2,739 replies), but with 3 runs per language such zeros make the
+comparison meaningless, as the v17 report had already said. The six runs are
+summarized under `picc-sql-minimal-v8` (manifest kept as
+`studies/sql/study-v8.json`) and are the record of the contract-failure rate
+without a worked example. Continued as [v19](EXPERIMENT_PLAN_v19.md).
+
 ## Question
 
 Two questions, the same ones v10 asked, on a harness that now holds:
