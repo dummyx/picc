@@ -1,6 +1,6 @@
 # Experiment plan: v19 (v18 again, with a contract the agent can check)
 
-Written before the first run. Harness commit: `HARNESS_COMMIT`. Everything
+Written before the first run. Harness commit: `54f52a6`. Everything
 not stated here is as in [v18](EXPERIMENT_PLAN_v18.md): the same two tasks,
 the same three languages, three replicates each, the same budgets, server,
 model, endpoints, validity gate, decision rule and exclusions.
