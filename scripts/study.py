@@ -895,6 +895,11 @@ def _materialize_direct(
         "workspace_file": "`SPEC.md` in the product workspace",
     }[delivery]
     variables["SPEC_LOCATION"] = spec_location
+    # The whole rendered specification, for a prompt file that repeats it. The
+    # minimal protocol puts it in AGENTS.md, which Pi includes in every request:
+    # the first message is summarized away within minutes of a two-hour run
+    # (v17: 16 summaries per run), and a summary keeps one line of it.
+    variables["SPEC_TEXT"] = rendered_spec
 
     prompt_sources = {
         name: resolve_repo_path(condition["prompt"][name], f"prompt.{name}")

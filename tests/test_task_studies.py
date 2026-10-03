@@ -111,7 +111,22 @@ class TaskStudyManifestTests(unittest.TestCase):
                 self.assertEqual(json.loads((root / "data" / "agent-visible" / "manifest.json").read_text())["tests"], [])
                 initial = (root / "prompts" / "INITIAL.txt").read_text()
                 self.assertNotIn("{{", initial)
-                self.assertEqual((root / "prompts" / "AGENTS.md").read_text().strip(), "")
+                # The specification is the first message and, since v19, also
+                # AGENTS.md, which Pi sends with every request so it outlives
+                # the conversation summaries. Nothing else is in either.
+                self.assertEqual((root / "prompts" / "AGENTS.md").read_text(), initial)
+                self.assertEqual((root / "prompts" / "TASK.md").read_text().strip(), "")
+                self.assertEqual((root / "prompts" / "CONTINUE.txt").read_text().strip(), "Continue.")
+                for word in ("PROGRESS.md", "vertical slice", "lowest-numbered", "test_visible"):
+                    self.assertNotIn(word, initial)
+                # The worked example and the two rules the v18 zeros violated.
+                self.assertIn("reads nothing from standard input" if name == "c18" else "nothing\nfrom standard input", initial)
+                self.assertIn("fixed time budget", initial)
+                if name == "sql":
+                    self.assertIn("error no such table: missing", initial)
+                    self.assertIn("2\tNULL\t3.0", initial)
+                else:
+                    self.assertIn("return 2 + 3;", initial)
 
     def test_python_arms_differ_only_in_the_type_gate(self) -> None:
         for name in ("c18", "sql"):

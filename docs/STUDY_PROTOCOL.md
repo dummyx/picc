@@ -63,9 +63,10 @@ task studies pin their selections (`studies/c18/selection.json`,
 `studies/sql/selection-record.json`). Scores are never pooled across tasks.
 
 The two task studies use the minimal protocol of `studies/c10/minimal` (its prompts are in `studies/shared/minimal-protocol/`): an empty
-repository, one short behavioural contract as the only initial message, blank
-`AGENTS.md`/`TASK.md`, `Continue.` as the continuation, built-in tools only, no
-tests, scores or reference exposed. Their conditions vary only the candidate:
+repository, one behavioural contract as the only initial message (and, since
+v19, as `AGENTS.md` too, so it outlives the conversation summaries), blank
+`TASK.md`, `Continue.` as the continuation, built-in tools only, no tests,
+scores or reference exposed. Their conditions vary only the candidate:
 
 - `rust` (baseline): `cargo build --release --offline`.
 - `python`: plain Python; `mypy` and other type checkers are withheld by the
