@@ -89,7 +89,7 @@ class Dashboard(ThreadingHTTPServer):
         super().__init__(address, Handler)
         self.results = results
         self.code = code
-        self.loopback_only = is_loopback(address[0])
+        self.loopback_only = is_loopback(address[0]) and not code
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -297,7 +297,7 @@ def main() -> int:
     parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE)
     parser.add_argument("--no-cache", action="store_true", help="keep parsed results in memory only")
     parser.add_argument("--workers", type=int, default=3, help="processes used to read all runs at start-up")
-    parser.add_argument("--code", help="access code when --host is not this machine (default: random)")
+    parser.add_argument("--code", help="access code: required when --host is not this machine (default: random), honoured on loopback when given (for a tunnel)")
     parser.add_argument("--background", action="store_true", help="start in the background and return")
     parser.add_argument("--stop", action="store_true", help="stop the background dashboard")
     parser.add_argument("--status", action="store_true", help="say whether the background dashboard runs")
@@ -322,9 +322,14 @@ def main() -> int:
         print(f"dashboard stopped (pid {pid})")
         return 0
 
+    # An access code is required off this machine, and honoured on loopback
+    # when given: a tunnel (cloudflared, ssh -R) forwards the public Internet
+    # to 127.0.0.1, and then the code is the only door.
     code = None
     if not is_loopback(args.host):
         code = args.code or secrets.token_urlsafe(12)
+    elif args.code:
+        code = args.code
 
     if args.background:
         pid = running_pid(cache)
@@ -356,7 +361,7 @@ def main() -> int:
         print(f"log: {log}   stop: make dashboard-stop")
         return 0
 
-    code = code and (os.environ.get("PICC_DASHBOARD_CODE") or code)
+    code = os.environ.get("PICC_DASHBOARD_CODE") or code
     results = Results(ROOT, None if args.no_cache else cache)
     try:
         httpd = Dashboard((args.host, args.port), results, code)

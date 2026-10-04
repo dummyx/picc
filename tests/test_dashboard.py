@@ -472,8 +472,12 @@ class DashboardServer(unittest.TestCase):
         self.assertNotIn(SECRET.encode(), body)
 
     def test_code_required_away_from_this_machine(self) -> None:
-        httpd = server.Dashboard(("127.0.0.2", 0), Results(self.root, None, tokenizer_path=None), "letmein")
+        httpd = server.Dashboard(("127.0.0.2", 0), Results(self.root, None, tokenizer_path=None), None)
         self.assertTrue(httpd.loopback_only)  # 127.0.0.2 is still this machine
+        httpd.server_close()
+        # A code given on loopback is enforced: a tunnel ends at 127.0.0.1.
+        httpd = server.Dashboard(("127.0.0.2", 0), Results(self.root, None, tokenizer_path=None), "letmein")
+        self.assertFalse(httpd.loopback_only)
         httpd.server_close()
         self.assertFalse(server.is_loopback("192.168.1.10"))
         self.assertTrue(server.is_loopback("::1"))
