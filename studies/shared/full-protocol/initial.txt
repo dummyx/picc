@@ -1,0 +1,6 @@
+Read the specification below (it is also in `AGENTS.md`) and inspect the
+initial repository. Implement it autonomously. Establish the smallest
+end-to-end vertical slice first, then expand while preserving working
+behavior. Do not stop merely to describe a plan.
+
+{{INITIAL_SPEC_BLOCK}}

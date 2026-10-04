@@ -58,8 +58,8 @@ class TaskStudyManifestTests(unittest.TestCase):
         # without a deliberate edit here. The SQL task gained javascript and
         # typescript in the v17 amendment; the compiler task is unchanged.
         expected = {
-            "c18": ["rust", "python", "python-typed"],
-            "sql": ["rust", "python", "python-typed", "javascript", "typescript"],
+            "c18": ["rust", "python", "python-typed", "rust-full-prompt"],
+            "sql": ["rust", "python", "python-typed", "javascript", "typescript", "rust-full-prompt"],
         }
         for name in ("c18", "sql"):
             with self.subTest(study=name):

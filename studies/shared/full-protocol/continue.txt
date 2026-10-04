@@ -1,0 +1,5 @@
+Continue the same implementation autonomously. Re-read the specification in
+`AGENTS.md` and `PROGRESS.md` when available. Work on the most basic
+incomplete or regressed behavior, perform implementation and debugging, build
+and test after meaningful changes, and update `PROGRESS.md`. Do not only
+summarize status.

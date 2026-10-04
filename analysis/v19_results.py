@@ -48,8 +48,11 @@ STUDIES = (
 # What a program that prints the same thing for every input scores on each
 # task's hidden tests; at or below it the candidate works on nothing.
 FLOORS = {"picc-sql-minimal-v9": 0.0503, "picc-c18-minimal-v5": 0.2129}
-ORDER = ("rust", "python", "python-typed")
+ORDER = ("rust", "python", "python-typed", "rust-full-prompt")
 TYPED, PLAIN = "python-typed", "python"
+# Contrasts reported separately, never pooled: the typing one was fixed before
+# any data; the prompt one (Amendment 2) was added after the SQL half reported.
+CONTRASTS = ((TYPED, PLAIN, "typing"), ("rust-full-prompt", "rust", "the full prompt"))
 THRESHOLD = 0.13
 
 
@@ -217,24 +220,30 @@ def report(study_id: str, label: str, study_path: str) -> None:
             print(f"- {condition}: {sum(1 for v in cells if v['working'])}/{len(cells)}")
     print("\nWith three replicates a difference of 3 to 0 is worth stating; anything smaller is not.\n")
 
-    print(f"### Endpoint 2: hidden score, {TYPED} minus {PLAIN}, paired by replicate\n")
-    deltas = []
-    for replicate in sorted({r for c, r in table if c == TYPED}):
-        typed, plain = table.get((TYPED, replicate)), table.get((PLAIN, replicate))
-        if not typed or not plain or not (typed["working"] and plain["working"]):
+    for arm, base, label in CONTRASTS:
+        if not any(c == arm for c, _ in table):
             continue
-        delta = typed["hidden"] - plain["hidden"]  # type: ignore[operator]
-        deltas.append(delta)
-        print(f"- replicate {replicate}: {delta:+.4f}")
-    if len(deltas) < 2:
-        verdict = "not measurable (fewer than two replicates with both arms working)"
-    else:
-        median = statistics.median(deltas)
-        print(f"\npaired median: {median:+.4f} (threshold ±{THRESHOLD})")
-        verdict = ("typing helps" if median >= THRESHOLD
-                   else "typing hurts" if median <= -THRESHOLD
-                   else "no effect detected")
-    print(f"\n**{verdict}**. At three replicates this is descriptive, not a test.\n")
+        print(f"### Endpoint 2: hidden score, {arm} minus {base}, paired by replicate"
+              + (" *(Amendment 2; added after the SQL half reported)*" if arm == "rust-full-prompt" else "") + "\n")
+        deltas = []
+        for replicate in sorted({r for c, r in table if c == arm}):
+            top, bottom = table.get((arm, replicate)), table.get((base, replicate))
+            if not top or not bottom or not (top["working"] and bottom["working"]):
+                continue
+            delta = top["hidden"] - bottom["hidden"]  # type: ignore[operator]
+            deltas.append(delta)
+            print(f"- replicate {replicate}: {delta:+.4f}")
+        if len(deltas) < 2:
+            verdict = "not measurable (fewer than two replicates with both arms working)"
+            if len(deltas) == 1:
+                verdict += f"; the one reading is {deltas[0]:+.4f}"
+        else:
+            median = statistics.median(deltas)
+            print(f"\npaired median: {median:+.4f} (threshold ±{THRESHOLD})")
+            verdict = (f"{label} helps" if median >= THRESHOLD
+                       else f"{label} hurts" if median <= -THRESHOLD
+                       else "no effect detected")
+        print(f"\n**{verdict}**. At this size this is descriptive, not a test.\n")
 
     # A median is only worth reading against the noise it sits in.
     print("### Spread within each language\n")
