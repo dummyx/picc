@@ -224,9 +224,39 @@ class RoundCheckMessageTests(unittest.TestCase):
         self.assertIn("did not finish within its time limit:\n    (no output)", timed_out)
 
     def test_forbidden_source_is_named(self) -> None:
-        text = self.message(self.check(audit={"ok": False, "findings": [{"path": "pisql.py", "line": 3, "reason": "prohibited python module", "excerpt": "import sqlite3"}]}))
-        self.assertIn("The program was not built: the source check found what the specification forbids.", text)
-        self.assertIn("    pisql.py:3: prohibited python module: import sqlite3", text)
+        text = self.message(self.check(audit={"ok": False, "findings": [{"path": "pisql.py", "line": 3, "kind": "source_pattern", "reason": "prohibited python module", "excerpt": "import sqlite3"}]}))
+        self.assertIn("The program was not built.\nThe source check found what the specification forbids:\n    pisql.py, line 3: prohibited python module — import sqlite3", text)
+        self.assertNotIn("could not be read", text)
+
+    def test_a_snapshot_that_does_not_parse_is_not_called_forbidden(self) -> None:
+        # The v20 trial run's first snapshot: pisql.py mid-edit at the round cap.
+        text = self.message(self.check(audit={"ok": False, "findings": [{"path": "pisql.py", "line": 559, "kind": "python_syntax", "reason": "invalid syntax (pisql.py, line 559)", "excerpt": None}]}))
+        self.assertIn("The program was not built.\nA source file could not be read:\n    pisql.py, line 559: invalid syntax (pisql.py, line 559)\n", text)
+        self.assertNotIn("forbids", text)
+        self.assertNotIn("None", text)
+
+    def test_the_scorer_passes_the_finding_kind_through(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            partition = build_smoke_partitions(root) / "visible"
+            workspace = root / "ws-mock-pisql-sqlite"
+            shutil.copytree(ROOT / "fixtures" / "mock-pisql-sqlite", workspace)
+            (workspace / "pisql.py").write_text("def main(:\n", encoding="utf-8")
+            shutil.copytree(workspace, root / "ws-broken")
+            shutil.rmtree(workspace)
+            shutil.move(str(root / "ws-broken"), str(workspace))
+            # run_sql_evaluator copies the fixture afresh, so call the scorer directly.
+            task = root / "task.json"
+            task.write_text(json.dumps({"runtime": "sql-engine", "parameters": {"script_timeout_seconds": 60, "sqlite_version": sqlite3.sqlite_version}}))
+            output = root / "out.json"
+            subprocess.run([sys.executable, str(SQL_EVALUATOR), "--workspace", str(workspace), "--tests-root", str(partition),
+                            "--manifest", str(partition / "manifest.json"), "--candidate-config", str(workspace / "candidate.json"),
+                            "--task-config", str(task), "--max-stage", "8", "--output", str(output), "--summary-json", "--example", str(SQL_EXAMPLE)],
+                           check=True, capture_output=True, text=True, cwd=ROOT)
+            check = json.loads(output.read_text())["summary"]["check"]
+        self.assertFalse(check["audit"]["ok"])
+        self.assertEqual(check["audit"]["findings"][0]["kind"], "python_syntax")
+        self.assertIn("A source file could not be read:", run_experiment.round_check_message({"check": check}, "Continue.\n"))
 
     def test_sql_example_differs_shows_both_outputs(self) -> None:
         expected = (SQL_EXAMPLE / "expected.txt").read_text()

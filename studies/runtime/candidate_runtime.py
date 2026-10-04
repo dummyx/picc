@@ -976,7 +976,7 @@ def specification_check(
         "audit": {
             "ok": not audit.get("blocking"),
             "findings": [
-                {"path": f.get("path"), "line": f.get("line"), "reason": f.get("reason"), "excerpt": f.get("excerpt")}
+                {"path": f.get("path"), "line": f.get("line"), "kind": f.get("kind"), "reason": f.get("reason"), "excerpt": f.get("excerpt")}
                 for f in list(audit.get("blocking_findings", []))[:5]
             ],
         },

@@ -451,6 +451,22 @@ def effective_round_timeout(cap_minutes: int, remaining_seconds: float) -> float
 
 ROUND_CHECK_MODES = ("none", "build-and-example")
 ROUND_CHECK_HEAD = "Harness check of /workspace as it stood when your previous turn ended:"
+# Audit finding kinds that mean "this file does not parse", not "this file
+# breaks a rule" (candidate_runtime.source_audit).
+UNREADABLE_SOURCE_KINDS = frozenset({"python_syntax", "toml_error", "json_error", "read_error"})
+
+
+def _finding_lines(findings: list[dict[str, Any]]) -> list[str]:
+    lines = []
+    for finding in findings:
+        where = str(finding.get("path"))
+        if finding.get("line") is not None:
+            where += f", line {finding.get('line')}"
+        text = f"    {where}: {finding.get('reason')}"
+        if finding.get("excerpt"):
+            text += f" — {finding.get('excerpt')}"
+        lines.append(text)
+    return lines
 
 
 def _indented(text: str | None, empty: str = "(nothing)", depth: int = 1) -> str:
@@ -487,10 +503,19 @@ def round_check_message(visible: dict[str, Any] | None, continuation: str) -> st
         audit = check.get("audit", {})
         example = check.get("example")
         if not audit.get("ok", True):
-            lines.append("The program was not built: the source check found what the specification forbids.")
-            for finding in audit.get("findings", []):
-                where = f"{finding.get('path')}:{finding.get('line')}"
-                lines.append(f"    {where}: {finding.get('reason')}: {finding.get('excerpt')}")
+            # Two different things stop the build before it starts: a source
+            # file the audit cannot read (a snapshot taken mid-edit, usually),
+            # and a file that uses what the task forbids.
+            findings = audit.get("findings", [])
+            unreadable = [f for f in findings if f.get("kind") in UNREADABLE_SOURCE_KINDS]
+            forbidden = [f for f in findings if f.get("kind") not in UNREADABLE_SOURCE_KINDS]
+            lines.append("The program was not built.")
+            if unreadable:
+                lines.append("A source file could not be read:")
+                lines.extend(_finding_lines(unreadable))
+            if forbidden:
+                lines.append("The source check found what the specification forbids:")
+                lines.extend(_finding_lines(forbidden))
         elif not build.get("ok"):
             how = "did not finish within its time limit" if build.get("timed_out") else "failed"
             lines.append(f"The build command `{build_command}`, run in /workspace, {how}:")

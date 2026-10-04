@@ -1,6 +1,7 @@
 # Experiment plan: v20 (v19 again, with the round check)
 
-Written before the first run. Harness commit: `ea94797`. Everything not stated here is as in [v19](EXPERIMENT_PLAN_v19.md):
+Written before the first run. Harness commit: `ea94797`, plus `118d288`
+(the wording for a snapshot that does not parse; found by the trial run). Everything not stated here is as in [v19](EXPERIMENT_PLAN_v19.md):
 the same two tasks, the same specifications (v19's text, Amendment 1
 included, unchanged), the same three languages, the same budgets, server,
 model, endpoints, validity gate, decision rule and exclusions.
@@ -68,6 +69,15 @@ asked for v20 to start the moment v19 ends, so the first check message of the
 first run (`runs/v20-sql-*/artifacts/rounds.jsonl`, round 1, `message`) is
 read as soon as it exists, and the batch is stopped if it is not what
 `round_check_message` is tested to produce.
+
+**Trial run** (`v20-trial-python-r1`, pilot profile, 2026-10-04 22:05Z, not
+counted): the message reached Pi exactly as composed. Its content showed one
+wording defect: the 12-minute first snapshot was mid-edit, `pisql.py` did not
+parse, the source audit reported that before the build, and the message
+called it "what the specification forbids". Fixed before the first main run:
+findings whose kind is a parse or read failure are reported as "a source file
+could not be read", forbidden-use findings as before, each with file and
+line; the scorer passes the finding kind through.
 
 ## Runs
 
