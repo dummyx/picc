@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "id": "picc-c18-minimal-v5",
-  "description": "Chapters 1-18 C compiler under the minimal protocol, one condition per implementation language. This id (v5) is the v19 batch (the contract with a worked example); v4 was the stopped v18 batch, which never reached this task; v1 was the v10 batch (studies/README.md lists every id).",
+  "id": "picc-c18-minimal-v6",
+  "description": "Chapters 1-18 C compiler under the minimal protocol, one condition per implementation language. This id (v6) is the v20 batch: as v5 (v19) but every round message after the first carries the harness's check of the last snapshot (the specification's build command and two example programs, round_check build-and-example). v5 was v19, v4 the stopped v18, v1 the v10 batch (studies/README.md lists every id).",
   "baseline_condition": "rust",
   "seed": 20260919,
   "completion_threshold": 0.95,
@@ -11,6 +11,10 @@
       "initial": "studies/shared/minimal-protocol/initial.txt",
       "continuation": "studies/shared/minimal-protocol/continue.txt",
       "experiment_tools": false
+    },
+    "round_check": {
+      "mode": "build-and-example",
+      "example": "studies/c18/example"
     },
     "specification": {
       "path": "studies/c18/task.md",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "id": "picc-sql-minimal-v10",
-  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol, one condition per implementation language, plus a minimal-specification arm. This id (v10) is the v20 batch: as v9 (v19) but every round message after the first carries the harness's check of the last snapshot (the specification's build command and worked example, round_check build-and-example). v9 was v19, v8 the stopped v18; studies/README.md lists every id.",
+  "id": "picc-sql-minimal-v9",
+  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol, one condition per implementation language. This id (v9) is the v19 batch (the contract with a worked example); v8 was the stopped v18 batch; the ids of earlier SQL batches are listed in studies/README.md.",
   "baseline_condition": "rust",
   "seed": 20260920,
   "completion_threshold": 0.95,
@@ -11,10 +11,6 @@
       "initial": "studies/shared/minimal-protocol/initial.txt",
       "continuation": "studies/shared/minimal-protocol/continue.txt",
       "experiment_tools": false
-    },
-    "round_check": {
-      "mode": "build-and-example",
-      "example": "studies/sql/example"
     },
     "specification": {
       "path": "studies/sql/task.md",

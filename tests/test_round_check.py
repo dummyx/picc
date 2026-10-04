@@ -28,9 +28,8 @@ SQL_EVALUATOR = ROOT / "studies" / "runtime" / "sql" / "evaluate.py"
 C_EVALUATOR = ROOT / "studies" / "runtime" / "evaluate.py"
 SQL_EXAMPLE = ROOT / "studies" / "sql" / "example"
 C_EXAMPLE = ROOT / "studies" / "c18" / "example"
-# The v20 manifests. They become studies/<task>/study.json once the last v19
-# run has been set up (the v19 chain reads study.json until then).
-CURRENT_MANIFESTS = {"sql": ROOT / "studies" / "sql" / "study-v10.json", "c18": ROOT / "studies" / "c18" / "study-v6.json"}
+# The v20 manifests (current); the v19 ones are kept as study-v9.json / study-v5.json.
+CURRENT_MANIFESTS = {"sql": ROOT / "studies" / "sql" / "study.json", "c18": ROOT / "studies" / "c18" / "study.json"}
 
 
 def run_sql_evaluator(root: Path, fixture: str, partition: Path, *, example: Path | None = SQL_EXAMPLE) -> dict:
@@ -276,7 +275,7 @@ class RoundCheckManifestTests(unittest.TestCase):
         self.condition = copy.deepcopy(self.conditions[0])
 
     def test_absent_block_is_none_and_adds_nothing(self) -> None:
-        _, conditions = study.load_study(ROOT / "studies" / "sql" / "study.json")
+        _, conditions = study.load_study(ROOT / "studies" / "sql" / "study-v9.json")
         self.assertNotIn("round_check", conditions[0])
         self.assertEqual(study.condition_round_check(conditions[0]), {"mode": "none"})
         study.validate_condition(conditions[0], {"id": "x"})
@@ -305,7 +304,7 @@ class RoundCheckManifestTests(unittest.TestCase):
                     self.assertEqual(study.condition_round_check(row), {"mode": "build-and-example", "example": f"studies/{name}/example"})
                     self.assertEqual(row["prompt"]["continuation"], "studies/shared/minimal-protocol/continue.txt")
                 # Apart from the id, description and the round check, the v20 manifest is the v19 one.
-                old_payload, old_conditions = study.load_study(ROOT / "studies" / name / "study.json")
+                old_payload, old_conditions = study.load_study(ROOT / "studies" / name / {"sql": "study-v9.json", "c18": "study-v5.json"}[name])
                 self.assertEqual([c["id"] for c in conditions], [c["id"] for c in old_conditions])
                 for new, old in zip(conditions, old_conditions, strict=True):
                     stripped = {k: v for k, v in new.items() if k != "round_check"}

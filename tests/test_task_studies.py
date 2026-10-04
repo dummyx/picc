@@ -82,8 +82,9 @@ class TaskStudyManifestTests(unittest.TestCase):
 
     def test_materialization_installs_the_task_runtime(self) -> None:
         for name, files, hidden_dir in (
-            ("c18", {"candidate.json", "candidate_runtime.py", "evaluate.py", "fuzz_evaluate.py", "fuzz_generator.py", "task.json"}, "data/partitions-c18/hidden"),
-            ("sql", {"candidate.json", "candidate_runtime.py", "evaluate.py", "sqllogictest.py", "task.json"}, "data/partitions-sql/hidden"),
+            # `example` is the specification's worked example, frozen for the round check (v20).
+            ("c18", {"candidate.json", "candidate_runtime.py", "evaluate.py", "example", "fuzz_evaluate.py", "fuzz_generator.py", "task.json"}, "data/partitions-c18/hidden"),
+            ("sql", {"candidate.json", "candidate_runtime.py", "evaluate.py", "example", "sqllogictest.py", "task.json"}, "data/partitions-sql/hidden"),
         ):
             if not (ROOT / hidden_dir / "manifest.json").is_file():
                 continue
