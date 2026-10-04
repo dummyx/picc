@@ -1,6 +1,6 @@
 # Experiment plan: v20 (v19 again, with the round check)
 
-Written before the first run. Harness commit: `ea94797`, plus `118d288`
+Written before the first run. Harness commit: `ea94797`, plus `4517701`
 (the wording for a snapshot that does not parse; found by the trial run). Everything not stated here is as in [v19](EXPERIMENT_PLAN_v19.md):
 the same two tasks, the same specifications (v19's text, Amendment 1
 included, unchanged), the same three languages, the same budgets, server,
