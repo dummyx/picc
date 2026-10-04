@@ -95,17 +95,6 @@
         "framework": "strict-static-typing",
         "scaffold": null
       }
-    },
-    {
-      "id": "rust-full-prompt",
-      "factor": "prompt",
-      "description": "Rust with the full working-rules prompt (studies/shared/full-protocol/: the original task's rules in AGENTS.md ahead of the specification, its longer first and per-round messages); everything else as `rust`. Added as v19 Amendment 2 to compare the full prompt against the minimal prompt on the compiler task.",
-      "prompt": {
-        "agents": "studies/shared/full-protocol/agents.md",
-        "initial": "studies/shared/full-protocol/initial.txt",
-        "continuation": "studies/shared/full-protocol/continue.txt",
-        "experiment_tools": false
-      }
     }
   ],
   "design": "one-factor-at-a-time"

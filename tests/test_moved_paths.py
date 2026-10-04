@@ -56,7 +56,7 @@ class MovedPathsTests(unittest.TestCase):
                 used_moved_files += frozen != condition
                 with self.subTest(study=path.parent.name, condition=condition["id"]):
                     self.assertEqual(summarize_study.relocated(frozen, MOVES), condition)
-        self.assertEqual(used_moved_files, 30)  # every condition of every study uses a moved file
+        self.assertEqual(used_moved_files, 31)  # every condition of every study uses a moved file
 
     def test_only_whole_paths_are_translated(self) -> None:
         old = "studies/minimal/agents.md"

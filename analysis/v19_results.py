@@ -48,11 +48,11 @@ STUDIES = (
 # What a program that prints the same thing for every input scores on each
 # task's hidden tests; at or below it the candidate works on nothing.
 FLOORS = {"picc-sql-minimal-v9": 0.0503, "picc-c18-minimal-v5": 0.2129}
-ORDER = ("rust", "python", "python-typed", "rust-full-prompt")
+ORDER = ("rust", "python", "python-typed", "rust-minimal-spec")
 TYPED, PLAIN = "python-typed", "python"
 # Contrasts reported separately, never pooled: the typing one was fixed before
-# any data; the prompt one (Amendment 2) was added after the SQL half reported.
-CONTRASTS = ((TYPED, PLAIN, "typing"), ("rust-full-prompt", "rust", "the full prompt"))
+# any data; the specification one (Amendment 2) was added after the SQL half reported.
+CONTRASTS = ((TYPED, PLAIN, "typing"), ("rust-minimal-spec", "rust", "the minimal specification"))
 THRESHOLD = 0.13
 
 
@@ -224,7 +224,7 @@ def report(study_id: str, label: str, study_path: str) -> None:
         if not any(c == arm for c, _ in table):
             continue
         print(f"### Endpoint 2: hidden score, {arm} minus {base}, paired by replicate"
-              + (" *(Amendment 2; added after the SQL half reported)*" if arm == "rust-full-prompt" else "") + "\n")
+              + (" *(Amendment 2; added after the SQL half reported)*" if arm == "rust-minimal-spec" else "") + "\n")
         deltas = []
         for replicate in sorted({r for c, r in table if c == arm}):
             top, bottom = table.get((arm, replicate)), table.get((base, replicate))

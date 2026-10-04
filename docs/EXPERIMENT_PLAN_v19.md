@@ -103,24 +103,32 @@ How this is handled, decided before any run 8 data:
   discarding six good runs (14 hours) to restart with the sentence, was not
   taken because the sentence cannot have affected those six.
 
-## Amendment 2, 2026-10-04: the full prompt against the minimal prompt
+## Amendment 2, 2026-10-04: the full specification against a minimal one
 
 Added at the project owner's direction after the SQL half had reported. The
-batch so far varies only the language; every run has the minimal prompt. This
-adds the other arm of a prompt comparison: `rust-full-prompt`, Rust with the
-original task's working rules (`studies/shared/full-protocol/`: the twelve
-rules in `AGENTS.md` ahead of the same specification, the longer first
-message, the longer per-round message in place of `Continue.`). Everything
-else is `rust`'s. Defined for both tasks; run first as one SQL run,
-`v19-sql-rust-full-prompt-r1`, queued behind the compiler runs, with more
-replicates or the compiler task addable the same way
-(`start_experiment.sh --single --condition rust-full-prompt --replicate N`).
+batch so far varies only the language; every run has the full specification.
+This adds the other arm of a specification comparison: `rust-minimal-spec`,
+Rust with the minimal prompt and a 170-word specification
+(`studies/sql/task-minimal.md`: the commands and working directory, the input
+and output contract, the feature list by name, the constraints) in place of
+the 600-word one with its worked example, full subset and SQLite semantics.
+Everything else is `rust`'s. Run first as one SQL run,
+`v19-sql-rust-minimal-spec-r1`, queued behind the compiler runs; more
+replicates are added the same way
+(`start_experiment.sh --study studies/sql/study.json --prefix v19-sql
+--single --condition rust-minimal-spec --replicate N`).
 
-**Decision rule, fixed before its first run:** `rust-full-prompt` minus
-`rust`, paired by replicate, on the hidden score among pairs where both arms
-produced a working program; the same ±0.13 line. One replicate is a reading,
-not a measurement; the write-up says so. The arm is not blind to v19's
-numbers and is reported as its own contrast, never pooled.
+**Decision rule, fixed before its first run:** `rust-minimal-spec` minus
+`rust`, paired by replicate, on the hidden score, with the same ±0.13 line
+and the same "working program" count. A zero in this arm from the output
+contract is part of the result (the contract is stated in one sentence here,
+without the example). One replicate is a reading, not a measurement. The arm
+is not blind to v19's numbers and is reported as its own contrast, never
+pooled.
+
+An earlier version of this amendment (commit `ab1fb9a`) set up a prompt
+comparison instead, by my misreading of the owner's request; it was replaced
+before any run started.
 
 ## Analysis
 

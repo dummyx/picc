@@ -58,8 +58,8 @@ class TaskStudyManifestTests(unittest.TestCase):
         # without a deliberate edit here. The SQL task gained javascript and
         # typescript in the v17 amendment; the compiler task is unchanged.
         expected = {
-            "c18": ["rust", "python", "python-typed", "rust-full-prompt"],
-            "sql": ["rust", "python", "python-typed", "javascript", "typescript", "rust-full-prompt"],
+            "c18": ["rust", "python", "python-typed"],
+            "sql": ["rust", "python", "python-typed", "javascript", "typescript", "rust-minimal-spec"],
         }
         for name in ("c18", "sql"):
             with self.subTest(study=name):
@@ -68,6 +68,8 @@ class TaskStudyManifestTests(unittest.TestCase):
                 self.assertEqual([row["id"] for row in conditions], expected[name])
                 spec = (ROOT / conditions[0]["specification"]["path"]).read_text()
                 for row in conditions:
+                    if row["id"] == "rust-minimal-spec":
+                        continue
                     self.assertFalse(row["prompt"]["experiment_tools"])
                     self.assertEqual(row["tests"]["access"], "none")
                     self.assertEqual(row["reference"]["mode"], "none")

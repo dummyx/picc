@@ -122,14 +122,19 @@
       }
     },
     {
-      "id": "rust-full-prompt",
-      "factor": "prompt",
-      "description": "Rust with the full working-rules prompt (studies/shared/full-protocol/: the original task's rules in AGENTS.md ahead of the specification, its longer first and per-round messages); everything else as `rust`. Added as v19 Amendment 2 to compare the full prompt against the minimal prompt on the engine task.",
-      "prompt": {
-        "agents": "studies/shared/full-protocol/agents.md",
-        "initial": "studies/shared/full-protocol/initial.txt",
-        "continuation": "studies/shared/full-protocol/continue.txt",
-        "experiment_tools": false
+      "id": "rust-minimal-spec",
+      "factor": "specification",
+      "description": "Rust with a minimal specification (studies/sql/task-minimal.md, about 170 words: the commands, the input and output contract, the feature list by name) in place of the full one; same minimal prompt, everything else as `rust`. Added as v19 Amendment 2 to compare the full specification against a minimal one.",
+      "specification": {
+        "path": "studies/sql/task-minimal.md",
+        "delivery": "initial_prompt_only",
+        "provenance": {
+          "method": "llm-generated-human-reviewed",
+          "creator": "Claude Fable 5.1 (Claude Code) with the harness maintainer",
+          "source": "the full contract reduced to the commands, the input/output contract and the feature names; no example, no subset detail, no semantics",
+          "artifact_family": "picc-sql-minimal-spec-v1",
+          "reviewed_by": "harness maintainer (text approved in chat, 2026-10-04)"
+        }
       }
     }
   ],
