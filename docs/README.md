@@ -1,7 +1,7 @@
 # Documents
 
 Start with the [front page](../README.md). For the results, read the
-[latest report](REPORT_2026-09-23.md) (the v17 batch) and the
+[latest report](REPORT_2026-10-05.md) (the v18 and v19 batches) and the
 [full write-up of every batch](../analysis/report.md). To browse runs,
 conversations and files, use the [results dashboard](DASHBOARD.md).
 
@@ -32,6 +32,9 @@ the full-length runs, with shorter trial runs in brackets.
 | v15 | Sep 20–21 | SQL engine | Rust, Python, and Python with strict type checks | 10 | the setup held (no broken conversations); typed Python produced nothing, so typing stayed unanswered | [plan](EXPERIMENT_PLAN_v15.md), §18 |
 | v16 | Sep 21 | SQL engine | typed Python with and without a cap on the model's thinking | 2 (+1) | both built working engines (0.814 and 0.785); the cap removes wasted rounds and was kept | [plan and results](EXPERIMENT_PLAN_v16.md), §19 |
 | v17 | Sep 21–22 | SQL engine | five languages: Rust, Python, typed Python, JavaScript, TypeScript | 15 | nothing broke; the spread within each language is bigger than the differences between languages | [plan](EXPERIMENT_PLAN_v17.md), [results](../analysis/v17-results.md), §20, [report](REPORT_2026-09-23.md) |
+| v18 | Oct 2–3 | SQL engine | Rust, Python, typed Python | 6 (stopped) | three of six zeroed by output-contract mistakes the agent could not see; stopped and redesigned as v19 | [plan](EXPERIMENT_PLAN_v18.md), §21 |
+| v19 | Oct 3–4 | SQL engine, ch. 1-18 compiler | Rust, Python, typed Python, + one minimal-specification Rust run | 19 | the example fixed the output contract; two new zeros (a crate in a subdirectory, `mypy` never run); typing −0.008 / +0.060, no effect; minimal spec −0.222 (one reading) | [plan](EXPERIMENT_PLAN_v19.md), §22, [report](REPORT_2026-10-05.md) |
+| v20 | Oct 4– | SQL engine, ch. 1-18 compiler | as v19, 21 runs, every round message carries the harness's build-and-example check | running | — | [plan](EXPERIMENT_PLAN_v20.md) |
 
 "§" numbers are sections of [analysis/report.md](../analysis/report.md).
 v16 and v17 are summarised in §19 and §20 and written up in full in their
@@ -69,7 +72,8 @@ is now `studies/c10/starter/study.json`).
   [2026-09-13](REPORT_2026-09-13.md) (v8),
   [2026-09-14](REPORT_2026-09-14.md) (v9),
   [2026-09-18](REPORT_2026-09-18.md) (v10),
-  [2026-09-23](REPORT_2026-09-23.md) (v17).
+  [2026-09-23](REPORT_2026-09-23.md) (v17),
+  [2026-10-05](REPORT_2026-10-05.md) (v18 stopped, v19, the v20 design).
 - [SLIDES_2026-09-13.md](SLIDES_2026-09-13.md) and
   [MEETING_NOTE_2026-09-14.md](MEETING_NOTE_2026-09-14.md): a talk and a
   meeting note on the chapters 1–10 campaign.

@@ -2010,3 +2010,73 @@ Plan `docs/EXPERIMENT_PLAN_v17.md`; full report for the project owner
 - **Where the time went.** About 85% of the two hours was the model writing
   replies, 13% summarizing the conversation, and about 1% the agent's
   commands running.
+
+## 21. The v18 batch: stopped after six runs
+
+Plan `docs/EXPERIMENT_PLAN_v18.md`; scores on screen from
+`analysis/v18_results.py`; manifest kept as `studies/sql/study-v8.json`
+(`picc-sql-minimal-v8`). Six SQL runs, 2026-10-02 15:19 to 10-03 03:54 UTC,
+two per language, before the batch was stopped.
+
+- **Three of the six scored 0 or nearly so for reasons that have nothing to
+  do with the language.** `rust-r2` read standard input and ignored the file
+  name it was given (0); `python-typed-r2` printed rows as `1|x` with no
+  `ok N` line and nothing for `CREATE TABLE` or `INSERT` (0); `python-r2`
+  printed a value where the `ok N` line goes (0.069). All three engines
+  otherwise worked. The other three: `python-typed-r1` 0.837, `rust-r1` 0.771,
+  `python-r1` 0.595.
+- **This was the v17 report's own finding, run again.** §20 had said that
+  the scores are decided by a few all-or-nothing mistakes the agents cannot
+  see. With three runs per language, one such zero per arm leaves nothing to
+  compare, so the batch was stopped and v19 set up with the contract made
+  checkable (a worked example, the input rule, the deadline rule, the
+  specification kept in `AGENTS.md`).
+- Harness changes before v18, kept since: the rule checker reads commands
+  rather than pasted text and every line of a multi-line command (which also
+  showed that in v10 the compiler agents had run `gcc` thirteen times on later
+  lines unblocked), and the scorer keeps both ends of a crash message.
+
+## 22. The v19 batch: the contract made checkable, and still two zeros
+
+Plan `docs/EXPERIMENT_PLAN_v19.md` (two amendments); scores on screen from
+`analysis/v19_results.py`; manifests kept as `studies/sql/study-v9.json`
+(`picc-sql-minimal-v9`) and `studies/c18/study-v5.json`
+(`picc-c18-minimal-v5`); owner report `docs/REPORT_2026-10-05.md`. Nineteen
+runs, 2026-10-03 04:29 to 10-04 20:14 UTC: SQL engine and chapters 1-18
+compiler, `rust`, `python`, `python-typed`, three each, plus one SQL run of
+`rust-minimal-spec` (Amendment 2), two hours of agent time each.
+
+- **The harness held.** Every run used its full two hours; no reply was lost
+  to a server error and no conversation summary failed.
+- **SQL engine.** Rust 0.811, 0.865, **0**; Python 0.745, 0.826, 0.837;
+  typed Python 0.862, 0.818, 0.809. The specification's example did its job
+  on the output contract: no hidden script in any run was lost to a missing
+  or malformed block (v18 lost whole runs to that). `rust-r3`'s zero is a new
+  hole: the agent built its crate in `/workspace/pisql/`, so the official
+  build command, run in `/workspace`, found no `Cargo.toml` and every snapshot
+  scored 0 while a 4,836-line engine was being built normally. Amendment 1
+  added the sentence saying where the commands run, from run 8 on.
+- **Chapters 1-18 compiler.** Rust 0.500 (no valid program compiled; the
+  compiler panicked on every one), 0.663, 0.633; Python 0.548, 0.610, 0.608;
+  typed Python 0.670, **0**, 0.606. `python-typed-r2`'s zero: in 380
+  commands the agent ran `mypy` once, for `--version`; its program had type
+  errors, so the official build command (`mypy --strict`) failed on every
+  snapshot and the program — which compiled and ran tests on its own — was
+  never scored.
+- **Typing.** Paired by replicate among working runs: SQL −0.008 (three
+  pairs), compiler +0.060 (two pairs); both inside ±0.13. No effect detected,
+  and the spreads within a language (0.05–0.09 where no run was zeroed) are
+  of the size of any difference between languages.
+- **The minimal specification** (`rust-minimal-spec-r1`, 170 words, no
+  example, no subset list, no semantics): 0.589 against `rust-r1`'s 0.811,
+  one reading, −0.222. It followed the output contract from the one sentence
+  it had.
+- **What v19 showed about the design.** Four sentences added to the
+  specification removed the four failure kinds they named, and the next two
+  runs found two more (the working directory, the type gate never run). These
+  are one defect: the agent never sees the result of the harness's own
+  build-and-run step, so whatever it misreads stays misread for two hours.
+  v20 (`docs/EXPERIMENT_PLAN_v20.md`) replaces the bare `Continue.` with that
+  result — the specification's build command and worked example, run on the
+  last snapshot — and changes nothing else. Run on the six v18/v19 zero
+  workspaces, the message names each problem (`analysis/v20-check-demo/`).
