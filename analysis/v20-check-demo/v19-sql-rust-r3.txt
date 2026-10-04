@@ -1,0 +1,6 @@
+Harness check of /workspace as it stood when your previous turn ended:
+
+The build command `cargo build --release --offline`, run in /workspace, failed:
+    error: could not find `Cargo.toml` in `/workspace` or any parent directory
+
+Continue.

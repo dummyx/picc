@@ -63,7 +63,7 @@ listed in [studies/moved.json](../studies/moved.json) (for example
 is now `studies/c10/starter/study.json`).
 
 - **Plans**, one per batch: [EXPERIMENT_PLAN.md](EXPERIMENT_PLAN.md) (v3),
-  then `EXPERIMENT_PLAN_v4.md` to `EXPERIMENT_PLAN_v19.md`.
+  then `EXPERIMENT_PLAN_v4.md` to `EXPERIMENT_PLAN_v20.md`.
 - **Reports to the project owner**:
   [2026-09-12](REPORT_2026-09-12.md) (v6, v7 and the hanging commands),
   [2026-09-13](REPORT_2026-09-13.md) (v8),

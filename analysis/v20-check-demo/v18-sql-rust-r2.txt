@@ -1,0 +1,21 @@
+Harness check of /workspace as it stood when your previous turn ended:
+
+The build command `cargo build --release --offline` succeeded. Run as `target/release/pisql INPUT.sql` on the example input from the specification, the program printed:
+    (nothing)
+
+The specification requires:
+    ok 0
+    ok 0
+    ok 0
+    ok 2
+    2	NULL	3.0
+    1	x	2.5
+    ok 1
+    2	3
+    error no such table: missing
+    ok 1
+    done
+
+The first difference is on line 1: the program printed nothing, the specification requires `ok 0`.
+
+Continue.

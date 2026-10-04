@@ -1,0 +1,15 @@
+Harness check of /workspace as it stood when your previous turn ended:
+
+The build command `cargo build --release --offline` succeeded. Run as `target/release/picc INPUT.c -o OUTPUT.s`:
+
+On the first example (`int main(void) { return 2 + 3; }`), which must give a program that exits with status 5:
+    the compiler exited with status 101 and wrote no usable `OUTPUT.s`.
+    The compiler printed on standard error:
+        thread 'main' panicked at src/picc/ast.rs:446:45:
+        index out of bounds: the len is 1 but the index is 8
+        note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+On the second example (`int main(void) { return 2 + ; }`), which must be rejected with a nonzero exit status, a diagnostic on standard error and no `OUTPUT.s`:
+    the compiler rejected it as required.
+
+Continue.

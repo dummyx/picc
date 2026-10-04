@@ -36,8 +36,9 @@ byte unless a note says otherwise.
 | v17 | [v17_results.py](v17_results.py), [v17_internals.py](v17_internals.py) | the screen (the first 57 lines of `v17-results.md`), `v17-internals.json` | — |
 | v18 | [v18_results.py](v18_results.py) | the screen only (6 runs; the batch was stopped) | — |
 | v19 | [v19_results.py](v19_results.py) | the screen only | — |
+| v20 | [v20_results.py](v20_results.py) | the screen only | `v20-check-demo/`: the round-check message six v18/v19 zero workspaces would have received, from the pinned image before the batch |
 
-The v10–v19 scripts read the study summary (`runs/study-results/<study-id>/runs.csv`,
+The v10–v20 scripts read the study summary (`runs/study-results/<study-id>/runs.csv`,
 written by `make study-summary`) rather than the runs directly.
 
 ## Across batches
@@ -62,6 +63,7 @@ python3 analysis/v9_results.py                       # likewise v5-v8, v10-v12, 
 python3 analysis/v17_results.py
 python3 analysis/v18_results.py
 python3 analysis/v19_results.py
+python3 analysis/v20_results.py
 .venv-sglang/bin/python analysis/v17_internals.py    # needs the `tokenizers` package
 .venv-sglang/bin/python analysis/reasoning_tokens.py RUN_ID [RUN_ID ...]
 python3 analysis/fuzz_rescore.py --results-dir analysis/fuzz-rescore/results \

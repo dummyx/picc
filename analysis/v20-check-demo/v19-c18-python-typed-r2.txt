@@ -1,0 +1,36 @@
+Harness check of /workspace as it stood when your previous turn ended:
+
+The build command `mypy --strict --no-error-summary --cache-dir /tmp/mypy-cache picc.py`, run in /workspace, failed:
+    picc.py:195: error: "CType" has no attribute "signed"  [attr-defined]
+    picc.py:204: error: "CType" has no attribute "signed"  [attr-defined]
+    picc.py:206: error: "CType" has no attribute "signed"  [attr-defined]
+    picc.py:1100: error: Incompatible types in assignment (expression has type "TFunc", variable has type "CType")  [assignment]
+    picc.py:1732: error: Item "FuncSym" of "VarSym | FuncSym" has no attribute "t"  [union-attr]
+    picc.py:1772: error: "CType" has no attribute "elem"  [attr-defined]
+    picc.py:1955: error: "CType" has no attribute "elem"  [attr-defined]
+    picc.py:1963: error: Argument 1 to "check_list_shape" of "Checker" has incompatible type "CType"; expected "TArray"  [arg-type]
+    picc.py:1969: error: "CType" has no attribute "members"  [attr-defined]
+    picc.py:1971: error: "CType" has no attribute "members"  [attr-defined]
+    picc.py:1986: error: Argument 1 to "check_list_shape" of "Checker" has incompatible type "CType"; expected "TArray"  [arg-type]
+    picc.py:1991: error: "CType" has n
+    ... [truncated 8287 characters] ...
+    [union-attr]
+    picc.py:3959: error: Item "CharLit" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "StrLit" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "BinOp" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "TernOp" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "Call" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "Cast" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "SizeOfExpr" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "Assign" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "Subscript" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "UnOp" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3959: error: Item "BraceList" of "NumLit | CharLit | StrLit | Id | BinOp | <10 more items>" has no attribute "name"  [union-attr]
+    picc.py:3999: error: "CType" has no attribute "members"  [attr-defined]
+    picc.py:4012: error: "CType" has no attribute "elem"  [attr-defined]
+    picc.py:4035: error: "CType" has no attribute "elem"  [attr-defined]
+    picc.py:4036: error: "CType" has no attribute "elem"  [attr-defined]
+    picc.py:4227: error: Argument 1 to "append" of "list" has incompatible type "int"; expected "str"  [arg-type]
+    picc.py:4233: error: Argument 1 to "append" of "list" has incompatible type "int"; expected "str"  [arg-type]
+
+Continue.

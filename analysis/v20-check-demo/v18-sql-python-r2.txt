@@ -1,0 +1,31 @@
+Harness check of /workspace as it stood when your previous turn ended:
+
+The build command `python3 -m py_compile pisql.py` succeeded. Run as `python3 pisql.py INPUT.sql` on the example input from the specification, the program printed:
+    ok 0
+    ok 1
+    ok 1
+    ok 2
+    2	NULL	3.0
+    1	x	2.5
+    ok 1
+    2	3
+    error no such table: missing
+    ok 1
+    done
+
+The specification requires:
+    ok 0
+    ok 0
+    ok 0
+    ok 2
+    2	NULL	3.0
+    1	x	2.5
+    ok 1
+    2	3
+    error no such table: missing
+    ok 1
+    done
+
+The first difference is on line 2: the program printed `ok 1`, the specification requires `ok 0`.
+
+Continue.

@@ -1,0 +1,23 @@
+Harness check of /workspace as it stood when your previous turn ended:
+
+The build command `mypy --strict --no-error-summary --cache-dir /tmp/mypy-cache pisql.py` succeeded. Run as `python3 pisql.py INPUT.sql` on the example input from the specification, the program printed:
+    Error: no such table: missing
+
+The specification requires:
+    ok 0
+    ok 0
+    ok 0
+    ok 2
+    2	NULL	3.0
+    1	x	2.5
+    ok 1
+    2	3
+    error no such table: missing
+    ok 1
+    done
+
+The first difference is on line 1: the program printed `Error: no such table: missing`, the specification requires `ok 0`.
+
+It exited with status 1.
+
+Continue.
