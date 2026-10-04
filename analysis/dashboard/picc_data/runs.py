@@ -316,7 +316,10 @@ class RunsMixin:
     def _liveness(self, run: Path, summary: dict[str, Any], locks: str | None) -> dict[str, Any]:
         held = lock_held(run / ".harness.lock", locks)
         status = summary.get("meta_status")
-        if held is None:  # no /proc/locks: fall back to recent activity
+        # The harness takes its lock only when resuming or scoring, so a fresh
+        # run in progress has no lock file; judge it by recent activity, as
+        # when /proc/locks is unavailable.
+        if held is None or not (run / ".harness.lock").exists():
             newest = 0.0
             for p in (run / "artifacts" / "events").glob("round-*.jsonl"):
                 try:
