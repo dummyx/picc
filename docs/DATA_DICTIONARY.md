@@ -93,7 +93,11 @@ One row per outer invocation:
 - elapsed process time;
 - Pi exit status;
 - timeout status;
-- paths to raw stdout/stderr logs.
+- paths to raw stdout/stderr logs;
+- `message`: the text the round was started with (round 0 the initial
+  prompt; later rounds `CONTINUE.txt`, or, under `ROUND_CHECK=build-and-example`,
+  the harness's check of the previous snapshot followed by it). Runs before
+  v20 have no such field.
 
 ## `artifacts/snapshots.jsonl`
 
@@ -136,7 +140,14 @@ for the random-program check), each with its stdout and stderr logs:
 - selection parameters and the input policy (preprocessing);
 - macro and micro summaries;
 - per-stage valid/invalid rates (SQL: per-script scores);
-- every test result and failure classification.
+- every test result and failure classification;
+- when the materialized `evaluator/example/` exists (a study with
+  `round_check`), the summary's `check`: the agent-facing build and entry
+  commands, the build result (and its output when it failed), blocking source
+  audit findings, and `example` — for the SQL task the program's output, the
+  required output, the first differing line, exit status and stderr; for the
+  compiler task one record per example program (status, exit status, stderr).
+  `check.passed` is true when the build succeeded and the example did too.
 
 Common failure types for the compiler tasks include:
 
@@ -203,8 +214,9 @@ A row without an `event` field, as the guard wrote them before v6, is a block.
 ## `artifacts/state.json`
 
 Current outer-harness state exposed to the model through `experiment_status`:
-round, fixed budget, elapsed/remaining time, maximum stage, and last visible
-summary. For resumed runs, elapsed and remaining time are cumulative across
+round, fixed budget, elapsed/remaining time, maximum stage, last visible
+summary, and `fixed_policy`, the sentence describing how the continuation
+message is produced (fixed `Continue.`, or the round check followed by it). For resumed runs, elapsed and remaining time are cumulative across
 active execution attempts, and the state includes the resume count.
 
 ## `workspace.git.bundle`

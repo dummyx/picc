@@ -449,6 +449,150 @@ def effective_round_timeout(cap_minutes: int, remaining_seconds: float) -> float
     return min(float(cap_minutes * 60), remaining_seconds)
 
 
+ROUND_CHECK_MODES = ("none", "build-and-example")
+ROUND_CHECK_HEAD = "Harness check of /workspace as it stood when your previous turn ended:"
+
+
+def _indented(text: str | None, empty: str = "(nothing)", depth: int = 1) -> str:
+    pad = "    " * depth
+    body = (text or "").rstrip("\n")
+    if not body.strip():
+        return pad + empty
+    return "\n".join(pad + line for line in body.split("\n"))
+
+
+def round_check_message(visible: dict[str, Any] | None, continuation: str) -> str:
+    """The round message under `ROUND_CHECK=build-and-example`.
+
+    It reports only what the specification already states: whether its build
+    command succeeded in /workspace and what its worked example produced when
+    the program was run as the specification says. No test, score, hint or
+    round number reaches the agent through it; the wording is the same for
+    every language and both tasks. v17 to v19 lost eleven two-hour runs to
+    mistakes this would have shown after the first round (reading standard
+    input, a wrong block header, a crate in a subdirectory, a type check
+    never run); the agent had no way to see them, because the only check it
+    got was its own.
+    """
+    lines: list[str] = [ROUND_CHECK_HEAD, ""]
+    check = visible.get("check") if isinstance(visible, dict) else None
+    if not isinstance(check, dict):
+        reason = (visible or {}).get("error") if isinstance(visible, dict) else None
+        lines.append("The check could not be completed this time" + (f" ({reason})." if reason else "."))
+    else:
+        commands = check.get("commands", {})
+        build_command = commands.get("build", "the build command")
+        entry_command = commands.get("entry", "the entry command")
+        build = check.get("build", {})
+        audit = check.get("audit", {})
+        example = check.get("example")
+        if not audit.get("ok", True):
+            lines.append("The program was not built: the source check found what the specification forbids.")
+            for finding in audit.get("findings", []):
+                where = f"{finding.get('path')}:{finding.get('line')}"
+                lines.append(f"    {where}: {finding.get('reason')}: {finding.get('excerpt')}")
+        elif not build.get("ok"):
+            how = "did not finish within its time limit" if build.get("timed_out") else "failed"
+            lines.append(f"The build command `{build_command}`, run in /workspace, {how}:")
+            lines.append(_indented(build.get("output"), "(no output)"))
+        elif not isinstance(example, dict):
+            lines.append(f"The build command `{build_command}` succeeded; the example was not run.")
+        elif "valid" in example and "invalid" in example:
+            lines.extend(_compiler_example_lines(build_command, entry_command, example))
+        else:
+            lines.extend(_sql_example_lines(build_command, entry_command, example))
+    lines.extend(["", continuation.strip()])
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _sql_example_lines(build_command: str, entry_command: str, example: dict[str, Any]) -> list[str]:
+    if example.get("passed"):
+        return [
+            f"The build command `{build_command}` succeeded, and run as `{entry_command}` on the example "
+            "input from the specification, the program printed exactly the required output."
+        ]
+    lines = [
+        f"The build command `{build_command}` succeeded. Run as `{entry_command}` on the example input "
+        "from the specification, the program printed:",
+        _indented(example.get("output")),
+        "",
+        "The specification requires:",
+        _indented(example.get("expected")),
+    ]
+    difference = example.get("first_difference")
+    if isinstance(difference, dict):
+        printed = difference.get("printed")
+        required = difference.get("required")
+        lines.extend([
+            "",
+            f"The first difference is on line {difference.get('line')}: the program printed "
+            + ("nothing" if printed is None else f"`{printed}`")
+            + ", the specification requires "
+            + ("nothing more." if required is None else f"`{required}`."),
+        ])
+    if example.get("timed_out"):
+        lines.extend(["", f"It did not finish within {example.get('timeout_seconds')} seconds."])
+    elif example.get("status") == "crashed":
+        lines.extend(["", f"It was killed by a signal (exit status {example.get('returncode')})."])
+    elif example.get("returncode") not in (0, None):
+        lines.extend(["", f"It exited with status {example.get('returncode')}."])
+    if (example.get("stderr") or "").strip():
+        lines.extend(["", "On standard error it printed:", _indented(example.get("stderr"))])
+    return lines
+
+
+def _compiler_example_lines(build_command: str, entry_command: str, example: dict[str, Any]) -> list[str]:
+    if example.get("passed"):
+        return [
+            f"The build command `{build_command}` succeeded, and run as `{entry_command}` on the two example "
+            "programs from the specification, the compiler behaved as the specification requires."
+        ]
+    valid = example.get("valid", {})
+    invalid = example.get("invalid", {})
+    lines = [f"The build command `{build_command}` succeeded. Run as `{entry_command}`:", ""]
+
+    source = (valid.get("source") or "").strip()
+    lines.append(f"On the first example (`{source}`), which must give a program that exits with status {valid.get('expected_exit_status')}:")
+    status = valid.get("status")
+    if status == "passed":
+        lines.append("    the assembled and linked program exited with that status, as required.")
+    elif status == "compiler_timeout":
+        lines.append("    the compiler did not finish within its time limit.")
+    elif status == "compiler_crash":
+        lines.append(f"    the compiler was killed by a signal (exit status {valid.get('compiler_returncode')}).")
+    elif status == "rejected":
+        lines.append(f"    the compiler exited with status {valid.get('compiler_returncode')} and wrote no usable `OUTPUT.s`.")
+    elif status == "no_output_file":
+        lines.append("    the compiler exited 0 but wrote no `OUTPUT.s`.")
+    elif status == "assembly_or_link_failure":
+        lines.append("    the compiler wrote `OUTPUT.s`, but assembling and linking it failed:")
+        lines.append(_indented(valid.get("link_stderr")))
+    elif status == "execution_timeout":
+        lines.append("    the assembled and linked program did not finish within its time limit.")
+    else:
+        lines.append(f"    the assembled and linked program exited with status {valid.get('exit_status')}.")
+    if (valid.get("compiler_stderr") or "").strip() and status != "passed":
+        lines.append("    The compiler printed on standard error:")
+        lines.append(_indented(valid.get("compiler_stderr"), depth=2))
+
+    source = (invalid.get("source") or "").strip()
+    lines.extend(["", f"On the second example (`{source}`), which must be rejected with a nonzero exit status, a diagnostic on standard error and no `OUTPUT.s`:"])
+    status = invalid.get("status")
+    if status == "passed":
+        lines.append("    the compiler rejected it as required.")
+    elif status == "compiler_timeout":
+        lines.append("    the compiler did not finish within its time limit.")
+    elif status == "compiler_crash":
+        lines.append(f"    the compiler was killed by a signal (exit status {invalid.get('compiler_returncode')}).")
+    elif status == "accepted":
+        lines.append("    the compiler exited 0" + (" and wrote `OUTPUT.s`." if invalid.get("assembly_written") else "."))
+    elif status == "output_file_written":
+        lines.append(f"    the compiler exited with status {invalid.get('compiler_returncode')} but left an `OUTPUT.s` behind.")
+    elif status == "no_diagnostic":
+        lines.append(f"    the compiler exited with status {invalid.get('compiler_returncode')} but printed nothing on standard error.")
+    return lines
+
+
 def strict_read_jsonl(path: Path) -> list[dict[str, Any]]:
     if not path.is_file():
         raise ExperimentError(f"Missing JSONL artifact: {path}")
@@ -1137,6 +1281,19 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
         """
         return deadline + evaluation_seconds
 
+    # Frozen by scripts/study.py from the condition's `round_check`; runs frozen
+    # before the key existed are "none", the fixed continuation message.
+    round_check = config.get("ROUND_CHECK", "none")
+    if round_check not in ROUND_CHECK_MODES:
+        raise ExperimentError(f"ROUND_CHECK must be one of {ROUND_CHECK_MODES}, not {round_check!r}")
+    if round_check == "none":
+        fixed_policy = "No human steering; continuation prompt is unchanged across rounds."
+    else:
+        fixed_policy = (
+            "No human steering; each continuation message is the harness's fixed report on the last "
+            "snapshot (the specification's build command and worked example), then the unchanged continuation prompt."
+        )
+
     try:
         for round_number in range(start_round, max_rounds):
             remaining_seconds = max(0.0, agent_deadline() - time.monotonic())
@@ -1154,11 +1311,15 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                 "max_stage": max_stage,
                 "last_visible": last_visible,
                 "resume_count": metadata.get("resume_count", 0),
-                "fixed_policy": "No human steering; continuation prompt is unchanged across rounds.",
+                "fixed_policy": fixed_policy,
             }
             atomic_write_json(artifacts / "state.json", state)
             prompt_file = control / ("INITIAL.txt" if round_number == 0 else "CONTINUE.txt")
             prompt = prompt_file.read_text(encoding="utf-8")
+            if round_number > 0 and round_check == "build-and-example":
+                # last_visible is the previous round's snapshot as the scorer
+                # saw it; on a resume it comes from the ledger (plan_resume).
+                prompt = round_check_message(last_visible, prompt)
             effective_timeout = effective_round_timeout(round_timeout_minutes, remaining_seconds)
             print(
                 f"[{run_id}] round {round_number:03d}: Pi ({effective_timeout / 60:.1f} min cap)",
@@ -1217,6 +1378,9 @@ def execute_run(args: argparse.Namespace, run_id: str, run_dir: Path, current_co
                     "visible": visible,
                 }
             )
+            # The message this round was started with (round 0: INITIAL.txt;
+            # later rounds: CONTINUE.txt, or the round check when one is on).
+            round_result["message"] = prompt
             append_jsonl(artifacts / "rounds.jsonl", round_result)
             append_jsonl(artifacts / "snapshots.jsonl", snapshot)
             last_round_attempted = round_number

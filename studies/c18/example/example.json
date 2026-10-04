@@ -1,0 +1,6 @@
+{
+  "runtime": "c-compiler",
+  "valid": {"source": "valid.c", "exit_status": 5},
+  "invalid": {"source": "invalid.c"},
+  "note": "The two example programs of studies/c18/task.md, byte for byte; tests/test_task_studies.py pins them equal."
+}

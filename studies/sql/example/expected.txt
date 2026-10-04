@@ -1,0 +1,11 @@
+ok 0
+ok 0
+ok 0
+ok 2
+2	NULL	3.0
+1	x	2.5
+ok 1
+2	3
+error no such table: missing
+ok 1
+done

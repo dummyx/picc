@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "id": "picc-sql-minimal-v10",
+  "description": "In-memory SQLite-compatible SQL engine (PiSQL) under the minimal protocol, one condition per implementation language, plus a minimal-specification arm. This id (v10) is the v20 batch: as v9 (v19) but every round message after the first carries the harness's check of the last snapshot (the specification's build command and worked example, round_check build-and-example). v9 was v19, v8 the stopped v18; studies/README.md lists every id.",
+  "baseline_condition": "rust",
+  "seed": 20260920,
+  "completion_threshold": 0.95,
+  "defaults": {
+    "prompt": {
+      "agents": "studies/shared/minimal-protocol/agents-spec.md",
+      "initial": "studies/shared/minimal-protocol/initial.txt",
+      "continuation": "studies/shared/minimal-protocol/continue.txt",
+      "experiment_tools": false
+    },
+    "round_check": {
+      "mode": "build-and-example",
+      "example": "studies/sql/example"
+    },
+    "specification": {
+      "path": "studies/sql/task.md",
+      "delivery": "initial_prompt_only",
+      "provenance": {
+        "method": "llm-generated-human-reviewed",
+        "creator": "Claude Fable 5.1 (Claude Code) with the harness maintainer",
+        "source": "short behavioral contract condensed from the task's pinned test selection, with one worked input/output example and the rule that the only input is the named file (added for v19 after 3 of 6 v18 runs scored 0 on the output contract); same text for every language condition",
+        "artifact_family": "picc-sql-minimal-v2",
+        "reviewed_by": null
+      }
+    },
+    "tests": {
+      "access": "none",
+      "feedback": "none",
+      "visible_subset_fraction": 1.0,
+      "subset_seed": 20260920,
+      "visible_partition": "data/partitions-sql/visible",
+      "hidden_partition": "data/partitions-sql/hidden",
+      "provenance": {
+        "method": "upstream-generated-and-human-authored",
+        "creator": "SQLite sqllogictest authors",
+        "source": "https://github.com/gregrahn/sqllogictest@c67f97bf3ca7e590d12e073408bcacaf2ff0f3a0 (mirror of https://www.sqlite.org/sqllogictest/)",
+        "artifact_family": "sqllogictest-evidence-select-random-orderby",
+        "reviewed_by": null
+      }
+    },
+    "candidate": {
+      "adapter": "studies/sql/candidates/rust-std.json",
+      "language": "rust",
+      "framework": "standard-library",
+      "scaffold": null
+    },
+    "reference": {
+      "mode": "none",
+      "oracle_limit": 0,
+      "source": null
+    },
+    "environment": {
+      "overrides": {
+        "FUZZ_STAGE_PROGRAMS": 0
+      }
+    },
+    "budget": {
+      "pilot_max_stage": 8,
+      "main_max_stage": 8,
+      "pilot_hours": 0.4,
+      "pilot_rounds": 2,
+      "pilot_round_timeout_minutes": 12
+    },
+    "task": {
+      "id": "sql-engine-sqllogictest",
+      "runtime": "sql-engine",
+      "max_stage": 8,
+      "parameters": {
+        "sqlite_version": "3.40.1",
+        "script_timeout_seconds": 120
+      }
+    }
+  },
+  "conditions": [
+    {
+      "id": "rust",
+      "factor": "baseline",
+      "description": "Rust, standard library only. Same inputs as studies/minimal except the product is a SQL engine scored on sqllogictest scripts."
+    },
+    {
+      "id": "python",
+      "factor": "candidate",
+      "description": "Plain Python 3, standard library only; type checkers withheld by the guard; same contract.",
+      "candidate": {
+        "adapter": "studies/sql/candidates/python-untyped.json",
+        "language": "python",
+        "framework": "dynamic-typing",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "python-typed",
+      "factor": "candidate",
+      "description": "Python 3 under `mypy --strict` as the build gate; same contract.",
+      "candidate": {
+        "adapter": "studies/sql/candidates/python-typed.json",
+        "language": "python",
+        "framework": "strict-static-typing",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "javascript",
+      "factor": "candidate",
+      "description": "JavaScript on Node, `node --check` as the build gate; same contract.",
+      "candidate": {
+        "adapter": "studies/sql/candidates/javascript-node.json",
+        "language": "javascript",
+        "framework": "dynamic-typing",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "typescript",
+      "factor": "candidate",
+      "description": "TypeScript under `tsc --strict --noEmitOnError` as the build gate; same contract.",
+      "candidate": {
+        "adapter": "studies/sql/candidates/typescript-strict.json",
+        "language": "typescript",
+        "framework": "strict-static-typing",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "rust-minimal-spec",
+      "factor": "specification",
+      "description": "Rust with a minimal specification (studies/sql/task-minimal.md, about 170 words: the commands, the input and output contract, the feature list by name) in place of the full one; same minimal prompt, everything else as `rust`. Added as v19 Amendment 2 to compare the full specification against a minimal one.",
+      "specification": {
+        "path": "studies/sql/task-minimal.md",
+        "delivery": "initial_prompt_only",
+        "provenance": {
+          "method": "llm-generated-human-reviewed",
+          "creator": "Claude Fable 5.1 (Claude Code) with the harness maintainer",
+          "source": "the full contract reduced to the commands, the input/output contract and the feature names; no example, no subset detail, no semantics",
+          "artifact_family": "picc-sql-minimal-spec-v1",
+          "reviewed_by": "harness maintainer (text approved in chat, 2026-10-04)"
+        }
+      }
+    }
+  ],
+  "design": "one-factor-at-a-time"
+}

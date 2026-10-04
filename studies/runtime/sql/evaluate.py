@@ -57,6 +57,7 @@ from candidate_runtime import (  # noqa: E402
     run_command,
     select_tests,
     source_audit,
+    specification_check,
     truncate,
     truncate_middle,
 )
@@ -96,6 +97,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test-id")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--summary-json", action="store_true")
+    # The specification's worked example (input.sql + expected.txt + example.json).
+    # When given, the summary carries a `check` block: the build command's result
+    # and what the example produced, for the harness to report between rounds.
+    parser.add_argument("--example", type=Path)
     # Accepted for command-line parity with the compiler evaluator; the
     # per-script timeout comes from task.json.
     parser.add_argument("--cache-dir", type=Path, default=Path("/run-artifacts/reference-cache"))
@@ -259,6 +264,82 @@ def judge(record: slt.Record, block: slt.Block | None, threshold: int, labels: s
     return slt.compare_query(record, values, threshold, labels)
 
 
+def example_first_difference(output: str, expected: str) -> dict[str, Any] | None:
+    """The first line where the program's output departs from the required
+    one, or None. An `error` line matches on that word alone (the
+    specification leaves the message text free), and a missing final newline
+    is not held against the program (the scorer reads blocks by line too)."""
+    produced = output.rstrip("\n").split("\n") if output.strip() else []
+    required = expected.rstrip("\n").split("\n")
+    for index, want in enumerate(required):
+        got = produced[index] if index < len(produced) else None
+        if got is not None and got.endswith("\r"):
+            got = got[:-1]
+        if want.split(" ", 1)[0] == "error":
+            matches = got is not None and (got == "error" or got.startswith("error "))
+        else:
+            matches = got == want
+        if not matches:
+            return {"line": index + 1, "printed": got, "required": want}
+    if len(produced) > len(required):
+        return {"line": len(required) + 1, "printed": produced[len(required)], "required": None}
+    return None
+
+
+def example_outputs_match(output: str, expected: str) -> bool:
+    return example_first_difference(output, expected) is None
+
+
+def check_example(
+    workspace: Path,
+    adapter: dict[str, Any],
+    artifact: Path,
+    example_dir: Path,
+    timeout: int,
+) -> dict[str, Any]:
+    """Run the specification's worked example the way the scorer runs a test
+    script (the entry command, the one file name, nothing on standard input)
+    and compare with the output the specification requires."""
+    spec = load_object(example_dir / "example.json")
+    input_source = example_dir / str(spec["input"])
+    expected = (example_dir / str(spec["expected_output"])).read_text(encoding="utf-8")
+    with tempfile.TemporaryDirectory(prefix="pisql-example-") as temporary:
+        temp = Path(temporary)
+        example_input = temp / "INPUT.sql"
+        example_input.write_bytes(input_source.read_bytes())
+        output_path = temp / "output.txt"
+        command = render_command(
+            adapter["run"]["command"],
+            {"workspace": str(workspace), "artifact": str(artifact), "input": str(example_input)},
+        )
+        env = {"CARGO_NET_OFFLINE": "true", "PYTHONDONTWRITEBYTECODE": "1", "PIP_NO_INDEX": "1"}
+        result = run_command(command, cwd=workspace, timeout=timeout, env=env, stdout_path=output_path)
+        output = output_path.read_bytes().decode("utf-8", errors="replace") if output_path.is_file() else ""
+    matches = example_outputs_match(output, expected)
+    if result.timed_out:
+        status = "timed_out"
+    elif result.returncode < 0:
+        status = "crashed"
+    elif not matches:
+        status = "output_differs"
+    elif result.returncode != 0:
+        status = "nonzero_exit"
+    else:
+        status = "passed"
+    return {
+        "passed": status == "passed",
+        "status": status,
+        "input": input_source.read_text(encoding="utf-8"),
+        "output": truncate_middle(output, 2000),
+        "expected": expected,
+        "first_difference": example_first_difference(output, expected),
+        "returncode": result.returncode,
+        "timed_out": result.timed_out,
+        "timeout_seconds": timeout,
+        "stderr": truncate_middle(result.stderr.strip(), 800),
+    }
+
+
 def summarize(results: list[ScriptResult], build_ok: bool, audit: dict[str, Any]) -> dict[str, Any]:
     by_stage: dict[int, list[ScriptResult]] = defaultdict(list)
     for result in results:
@@ -369,6 +450,9 @@ def main() -> int:
         ]
 
     summary = summarize(results, build_ok, audit)
+    if args.example is not None:
+        example = check_example(workspace, adapter, artifact, args.example.resolve(), timeout) if build_ok else None
+        summary["check"] = specification_check(adapter, audit, build_result, build_ok, example)
     output = {
         "schema_version": 1,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

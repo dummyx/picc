@@ -48,6 +48,12 @@ VALID_DELIVERIES = {"task_file", "initial_prompt", "initial_prompt_only", "works
 VALID_TEST_ACCESS = {"none", "tool", "files"}
 VALID_FEEDBACK = {"none", "aggregate", "failures", "detailed"}
 VALID_REFERENCE_MODES = {"none", "oracle", "source"}
+# A condition's `round_check`: what the harness tells the agent between rounds.
+# "none" is the fixed `Continue.`; "build-and-example" prepends the result of
+# the specification's own build command and worked example on the last
+# snapshot (v20). Conditions without the block are "none", unchanged.
+VALID_ROUND_CHECKS = {"none", "build-and-example"}
+DEFAULT_ROUND_CHECK: dict[str, Any] = {"mode": "none"}
 # Copied from the repository into every materialization. prompts/ and
 # evaluator/ are created there and filled from the condition.
 RUNTIME_COPY_DIRS = ("config", "docker", "scripts", "pi")
@@ -256,6 +262,53 @@ def condition_task(condition: Mapping[str, Any]) -> dict[str, Any]:
     return deep_merge(DEFAULT_TASK, task)
 
 
+def condition_round_check(condition: Mapping[str, Any]) -> dict[str, Any]:
+    """The condition's round_check block with the default applied (never mutates the condition)."""
+    block = condition.get("round_check")
+    if block is None:
+        return copy.deepcopy(DEFAULT_ROUND_CHECK)
+    return deep_merge(DEFAULT_ROUND_CHECK, block)
+
+
+def validate_round_check(condition: dict[str, Any], condition_id: str, task: Mapping[str, Any]) -> dict[str, Any]:
+    raw = condition.get("round_check")
+    if raw is not None and not isinstance(raw, dict):
+        raise StudyError(f"{condition_id}.round_check must be an object")
+    block = condition_round_check(condition)
+    unknown = set(block) - {"mode", "example"}
+    if unknown:
+        raise StudyError(f"{condition_id}.round_check has unknown keys: {sorted(unknown)}")
+    if block.get("mode") not in VALID_ROUND_CHECKS:
+        raise StudyError(f"{condition_id}.round_check.mode must be one of {sorted(VALID_ROUND_CHECKS)}")
+    if block["mode"] == "none":
+        if "example" in block:
+            raise StudyError(f"{condition_id}.round_check.example is only valid with a mode other than 'none'")
+        return block
+    example_dir = resolve_repo_path(block.get("example"), f"{condition_id}.round_check.example")
+    manifest_path = example_dir / "example.json"
+    if not manifest_path.is_file():
+        raise StudyError(f"{condition_id}.round_check.example must be a directory holding example.json")
+    manifest = load_json_object(manifest_path)
+    if manifest.get("runtime") != task["runtime"]:
+        raise StudyError(
+            f"{condition_id}.round_check.example is for the {manifest.get('runtime')!r} runtime, "
+            f"the condition's task is {task['runtime']!r}"
+        )
+    required = ("input", "expected_output") if task["runtime"] == "sql-engine" else ("valid", "invalid")
+    for key in required:
+        if key not in manifest:
+            raise StudyError(f"{condition_id}.round_check.example: example.json lacks {key!r}")
+        entry = manifest[key]
+        name = entry if isinstance(entry, str) else (entry.get("source") if isinstance(entry, dict) else None)
+        if not isinstance(name, str) or not (example_dir / name).is_file():
+            raise StudyError(f"{condition_id}.round_check.example: {key!r} does not name a file in the example directory")
+    if task["runtime"] == "c-compiler":
+        status = manifest["valid"].get("exit_status") if isinstance(manifest["valid"], dict) else None
+        if isinstance(status, bool) or not isinstance(status, int) or not 0 <= status <= 255:
+            raise StudyError(f"{condition_id}.round_check.example: valid.exit_status must be an integer 0-255")
+    return block
+
+
 def validate_task(condition: dict[str, Any], condition_id: str) -> dict[str, Any]:
     raw = condition.get("task")
     if raw is not None and not isinstance(raw, dict):
@@ -292,6 +345,7 @@ def validate_condition(condition: dict[str, Any], study: dict[str, Any]) -> None
         raise StudyError(f"Invalid condition id: {condition_id!r}")
     require_string(condition.get("factor"), f"{condition_id}.factor")
     task = validate_task(condition, condition_id)
+    validate_round_check(condition, condition_id, task)
 
     prompt = condition.get("prompt")
     if not isinstance(prompt, dict):
@@ -940,6 +994,11 @@ def _materialize_direct(
         shutil.copy2(REPO_ROOT / "studies" / "runtime" / source_name, evaluator_dir / target_name)
     atomic_write_json(evaluator_dir / "task.json", task)
     shutil.copy2(adapter_source, evaluator_dir / "candidate.json")
+    round_check = condition_round_check(condition)
+    if round_check["mode"] != "none":
+        # The scorer reports what the example produces (summary `check`) and
+        # run_experiment.py puts that into every round message after the first.
+        copy_tree(resolve_repo_path(round_check["example"], "round_check.example"), evaluator_dir / "example")
 
     visible_source, hidden_source = source_partitions(condition)
     partitions_root = materialization_root / "data" / "partitions"
@@ -1020,6 +1079,7 @@ def _materialize_direct(
         shutil.copy2(REPO_ROOT / "pi" / "extensions" / name, extensions / name)
     effective_config = effective_config_overrides(condition)
     effective_config["AGENT_VISIBLE_TESTS"] = "data/agent-visible"
+    effective_config["ROUND_CHECK"] = round_check["mode"]
     effective_config["PI_TOOLS"] = "read,bash,edit,write,grep,find,ls"
     if experiment_tools:
         effective_config["PI_TOOLS"] += ",test_visible,reference_oracle,experiment_status"

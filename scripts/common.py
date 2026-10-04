@@ -720,6 +720,11 @@ def evaluation_command(
         f"/run-artifacts/evaluations/{output_name}",
         "--summary-json",
     ]
+    # A study with a round check (study.py `round_check`) freezes the
+    # specification's worked example beside the scorer; the scorer then also
+    # reports what the example produced (summary `check`).
+    if (evaluator / "example" / "example.json").is_file():
+        command += ["--example", "/opt/picc-eval/example"]
     return command
 
 

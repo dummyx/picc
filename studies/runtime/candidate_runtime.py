@@ -937,6 +937,54 @@ def resolve_candidate_artifact(workspace: Path, logical: Path) -> Path:
     return artifact
 
 
+def agent_facing_commands(adapter: Mapping[str, Any]) -> dict[str, str]:
+    """The build and entry commands as the specification shows them to the
+    agent (the adapter's `spec_variables`), falling back to the adapter's own
+    command lines for fixtures that have none."""
+    variables = adapter.get("spec_variables") if isinstance(adapter.get("spec_variables"), dict) else {}
+    build = str(variables.get("BUILD_COMMAND") or " ".join(adapter["build"].get("command", [])) or "(no build command)")
+    entry = str(variables.get("ENTRY_COMMAND") or "")
+    if not entry:
+        artifact = str(adapter["build"]["artifact"])
+        entry = " ".join(adapter["run"]["command"]).replace("{artifact}", artifact).replace("{input}", "INPUT").replace("{output}", "OUTPUT")
+    return {"build": build, "entry": entry}
+
+
+def specification_check(
+    adapter: Mapping[str, Any],
+    audit: Mapping[str, Any],
+    build_result: CommandResult | None,
+    build_ok: bool,
+    example: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """What the harness tells the agent between rounds, when a study asks for
+    it: whether the specification's own build command succeeded, and what its
+    worked example produced. Nothing from the test partitions is in here."""
+    commands = agent_facing_commands(adapter)
+    build_output = None
+    if not build_ok and build_result is not None:
+        build_output = truncate_middle((build_result.stderr or build_result.stdout or "").strip(), 3000)
+    return {
+        "commands": commands,
+        "build": {
+            "ok": build_ok,
+            "ran": build_result is not None,
+            "timed_out": bool(build_result.timed_out) if build_result else False,
+            "returncode": build_result.returncode if build_result else None,
+            "output": build_output,
+        },
+        "audit": {
+            "ok": not audit.get("blocking"),
+            "findings": [
+                {"path": f.get("path"), "line": f.get("line"), "reason": f.get("reason"), "excerpt": f.get("excerpt")}
+                for f in list(audit.get("blocking_findings", []))[:5]
+            ],
+        },
+        "example": example,
+        "passed": bool(build_ok and example and example.get("passed")),
+    }
+
+
 def build_candidate(workspace: Path, adapter: dict[str, Any], timeout: int) -> tuple[CommandResult, Path]:
     build = adapter["build"]
     logical_artifact = workspace / str(build["artifact"])

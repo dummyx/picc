@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "id": "picc-c18-minimal-v6",
+  "description": "Chapters 1-18 C compiler under the minimal protocol, one condition per implementation language. This id (v6) is the v20 batch: as v5 (v19) but every round message after the first carries the harness's check of the last snapshot (the specification's build command and two example programs, round_check build-and-example). v5 was v19, v4 the stopped v18, v1 the v10 batch (studies/README.md lists every id).",
+  "baseline_condition": "rust",
+  "seed": 20260919,
+  "completion_threshold": 0.95,
+  "defaults": {
+    "prompt": {
+      "agents": "studies/shared/minimal-protocol/agents-spec.md",
+      "initial": "studies/shared/minimal-protocol/initial.txt",
+      "continuation": "studies/shared/minimal-protocol/continue.txt",
+      "experiment_tools": false
+    },
+    "round_check": {
+      "mode": "build-and-example",
+      "example": "studies/c18/example"
+    },
+    "specification": {
+      "path": "studies/c18/task.md",
+      "delivery": "initial_prompt_only",
+      "provenance": {
+        "method": "llm-generated-human-reviewed",
+        "creator": "Claude Fable 5.1 (Claude Code) with the harness maintainer",
+        "source": "short behavioral contract condensed from the task's pinned test selection, with one valid and one invalid example program and the rule that the only input is the named file and the only output the named file (added for v19); same text for every language condition",
+        "artifact_family": "picc-c18-minimal-v2",
+        "reviewed_by": null
+      }
+    },
+    "tests": {
+      "access": "none",
+      "feedback": "none",
+      "visible_subset_fraction": 1.0,
+      "subset_seed": 20260919,
+      "visible_partition": "data/partitions-c18/visible",
+      "hidden_partition": "data/partitions-c18/hidden",
+      "provenance": {
+        "method": "upstream-human-and-template-generated",
+        "creator": "nlsandler/writing-a-c-compiler-tests contributors",
+        "source": "https://github.com/nlsandler/writing-a-c-compiler-tests@ae12014d2dec14488f3f80d14df4b6d8e4634d7d",
+        "artifact_family": "writing-a-c-compiler-core-ch1-18-with-fixtures",
+        "reviewed_by": null
+      }
+    },
+    "candidate": {
+      "adapter": "studies/shared/candidates/rust-std.json",
+      "language": "rust",
+      "framework": "standard-library",
+      "scaffold": null
+    },
+    "reference": {
+      "mode": "none",
+      "oracle_limit": 0,
+      "source": null
+    },
+    "environment": {
+      "overrides": {
+        "FUZZ_STAGE_PROGRAMS": 0
+      }
+    },
+    "budget": {
+      "pilot_max_stage": 3,
+      "main_max_stage": 18,
+      "pilot_hours": 0.4,
+      "pilot_rounds": 2,
+      "pilot_round_timeout_minutes": 12
+    },
+    "task": {
+      "id": "c-compiler-ch1-18",
+      "runtime": "c-compiler",
+      "max_stage": 18,
+      "parameters": {}
+    }
+  },
+  "conditions": [
+    {
+      "id": "rust",
+      "factor": "baseline",
+      "description": "Rust, standard library only. Same inputs as studies/minimal except the contract covers chapters 1-18 and stages run to 18."
+    },
+    {
+      "id": "python",
+      "factor": "candidate",
+      "description": "Plain Python 3, standard library only; type checkers withheld by the guard; same contract.",
+      "candidate": {
+        "adapter": "studies/c18/candidates/python-untyped.json",
+        "language": "python",
+        "framework": "dynamic-typing",
+        "scaffold": null
+      }
+    },
+    {
+      "id": "python-typed",
+      "factor": "candidate",
+      "description": "Python 3 under `mypy --strict` as the build gate; same contract.",
+      "candidate": {
+        "adapter": "studies/c18/candidates/python-typed.json",
+        "language": "python",
+        "framework": "strict-static-typing",
+        "scaffold": null
+      }
+    }
+  ],
+  "design": "one-factor-at-a-time"
+}

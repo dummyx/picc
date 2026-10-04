@@ -1,0 +1,6 @@
+{
+  "runtime": "sql-engine",
+  "input": "input.sql",
+  "expected_output": "expected.txt",
+  "note": "The worked example of studies/sql/task.md, byte for byte; tests/test_task_studies.py pins the two equal. The error line is compared by its first word only, as the specification says the message text is free."
+}

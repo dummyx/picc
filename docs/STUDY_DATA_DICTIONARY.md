@@ -76,6 +76,20 @@ materialized `evaluator/`; the budget's `*_max_stage` may not exceed
 `max_stage`. The SQL task's `parameters` pin `sqlite_version` and
 `script_timeout_seconds`. See "Task studies" below.
 
+### `round_check`
+
+Optional `{mode, example}`; absent means `mode: none`, the fixed continuation
+message. `mode: build-and-example` (v20) makes every round message after the
+first the harness's report on the last snapshot — the result of the
+specification's build command and of its worked example — followed by the
+continuation prompt. `example` names the directory holding `example.json`
+(SQL: `input`, `expected_output`; compiler: `valid` with `source` and
+`exit_status`, `invalid` with `source`) whose `runtime` must match the task's;
+it is copied to the materialized `evaluator/example/`, the scorer is then
+invoked with `--example`, and `ROUND_CHECK` is frozen into the run's
+configuration. The check uses nothing but the specification's own commands and
+example; `scripts/run_experiment.py:round_check_message` is the wording.
+
 ## Candidate adapter
 
 `candidate.json` defines:

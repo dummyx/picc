@@ -74,6 +74,7 @@ from candidate_runtime import (  # noqa: E402
     rust_include_closure,
     select_tests,
     source_audit,
+    specification_check,
     strip_js_comments,
     subprocess_environment,
     truncate,
@@ -105,6 +106,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--oracle-source", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--summary-json", action="store_true")
+    # The specification's two example programs (valid.c, invalid.c, example.json).
+    # When given, the summary carries a `check` block: the build command's result
+    # and what the examples produced, for the harness to report between rounds.
+    parser.add_argument("--example", type=Path)
     parser.add_argument("--cache-dir", type=Path, default=Path("/run-artifacts/reference-cache"))
     parser.add_argument("--build-timeout", type=int, default=900)
     parser.add_argument("--compile-timeout", type=int, default=30)
@@ -447,6 +452,95 @@ def evaluate_invalid(
         )
 
 
+def check_example(
+    workspace: Path,
+    adapter: dict[str, Any],
+    artifact: Path,
+    example_dir: Path,
+    compile_timeout: int,
+    run_timeout: int,
+) -> dict[str, Any]:
+    """Run the specification's two example programs the way the scorer runs a
+    test: the entry command on `INPUT.c` writing `OUTPUT.s`, nothing on
+    standard input; the valid one is then assembled, linked and run."""
+    spec = load_object(example_dir / "example.json")
+    valid_spec, invalid_spec = spec["valid"], spec["invalid"]
+    expected_status = int(valid_spec["exit_status"])
+
+    with tempfile.TemporaryDirectory(prefix="picc-example-valid-") as temporary:
+        temp = Path(temporary)
+        source = temp / "INPUT.c"
+        source.write_bytes((example_dir / str(valid_spec["source"])).read_bytes())
+        assembly = temp / "OUTPUT.s"
+        compiled = candidate_compile(workspace, adapter, artifact, source, assembly, compile_timeout)
+        valid: dict[str, Any] = {
+            "source": source.read_text(encoding="utf-8"),
+            "expected_exit_status": expected_status,
+            "compiler_returncode": compiled.returncode,
+            "compiler_timed_out": compiled.timed_out,
+            "compiler_stderr": truncate_middle(compiled.stderr.strip(), 800),
+            "assembly_written": assembly.is_file() and assembly.stat().st_size > 0,
+            "link_stderr": None,
+            "exit_status": None,
+        }
+        if compiled.timed_out:
+            valid["status"] = "compiler_timeout"
+        elif compiled.returncode < 0:
+            valid["status"] = "compiler_crash"
+        elif compiled.returncode != 0:
+            valid["status"] = "rejected"
+        elif not valid["assembly_written"]:
+            valid["status"] = "no_output_file"
+        else:
+            executable = temp / "candidate"
+            linked = run_command(
+                ["/usr/bin/gcc", "-x", "assembler", "-fno-pie", "-no-pie", str(assembly), "-o", str(executable)],
+                cwd=temp,
+                timeout=compile_timeout,
+            )
+            if linked.timed_out or linked.returncode != 0:
+                valid["status"] = "assembly_or_link_failure"
+                valid["link_stderr"] = truncate_middle(linked.stderr.strip(), 800)
+            else:
+                execution = run_command([str(executable)], cwd=temp, timeout=run_timeout)
+                if execution.timed_out:
+                    valid["status"] = "execution_timeout"
+                else:
+                    valid["exit_status"] = execution.returncode
+                    valid["status"] = "passed" if execution.returncode == expected_status else "wrong_exit_status"
+        valid["passed"] = valid["status"] == "passed"
+
+    with tempfile.TemporaryDirectory(prefix="picc-example-invalid-") as temporary:
+        temp = Path(temporary)
+        source = temp / "INPUT.c"
+        source.write_bytes((example_dir / str(invalid_spec["source"])).read_bytes())
+        assembly = temp / "OUTPUT.s"
+        compiled = candidate_compile(workspace, adapter, artifact, source, assembly, compile_timeout)
+        wrote_output = assembly.is_file() and assembly.stat().st_size > 0
+        invalid: dict[str, Any] = {
+            "source": source.read_text(encoding="utf-8"),
+            "compiler_returncode": compiled.returncode,
+            "compiler_timed_out": compiled.timed_out,
+            "compiler_stderr": truncate_middle(compiled.stderr.strip(), 800),
+            "assembly_written": wrote_output,
+        }
+        if compiled.timed_out:
+            invalid["status"] = "compiler_timeout"
+        elif compiled.returncode < 0:
+            invalid["status"] = "compiler_crash"
+        elif compiled.returncode == 0:
+            invalid["status"] = "accepted"
+        elif wrote_output:
+            invalid["status"] = "output_file_written"
+        elif not compiled.stderr.strip():
+            invalid["status"] = "no_diagnostic"
+        else:
+            invalid["status"] = "passed"
+        invalid["passed"] = invalid["status"] == "passed"
+
+    return {"passed": valid["passed"] and invalid["passed"], "valid": valid, "invalid": invalid}
+
+
 def summarize(results: list[TestResult], build_ok: bool, audit: dict[str, Any]) -> dict[str, Any]:
     by_stage: dict[int, list[TestResult]] = defaultdict(list)
     for result in results:
@@ -598,6 +692,13 @@ def main() -> int:
         ]
 
     summary = summarize(results, build_ok, audit)
+    if args.example is not None:
+        example = (
+            check_example(workspace, adapter, artifact, args.example.resolve(), args.compile_timeout, args.run_timeout)
+            if build_ok
+            else None
+        )
+        summary["check"] = specification_check(adapter, audit, build_result, build_ok, example)
     output = {
         "schema_version": 1,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
