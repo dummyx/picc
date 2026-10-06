@@ -2080,3 +2080,65 @@ compiler, `rust`, `python`, `python-typed`, three each, plus one SQL run of
   result — the specification's build command and worked example, run on the
   last snapshot — and changes nothing else. Run on the six v18/v19 zero
   workspaces, the message names each problem (`analysis/v20-check-demo/`).
+
+## 23. The v20 batch: the round check, and the first batch without a contract zero
+
+Plan `docs/EXPERIMENT_PLAN_v20.md`; scores on screen from
+`analysis/v20_results.py`; studies `picc-sql-minimal-v10` and
+`picc-c18-minimal-v6` (now `studies/sql/study.json`, `studies/c18/study.json`);
+owner report `docs/REPORT_2026-10-07.md`. Twenty-one runs, 2026-10-04 22:31
+to 10-06 19:03 UTC: SQL engine (`rust`, `python`, `python-typed`,
+`rust-minimal-spec`, three each) and chapters 1-18 compiler (the three
+languages, three each), two hours of agent time each, harness `ea94797` +
+`4517701`. One trial run before (`v20-trial-python-r1`, not counted).
+
+- **The one change.** Every round message after the first is the harness's
+  check of the snapshot the agent just left — the specification's build
+  command and worked example, run the official way — then `Continue.`
+  Nothing from the tests, no score, no hint. The wording is in
+  `scripts/run_experiment.py:round_check_message`; the trial run found one
+  wording defect (a mid-edit snapshot that did not parse was called "what the
+  specification forbids"), fixed before the first main run.
+- **The harness held.** 21 of 21 used their full two hours; no reply lost to
+  a server error, no conversation summary failed.
+- **No contract zero.** Across v17–v19, eleven of forty runs had been lost to
+  mistakes the agent could not see (stdin, a wrong block header, a crate in a
+  subdirectory, a type gate never run). In v20: zero hidden scripts lost to
+  the output contract in any SQL run; every run's check passed on its final
+  snapshot except one. Where a run started wrong, the agent was told and
+  fixed it: all three `rust-minimal-spec` runs printed the example wrongly
+  after round 0 (NULL as empty, `3` for `3.0`, `ok 1` for `INSERT`) and all
+  three printed it exactly by the end; `c18-python-r1` and `-r3` crashed on
+  `return 2 + 3` after round 1 and compiled it by the end;
+  `c18-python-typed-r3` had 33 `mypy` errors after round 0, 6 after round 1,
+  none at the end.
+- **The one zero is a program failure the agent watched happen.**
+  `c18-rust-r2` wrote 6,018 lines of Rust in 156 long replies and never had a
+  compiling snapshot (64 errors, then 54); it ran the official build itself
+  eight times and saw the same list the harness sent. That is a "no working
+  program" result and stays in.
+- **SQL engine.** Rust 0.849, 0.807, 0.181; Python 0.767, 0.875, 0.805;
+  typed Python 0.848, 0.861, 0.794; Rust with the minimal specification
+  0.417, 0.778, 0.137. `python-r2`'s 0.875 is the highest SQL score of any
+  batch (the one 4-to-64-table join script bounds it at 0.875 for every
+  engine, so this run passed everything else). `rust-r3`'s 0.181 is an engine
+  that hangs on three large scripts (1,000 statements in 0.2 s, then >120 s),
+  not a contract miss.
+- **Compiler.** Rust 0.569, **0**, 0.566 (44, 0, 42 valid programs of 141);
+  Python 0.596, 0.652, 0.621 (21, 49, 28); typed Python 0.541, 0.657, 0.681
+  (22, 29, 58). Best 0.681 against v19's best 0.670 and v10's 0.501.
+- **Typing: no effect, again.** Paired medians −0.011 (SQL) and +0.004
+  (compiler); the typed arm has the tightest SQL spread (0.794–0.861) and the
+  widest working compiler spread (0.541–0.681). Six batches have now asked
+  this question (v4, v7, v10, v17, v19, v20) and none has found an effect at
+  n = 3–4.
+- **The minimal specification costs a lot or nothing.** Paired: −0.432,
+  −0.029, −0.044, median −0.044 (no effect by the ±0.13 line), but the arm's
+  spread (0.137–0.778) is twice the full-spec arms' and every one of its runs
+  needed the check to learn the output format; two reached it only in the
+  last round. With the full specification the check passed after round 1 or
+  2 in nine of nine SQL runs.
+- **What the check cost.** The scorer already built and ran each snapshot;
+  the example adds one program run per round (seconds), charged to the
+  harness, not the agent. The message is 5 lines when both pass and up to
+  ~80 when the build fails (cargo's error list, both ends kept).
