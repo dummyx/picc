@@ -1,7 +1,7 @@
 // Router and the top-level pages: batches, one batch, compare, reports, model server.
 
 import {
-  h, clear, api, forget, fmt, enc, END, TASK, TASK_INFO, STATUS, PROFILE, TIME_KINDS, CODE_KINDS, variantColors, card, cardHead,
+  h, clear, api, forget, fmt, enc, END, TASK, TASK_INFO, TASK_CODE, STATUS, PROFILE, TIME_KINDS, CODE_KINDS, variantColors, card, cardHead,
   segmented, table, runName, statusPill, pill, kpi, median, sum, errorBox, heatColor, showTip, hideTip, toolColor,
   tipLines, plural, FAILURE, scoreCell, activityText, END_SHORT,
 } from './util.js';
@@ -135,6 +135,12 @@ async function home(view, stale) {
   for (const t of data.tasks) view.append(taskSection(t));
 }
 
+// The short name next to a task heading, so "c18" in a run id is findable.
+function taskCode(taskId) {
+  const code = TASK_CODE[taskId];
+  return code ? h('span', { class: 'muted small', style: { fontWeight: 400, marginLeft: '10px' }, title: 'as written in run ids' }, code) : null;
+}
+
 // One task on the front page: what it is, and its batches with only its runs.
 function taskSection(t) {
   const info = TASK_INFO[t.id] || {};
@@ -142,7 +148,7 @@ function taskSection(t) {
   const grid = h('div', { class: 'batches' });
   for (const b of t.batches) grid.append(batchCard(b, colors));
   return h('section', { class: 'task-section' },
-    h('h2', null, h('a', { href: `#/task/${enc(t.id)}` }, TASK[t.id] || t.id)),
+    h('h2', null, h('a', { href: `#/task/${enc(t.id)}` }, TASK[t.id] || t.id), taskCode(t.id)),
     h('p', { class: 'sub' },
       info.builds ? `The agent builds ${info.builds}; ${info.scored}. ` : '',
       `${plural(t.batches.length, 'batch', 'batches')}, ${plural(t.main, 'main run')}`,
@@ -217,7 +223,7 @@ async function taskPage(view, taskId, stale) {
   const oldest = t.batches.slice().sort((a, b) => (a.first_start || '').localeCompare(b.first_start || ''));
   const trial = t.runs - t.main;
   view.append(h('div', { class: 'crumbs' }, h('a', { href: '#/' }, 'Tasks'), ' › ', TASK[t.id] || t.id));
-  view.append(h('h1', null, TASK[t.id] || t.id));
+  view.append(h('h1', null, TASK[t.id] || t.id, taskCode(t.id)));
   view.append(h('p', { class: 'sub' },
     info.builds ? `The agent builds ${info.builds}; ${info.scored}. ` : '',
     `${plural(t.batches.length, 'batch', 'batches')}, ${plural(t.main, 'main run')}${trial ? ` and ${plural(trial, 'trial run')}` : ''}, `,
@@ -302,9 +308,17 @@ async function batchPage(view, key, params, stale) {
     new Set(all.map((r) => r.task)).size === 1
       ? h('a', { href: `#/compare?runs=${all.filter((r) => r.profile === 'main').map((r) => enc(r.id)).join(',')}` }, 'Compare these runs')
       : null));
-  for (const st of data.studies) {
+  // Several tasks: say so at the top, with a jump to each task's table, since
+  // the second table is below the first and easy to miss.
+  const sections = data.studies.map((st) => studySection(st, runs, data.studies.length > 1));
+  if (data.studies.length > 1) {
+    view.append(h('div', { class: 'links' }, h('span', { class: 'muted' }, 'This batch ran ', plural(data.studies.length, 'task'), ', one table each:'),
+      data.studies.map((st, i) => h('a', { href: '#/batch/' + enc(key), onclick: (e) => { e.preventDefault(); sections[i].scrollIntoView({ behavior: 'smooth' }); } },
+        `${TASK[st.task] || st.task} (${TASK_CODE[st.task] || st.task}, ${plural(st.runs.length, 'run')}) ↓`))));
+  }
+  for (const sec of sections) {
     if (stale()) return;
-    view.append(studySection(st, runs, data.studies.length > 1));
+    view.append(sec);
   }
 }
 
@@ -317,7 +331,7 @@ function studySection(st, runs, several) {
   const colors = variantColors(variants);
   const main = counted.length ? counted : rows;
   if (several || st.id) {
-    sec.append(h('h2', null, h('a', { href: `#/task/${enc(st.task)}`, title: 'every batch of this task' }, TASK[st.task] || st.task),
+    sec.append(h('h2', null, h('a', { href: `#/task/${enc(st.task)}`, title: 'every batch of this task' }, TASK[st.task] || st.task), taskCode(st.task),
       h('span', { class: 'muted small', style: { fontWeight: 400, marginLeft: '10px' } }, st.id),
       several ? h('a', { class: 'small', style: { fontWeight: 400, marginLeft: '14px' },
         href: `#/compare?runs=${rows.filter((r) => r.profile === 'main').map((r) => enc(r.id)).join(',')}` }, 'compare these runs') : null));

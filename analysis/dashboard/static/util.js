@@ -181,6 +181,12 @@ export const TASK = {
   'c-compiler-ch1-18': 'C compiler (chapters 1–18)',
   'sql-engine-sqllogictest': 'SQL engine',
 };
+// The task's name inside run ids (v20-c18-rust-r2) and study folders (studies/c18).
+export const TASK_CODE = {
+  'c-compiler-ch1-10': 'c10',
+  'c-compiler-ch1-18': 'c18',
+  'sql-engine-sqllogictest': 'sql',
+};
 // What each task asks for, in the words the front page uses.
 export const TASK_INFO = {
   'sql-engine-sqllogictest': {

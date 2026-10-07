@@ -36,15 +36,17 @@ run whose files change, such as one that is running, is re-read automatically.
 ## What is on it
 
 - **Tasks** (the front page): one section per task (SQL engine, C compiler
-  chapters 1-18, C compiler chapters 1-10), each with a card per batch that
+  chapters 1-18, C compiler chapters 1-10; each heading also shows the short
+  name used in run ids: `sql`, `c18`, `c10`), each with a card per batch that
   ran it, and a "Running now" section while a batch is going. A batch that
   ran two tasks (v10, v11) appears under each, with only that task's runs.
   Scores of different tasks are never shown together.
 - **A task**: every run of the task, batch by batch; a table of its batches
   (dates, variants, runs, middle and best score, plan and report); and a
   sortable table of all its runs.
-- **A batch**: one section per task it ran, each with scores by variant,
-  progress over time, a table of every run
+- **A batch**: one section per task it ran (a batch that ran two has a line
+  under its title naming both, with a jump to each table), each with scores
+  by variant, progress over time, a table of every run
   (scores, time, replies, tokens, tool calls, failures, blocked commands,
   conversation summaries, code size), the score on each hidden test, where the
   time went, tokens written and read, tool calls, and what each agent left
